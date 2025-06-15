@@ -350,15 +350,14 @@
             padding: 25px;
             border-radius: 12px;
             box-shadow: 0 5px 25px rgba(0, 0, 0, 0.3);
-            width: 90%;
-            max-width: 400px;
+            width: 90%; /* Keep it responsive */
+            /* Removed max-width here to allow content to span more naturally */
             text-align: center;
-            display: flex; /* Flexbox for centering content inside */
+            display: flex;
             flex-direction: column;
             align-items: center;
-            /* New: for handling overflow on smaller screens */
-            max-height: 90vh; /* Limit height to 90% of viewport height */
-            overflow-y: auto; /* Enable vertical scrolling if content exceeds max-height */
+            max-height: 90vh;
+            overflow-y: auto;
         }
         /* New style for delete icon */
         .delete-icon {
@@ -532,7 +531,11 @@
             // Remove a classe 'modal' se estiver presente para garantir o posicionamento fixo padrão
             if (messageBox.classList.contains('modal')) {
                 messageBox.classList.remove('modal');
-                messageBox.style.position = 'fixed'; 
+                // Remove positioning for modal to ensure it doesn't conflict with general message box
+                messageBox.style.position = ''; 
+                messageBox.style.top = '';
+                messageBox.style.left = '';
+                messageBox.style.transform = '';
             }
 
             messageBox.textContent = ''; // Limpa qualquer texto anterior
@@ -562,6 +565,11 @@
             messageBox.style.display = 'none';
             messageBox.className = 'message-box'; // Reseta a classe
             messageBox.innerHTML = ''; // Limpa o conteúdo
+            // Restore default positioning for general messages if a modal was just closed
+            messageBox.style.position = 'fixed'; 
+            messageBox.style.top = '0';
+            messageBox.style.left = '50%';
+            messageBox.style.transform = 'translateX(-50%)';
         }
 
         /**
@@ -858,7 +866,7 @@
                             if (currentIndex > 0) { // Não está na série mais alta (A)
                                 newSeries = SERIES_ORDER[currentIndex - 1]; // Move para um índice menor (A é 0, B é 1, etc.)
                                 shouldResetCounts = true;
-                                eventMessage = `${playerData.name} subiu para a Série ${newSeries}! 🎉`;
+                                eventMessage = `${playerData.name} subiu para a Série ${newSeries}! �`;
                             } else {
                                 // Já está na série mais alta (A)
                                 shouldResetCounts = true;
@@ -1172,7 +1180,7 @@
 
                 // Adiciona um evento ao log para a redefinição global
                 await addDoc(eventsCollectionRef(), {
-                    message: "Placar completo foi redefinido para o início. �",
+                    message: "Placar completo foi redefinido para o início. 🔄",
                     timestamp: serverTimestamp()
                 });
 
@@ -1221,7 +1229,8 @@
         // Registrar o Service Worker (para funcionalidade PWA)
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
-                navigator.serviceWorker.register('/service-worker.js')
+                // Alterado o caminho para relativo, usando './'
+                navigator.serviceWorker.register('./service-worker.js') 
                     .then(registration => {
                         console.log('Service Worker registrado com sucesso:', registration.scope);
                     })
