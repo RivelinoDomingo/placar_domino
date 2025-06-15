@@ -411,6 +411,10 @@
             Mostrar Controles do Administrador
         </button>
 
+        <button id="enableNotificationsBtn" style="background-color: #ff9800; color: white; padding: 10px; border-radius: 8px; border: none; cursor: pointer; margin-top: 15px;">
+            🔔 Ativar Notificações
+        </button>
+
         <!-- Admin Control Panel (hidden by default) -->
         <div id="adminPanel" class="admin-panel">
             <h2 class="text-xl font-semibold text-gray-700">Controle de Administrador</h2>
@@ -1296,6 +1300,10 @@
         // Novo: Adiciona ouvinte de evento para o botão de adicionar jogador
         addPlayerBtn.addEventListener('click', handleAddPlayer);
 
+
+        // No final do seu script, perto do window.onload
+        document.getElementById('enableNotificationsBtn').addEventListener('click', requestNotificationPermissionAndSubscribe);
+        // window.onload = initializeFirebase;
 
         // Inicializa o Firebase quando a janela carrega
         window.onload = initializeFirebase;
