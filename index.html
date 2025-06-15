@@ -665,8 +665,8 @@
                 document.getElementById('loadingMessage').textContent = 'Erro ao carregar.';
             }
             /**
-             * Pede permissão ao usuário para notificações e salva o token no Firestore.
-             */
+            * Pede permissão ao usuário para notificações e salva o token no Firestore.
+            */
             async function requestNotificationPermissionAndSubscribe() {
                 console.log('Solicitando permissão para notificações...');
                 
@@ -704,14 +704,14 @@
                     console.error('Erro ao solicitar permissão ou obter token:', error);
                     showMessage('Ocorreu um erro ao tentar ativar as notificações.', 'error');
                 }
-                }
-                
-                // Para testar, você pode chamar essa função quando o admin mode é ativado,
-                // ou idealmente, adicionar um botão específico para isso na UI.
-                // Exemplo: document.getElementById('enableNotificationsBtn').addEventListener('click', requestNotificationPermissionAndSubscribe);
+            }
         }
+                
+            // Para testar, você pode chamar essa função quando o admin mode é ativado,
+            // ou idealmente, adicionar um botão específico para isso na UI.
+            // Exemplo: document.getElementById('enableNotificationsBtn').addEventListener('click', requestNotificationPermissionAndSubscribe);
 
-        /**
+         /**
          * Configura todos os ouvintes em tempo real para os dados do Firestore (jogadores e eventos).
          */
         async function setupFirestoreListeners() {
