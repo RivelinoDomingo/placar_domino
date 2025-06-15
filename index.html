@@ -183,7 +183,7 @@
             background-color: #c82333;
         }
         /* Style for disabled buttons */
-        .score-buttons button:disabled, .admin-panel .button:disabled, .edit-icon[disabled] {
+        .score-buttons button:disabled, .admin-panel .button:disabled, .edit-icon[disabled], .delete-icon[disabled] {
             background-color: #cccccc !important;
             cursor: not-allowed;
             box-shadow: none;
@@ -357,6 +357,19 @@
             flex-direction: column;
             align-items: center;
         }
+        /* New style for delete icon */
+        .delete-icon {
+            display: none; /* Hidden by default */
+            cursor: pointer;
+            vertical-align: middle;
+            margin-left: 8px;
+            color: #dc3545; /* Reddish color for delete */
+            transition: color 0.2s ease, transform 0.1s ease;
+        }
+        .delete-icon:hover {
+            color: #c82333; /* Darker red on hover */
+            transform: scale(1.1);
+        }
     </style>
     <!-- Adicionando a referência ao Web App Manifest -->
     <link rel="manifest" href="/manifest.json">
@@ -464,7 +477,7 @@
         let isAdminMode = false; // Estado do modo administrador
 
         /**
-         * Atualiza o estado dos botões de controle (Raios, Lambretas, Redefinir e Ícones de Edição).
+         * Atualiza o estado dos botões de controle (Raios, Lambretas, Redefinir e Ícones de Edição/Exclusão).
          */
         function updateControlButtonsState() {
             const allScoreButtons = document.querySelectorAll('.score-buttons button');
@@ -476,6 +489,18 @@
 
             const editIcons = document.querySelectorAll('.edit-icon');
             editIcons.forEach(icon => {
+                if (isAdminMode) {
+                    icon.style.display = 'inline-block';
+                    icon.removeAttribute('disabled');
+                } else {
+                    icon.style.display = 'none';
+                    icon.setAttribute('disabled', 'true');
+                }
+            });
+
+            // Controla o novo ícone de exclusão
+            const deleteIcons = document.querySelectorAll('.delete-icon');
+            deleteIcons.forEach(icon => {
                 if (isAdminMode) {
                     icon.style.display = 'inline-block';
                     icon.removeAttribute('disabled');
@@ -501,18 +526,17 @@
          * @param {HTMLElement} [contentElement] - O conteúdo HTML a ser inserido na mensagem (para modals).
          */
         function showMessage(message, type = 'info', contentElement = null) {
-            // Remove the previous position:fixed or sticky if it's a modal, to prevent conflicts
+            // Remove a classe 'modal' se estiver presente para garantir o posicionamento fixo padrão
             if (messageBox.classList.contains('modal')) {
                 messageBox.classList.remove('modal');
-                // Ensure other positioning properties are reset if needed
-                messageBox.style.position = 'fixed'; // Back to fixed for general messages
+                messageBox.style.position = 'fixed'; 
             }
 
             messageBox.textContent = ''; // Limpa qualquer texto anterior
             messageBox.className = `message-box ${type}`; // Aplica a classe baseada no tipo
 
             if (contentElement) {
-                messageBox.innerHTML = ''; // Clear text content to insert complex HTML
+                messageBox.innerHTML = ''; // Limpa o conteúdo de texto para inserir HTML complexo
                 messageBox.appendChild(contentElement);
             } else {
                 messageBox.textContent = message;
@@ -740,6 +764,13 @@
                                         <path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/>
                                         <path d="M18 13V7"/>
                                     </svg>
+                                    <!-- New: Delete icon next to edit icon -->
+                                    <svg class="delete-icon" data-id="${player.id}" data-name="${player.name}" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M3 6h18"/>
+                                        <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+                                        <line x1="10" y1="11" x2="10" y2="17"/>
+                                        <line x1="14" y1="11" x2="14" y2="17"/>
+                                    </svg>
                                 </span>
                                 <span class="player-series">Série: ${player.series || 'Amador'}</span>
                             </div>
@@ -774,6 +805,11 @@
             playersListDiv.querySelectorAll('.edit-icon').forEach(icon => {
                 icon.addEventListener('click', handleRenamePlayer);
             });
+            // Adiciona ouvintes de eventos ao novo ícone de exclusão
+            playersListDiv.querySelectorAll('.delete-icon').forEach(icon => {
+                icon.addEventListener('click', handleDeletePlayer);
+            });
+
 
             // Atualiza o estado dos botões e ícones após a renderização
             updateControlButtonsState();
@@ -1008,6 +1044,67 @@
                 showMessage("Adição de jogador cancelada.", 'info');
                 closeMessageBox();
             };
+        }
+
+        /**
+         * Lida com a exclusão de um jogador.
+         * Abre um modal de confirmação antes de deletar.
+         * @param {Event} event - O evento de clique no ícone de exclusão.
+         */
+        async function handleDeletePlayer(event) {
+            if (!isAdminMode) {
+                showMessage("Você precisa estar no Modo Administrador para remover jogadores.", 'error');
+                return;
+            }
+
+            const playerId = event.target.closest('.delete-icon').dataset.id;
+            const playerName = event.target.closest('.delete-icon').dataset.name;
+            const playerDocRef = doc(playersCollectionRef(), playerId);
+
+            // Cria o conteúdo do modal de confirmação
+            const modalContent = document.createElement('div');
+            modalContent.className = 'custom-modal-content';
+            modalContent.innerHTML = `
+                <p class="text-lg font-semibold mb-3">Confirmar Exclusão</p>
+                <p>Tem certeza que deseja remover o jogador "${playerName}"?</p>
+                <div class="modal-buttons mt-4">
+                    <button class="save-btn" id="confirmDeleteYes">Sim</button>
+                    <button class="cancel-btn" id="confirmDeleteNo">Não</button>
+                </div>
+            `;
+            showMessage('Confirmar Exclusão', 'modal', modalContent);
+
+            const confirmPromise = new Promise((resolve) => {
+                document.getElementById('confirmDeleteYes').onclick = () => {
+                    closeMessageBox();
+                    resolve(true);
+                };
+                document.getElementById('confirmDeleteNo').onclick = () => {
+                    closeMessageBox();
+                    resolve(false);
+                };
+            });
+
+            const userConfirmed = await confirmPromise;
+
+            if (!userConfirmed) {
+                showMessage("Exclusão de jogador cancelada.", 'info');
+                return;
+            }
+
+            showMessage(`Removendo jogador "${playerName}"...`, 'info');
+
+            try {
+                await deleteDoc(playerDocRef);
+                await addDoc(eventsCollectionRef(), {
+                    message: `Jogador "${playerName}" foi removido. 🗑️`,
+                    timestamp: serverTimestamp()
+                });
+                showMessage(`Jogador "${playerName}" removido com sucesso!`, 'success');
+            } catch (error) {
+                console.error("Erro ao remover jogador:", error);
+                showMessage("Erro ao remover jogador.", 'error');
+            }
         }
 
 
