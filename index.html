@@ -451,6 +451,7 @@
         let db;
         let auth;
         let userId = 'anonymous'; // Padrão anônimo até autenticação
+        let messaging; // <-- ADICIONE ESTA LINHA
 
         // SEU OBJETO DE CONFIGURAÇÃO DO FIREBASE VAI AQUI!
         // Cole o objeto 'firebaseConfig' que você pegou do Console do Firebase.
@@ -634,6 +635,48 @@
             });
         }
 
+        /**
+        * Pede permissão ao usuário para notificações e salva o token no Firestore.
+        */
+        async function requestNotificationPermissionAndSubscribe() {
+            console.log('Solicitando permissão para notificações...');
+
+            try {
+                const permission = await Notification.requestPermission();
+                if (permission === 'granted') {
+                    console.log('Permissão para notificação concedida.');
+
+                    // Obtenha o token do FCM usando sua chave VAPID do console do Firebase
+                    const fcmToken = await getToken(messaging, {
+                        vapidKey: 'BL3XpLOirHkCWzZnsCSDEge0-NpA6xDaEQeSNEb_oXjw1XH6WRn0bTc5arjJWTd-kfrtNvQXeiRjXevgaEOulXg' // <-- IMPORTANTE
+                    });
+
+                    if (fcmToken) {
+                        console.log('Token FCM obtido:', fcmToken);
+                        // Salve o token no Firestore associado ao usuário/dispositivo
+                        const subscriptionsCollectionRef = collection(db, `artifacts/${appIdentifier}/public/data/subscriptions`);
+                        const tokenDocRef = doc(subscriptionsCollectionRef, fcmToken); // Usa o próprio token como ID para evitar duplicatas
+
+                        await setDoc(tokenDocRef, {
+                            userId: userId,
+                            createdAt: serverTimestamp()
+                        });
+
+                        showMessage('Notificações ativadas com sucesso!', 'success');
+                    } else {
+                        console.warn('Não foi possível obter o token FCM. O registro do Service Worker pode estar faltando.');
+                        showMessage('Não foi possível ativar as notificações.', 'error');
+                    }
+                } else {
+                    console.log('Permissão para notificação não foi concedida.');
+                    showMessage('Você não permitiu o envio de notificações.', 'info');
+                }
+            } catch (error) {
+            console.error('Erro ao solicitar permissão ou obter token:', error);
+            showMessage('Ocorreu um erro ao tentar ativar as notificações.', 'error');
+        }
+    }
+
 
         /**
          * Inicializa o Firebase e configura a autenticação.
@@ -643,6 +686,7 @@
                 app = initializeApp(firebaseConfig);
                 db = getFirestore(app);
                 auth = getAuth(app);
+                messaging = getMessaging(app); // <-- INICIALIZE A VARIÁVEL GLOBAL AQUI
 
                 // Usamos signInAnonymously para uma autenticação básica e compartilhamento público.
                 await signInAnonymously(auth);
@@ -668,47 +712,7 @@
                 showMessage("Erro ao carregar o aplicativo. Verifique as credenciais do Firebase e a ativação da autenticação anônima.", 'error');
                 document.getElementById('loadingMessage').textContent = 'Erro ao carregar.';
             }
-            /**
-            * Pede permissão ao usuário para notificações e salva o token no Firestore.
-            */
-            async function requestNotificationPermissionAndSubscribe() {
-                console.log('Solicitando permissão para notificações...');
-                
-                try {
-                    const permission = await Notification.requestPermission();
-                    if (permission === 'granted') {
-                        console.log('Permissão para notificação concedida.');
-                        
-                        // Obtenha o token do FCM usando sua chave VAPID do console do Firebase
-                        const fcmToken = await getToken(messaging, { 
-                            vapidKey: 'BL3XpLOirHkCWzZnsCSDEge0-NpA6xDaEQeSNEb_oXjw1XH6WRn0bTc5arjJWTd-kfrtNvQXeiRjXevgaEOulXg' // <-- IMPORTANTE
-                        });
-            
-                        if (fcmToken) {
-                            console.log('Token FCM obtido:', fcmToken);
-                            // Salve o token no Firestore associado ao usuário/dispositivo
-                            const subscriptionsCollectionRef = collection(db, `artifacts/${appIdentifier}/public/data/subscriptions`);
-                            const tokenDocRef = doc(subscriptionsCollectionRef, fcmToken); // Usa o próprio token como ID para evitar duplicatas
-            
-                            await setDoc(tokenDocRef, {
-                                userId: userId,
-                                createdAt: serverTimestamp()
-                            });
-            
-                            showMessage('Notificações ativadas com sucesso!', 'success');
-                        } else {
-                            console.warn('Não foi possível obter o token FCM. O registro do Service Worker pode estar faltando.');
-                            showMessage('Não foi possível ativar as notificações.', 'error');
-                        }
-                    } else {
-                        console.log('Permissão para notificação não foi concedida.');
-                        showMessage('Você não permitiu o envio de notificações.', 'info');
-                    }
-                } catch (error) {
-                    console.error('Erro ao solicitar permissão ou obter token:', error);
-                    showMessage('Ocorreu um erro ao tentar ativar as notificações.', 'error');
-                }
-            }
+
         }
                 
             // Para testar, você pode chamar essa função quando o admin mode é ativado,
