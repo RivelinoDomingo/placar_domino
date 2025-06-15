@@ -1,7 +1,7 @@
 // service-worker.js
 // Um Service Worker minimalista para habilitar a funcionalidade de "Instalar na Tela Inicial"
 
-const CACHE_NAME = 'domino-score-v2'; // Versão do cache, alterada para forçar atualização
+const CACHE_NAME = 'domino-score-v3'; // Versão do cache, alterada para forçar atualização
 const urlsToCache = [
     './', // Atalho para index.html
     './index.html',
