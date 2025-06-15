@@ -1,0 +1,1002 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Placar de Jogadores</title>
+    <!-- Tailwind CSS CDN for easy styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f0f2f5;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+        .container {
+            background-color: #ffffff;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 600px;
+            text-align: center;
+        }
+        /* Style for the button that toggles admin controls visibility */
+        .toggle-admin-btn {
+            background-color: #4a5568; /* Darker gray */
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.2s ease, transform 0.1s ease;
+            margin-top: 20px; /* Moved to bottom, so top margin */
+            margin-bottom: 0; /* No bottom margin, as it's at the end */
+            font-weight: 600;
+        }
+        .toggle-admin-btn:hover {
+            background-color: #2d3748; /* Even darker gray on hover */
+            transform: translateY(-1px);
+        }
+
+        /* Admin Control Panel itself */
+        .admin-panel {
+            margin-top: 20px; /* Separates from content above */
+            padding: 15px;
+            background-color: #e2f0f9;
+            border-radius: 8px;
+            border: 1px solid #c2e1f2;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+            transition: all 0.3s ease-in-out; /* Smooth transition for showing/hiding */
+            overflow: hidden; /* Hide overflow during transition */
+            max-height: 0; /* Hidden by default */
+            opacity: 0; /* Hidden by default */
+            margin-bottom: 20px; /* Space below panel */
+        }
+        .admin-panel.active {
+            max-height: 300px; /* Increased to accommodate reset button */
+            opacity: 1;
+            padding: 15px; /* Restore padding when active */
+        }
+        /* Restore padding for hidden state to prevent jumpiness on toggle */
+        .admin-panel:not(.active) {
+            padding: 0 15px;
+        }
+
+        .admin-panel input {
+            padding: 8px 12px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            width: 100%;
+            max-width: 250px;
+        }
+        .admin-panel button {
+            background-color: #4CAF50; /* Green */
+            color: white;
+            padding: 8px 15px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+        }
+        .admin-panel button:hover {
+            background-color: #45a049;
+        }
+        .player-item {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            align-items: flex-start;
+            padding: 15px 20px;
+            margin-bottom: 10px;
+            background-color: #f9f9f9;
+            border-radius: 8px;
+            border: 1px solid #e0e0e0;
+            transition: all 0.3s ease;
+        }
+        .player-item:hover {
+            background-color: #f0f0f0;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+        .player-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            margin-bottom: 10px;
+        }
+        .player-name {
+            font-size: 1.1em;
+            font-weight: 600;
+            color: #333;
+            text-align: left;
+            flex-grow: 1;
+            display: flex; /* For aligning name and icon */
+            align-items: center;
+        }
+        .player-series {
+            font-size: 1em;
+            font-weight: 500;
+            color: #666;
+            background-color: #e2e8f0;
+            padding: 4px 8px;
+            border-radius: 6px;
+        }
+        .counter-group {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            margin-bottom: 5px;
+        }
+        .counter-label {
+            font-size: 1em;
+            font-weight: 500;
+            color: #555;
+            flex-grow: 1;
+            text-align: left;
+        }
+        .counter-value {
+            font-size: 1.2em;
+            font-weight: 700;
+            color: #007bff;
+            min-width: 30px;
+            text-align: right;
+            margin-right: 15px;
+        }
+        .score-buttons button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 32px;
+            height: 32px;
+            font-size: 1.2em;
+            cursor: pointer;
+            transition: background-color 0.2s ease, transform 0.1s ease;
+            display: inline-flex;
+            justify-content: center;
+            align-items: center;
+            margin-left: 6px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+        .score-buttons button:hover {
+            background-color: #0056b3;
+            transform: translateY(-1px);
+        }
+        .score-buttons button:active {
+            transform: translateY(1px);
+            box-shadow: none;
+        }
+        .score-buttons button.minus {
+            background-color: #dc3545;
+        }
+        .score-buttons button.minus:hover {
+            background-color: #c82333;
+        }
+        /* Style for disabled buttons */
+        .score-buttons button:disabled, .reset-button:disabled, .edit-icon[disabled] {
+            background-color: #cccccc !important;
+            cursor: not-allowed;
+            box-shadow: none;
+            transform: none;
+            opacity: 0.6; /* Dim disabled icons */
+        }
+        /* The reset button now lives INSIDE the admin panel */
+        .reset-button {
+            background-color: #6c757d;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1em;
+            cursor: pointer;
+            margin-top: 15px; /* Margin from other admin controls */
+            transition: background-color 0.2s ease, transform 0.1s ease;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+        .reset-button:hover {
+            background-color: #5a6268;
+            transform: translateY(-1px);
+        }
+        .reset-button:active {
+            transform: translateY(1px);
+            box-shadow: none;
+        }
+        .user-id-display {
+            font-size: 0.8em;
+            color: #777;
+            margin-top: 20px;
+            word-break: break-all;
+        }
+        .message-box {
+            background-color: #e6ffed; /* Light green for success/info */
+            color: #1a5e20; /* Darker green */
+            padding: 10px;
+            border: 1px solid #b2f1c8;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            display: none;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        .message-box.error {
+            background-color: #ffe6e6; /* Light red for error */
+            color: #cc0000; /* Darker red */
+            border: 1px solid #ffb2b2;
+        }
+        .message-box.info {
+            background-color: #e0f2fe; /* Light blue for info */
+            color: #0056b3; /* Darker blue */
+            border: 1px solid #bfdfff;
+        }
+        .series-heading {
+            font-size: 1.5em;
+            font-weight: 700;
+            color: #2c3e50;
+            margin-top: 25px;
+            margin-bottom: 15px;
+            border-bottom: 2px solid #ddd;
+            padding-bottom: 5px;
+            text-align: left;
+        }
+        .edit-icon {
+            display: none; /* Hidden by default */
+            cursor: pointer;
+            vertical-align: middle;
+            margin-left: 8px;
+            color: #4a5568; /* Grayish color */
+            transition: color 0.2s ease, transform 0.1s ease;
+        }
+        .edit-icon:hover {
+            color: #3182ce; /* Blue on hover */
+            transform: scale(1.1);
+        }
+        .edit-icon[disabled] {
+            pointer-events: none; /* Make it non-clickable when disabled */
+        }
+        /* Custom modal styles for renaming and confirmations */
+        .custom-modal-content {
+            padding: 15px;
+            text-align: center;
+        }
+        .custom-modal-content input {
+            width: calc(100% - 20px); /* Adjust width for padding */
+            padding: 10px;
+            margin: 15px 0;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            font-size: 1em;
+            box-sizing: border-box; /* Include padding in width */
+        }
+        .custom-modal-content .modal-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+        }
+        .custom-modal-content .modal-buttons button {
+            padding: 8px 15px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+        }
+        .custom-modal-content .modal-buttons .save-btn {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+        }
+        .custom-modal-content .modal-buttons .save-btn:hover {
+            background-color: #45a049;
+        }
+        .custom-modal-content .modal-buttons .cancel-btn {
+            background-color: #6c757d;
+            color: white;
+            border: none;
+        }
+        .custom-modal-content .modal-buttons .cancel-btn:hover {
+            background-color: #5a6268;
+        }
+        /* Styles for Recent Events Log */
+        .recent-events {
+            margin-top: 30px;
+            padding: 20px;
+            background-color: #f0f8ff;
+            border-radius: 12px;
+            border: 1px solid #cceeff;
+            text-align: left;
+        }
+        .recent-events h2 {
+            font-size: 1.5em;
+            font-weight: 700;
+            color: #2c3e50;
+            margin-bottom: 15px;
+            border-bottom: 2px solid #b3d9ff;
+            padding-bottom: 5px;
+        }
+        .event-item {
+            font-size: 0.9em;
+            color: #555;
+            margin-bottom: 8px;
+            line-height: 1.4;
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+        }
+        .event-item .timestamp {
+            font-size: 0.8em;
+            color: #888;
+            min-width: 80px; /* Adjust as needed */
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="text-3xl font-bold mb-6 text-gray-800">Placar de Jogadores</h1>
+
+        <div id="loadingMessage" class="text-gray-600 mb-4">
+            Carregando jogadores...
+        </div>
+
+        <div id="messageBox" class="message-box"></div>
+
+        <div id="playersList" class="space-y-3">
+            <!-- Player items will be rendered here by JavaScript, grouped by series -->
+        </div>
+
+        <!-- Recent Events Log Section -->
+        <div class="recent-events">
+            <h2>Últimos Eventos</h2>
+            <div id="eventsLog" class="space-y-2">
+                <!-- Event items will be rendered here by JavaScript -->
+                <p class="text-gray-500">Nenhum evento recente.</p>
+            </div>
+        </div>
+
+        <!-- Toggle Admin Controls Button (now at the bottom) -->
+        <button id="toggleAdminControlsBtn" class="toggle-admin-btn">
+            Mostrar Controles do Administrador
+        </button>
+
+        <!-- Admin Control Panel (hidden by default) -->
+        <div id="adminPanel" class="admin-panel">
+            <h2 class="text-xl font-semibold text-gray-700">Controle de Administrador</h2>
+            <p class="text-sm text-gray-600">Insira a chave de administrador para habilitar edições.</p>
+            <input type="password" id="adminKeyInput" placeholder="Chave de Administrador">
+            <button id="activateAdminBtn">Ativar Modo Admin</button>
+            <div id="adminStatus" class="text-sm text-red-600">Modo Admin: Desativado</div>
+
+            <!-- Reset All button is now inside the admin panel -->
+            <button id="resetScoresBtn" class="reset-button" disabled>
+                Redefinir Tudo (Raios, Lambretas e Séries)
+            </button>
+        </div>
+        
+        <div id="userIdDisplay" class="user-id-display">
+            Seu ID de Usuário: <span id="userIdValue"></span>
+        </div>
+    </div>
+
+    <!-- Firebase SDKs -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, doc, getDoc, addDoc, setDoc, updateDoc, deleteDoc, onSnapshot, collection, query, where, getDocs, orderBy, limit, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        // Variáveis globais para instâncias do Firebase
+        let app;
+        let db;
+        let auth;
+        let userId = 'anonymous'; // Padrão anônimo até autenticação
+
+        // Usamos uma coleção pública para o placar ser compartilhado entre todos os usuários
+        const playersCollectionRef = () => collection(db, `artifacts/${appId}/public/data/players`);
+        // Nova coleção pública para os eventos
+        const eventsCollectionRef = () => collection(db, `artifacts/${appId}/public/data/events`);
+
+        // Obtém o ID do aplicativo do ambiente Canvas ou usa um padrão
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-scoreboard-app';
+
+        // Elementos da UI
+        const messageBox = document.getElementById('messageBox');
+        const adminKeyInput = document.getElementById('adminKeyInput');
+        const activateAdminBtn = document.getElementById('activateAdminBtn');
+        const adminStatusDiv = document.getElementById('adminStatus');
+        const resetScoresBtn = document.getElementById('resetScoresBtn');
+        const eventsLogDiv = document.getElementById('eventsLog');
+        const adminPanel = document.getElementById('adminPanel'); // Referência ao novo painel
+        const toggleAdminControlsBtn = document.getElementById('toggleAdminControlsBtn'); // Novo botão
+
+        // Define a ordem das séries (do mais alto para o mais baixo - para exibição e ordenação)
+        const SERIES_ORDER = ['A', 'B', 'C', 'D', 'Amador'];
+        const MAX_COUNT = 12; // Limite máximo para Raios e Lambretas
+        const ADMIN_KEY = 'SenhaDomino25'; // CHAVE DE ADMINISTRADOR - Mude para uma chave segura em produção!
+
+        let isAdminMode = false; // Estado do modo administrador
+
+        /**
+         * Atualiza o estado dos botões de controle (Raios, Lambretas, Redefinir e Ícones de Edição).
+         */
+        function updateControlButtonsState() {
+            const allScoreButtons = document.querySelectorAll('.score-buttons button');
+            allScoreButtons.forEach(button => {
+                button.disabled = !isAdminMode;
+            });
+            resetScoresBtn.disabled = !isAdminMode;
+
+            const editIcons = document.querySelectorAll('.edit-icon');
+            editIcons.forEach(icon => {
+                if (isAdminMode) {
+                    icon.style.display = 'inline-block';
+                    icon.removeAttribute('disabled');
+                } else {
+                    icon.style.display = 'none';
+                    icon.setAttribute('disabled', 'true');
+                }
+            });
+
+            if (isAdminMode) {
+                adminStatusDiv.className = 'text-sm text-green-600';
+                adminStatusDiv.textContent = 'Modo Admin: Ativado';
+            } else {
+                adminStatusDiv.className = 'text-sm text-red-600';
+                adminStatusDiv.textContent = 'Modo Admin: Desativado';
+            }
+        }
+
+        /**
+         * Exibe uma mensagem na caixa de mensagem. Pode ser usada para mensagens de status ou como modal.
+         * @param {string} message - A mensagem a ser exibida.
+         * @param {string} type - Tipo de mensagem ('error', 'success', 'info', 'modal').
+         * @param {HTMLElement} [contentElement] - O conteúdo HTML a ser inserido na mensagem (para modals).
+         */
+        function showMessage(message, type = 'info', contentElement = null) {
+            messageBox.textContent = ''; // Limpa qualquer texto anterior
+            messageBox.className = 'message-box ' + type; // Aplica a classe baseada no tipo
+
+            if (contentElement) {
+                messageBox.appendChild(contentElement);
+            } else {
+                messageBox.textContent = message;
+            }
+            messageBox.style.display = 'block';
+
+            if (type !== 'modal') { // Mensagens de status desaparecem automaticamente
+                setTimeout(() => {
+                    messageBox.style.display = 'none';
+                    messageBox.className = 'message-box'; // Reseta a classe
+                    messageBox.innerHTML = ''; // Limpa o conteúdo
+                }, 5000); // Esconde após 5 segundos
+            }
+        }
+
+        /**
+         * Fecha a caixa de mensagem/modal.
+         */
+        function closeMessageBox() {
+            messageBox.style.display = 'none';
+            messageBox.className = 'message-box';
+            messageBox.innerHTML = ''; // Limpa o conteúdo
+        }
+
+        /**
+         * Renderiza as últimas mensagens de evento no log.
+         * @param {Array} events - Array de objetos de evento { message, timestamp }.
+         */
+        function renderEvents(events) {
+            eventsLogDiv.innerHTML = ''; // Limpa o log anterior
+
+            if (events.length === 0) {
+                eventsLogDiv.innerHTML = '<p class="text-gray-500">Nenhum evento recente.</p>';
+                return;
+            }
+
+            events.forEach(event => {
+                const eventItem = document.createElement('div');
+                eventItem.className = 'event-item';
+
+                // Formata o timestamp para uma leitura mais fácil
+                const date = event.timestamp ? event.timestamp.toDate() : new Date();
+                const formattedTime = date.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+                const formattedDate = date.toLocaleDateString('pt-BR');
+
+                eventItem.innerHTML = `
+                    <span class="timestamp">${formattedDate} ${formattedTime}</span>
+                    <span>${event.message}</span>
+                `;
+                eventsLogDiv.appendChild(eventItem);
+            });
+        }
+
+
+        /**
+         * Inicializa o Firebase e configura a autenticação.
+         */
+        async function initializeFirebase() {
+            try {
+                const firebaseConfig = JSON.parse(__firebase_config);
+                app = initializeApp(firebaseConfig);
+                db = getFirestore(app);
+                auth = getAuth(app);
+
+                // Autentica com token personalizado se disponível, caso contrário, entra anonimamente
+                if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+                    await signInWithCustomToken(auth, __initial_auth_token);
+                } else {
+                    await signInAnonymously(auth);
+                }
+
+                // Ouve mudanças no estado de autenticação e define o userId
+                onAuthStateChanged(auth, (user) => {
+                    if (user) {
+                        userId = user.uid;
+                        document.getElementById('userIdValue').textContent = userId;
+                        console.log("Firebase inicializado e autenticado. ID do Usuário:", userId);
+                        setupFirestoreListeners(); // Inicia os ouvintes do Firestore após a autenticação
+                    } else {
+                        console.log("Usuário desconectado ou anônimo.");
+                    }
+                });
+
+                // Inicializa o estado dos botões ao carregar (inicialmente desabilitados)
+                updateControlButtonsState();
+
+            } catch (error) {
+                console.error("Erro ao inicializar Firebase ou autenticar:", error);
+                showMessage("Erro ao carregar o aplicativo. Tente novamente.", 'error');
+                document.getElementById('loadingMessage').textContent = 'Erro ao carregar.';
+            }
+        }
+
+        /**
+         * Configura todos os ouvintes em tempo real para os dados do Firestore (jogadores e eventos).
+         */
+        async function setupFirestoreListeners() {
+            const loadingMessage = document.getElementById('loadingMessage');
+            loadingMessage.textContent = 'Carregando jogadores...';
+
+            // Listener para os jogadores
+            onSnapshot(playersCollectionRef(), async (snapshot) => {
+                const playersData = [];
+                snapshot.forEach((doc) => {
+                    playersData.push({ id: doc.id, ...doc.data() });
+                });
+
+                // Ordena os jogadores:
+                // 1. Por Série (A > B > C > D > Amador)
+                // 2. Por Raios (descendente)
+                // 3. Por Lambreta (ascendente)
+                // 4. Por nome (alfabético)
+                playersData.sort((a, b) => {
+                    const seriesIndexA = SERIES_ORDER.indexOf(a.series || 'Amador');
+                    const seriesIndexB = SERIES_ORDER.indexOf(b.series || 'Amador');
+
+                    if (seriesIndexA !== seriesIndexB) {
+                        return seriesIndexA - seriesIndexB; // Maior série primeiro (A no topo)
+                    }
+                    if ((b.raios || 0) !== (a.raios || 0)) {
+                        return (b.raios || 0) - (a.raios || 0); // Mais Raios primeiro
+                    }
+                    if ((a.lambreta || 0) !== (b.lambreta || 0)) {
+                        return (a.lambreta || 0) - (b.lambreta || 0); // Menos Lambreta primeiro
+                    }
+                    return (a.name || '').localeCompare(b.name || ''); // Alfabético por nome
+                });
+
+                // Se não houver jogadores, adiciona jogadores padrão
+                if (playersData.length === 0) {
+                    console.log("Nenhum jogador encontrado. Adicionando jogadores padrão.");
+                    await addDefaultPlayers();
+                } else {
+                    renderPlayers(playersData);
+                }
+                loadingMessage.style.display = 'none'; // Esconde a mensagem de carregamento
+            }, (error) => {
+                console.error("Erro ao obter dados do Firestore (players):", error);
+                showMessage("Erro ao carregar dados do placar. Verifique sua conexão.", 'error');
+                loadingMessage.textContent = 'Erro ao carregar dados.';
+            });
+
+            // Listener para os eventos
+            const qEvents = query(eventsCollectionRef(), orderBy('timestamp', 'desc'), limit(3));
+            onSnapshot(qEvents, (snapshot) => {
+                const eventsData = [];
+                snapshot.forEach((doc) => {
+                    eventsData.push(doc.data());
+                });
+                renderEvents(eventsData);
+            }, (error) => {
+                console.error("Erro ao obter dados do Firestore (events):", error);
+            });
+        }
+
+        /**
+         * Adiciona 10 jogadores padrão ao Firestore com Raios e Lambreta zerados e Série Amador.
+         */
+        async function addDefaultPlayers() {
+            const defaultPlayers = [];
+            for (let i = 1; i <= 10; i++) {
+                defaultPlayers.push({ name: `Jogador ${i}`, raios: 0, lambreta: 0, series: 'Amador' });
+            }
+
+            try {
+                const batchPromises = defaultPlayers.map(player => addDoc(playersCollectionRef(), player));
+                await Promise.all(batchPromises);
+                console.log("Jogadores padrão adicionados com sucesso!");
+                showMessage("Jogadores padrão adicionados com sucesso!", 'success');
+            } catch (error) {
+                console.error("Erro ao adicionar jogadores padrão:", error);
+                showMessage("Erro ao inicializar jogadores padrão.", 'error');
+            }
+        }
+
+        /**
+         * Renderiza a lista de jogadores no HTML, agrupando-os por série.
+         * @param {Array} players - Array de objetos de jogador { id, name, raios, lambreta, series }.
+         */
+        function renderPlayers(players) {
+            const playersListDiv = document.getElementById('playersList');
+            playersListDiv.innerHTML = ''; // Limpa a lista anterior
+
+            if (players.length === 0) {
+                playersListDiv.innerHTML = '<p class="text-gray-500">Nenhum jogador para exibir.</p>';
+                return;
+            }
+
+            // Cria um mapa para agrupar jogadores por série
+            const playersBySeries = SERIES_ORDER.reduce((acc, series) => {
+                acc[series] = [];
+                return acc;
+            }, {});
+
+            players.forEach(player => {
+                const series = player.series || 'Amador'; // Garante que a série exista
+                if (playersBySeries[series]) {
+                    playersBySeries[series].push(player);
+                } else {
+                    // Caso uma série desconhecida apareça, adiciona ao Amador
+                    playersBySeries['Amador'].push(player);
+                }
+            });
+
+            // Renderiza cada grupo de séries na ordem definida em SERIES_ORDER
+            SERIES_ORDER.forEach(series => {
+                if (playersBySeries[series].length > 0) {
+                    const seriesHeading = document.createElement('h2');
+                    seriesHeading.className = 'series-heading';
+                    seriesHeading.textContent = `Série ${series}`;
+                    playersListDiv.appendChild(seriesHeading);
+
+                    playersBySeries[series].forEach(player => {
+                        const playerItem = document.createElement('div');
+                        playerItem.className = 'player-item';
+                        playerItem.dataset.playerId = player.id; // Armazena o ID do documento Firestore
+
+                        playerItem.innerHTML = `
+                            <div class="player-info">
+                                <span class="player-name">
+                                    ${player.name}
+                                    <svg class="edit-icon" data-id="${player.id}" data-name="${player.name}" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M12 20h9"/>
+                                        <path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/>
+                                        <path d="M18 13V7"/>
+                                    </svg>
+                                </span>
+                                <span class="player-series">Série: ${player.series || 'Amador'}</span>
+                            </div>
+                            <div class="counter-group">
+                                <span class="counter-label">Raios:</span>
+                                <span class="counter-value" data-raios>${player.raios}</span>
+                                <div class="score-buttons">
+                                    <button class="minus-btn" data-id="${player.id}" data-type="raios" data-action="minus">-</button>
+                                    <button class="plus-btn" data-id="${player.id}" data-type="raios" data-action="plus">+</button>
+                                </div>
+                            </div>
+                            <div class="counter-group">
+                                <span class="counter-label">Lambreta:</span>
+                                <span class="counter-value" data-lambreta>${player.lambreta}</span>
+                                <div class="score-buttons">
+                                    <button class="minus-btn" data-id="${player.id}" data-type="lambreta" data-action="minus">-</button>
+                                    <button class="plus-btn" data-id="${player.id}" data-type="lambreta" data-action="plus">+</button>
+                                </div>
+                            </div>
+                        `;
+                        playersListDiv.appendChild(playerItem);
+                    });
+                }
+            });
+
+            // Adiciona ouvintes de eventos aos botões de score
+            playersListDiv.querySelectorAll('.plus-btn, .minus-btn').forEach(button => {
+                button.addEventListener('click', handleScoreChange);
+            });
+
+            // Adiciona ouvintes de eventos aos novos ícones de edição
+            playersListDiv.querySelectorAll('.edit-icon').forEach(icon => {
+                icon.addEventListener('click', handleRenamePlayer);
+            });
+
+            // Atualiza o estado dos botões e ícones após a renderização
+            updateControlButtonsState();
+        }
+
+        /**
+         * Lida com o incremento/decremento de Raios ou Lambreta para um jogador,
+         * verificando promoções/rebaixamentos.
+         * @param {Event} event - O evento de clique.
+         */
+        async function handleScoreChange(event) {
+            if (!isAdminMode) {
+                showMessage("Você precisa estar no Modo Administrador para fazer alterações.", 'error');
+                return;
+            }
+
+            const playerId = event.target.dataset.id;
+            const action = event.target.dataset.action;
+            const type = event.target.dataset.type; // 'raios' ou 'lambreta'
+            const playerDocRef = doc(playersCollectionRef(), playerId);
+
+            try {
+                const docSnap = await getDoc(playerDocRef);
+                if (docSnap.exists()) {
+                    let playerData = docSnap.data();
+                    let currentRaios = playerData.raios || 0;
+                    let currentLambreta = playerData.lambreta || 0;
+                    let currentSeries = playerData.series || 'Amador';
+
+                    let newRaios = currentRaios;
+                    let newLambreta = currentLambreta;
+                    let newSeries = currentSeries;
+                    let shouldResetCounts = false;
+                    let eventMessage = ''; // Mensagem para o log de eventos
+
+                    if (type === 'raios') {
+                        newRaios = Math.min(MAX_COUNT, currentRaios + (action === 'plus' ? 1 : -1));
+                        newRaios = Math.max(0, newRaios); // Garante que não seja menor que 0
+                        
+                        if (newRaios === MAX_COUNT && currentLambreta < MAX_COUNT) {
+                            // Condição de promoção
+                            const currentIndex = SERIES_ORDER.indexOf(currentSeries);
+                            if (currentIndex > 0) { // Não está na série mais alta (A)
+                                newSeries = SERIES_ORDER[currentIndex - 1]; // Move para um índice menor (A é 0, B é 1, etc.)
+                                shouldResetCounts = true;
+                                eventMessage = `${playerData.name} subiu para a Série ${newSeries}! 🎉`;
+                            } else {
+                                // Já está na série mais alta (A)
+                                shouldResetCounts = true;
+                                eventMessage = `${playerData.name} alcançou ${MAX_COUNT} Raios na Série ${newSeries}! ✨`;
+                            }
+                        }
+                    } else if (type === 'lambreta') {
+                        newLambreta = Math.min(MAX_COUNT, currentLambreta + (action === 'plus' ? 1 : -1));
+                        newLambreta = Math.max(0, newLambreta); // Garante que não seja menor que 0
+
+                        if (newLambreta === MAX_COUNT && currentRaios < MAX_COUNT) {
+                            // Condição de rebaixamento
+                            const currentIndex = SERIES_ORDER.indexOf(currentSeries);
+                            if (currentIndex < SERIES_ORDER.length - 1) { // Não está na série mais baixa (Amador)
+                                newSeries = SERIES_ORDER[currentIndex + 1]; // Move para um índice maior (Amador é o último)
+                                shouldResetCounts = true;
+                                eventMessage = `${playerData.name} caiu para a Série ${newSeries}. ⬇️`;
+                            } else {
+                                // Já está na série mais baixa (Amador)
+                                shouldResetCounts = true;
+                                eventMessage = `${playerData.name} alcançou ${MAX_COUNT} Lambretas e permaneceu na Série ${newSeries}. 😔`;
+                            }
+                        }
+                    }
+
+                    const updates = {};
+                    let hasChanged = false;
+
+                    if (shouldResetCounts) {
+                        updates.raios = 0;
+                        updates.lambreta = 0;
+                        hasChanged = true;
+                    } else {
+                        if (newRaios !== currentRaios) {
+                            updates.raios = newRaios;
+                            hasChanged = true;
+                        }
+                        if (newLambreta !== currentLambreta) {
+                            updates.lambreta = newLambreta;
+                            hasChanged = true;
+                        }
+                    }
+                    
+                    if (newSeries !== currentSeries) {
+                        updates.series = newSeries;
+                        hasChanged = true;
+                    }
+
+                    if (hasChanged) {
+                        await updateDoc(playerDocRef, updates);
+                        console.log(`Dados do jogador ${playerId} atualizados:`, updates);
+                        // Adiciona mensagem ao log de eventos se houver uma transição de série
+                        if (eventMessage) {
+                            await addDoc(eventsCollectionRef(), {
+                                message: eventMessage,
+                                timestamp: serverTimestamp() // Usa o timestamp do servidor do Firestore
+                            });
+                            showMessage(eventMessage, 'success'); // Mantém a mensagem instantânea no topo
+                        }
+                    } else {
+                        console.log(`Nenhuma mudança na pontuação para ${playerId} (${type}).`);
+                    }
+
+                } else {
+                    console.warn("Documento do jogador não encontrado:", playerId);
+                    showMessage("Erro: Jogador não encontrado.", 'error');
+                }
+            } catch (error) {
+                console.error(`Erro ao atualizar ${type}:`, error);
+                showMessage(`Erro ao atualizar ${type}.`, 'error');
+            }
+        }
+
+        /**
+         * Lida com a renomeação de um jogador.
+         * Abre um modal personalizado para o administrador inserir o novo nome.
+         * @param {Event} event - O evento de clique no ícone de edição.
+         */
+        async function handleRenamePlayer(event) {
+            if (!isAdminMode) {
+                showMessage("Você precisa estar no Modo Administrador para renomear jogadores.", 'error');
+                return;
+            }
+
+            const playerId = event.target.closest('.edit-icon').dataset.id;
+            const currentName = event.target.closest('.edit-icon').dataset.name;
+            const playerDocRef = doc(playersCollectionRef(), playerId);
+
+            // Cria o conteúdo do modal
+            const modalContent = document.createElement('div');
+            modalContent.className = 'custom-modal-content';
+            modalContent.innerHTML = `
+                <p class="text-lg font-semibold mb-3">Renomear Jogador</p>
+                <input type="text" id="newPlayerNameInput" value="${currentName}" placeholder="Novo nome do jogador">
+                <div class="modal-buttons">
+                    <button class="save-btn" id="saveRenameBtn">Salvar</button>
+                    <button class="cancel-btn" id="cancelRenameBtn">Cancelar</button>
+                </div>
+            `;
+            
+            showMessage('Renomear', 'modal', modalContent);
+
+            const newPlayerNameInput = document.getElementById('newPlayerNameInput');
+            const saveRenameBtn = document.getElementById('saveRenameBtn');
+            const cancelRenameBtn = document.getElementById('cancelRenameBtn');
+
+            // Garante que o input receba o foco e o texto seja selecionado
+            newPlayerNameInput.focus();
+            newPlayerNameInput.select();
+
+            saveRenameBtn.onclick = async () => {
+                const newName = newPlayerNameInput.value.trim();
+                if (newName && newName !== currentName) {
+                    try {
+                        await updateDoc(playerDocRef, { name: newName });
+                        showMessage(`Nome do jogador atualizado para "${newName}"!`, 'success');
+                    } catch (error) {
+                        console.error("Erro ao renomear jogador:", error);
+                        showMessage("Erro ao renomear jogador.", 'error');
+                    }
+                } else if (newName === currentName) {
+                    showMessage("O nome é o mesmo. Nenhuma alteração.", 'info');
+                } else {
+                    showMessage("O nome não pode ser vazio.", 'error');
+                }
+                closeMessageBox();
+            };
+
+            cancelRenameBtn.onclick = () => {
+                showMessage("Renomeação cancelada.", 'info');
+                closeMessageBox();
+            };
+        }
+
+        /**
+         * Redefine os valores de Raios, Lambreta e Série de todos os jogadores para o estado inicial.
+         */
+        async function resetAllScores() {
+            if (!isAdminMode) {
+                showMessage("Você precisa estar no Modo Administrador para redefinir o placar.", 'error');
+                return;
+            }
+
+            // Exibe uma confirmação simples ao invés de alert()
+            const confirmReset = document.createElement('div');
+            confirmReset.className = 'message-box info custom-modal-content'; // Usa o estilo do modal
+            confirmReset.innerHTML = `
+                <p class="text-lg font-semibold mb-3">Confirmar Redefinição</p>
+                <p>Tem certeza que deseja redefinir todas as Raios, Lambretas e Séries para todos os jogadores?</p>
+                <div class="modal-buttons mt-4">
+                    <button id="confirmResetYes" class="save-btn">Sim</button>
+                    <button id="confirmResetNo" class="cancel-btn">Não</button>
+                </div>
+            `;
+            showMessage('Confirmar', 'modal', confirmReset); // Usa type 'modal'
+
+            const confirmPromise = new Promise((resolve) => {
+                document.getElementById('confirmResetYes').onclick = () => {
+                    closeMessageBox(); // Fecha o modal de confirmação
+                    resolve(true);
+                };
+                document.getElementById('confirmResetNo').onclick = () => {
+                    closeMessageBox(); // Fecha o modal de confirmação
+                    resolve(false);
+                };
+            });
+
+            const userConfirmed = await confirmPromise;
+
+            if (!userConfirmed) {
+                showMessage("Redefinição cancelada.", 'info');
+                return;
+            }
+
+            showMessage("Redefinindo tudo (Raios, Lambretas e Séries)...", 'info');
+
+            try {
+                const q = query(playersCollectionRef());
+                const querySnapshot = await getDocs(q);
+
+                const batchPromises = querySnapshot.docs.map(playerDoc => {
+                    return updateDoc(doc(playersCollectionRef(), playerDoc.id), { raios: 0, lambreta: 0, series: 'Amador' });
+                });
+                await Promise.all(batchPromises);
+
+                // Adiciona um evento ao log para a redefinição global
+                await addDoc(eventsCollectionRef(), {
+                    message: "Placar completo foi redefinido para o início. 🔄",
+                    timestamp: serverTimestamp()
+                });
+
+                console.log("Todas as Raios, Lambretas e Séries foram redefinidas.");
+                showMessage("Todas as Raios, Lambretas e Séries foram redefinidas!", 'success');
+            }
+            catch (error) {
+                console.error("Erro ao redefinir tudo:", error);
+                showMessage("Erro ao redefinir tudo.", 'error');
+            }
+        }
+
+        // --- Gerenciamento do Modo Administrador ---
+        // Adiciona um ouvinte de evento para o novo botão de toggle
+        toggleAdminControlsBtn.addEventListener('click', () => {
+            adminPanel.classList.toggle('active'); // Alterna a classe 'active'
+            if (adminPanel.classList.contains('active')) {
+                toggleAdminControlsBtn.textContent = 'Ocultar Controles do Administrador';
+            } else {
+                toggleAdminControlsBtn.textContent = 'Mostrar Controles do Administrador';
+            }
+        });
+
+        activateAdminBtn.addEventListener('click', () => {
+            if (adminKeyInput.value === ADMIN_KEY) {
+                isAdminMode = true;
+                showMessage("Modo Administrador ativado!", 'success');
+                adminKeyInput.value = ''; // Limpa a chave
+                updateControlButtonsState();
+            } else {
+                isAdminMode = false;
+                showMessage("Chave de administrador incorreta.", 'error');
+                updateControlButtonsState();
+            }
+        });
+
+        // Adiciona ouvinte de evento para o botão de redefinição
+        resetScoresBtn.addEventListener('click', resetAllScores);
+
+        // Inicializa o Firebase quando a janela carrega
+        window.onload = initializeFirebase;
+
+    </script>
+</body>
+</html>
