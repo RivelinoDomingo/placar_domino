@@ -1,111 +1,70 @@
-// service-worker.js
-// Um Service Worker minimalista para habilitar a funcionalidade de "Instalar na Tela Inicial"
+// Importa os scripts do Firebase. ATENÇÃO: a versão deve ser a mesma do seu app.
+importScripts("https://www.gstatic.com/firebasejs/11.6.1/firebase-app-compat.js");
+importScripts("https://www.gstatic.com/firebasejs/11.6.1/firebase-messaging-compat.js");
 
-const CACHE_NAME = 'domino-score-v5'; // Versão do cache, alterada para forçar atualização
+// Cole aqui a configuração do seu Firebase (o mesmo objeto do index.html)
+const firebaseConfig = {
+    apiKey: "AIzaSyBqpkxcl0GkBBHVO8Nxk7UpYd00H4Frklc",
+    authDomain: "placar-domino.firebaseapp.com",
+    projectId: "placar-domino",
+    storageBucket: "placar-domino.firebasestorage.app",
+    messagingSenderId: "187178310074",
+    appId: "1:187178310074:web:5f56292dea8dc776532583",
+    measurementId: "G-BL3W42DJ3M"
+};
+
+// Inicializa o Firebase
+firebase.initializeApp(firebaseConfig);
+
+// Obtém a instância do Messaging para lidar com as notificações em segundo plano
+const messaging = firebase.messaging();
+
+// Adiciona um ouvinte para quando uma notificação push é recebida
+// enquanto o app está em segundo plano.
+messaging.onBackgroundMessage((payload) => {
+    console.log(
+        "[firebase-messaging-sw.js] Received background message ",
+        payload,
+    );
+
+    // Extrai o título e o corpo da notificação dos dados recebidos
+    const notificationTitle = payload.notification.title;
+    const notificationOptions = {
+        body: payload.notification.body,
+        icon: "/placar_domino/icone192.png", // Ícone da notificação
+    };
+
+    // Exibe a notificação para o usuário
+    self.registration.showNotification(notificationTitle, notificationOptions);
+});
+
+
+// SEU CÓDIGO ANTIGO DE CACHE CONTINUA AQUI
+const CACHE_NAME = 'domino-score-v5';
 const urlsToCache = [
-    '/placar_domino/', // Caches a raiz do aplicativo (index.html na pasta placar_domino)
+    '/placar_domino/',
     '/placar_domino/index.html',
     '/placar_domino/manifest.json',
     '/placar_domino/icone192.png',
     '/placar_domino/icone512.png',
-    '/placar_domino/favicon.ico', // Novo: Adicionado para cache do favicon
-    // Não cachearemos o Tailwind CSS do CDN aqui, para evitar possíveis erros CORS durante a instalação.
-    // Se você precisar de funcionalidade offline para o Tailwind,
-    // considere baixá-lo e servi-lo localmente.
+    '/placar_domino/favicon.ico',
 ];
 
 self.addEventListener('install', (event) => {
-    console.log('Service Worker: Evento de instalação disparado.');
     event.waitUntil(
-        caches.open(CACHE_NAME)
-            .then((cache) => {
-                console.log('Service Worker: Abrindo cache e adicionando URLs.');
-                // Usar Promise.allSettled para que mesmo se algumas URLs falharem, o SW ainda tente instalar
-                return Promise.allSettled(urlsToCache.map(url => cache.add(url)))
-                    .then(results => {
-                        results.forEach(result => {
-                            if (result.status === 'rejected') {
-                                console.warn('Service Worker: Falha ao cachear URL:', result.reason);
-                            }
-                        });
-                        console.log('Service Worker: Tentativa de cache de URLs concluída.');
-                        // Não rejeitar a Promise aqui, permitindo a instalação mesmo com falhas parciais de cache
-                        return; 
-                    });
-            })
-            .catch(error => {
-                console.error('Service Worker: Falha crítica na fase de instalação:', error);
-                // Rejeitar a promessa para que o Service Worker não seja ativado
-                return Promise.reject(error);
-            })
-    );
-});
-
-self.addEventListener('fetch', (event) => {
-    // IMPORTANTE: Bypassar requisições para o Firestore e outras APIs externas/não GET
-    const requestUrl = new URL(event.request.url);
-
-    // Regra 1: Bypass para o Firestore
-    if (requestUrl.hostname.includes('firestore.googleapis.com')) {
-        console.log('Service Worker: Bypassando requisição Firestore:', event.request.url);
-        return event.respondWith(fetch(event.request));
-    }
-
-    // Regra 2: Bypass para requisições que não sejam GET (POST, PUT, DELETE, etc.)
-    // APIs geralmente não devem ser cacheadas para escrita de dados
-    if (event.request.method !== 'GET') {
-        console.log('Service Worker: Bypassando requisição não GET:', event.request.url);
-        return event.respondWith(fetch(event.request));
-    }
-
-    // Para todas as outras requisições GET (assets estáticos), tentar servir do cache primeiro, depois da rede.
-    event.respondWith(
-        caches.match(event.request).then((response) => {
-            // Se encontrar no cache, retorna a resposta do cache
-            if (response) {
-                console.log('Service Worker: Servindo do cache:', event.request.url);
-                return response;
-            }
-
-            // Se não encontrar no cache, tenta buscar na rede
-            return fetch(event.request)
-                .then(networkResponse => {
-                    // Opcional: Cachear novas requisições GET após buscá-las da rede
-                    // Cuidado com o tamanho do cache e a relevância dos assets dinâmicos
-                    // if (networkResponse.ok) { // Apenas cachear respostas bem-sucedidas
-                    //     const responseToCache = networkResponse.clone();
-                    //     caches.open(CACHE_NAME).then(cache => {
-                    //         cache.put(event.request, responseToCache);
-                    //     });
-                    // }
-                    console.log('Service Worker: Servindo da rede:', event.request.url);
-                    return networkResponse;
-                })
-                .catch(error => {
-                    console.error('Service Worker: Erro durante o fetch (cache miss e falha de rede):', event.request.url, error);
-                    // Opcional: retornar uma página de fallback offline para URLs que não foram cacheadas
-                    // return caches.match('/offline.html');
-                    // Ou apenas rejeitar a promessa, deixando o navegador lidar com o erro de rede
-                    throw error; 
-                });
-        }).catch(error => {
-            console.error('Service Worker: Erro durante a correspondência de cache ou fetch inicial:', event.request.url, error);
-            // Captura erros que ocorrem antes mesmo do fetch da rede, por exemplo, problemas de acesso ao cache
-            throw error; 
+        caches.open(CACHE_NAME).then((cache) => {
+            console.log('Service Worker: Caching app shell');
+            return cache.addAll(urlsToCache);
         })
     );
 });
 
-
 self.addEventListener('activate', (event) => {
-    // O Service Worker está ativo. Limpeza de caches antigos pode acontecer aqui.
-    console.log('Service Worker: Evento de ativação disparado.');
     event.waitUntil(
-        caches.keys().then(cacheNames => {
+        caches.keys().then((cacheNames) => {
             return Promise.all(
-                cacheNames.map(cacheName => {
-                    if (cacheName !== CACHE_NAME) { // Remove caches antigos que não correspondem à versão atual
-                        console.log('Service Worker: Limpando cache antigo', cacheName);
+                cacheNames.map((cacheName) => {
+                    if (cacheName !== CACHE_NAME) {
                         return caches.delete(cacheName);
                     }
                 })
@@ -114,58 +73,16 @@ self.addEventListener('activate', (event) => {
     );
 });
 
-
-// IMPORTANTE: Este evento lida com a notificação push recebida do FCM
-self.addEventListener('push', (event) => {
-    console.log('Service Worker: Evento de push recebido.');
-
-    if (!event.data) {
-        console.log('Service Worker: Push event sem dados.');
-        return;
+self.addEventListener('fetch', (event) => {
+    // Bypass para requisições do Firestore e não-GET
+    const requestUrl = new URL(event.request.url);
+    if (requestUrl.hostname.includes('firestore.googleapis.com') || event.request.method !== 'GET') {
+        return event.respondWith(fetch(event.request));
     }
 
-    const pushData = event.data.json();
-    console.log('Service Worker: Dados do Push:', pushData);
-
-    const title = pushData.notification.title || 'Placar do Dominó';
-    const options = {
-        body: pushData.notification.body || 'Uma nova atualização ocorreu.',
-        icon: '/placar_domino/icone192.png', // Ícone que aparece na notificação
-        badge: '/placar_domino/icone192.png', // Ícone pequeno na barra de status (Android)
-        vibrate: [100, 50, 100], // Padrão de vibração
-        data: {
-            url: self.location.origin + '/placar_domino/' // URL para abrir ao clicar na notificação
-        }
-    };
-
-    // Exibe a notificação
-    event.waitUntil(
-        self.registration.showNotification(title, options)
-    );
-});
-
-// Opcional: Adicionar um ouvinte para o clique na notificação
-self.addEventListener('notificationclick', (event) => {
-    event.notification.close(); // Fecha a notificação
-
-    const urlToOpen = event.notification.data.url;
-
-    // Abre a janela do PWA ou foca nela se já estiver aberta
-    event.waitUntil(
-        clients.matchAll({
-            type: 'window',
-            includeUncontrolled: true
-        }).then((clientList) => {
-            if (clientList.length > 0) {
-                let client = clientList[0];
-                for (let i = 0; i < clientList.length; i++) {
-                    if (clientList[i].focused) {
-                        client = clientList[i];
-                    }
-                }
-                return client.focus();
-            }
-            return clients.openWindow(urlToOpen);
+    event.respondWith(
+        caches.match(event.request).then((response) => {
+            return response || fetch(event.request);
         })
     );
 });
