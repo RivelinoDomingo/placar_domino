@@ -226,19 +226,20 @@
         }
         /* Adjusted Message Box styles for better visibility */
         .message-box {
-            position: fixed; /* Fixed position relative to viewport */
-            top: 0;          /* Aligns to the top */
-            left: 50%;       /* Centers horizontally */
-            transform: translateX(-50%); /* Adjusts for half its width to truly center */
-            width: 90%;      /* Take 90% of the width */
-            max-width: 500px; /* Max width for larger screens */
+            /* These are default styles for the top notification messages */
+            position: fixed; 
+            top: 0;          
+            left: 50%;       
+            transform: translateX(-50%); 
+            width: 90%;      
+            max-width: 500px; 
             padding: 10px;
-            border-radius: 0 0 8px 8px; /* Rounded corners only at the bottom */
+            border-radius: 0 0 8px 8px; 
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
             text-align: center;
-            z-index: 1001; /* Higher than modal backdrop */
-            display: none; /* Hidden by default */
-            box-sizing: border-box; /* Include padding in width */
+            z-index: 1001; 
+            display: none; 
+            box-sizing: border-box; 
         }
         .message-box.success {
             background-color: #e6ffed; /* Light green for success/info */
@@ -329,20 +330,23 @@
             min-width: 80px; /* Adjust as needed */
         }
 
-        /* Styles for the modal backdrop and content */
+        /* Styles for the modal backdrop and content when messageBox acts as a modal */
         .message-box.modal {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent backdrop */
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 1000; /* Ensure it's on top of everything */
-            padding: 20px; /* Add padding to prevent content touching edges */
-            box-sizing: border-box; /* Include padding in width/height */
+            position: fixed !important; /* Override default messageBox positioning */
+            top: 0 !important;          
+            left: 0 !important;       
+            transform: none !important; /* IMPORTANT: Remove transform for full-screen modal */
+            width: 100% !important;      
+            height: 100% !important;     
+            background-color: rgba(0, 0, 0, 0.5) !important; /* Semi-transparent backdrop */
+            display: flex !important;    
+            justify-content: center !important;
+            align-items: center !important;
+            z-index: 1000 !important;    /* Ensure it's on top of everything */
+            padding: 20px !important;    /* Add padding to prevent content touching edges */
+            box-sizing: border-box !important; /* Include padding in width/height */
+            border-radius: 0 !important; /* No rounded corners for full backdrop */
+            box-shadow: none !important; /* No shadow for backdrop */
         }
 
         .message-box.modal .custom-modal-content {
@@ -350,8 +354,8 @@
             padding: 25px;
             border-radius: 12px;
             box-shadow: 0 5px 25px rgba(0, 0, 0, 0.3);
-            width: 90%; /* Keep it responsive */
-            /* Removed max-width here to allow content to span more naturally */
+            width: 90%; 
+            max-width: 400px; /* Re-added max-width for modal content itself for better readability */
             text-align: center;
             display: flex;
             flex-direction: column;
@@ -528,33 +532,58 @@
          * @param {HTMLElement} [contentElement] - O conteúdo HTML a ser inserido na mensagem (para modals).
          */
         function showMessage(message, type = 'info', contentElement = null) {
-            // Remove a classe 'modal' se estiver presente para garantir o posicionamento fixo padrão
-            if (messageBox.classList.contains('modal')) {
-                messageBox.classList.remove('modal');
-                // Remove positioning for modal to ensure it doesn't conflict with general message box
-                messageBox.style.position = ''; 
-                messageBox.style.top = '';
-                messageBox.style.left = '';
-                messageBox.style.transform = '';
-            }
-
-            messageBox.textContent = ''; // Limpa qualquer texto anterior
-            messageBox.className = `message-box ${type}`; // Aplica a classe baseada no tipo
+            // Reset all potential previous inline styles to ensure clean state
+            messageBox.style.cssText = ''; 
+            messageBox.textContent = ''; // Clear existing text
+            messageBox.className = `message-box ${type}`; // Apply base class and type class
 
             if (contentElement) {
-                messageBox.innerHTML = ''; // Limpa o conteúdo de texto para inserir HTML complexo
+                messageBox.innerHTML = '';
                 messageBox.appendChild(contentElement);
+                // Apply modal specific styles
+                messageBox.classList.add('modal'); // Ensure modal class is present
+                Object.assign(messageBox.style, {
+                    position: 'fixed',
+                    top: '0',
+                    left: '0',
+                    transform: 'none', // IMPORTANT: No transform for full-screen modal
+                    width: '100%',
+                    height: '100%',
+                    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    zIndex: '1000',
+                    padding: '20px',
+                    borderRadius: '0', // No rounded corners for full backdrop
+                    boxShadow: 'none' // No shadow for backdrop
+                });
             } else {
                 messageBox.textContent = message;
+                // Apply non-modal (top notification) specific styles
+                Object.assign(messageBox.style, {
+                    position: 'fixed',
+                    top: '0',
+                    left: '50%',
+                    transform: 'translateX(-50%)', // Center for top messages
+                    width: '90%',
+                    maxWidth: '500px',
+                    padding: '10px',
+                    borderRadius: '0 0 8px 8px', // Rounded corners for top bar
+                    boxShadow: '0 4px 8px rgba(0, 0, 0, 0.2)',
+                    textAlign: 'center',
+                    zIndex: '1001',
+                    display: 'block', // Set display here for top messages
+                    height: '', // Ensure height is not fixed for top messages
+                    backgroundColor: '' // Ensure background is reset
+                });
             }
-            messageBox.style.display = 'block';
+            messageBox.style.display = 'block'; // Always make it visible at the end
 
-            if (type !== 'modal') { // Mensagens de status desaparecem automaticamente
+            if (type !== 'modal') {
                 setTimeout(() => {
-                    messageBox.style.display = 'none';
-                    messageBox.className = 'message-box'; // Reseta a classe
-                    messageBox.innerHTML = ''; // Limpa o conteúdo
-                }, 5000); // Esconde após 5 segundos
+                    closeMessageBox(); 
+                }, 5000);
             }
         }
 
@@ -563,13 +592,10 @@
          */
         function closeMessageBox() {
             messageBox.style.display = 'none';
-            messageBox.className = 'message-box'; // Reseta a classe
-            messageBox.innerHTML = ''; // Limpa o conteúdo
-            // Restore default positioning for general messages if a modal was just closed
-            messageBox.style.position = 'fixed'; 
-            messageBox.style.top = '0';
-            messageBox.style.left = '50%';
-            messageBox.style.transform = 'translateX(-50%)';
+            messageBox.className = 'message-box'; // Resets all type-specific classes
+            messageBox.innerHTML = ''; // Clears content
+            // Explicitly reset all inline style properties to their default or empty string
+            messageBox.style.cssText = ''; 
         }
 
         /**
@@ -866,7 +892,7 @@
                             if (currentIndex > 0) { // Não está na série mais alta (A)
                                 newSeries = SERIES_ORDER[currentIndex - 1]; // Move para um índice menor (A é 0, B é 1, etc.)
                                 shouldResetCounts = true;
-                                eventMessage = `${playerData.name} subiu para a Série ${newSeries}! �`;
+                                eventMessage = `${playerData.name} subiu para a Série ${newSeries}! 🎉`;
                             } else {
                                 // Já está na série mais alta (A)
                                 shouldResetCounts = true;
@@ -1229,8 +1255,8 @@
         // Registrar o Service Worker (para funcionalidade PWA)
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
-                // Alterado o caminho para relativo, usando './'
-                navigator.serviceWorker.register('./service-worker.js') 
+                // Caminho absoluto para o service worker na raiz do domínio do GitHub Pages
+                navigator.serviceWorker.register('/placar_domino/service-worker.js') 
                     .then(registration => {
                         console.log('Service Worker registrado com sucesso:', registration.scope);
                     })
