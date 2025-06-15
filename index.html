@@ -761,6 +761,46 @@
         }
     }
 
+    async function resetAllScores() {
+        if (!isAdminMode) {
+            showMessage("Você precisa estar no Modo Administrador para redefinir o placar.", 'error');
+            return;
+        }
+
+        const confirmReset = document.createElement('div');
+        confirmReset.className = 'custom-modal-content';
+        confirmReset.innerHTML = `
+            <p class="text-lg font-semibold mb-3">Confirmar Redefinição</p>
+            <p>Tem certeza que deseja redefinir todas as Raios, Lambretas e Séries para todos os jogadores?</p>
+            <div class="modal-buttons mt-4"><button id="confirmResetYes" class="save-btn">Sim</button><button id="confirmResetNo" class="cancel-btn">Não</button></div>`;
+        showMessage('Confirmar', 'modal', confirmReset);
+
+        const userConfirmed = await new Promise((resolve) => {
+            document.getElementById('confirmResetYes').onclick = () => { closeMessageBox(); resolve(true); };
+            document.getElementById('confirmResetNo').onclick = () => { closeMessageBox(); resolve(false); };
+        });
+
+        if (!userConfirmed) {
+            showMessage("Redefinição cancelada.", 'info');
+            return;
+        }
+
+        showMessage("Redefinindo tudo...", 'info');
+
+        try {
+            const querySnapshot = await getDocs(query(playersCollectionRef()));
+            const batchPromises = querySnapshot.docs.map(playerDoc => {
+                return updateDoc(doc(playersCollectionRef(), playerDoc.id), { raios: 0, lambreta: 0, series: 'Amador' });
+            });
+            await Promise.all(batchPromises);
+
+            await addDoc(eventsCollectionRef(), { message: "Placar completo foi redefinido.", timestamp: serverTimestamp() });
+            showMessage("Todas as pontuações foram redefinidas!", 'success');
+        } catch (error) {
+            showMessage("Erro ao redefinir tudo.", 'error');
+        }
+    }
+
     // ... (COLE AQUI O RESTANTE DAS SUAS FUNÇÕES: handleRenamePlayer, handleAddPlayer, handleDeletePlayer, resetAllScores)
     async function handleRenamePlayer(event) {
         if (!isAdminMode) {
