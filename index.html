@@ -492,19 +492,99 @@
     // =======================================================
 
     function showMessage(message, type = 'info', contentElement = null) {
-        // ... (código da sua função showMessage)
+        messageBox.style.cssText = '';
+        messageBox.textContent = '';
+        messageBox.className = `message-box ${type}`;
+
+        if (contentElement) {
+            messageBox.innerHTML = '';
+            messageBox.appendChild(contentElement);
+            messageBox.classList.add('modal');
+            Object.assign(messageBox.style, {
+                position: 'fixed', top: '0', left: '0', transform: 'none',
+                width: '100%', height: '100%', backgroundColor: 'rgba(0, 0, 0, 0.5)',
+                display: 'flex', justifyContent: 'center', alignItems: 'center',
+                zIndex: '1000', padding: '20px', borderRadius: '0', boxShadow: 'none'
+            });
+        } else {
+            messageBox.textContent = message;
+            Object.assign(messageBox.style, {
+                position: 'fixed', top: '0', left: '50%', transform: 'translateX(-50%)',
+                width: '90%', maxWidth: '500px', padding: '10px',
+                borderRadius: '0 0 8px 8px', boxShadow: '0 4px 8px rgba(0, 0, 0, 0.2)',
+                textAlign: 'center', zIndex: '1001', display: 'block', height: '', backgroundColor: ''
+            });
+        }
+        messageBox.style.display = 'block';
+
+        if (type !== 'modal') {
+            setTimeout(() => { closeMessageBox(); }, 5000);
+        }
     }
 
     function closeMessageBox() {
-        // ... (código da sua função closeMessageBox)
+        messageBox.style.display = 'none';
+        messageBox.className = 'message-box';
+        messageBox.innerHTML = '';
+        messageBox.style.cssText = '';
     }
 
     function renderEvents(events) {
-        // ... (código da sua função renderEvents)
+        eventsLogDiv.innerHTML = '';
+
+        if (events.length === 0) {
+            eventsLogDiv.innerHTML = '<p class="text-gray-500">Nenhum evento recente.</p>';
+            return;
+        }
+
+        events.forEach(event => {
+            const eventItem = document.createElement('div');
+            eventItem.className = 'event-item';
+            const date = event.timestamp ? event.timestamp.toDate() : new Date();
+            const formattedTime = date.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+            const formattedDate = date.toLocaleDateString('pt-BR');
+            eventItem.innerHTML = `<span class="timestamp">${formattedDate} ${formattedTime}</span><span>${event.message}</span>`;
+            eventsLogDiv.appendChild(eventItem);
+        });
     }
 
     function updateControlButtonsState() {
-        // ... (código da sua função updateControlButtonsState)
+        const allScoreButtons = document.querySelectorAll('.score-buttons button');
+        allScoreButtons.forEach(button => {
+            button.disabled = !isAdminMode;
+        });
+        resetScoresBtn.disabled = !isAdminMode;
+        addPlayerBtn.disabled = !isAdminMode;
+
+        const editIcons = document.querySelectorAll('.edit-icon');
+        editIcons.forEach(icon => {
+            if (isAdminMode) {
+                icon.style.display = 'inline-block';
+                icon.removeAttribute('disabled');
+            } else {
+                icon.style.display = 'none';
+                icon.setAttribute('disabled', 'true');
+            }
+        });
+
+        const deleteIcons = document.querySelectorAll('.delete-icon');
+        deleteIcons.forEach(icon => {
+            if (isAdminMode) {
+                icon.style.display = 'inline-block';
+                icon.removeAttribute('disabled');
+            } else {
+                icon.style.display = 'none';
+                icon.setAttribute('disabled', 'true');
+            }
+        });
+
+        if (isAdminMode) {
+            adminStatusDiv.className = 'text-sm text-green-600';
+            adminStatusDiv.textContent = 'Modo Admin: Ativado';
+        } else {
+            adminStatusDiv.className = 'text-sm text-red-600';
+            adminStatusDiv.textContent = 'Modo Admin: Desativado';
+        }
     }
 
     async function requestPermissionAndGetToken(swRegistration) {
@@ -538,15 +618,306 @@
     }
 
     function renderPlayers(players) {
-        // ... (código da sua função renderPlayers)
+        const playersListDiv = document.getElementById('playersList');
+        playersListDiv.innerHTML = '';
+
+        if (players.length === 0) {
+            playersListDiv.innerHTML = '<p class="text-gray-500">Nenhum jogador para exibir.</p>';
+            return;
+        }
+
+        const playersBySeries = SERIES_ORDER.reduce((acc, series) => {
+            acc[series] = [];
+            return acc;
+        }, {});
+
+        players.forEach(player => {
+            const series = player.series || 'Amador';
+            if (playersBySeries[series]) {
+                playersBySeries[series].push(player);
+            } else {
+                playersBySeries['Amador'].push(player);
+            }
+        });
+
+        SERIES_ORDER.forEach(series => {
+            if (playersBySeries[series].length > 0) {
+                const seriesHeading = document.createElement('h2');
+                seriesHeading.className = 'series-heading';
+                seriesHeading.textContent = `Série ${series}`;
+                playersListDiv.appendChild(seriesHeading);
+
+                playersBySeries[series].forEach(player => {
+                    const playerItem = document.createElement('div');
+                    playerItem.className = 'player-item';
+                    playerItem.dataset.playerId = player.id;
+                    playerItem.innerHTML = `
+                        <div class="player-info">
+                            <span class="player-name">
+                                ${player.name}
+                                <svg class="edit-icon" data-id="${player.id}" data-name="${player.name}" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/><path d="M18 13V7"/></svg>
+                                <svg class="delete-icon" data-id="${player.id}" data-name="${player.name}" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg>
+                            </span>
+                            <span class="player-series">Série: ${player.series || 'Amador'}</span>
+                        </div>
+                        <div class="counter-group">
+                            <span class="counter-label">Raios:</span>
+                            <span class="counter-value" data-raios>${player.raios}</span>
+                            <div class="score-buttons"><button class="minus-btn" data-id="${player.id}" data-type="raios" data-action="minus">-</button><button class="plus-btn" data-id="${player.id}" data-type="raios" data-action="plus">+</button></div>
+                        </div>
+                        <div class="counter-group">
+                            <span class="counter-label">Lambreta:</span>
+                            <span class="counter-value" data-lambreta>${player.lambreta}</span>
+                            <div class="score-buttons"><button class="minus-btn" data-id="${player.id}" data-type="lambreta" data-action="minus">-</button><button class="plus-btn" data-id="${player.id}" data-type="lambreta" data-action="plus">+</button></div>
+                        </div>`;
+                    playersListDiv.appendChild(playerItem);
+                });
+            }
+        });
+
+        playersListDiv.querySelectorAll('.plus-btn, .minus-btn').forEach(button => button.addEventListener('click', handleScoreChange));
+        playersListDiv.querySelectorAll('.edit-icon').forEach(icon => icon.addEventListener('click', handleRenamePlayer));
+        playersListDiv.querySelectorAll('.delete-icon').forEach(icon => icon.addEventListener('click', handleDeletePlayer));
+        updateControlButtonsState();
     }
 
     async function handleScoreChange(event) {
-        // ... (código da sua função handleScoreChange)
+        if (!isAdminMode) {
+            showMessage("Você precisa estar no Modo Administrador para fazer alterações.", 'error');
+            return;
+        }
+
+        const playerId = event.target.dataset.id;
+        const action = event.target.dataset.action;
+        const type = event.target.dataset.type;
+        const playerDocRef = doc(playersCollectionRef(), playerId);
+
+        try {
+            const docSnap = await getDoc(playerDocRef);
+            if (docSnap.exists()) {
+                let playerData = docSnap.data();
+                let currentRaios = playerData.raios || 0;
+                let currentLambreta = playerData.lambreta || 0;
+                let currentSeries = playerData.series || 'Amador';
+                let newRaios = currentRaios;
+                let newLambreta = currentLambreta;
+                let newSeries = currentSeries;
+                let shouldResetCounts = false;
+                let eventMessage = '';
+
+                if (type === 'raios') {
+                    newRaios = Math.max(0, currentRaios + (action === 'plus' ? 1 : -1));
+                    if (newRaios === MAX_COUNT && currentLambreta < MAX_COUNT) {
+                        const currentIndex = SERIES_ORDER.indexOf(currentSeries);
+                        if (currentIndex > 0) {
+                            newSeries = SERIES_ORDER[currentIndex - 1];
+                            shouldResetCounts = true;
+                            eventMessage = `${playerData.name} subiu para a Série ${newSeries}! 🎉`;
+                        } else {
+                            shouldResetCounts = true;
+                            eventMessage = `${playerData.name} alcançou ${MAX_COUNT} Raios na Série ${newSeries}! ✨`;
+                        }
+                    }
+                } else if (type === 'lambreta') {
+                    newLambreta = Math.max(0, currentLambreta + (action === 'plus' ? 1 : -1));
+                    if (newLambreta === MAX_COUNT && currentRaios < MAX_COUNT) {
+                        const currentIndex = SERIES_ORDER.indexOf(currentSeries);
+                        if (currentIndex < SERIES_ORDER.length - 1) {
+                            newSeries = SERIES_ORDER[currentIndex + 1];
+                            shouldResetCounts = true;
+                            eventMessage = `${playerData.name} caiu para a Série ${newSeries}. ⬇️`;
+                        } else {
+                            shouldResetCounts = true;
+                            eventMessage = `${playerData.name} alcançou ${MAX_COUNT} Lambretas e permaneceu na Série ${newSeries}. 😔`;
+                        }
+                    }
+                }
+
+                const updates = {};
+                let hasChanged = false;
+
+                if (shouldResetCounts) {
+                    updates.raios = 0;
+                    updates.lambreta = 0;
+                    hasChanged = true;
+                } else {
+                    if (newRaios !== currentRaios) { updates.raios = newRaios; hasChanged = true; }
+                    if (newLambreta !== currentLambreta) { updates.lambreta = newLambreta; hasChanged = true; }
+                }
+                if (newSeries !== currentSeries) { updates.series = newSeries; hasChanged = true; }
+
+                if (hasChanged) {
+                    await updateDoc(playerDocRef, updates);
+                    if (eventMessage) {
+                        await addDoc(eventsCollectionRef(), { message: eventMessage, timestamp: serverTimestamp() });
+                        showMessage(eventMessage, 'success');
+                    }
+                }
+            } else {
+                showMessage("Erro: Jogador não encontrado.", 'error');
+            }
+        } catch (error) {
+            showMessage(`Erro ao atualizar ${type}.`, 'error');
+        }
     }
 
     // ... (COLE AQUI O RESTANTE DAS SUAS FUNÇÕES: handleRenamePlayer, handleAddPlayer, handleDeletePlayer, resetAllScores)
+    async function handleRenamePlayer(event) {
+        if (!isAdminMode) {
+            showMessage("Você precisa estar no Modo Administrador para renomear jogadores.", 'error');
+            return;
+        }
 
+        const playerId = event.target.closest('.edit-icon').dataset.id;
+        const currentName = event.target.closest('.edit-icon').dataset.name;
+        const playerDocRef = doc(playersCollectionRef(), playerId);
+
+        const modalContent = document.createElement('div');
+        modalContent.className = 'custom-modal-content';
+        modalContent.innerHTML = `
+            <p class="text-lg font-semibold mb-3">Renomear Jogador</p>
+            <input type="text" id="newPlayerNameInput" value="${currentName}" placeholder="Novo nome do jogador">
+            <div class="modal-buttons"><button class="save-btn" id="saveRenameBtn">Salvar</button><button class="cancel-btn" id="cancelRenameBtn">Cancelar</button></div>`;
+
+        showMessage('Renomear', 'modal', modalContent);
+
+        const newPlayerNameInput = document.getElementById('newPlayerNameInput');
+        newPlayerNameInput.focus();
+        newPlayerNameInput.select();
+
+        document.getElementById('saveRenameBtn').onclick = async () => {
+            const newName = newPlayerNameInput.value.trim();
+            if (newName && newName !== currentName) {
+                try {
+                    await updateDoc(playerDocRef, { name: newName });
+                    showMessage(`Nome do jogador atualizado para "${newName}"!`, 'success');
+                } catch (error) { showMessage("Erro ao renomear jogador.", 'error'); }
+            } else if (newName) {
+                showMessage("O nome é o mesmo. Nenhuma alteração.", 'info');
+            } else {
+                showMessage("O nome não pode ser vazio.", 'error');
+            }
+            closeMessageBox();
+        };
+
+        document.getElementById('cancelRenameBtn').onclick = () => {
+            showMessage("Renomeação cancelada.", 'info');
+            closeMessageBox();
+        };
+    }
+
+    async function handleAddPlayer() {
+        if (!isAdminMode) {
+            showMessage("Você precisa estar no Modo Administrador para adicionar jogadores.", 'error');
+            return;
+        }
+
+        const modalContent = document.createElement('div');
+        modalContent.className = 'custom-modal-content';
+        modalContent.innerHTML = `
+            <p class="text-lg font-semibold mb-3">Adicionar Novo Jogador</p>
+            <input type="text" id="newPlayerNameInput" placeholder="Nome do novo jogador">
+            <div class="modal-buttons"><button class="save-btn" id="saveAddPlayerBtn">Adicionar</button><button class="cancel-btn" id="cancelAddPlayerBtn">Cancelar</button></div>`;
+
+        showMessage('Adicionar Jogador', 'modal', modalContent);
+
+        const newPlayerNameInput = document.getElementById('newPlayerNameInput');
+        newPlayerNameInput.focus();
+
+        document.getElementById('saveAddPlayerBtn').onclick = async () => {
+            const newName = newPlayerNameInput.value.trim();
+            if (newName) {
+                try {
+                    await addDoc(playersCollectionRef(), { name: newName, raios: 0, lambreta: 0, series: 'Amador' });
+                    showMessage(`Jogador "${newName}" adicionado com sucesso!`, 'success');
+                } catch (error) { showMessage("Erro ao adicionar jogador.", 'error'); }
+            } else {
+                showMessage("O nome do jogador não pode ser vazio.", 'error');
+            }
+            closeMessageBox();
+        };
+
+        document.getElementById('cancelAddPlayerBtn').onclick = () => {
+            showMessage("Adição de jogador cancelada.", 'info');
+            closeMessageBox();
+        };
+    }
+
+    async function handleDeletePlayer(event) {
+        if (!isAdminMode) {
+            showMessage("Você precisa estar no Modo Administrador para remover jogadores.", 'error');
+            return;
+        }
+
+        const playerId = event.target.closest('.delete-icon').dataset.id;
+        const playerName = event.target.closest('.delete-icon').dataset.name;
+        const playerDocRef = doc(playersCollectionRef(), playerId);
+
+        const modalContent = document.createElement('div');
+        modalContent.className = 'custom-modal-content';
+        modalContent.innerHTML = `
+            <p class="text-lg font-semibold mb-3">Confirmar Exclusão</p>
+            <p>Tem certeza que deseja remover o jogador "${playerName}"?</p>
+            <div class="modal-buttons mt-4"><button class="save-btn" id="confirmDeleteYes">Sim</button><button class="cancel-btn" id="confirmDeleteNo">Não</button></div>`;
+        showMessage('Confirmar Exclusão', 'modal', modalContent);
+
+        const userConfirmed = await new Promise((resolve) => {
+            document.getElementById('confirmDeleteYes').onclick = () => { closeMessageBox(); resolve(true); };
+            document.getElementById('confirmDeleteNo').onclick = () => { closeMessageBox(); resolve(false); };
+        });
+
+        if (!userConfirmed) {
+            showMessage("Exclusão de jogador cancelada.", 'info');
+            return;
+        }
+
+        showMessage(`Removendo jogador "${playerName}"...`, 'info');
+        try {
+            await deleteDoc(playerDocRef);
+            await addDoc(eventsCollectionRef(), { message: `Jogador "${playerName}" foi removido. 🗑️`, timestamp: serverTimestamp() });
+            showMessage(`Jogador "${playerName}" removido com sucesso!`, 'success');
+        } catch (error) { showMessage("Erro ao remover jogador.", 'error'); }
+    }
+
+    async function resetAllScores() {
+        if (!isAdminMode) {
+            showMessage("Você precisa estar no Modo Administrador para redefinir o placar.", 'error');
+            return;
+        }
+
+        const confirmReset = document.createElement('div');
+        confirmReset.className = 'custom-modal-content';
+        confirmReset.innerHTML = `
+            <p class="text-lg font-semibold mb-3">Confirmar Redefinição</p>
+            <p>Tem certeza que deseja redefinir todas as Raios, Lambretas e Séries para todos os jogadores?</p>
+            <div class="modal-buttons mt-4"><button id="confirmResetYes" class="save-btn">Sim</button><button id="confirmResetNo" class="cancel-btn">Não</button></div>`;
+        showMessage('Confirmar', 'modal', confirmReset);
+
+        const userConfirmed = await new Promise((resolve) => {
+            document.getElementById('confirmResetYes').onclick = () => { closeMessageBox(); resolve(true); };
+            document.getElementById('confirmResetNo').onclick = () => { closeMessageBox(); resolve(false); };
+        });
+
+        if (!userConfirmed) {
+            showMessage("Redefinição cancelada.", 'info');
+            return;
+        }
+
+        showMessage("Redefinindo tudo...", 'info');
+
+        try {
+            const querySnapshot = await getDocs(query(playersCollectionRef()));
+            const batchPromises = querySnapshot.docs.map(playerDoc => {
+                return updateDoc(doc(playersCollectionRef(), playerDoc.id), { raios: 0, lambreta: 0, series: 'Amador' });
+            });
+            await Promise.all(batchPromises);
+
+            await addDoc(eventsCollectionRef(), { message: "Placar completo foi redefinido.", timestamp: serverTimestamp() });
+            showMessage("Todas as pontuações foram redefinidas!", 'success');
+        } catch (error) {
+            showMessage("Erro ao redefinir tudo.", 'error');
+        }
+    }
 
     async function setupFirestoreListeners() {
         const loadingMessage = document.getElementById('loadingMessage');
