@@ -441,118 +441,223 @@
 
     <!-- Firebase SDKs -->
     <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, doc, getDoc, addDoc, setDoc, updateDoc, deleteDoc, onSnapshot, collection, query, getDocs, orderBy, limit, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
-        import { getMessaging, getToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-messaging.js";
+    // =======================================================
+    // 1. IMPORTS
+    // =======================================================
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+    import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+    import { getFirestore, doc, getDoc, addDoc, setDoc, updateDoc, deleteDoc, onSnapshot, collection, query, getDocs, orderBy, limit, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+    import { getMessaging, getToken, onMessage } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-messaging.js";
 
-        let app;
-        let db;
-        let auth;
-        let messaging;
-        let userId = 'anonymous';
+    // =======================================================
+    // 2. VARIÁVEIS GLOBAIS E CONSTANTES
+    // =======================================================
+    let app;
+    let db;
+    let auth;
+    let messaging;
+    let userId = 'anonymous';
+    let isAdminMode = false;
 
-        const firebaseConfig = {
-            apiKey: "AIzaSyBqpkxcl0GkBBHVO8Nxk7UpYd00H4Frklc",
-            authDomain: "placar-domino.firebaseapp.com",
-            projectId: "placar-domino",
-            storageBucket: "placar-domino.firebasestorage.app",
-            messagingSenderId: "187178310074",
-            appId: "1:187178310074:web:5f56292dea8dc776532583",
-            measurementId: "G-BL3W42DJ3M"
-        };
+    const firebaseConfig = {
+        apiKey: "AIzaSyBqpkxcl0GkBBHVO8Nxk7UpYd00H4Frklc",
+        authDomain: "placar-domino.firebaseapp.com",
+        projectId: "placar-domino",
+        storageBucket: "placar-domino.firebasestorage.app",
+        messagingSenderId: "187178310074",
+        appId: "1:187178310074:web:5f56292dea8dc776532583",
+        measurementId: "G-BL3W42DJ3M"
+    };
 
-        const appIdentifier = firebaseConfig.appId;
-        const playersCollectionRef = () => collection(db, `artifacts/${appIdentifier}/public/data/players`);
-        const eventsCollectionRef = () => collection(db, `artifacts/${appIdentifier}/public/data/events`);
+    const appIdentifier = firebaseConfig.appId;
+    const playersCollectionRef = () => collection(db, `artifacts/${appIdentifier}/public/data/players`);
+    const eventsCollectionRef = () => collection(db, `artifacts/${appIdentifier}/public/data/events`);
 
-        const messageBox = document.getElementById('messageBox');
-        // ... (resto das suas constantes de UI)
+    const messageBox = document.getElementById('messageBox');
+    const adminKeyInput = document.getElementById('adminKeyInput');
+    const activateAdminBtn = document.getElementById('activateAdminBtn');
+    const adminStatusDiv = document.getElementById('adminStatus');
+    const resetScoresBtn = document.getElementById('resetScoresBtn');
+    const addPlayerBtn = document.getElementById('addPlayerBtn');
+    const eventsLogDiv = document.getElementById('eventsLog');
+    const adminPanel = document.getElementById('adminPanel');
+    const toggleAdminControlsBtn = document.getElementById('toggleAdminControlsBtn');
 
-        // Função para pedir permissão e obter o token. Agora ela recebe o serviceWorkerRegistration.
-        async function requestPermissionAndGetToken(swRegistration) {
-            console.log('Solicitando permissão para notificações...');
+    const SERIES_ORDER = ['A', 'B', 'C', 'D', 'Amador'];
+    const MAX_COUNT = 12;
+    const ADMIN_KEY = 'SenhaDomino25';
 
-            try {
-                const permission = await Notification.requestPermission();
-                if (permission === 'granted') {
-                    console.log('Permissão para notificação concedida.');
+    // =======================================================
+    // 3. DEFINIÇÃO DE TODAS AS FUNÇÕES
+    // =======================================================
 
-                    // PASSAMOS O SERVICE WORKER CORRETO AQUI
-                    const fcmToken = await getToken(messaging, {
-                        vapidKey: 'BL3XpLOirHkCWzZnsCSDEge0-NpA6xDaEQeSNEb_oXjw1XH6WRn0bTc5arjJWTd-kfrtNvQXeiRjXevgaEOulXg',
-                        serviceWorkerRegistration: swRegistration
-                    });
+    function showMessage(message, type = 'info', contentElement = null) {
+        // ... (código da sua função showMessage)
+    }
 
-                    if (fcmToken) {
-                        console.log('Token FCM obtido:', fcmToken);
-                        const subscriptionsCollectionRef = collection(db, `artifacts/${appIdentifier}/public/data/subscriptions`);
-                        const tokenDocRef = doc(subscriptionsCollectionRef, fcmToken);
+    function closeMessageBox() {
+        // ... (código da sua função closeMessageBox)
+    }
 
-                        await setDoc(tokenDocRef, {
-                            userId: userId,
-                            createdAt: serverTimestamp()
-                        });
-                        showMessage('Notificações ativadas com sucesso!', 'success');
-                    } else {
-                        showMessage('Não foi possível ativar as notificações.', 'error');
-                    }
-                } else {
-                    showMessage('Você não permitiu o envio de notificações.', 'info');
-                }
-            } catch (error) {
-                console.error('Erro ao solicitar permissão ou obter token:', error);
-                showMessage('Ocorreu um erro ao tentar ativar as notificações.', 'error');
-            }
-        }
+    function renderEvents(events) {
+        // ... (código da sua função renderEvents)
+    }
 
-        // --- FUNÇÃO DE INICIALIZAÇÃO DO FIREBASE (sem alterações) ---
-        async function initializeFirebase() {
-             try {
-                app = initializeApp(firebaseConfig);
-                db = getFirestore(app);
-                auth = getAuth(app);
-                messaging = getMessaging(app);
+    function updateControlButtonsState() {
+        // ... (código da sua função updateControlButtonsState)
+    }
 
-                await signInAnonymously(auth);
-
-                onAuthStateChanged(auth, (user) => {
-                    if (user) {
-                        userId = user.uid;
-                        document.getElementById('userIdValue').textContent = userId;
-                        setupFirestoreListeners();
-                    }
+    async function requestPermissionAndGetToken(swRegistration) {
+        console.log('Solicitando permissão para notificações...');
+        try {
+            const permission = await Notification.requestPermission();
+            if (permission === 'granted') {
+                console.log('Permissão para notificação concedida.');
+                const fcmToken = await getToken(messaging, {
+                    vapidKey: 'BL3XpLOirHkCWzZnsCSDEge0-NpA6xDaEQeSNEb_oXjw1XH6WRn0bTc5arjJWTd-kfrtNvQXeiRjXevgaEOulXg',
+                    serviceWorkerRegistration: swRegistration
                 });
-            } catch (error) {
-                console.error("Erro ao inicializar Firebase:", error);
+                if (fcmToken) {
+                    console.log('Token FCM obtido:', fcmToken);
+                    const subscriptionsCollectionRef = collection(db, `artifacts/${appIdentifier}/public/data/subscriptions`);
+                    const tokenDocRef = doc(subscriptionsCollectionRef, fcmToken);
+                    await setDoc(tokenDocRef, { userId: userId, createdAt: serverTimestamp() });
+                    showMessage('Notificações ativadas com sucesso!', 'success');
+                }
+            } else {
+                showMessage('Você não permitiu o envio de notificações.', 'info');
             }
+        } catch (error) {
+            console.error('Erro ao solicitar permissão ou obter token:', error);
+            showMessage('Ocorreu um erro ao tentar ativar as notificações.', 'error');
         }
+    }
 
-        // ... (COLE AQUI TODAS AS SUAS OUTRAS FUNÇÕES: showMessage, renderPlayers, handleScoreChange, etc.)
-        // ... (Não precisa colar de novo, apenas garanta que elas estão no seu código)
+    async function addDefaultPlayers() {
+        // ... (código da sua função addDefaultPlayers)
+    }
+
+    function renderPlayers(players) {
+        // ... (código da sua função renderPlayers)
+    }
+
+    async function handleScoreChange(event) {
+        // ... (código da sua função handleScoreChange)
+    }
+
+    // ... (COLE AQUI O RESTANTE DAS SUAS FUNÇÕES: handleRenamePlayer, handleAddPlayer, handleDeletePlayer, resetAllScores)
 
 
-        // --- BLOCO PRINCIPAL ---
+    async function setupFirestoreListeners() {
+        const loadingMessage = document.getElementById('loadingMessage');
+        loadingMessage.textContent = 'Carregando jogadores...';
 
-        // Ao carregar a página, inicializa o Firebase
-        await initializeFirebase();
+        onSnapshot(playersCollectionRef(), (snapshot) => {
+            const playersData = [];
+            snapshot.forEach((doc) => playersData.push({ id: doc.id, ...doc.data() }));
 
-        // Adiciona o ouvinte ao botão. AGORA, ele só registra o Service Worker.
-        document.getElementById('enableNotificationsBtn').addEventListener('click', () => {
-             // O registro do Service Worker agora também pede o token.
-             if ('serviceWorker' in navigator) {
-                navigator.serviceWorker.register('/placar_domino/service-worker.js')
-                    .then(registration => {
-                        console.log('Service Worker registrado com sucesso, pedindo permissão...', registration.scope);
-                        // Uma vez registrado, pedimos o token passando a referência do SW
-                        requestPermissionAndGetToken(registration);
-                    })
-                    .catch(error => {
-                        console.error('Falha no registro do Service Worker:', error);
-                    });
+            playersData.sort((a, b) => {
+                const seriesIndexA = SERIES_ORDER.indexOf(a.series || 'Amador');
+                const seriesIndexB = SERIES_ORDER.indexOf(b.series || 'Amador');
+                if (seriesIndexA !== seriesIndexB) return seriesIndexA - seriesIndexB;
+                if ((b.raios || 0) !== (a.raios || 0)) return (b.raios || 0) - (a.raios || 0);
+                return (a.lambreta || 0) - (b.lambreta || 0);
+            });
+
+            if (playersData.length === 0) {
+                addDefaultPlayers();
+            } else {
+                renderPlayers(playersData);
             }
+            loadingMessage.style.display = 'none';
+        }, (error) => {
+            console.error("Erro ao obter dados dos jogadores:", error);
+            showMessage("Erro ao carregar dados do placar.", 'error');
         });
 
-    </script>
+        const qEvents = query(eventsCollectionRef(), orderBy('timestamp', 'desc'), limit(3));
+        onSnapshot(qEvents, (snapshot) => {
+            const eventsData = [];
+            snapshot.forEach((doc) => eventsData.push(doc.data()));
+            renderEvents(eventsData);
+        });
+    }
+
+    async function initializeFirebase() {
+        try {
+            app = initializeApp(firebaseConfig);
+            db = getFirestore(app);
+            auth = getAuth(app);
+            messaging = getMessaging(app);
+
+            // CORREÇÃO PARA O ERRO 2: Ouvinte de notificações em primeiro plano
+            onMessage(messaging, (payload) => {
+                console.log('Mensagem recebida em primeiro plano: ', payload);
+                // Mostra a notificação usando nossa função de mensagem interna
+                const title = payload.notification.title;
+                const body = payload.notification.body;
+                showMessage(`${title} - ${body}`, 'info');
+            });
+
+            await signInAnonymously(auth);
+
+            onAuthStateChanged(auth, (user) => {
+                if (user) {
+                    userId = user.uid;
+                    document.getElementById('userIdValue').textContent = userId;
+                    console.log("Firebase inicializado. Chamando ouvintes...");
+                    // Agora as funções já estão definidas antes desta chamada
+                    setupFirestoreListeners();
+                    updateControlButtonsState();
+                }
+            });
+        } catch (error) {
+            console.error("Erro ao inicializar Firebase:", error);
+        }
+    }
+
+    // =======================================================
+    // 4. EXECUÇÃO PRINCIPAL
+    // =======================================================
+
+    // Ouve os cliques nos botões de admin
+    toggleAdminControlsBtn.addEventListener('click', () => {
+        adminPanel.classList.toggle('active');
+        toggleAdminControlsBtn.textContent = adminPanel.classList.contains('active') ?
+            'Ocultar Controles do Administrador' : 'Mostrar Controles do Administrador';
+    });
+
+    activateAdminBtn.addEventListener('click', () => {
+        if (adminKeyInput.value === ADMIN_KEY) {
+            isAdminMode = true;
+            showMessage("Modo Administrador ativado!", 'success');
+            adminKeyInput.value = '';
+        } else {
+            isAdminMode = false;
+            showMessage("Chave de administrador incorreta.", 'error');
+        }
+        updateControlButtonsState();
+    });
+
+    // Ouve o clique no botão de notificação
+    document.getElementById('enableNotificationsBtn').addEventListener('click', () => {
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('/placar_domino/service-worker.js')
+                .then(registration => {
+                    console.log('Service Worker registrado, pedindo permissão...');
+                    requestPermissionAndGetToken(registration);
+                })
+                .catch(error => {
+                    console.error('Falha no registro do Service Worker:', error);
+                });
+        }
+    });
+
+    // ... (outros event listeners que você tenha)
+
+    // Finalmente, inicializa tudo quando a janela carregar
+    window.onload = initializeFirebase;
+
+</script>
 </body>
 </html>
