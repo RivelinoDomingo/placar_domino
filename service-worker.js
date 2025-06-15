@@ -113,3 +113,59 @@ self.addEventListener('activate', (event) => {
         })
     );
 });
+
+
+// IMPORTANTE: Este evento lida com a notificação push recebida do FCM
+self.addEventListener('push', (event) => {
+    console.log('Service Worker: Evento de push recebido.');
+
+    if (!event.data) {
+        console.log('Service Worker: Push event sem dados.');
+        return;
+    }
+
+    const pushData = event.data.json();
+    console.log('Service Worker: Dados do Push:', pushData);
+
+    const title = pushData.notification.title || 'Placar do Dominó';
+    const options = {
+        body: pushData.notification.body || 'Uma nova atualização ocorreu.',
+        icon: '/placar_domino/icone192.png', // Ícone que aparece na notificação
+        badge: '/placar_domino/icone192.png', // Ícone pequeno na barra de status (Android)
+        vibrate: [100, 50, 100], // Padrão de vibração
+        data: {
+            url: self.location.origin + '/placar_domino/' // URL para abrir ao clicar na notificação
+        }
+    };
+
+    // Exibe a notificação
+    event.waitUntil(
+        self.registration.showNotification(title, options)
+    );
+});
+
+// Opcional: Adicionar um ouvinte para o clique na notificação
+self.addEventListener('notificationclick', (event) => {
+    event.notification.close(); // Fecha a notificação
+
+    const urlToOpen = event.notification.data.url;
+
+    // Abre a janela do PWA ou foca nela se já estiver aberta
+    event.waitUntil(
+        clients.matchAll({
+            type: 'window',
+            includeUncontrolled: true
+        }).then((clientList) => {
+            if (clientList.length > 0) {
+                let client = clientList[0];
+                for (let i = 0; i < clientList.length; i++) {
+                    if (clientList[i].focused) {
+                        client = clientList[i];
+                    }
+                }
+                return client.focus();
+            }
+            return clients.openWindow(urlToOpen);
+        })
+    );
+});
