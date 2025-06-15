@@ -341,6 +341,35 @@
             color: #888;
             min-width: 80px; /* Adjust as needed */
         }
+
+        /* Styles for the modal backdrop and content */
+        .message-box.modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent backdrop */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000; /* Ensure it's on top of everything */
+            padding: 20px; /* Add padding to prevent content touching edges */
+            box-sizing: border-box; /* Include padding in width/height */
+        }
+
+        .message-box.modal .custom-modal-content {
+            background-color: #ffffff;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 5px 25px rgba(0, 0, 0, 0.3);
+            width: 90%;
+            max-width: 400px;
+            text-align: center;
+            display: flex; /* Flexbox for centering content inside */
+            flex-direction: column;
+            align-items: center;
+        }
     </style>
 </head>
 <body>
@@ -988,11 +1017,16 @@
          * Redefine os valores de Raios, Lambreta e Série de todos os jogadores para o estado inicial.
          */
         async function resetAllScores() {
+            console.log("resetAllScores foi chamada.");
+            console.log("isAdminMode:", isAdminMode);
+
             if (!isAdminMode) {
                 showMessage("Você precisa estar no Modo Administrador para redefinir o placar.", 'error');
+                console.log("Redefinir tudo bloqueado: Não está no modo administrador.");
                 return;
             }
 
+            console.log("Exibindo modal de confirmação...");
             // Exibe uma confirmação simples ao invés de alert()
             const confirmReset = document.createElement('div');
             confirmReset.className = 'message-box info custom-modal-content'; // Usa o estilo do modal
@@ -1021,14 +1055,17 @@
 
             if (!userConfirmed) {
                 showMessage("Redefinição cancelada.", 'info');
+                console.log("Redefinição cancelada pelo usuário.");
                 return;
             }
 
             showMessage("Redefinindo tudo (Raios, Lambretas e Séries)...", 'info');
+            console.log("Iniciando redefinição dos dados no Firestore...");
 
             try {
                 const q = query(playersCollectionRef());
                 const querySnapshot = await getDocs(q);
+                console.log(`Encontrados ${querySnapshot.docs.length} jogadores para redefinir.`);
 
                 const batchPromises = querySnapshot.docs.map(playerDoc => {
                     return updateDoc(doc(playersCollectionRef(), playerDoc.id), { raios: 0, lambreta: 0, series: 'Amador' });
