@@ -1,14 +1,14 @@
 // service-worker.js
 // Um Service Worker minimalista para habilitar a funcionalidade de "Instalar na Tela Inicial"
 
-const CACHE_NAME = 'domino-score-v3'; // Versão do cache, alterada para forçar atualização
+const CACHE_NAME = 'domino-score-v2'; // Versão do cache, alterada para forçar atualização
 const urlsToCache = [
-    './', // Atalho para index.html
-    './index.html',
-    './manifest.json',
-    './icone192.png',  // <-- ÍCONE ADICIONADO
-    './icone512.png',  // <-- ÍCONE ADICIONADO
-    './service-worker.js'
+    '/placar_domino/', // Caches a raiz do aplicativo (index.html na pasta placar_domino)
+    '/placar_domino/index.html',
+    '/placar_domino/manifest.json',
+    // Não cachearemos o Tailwind CSS do CDN aqui, para evitar possíveis erros CORS durante a instalação.
+    // Se você precisar de funcionalidade offline para o Tailwind,
+    // considere baixá-lo e servi-lo localmente.
 ];
 
 self.addEventListener('install', (event) => {
