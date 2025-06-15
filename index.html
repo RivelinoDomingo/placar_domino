@@ -62,7 +62,7 @@
             margin-bottom: 20px; /* Space below panel */
         }
         .admin-panel.active {
-            max-height: 300px; /* Increased to accommodate reset button */
+            max-height: 350px; /* Increased to accommodate new player button */
             opacity: 1;
             padding: 15px; /* Restore padding when active */
         }
@@ -183,7 +183,7 @@
             background-color: #c82333;
         }
         /* Style for disabled buttons */
-        .score-buttons button:disabled, .reset-button:disabled, .edit-icon[disabled] {
+        .score-buttons button:disabled, .admin-panel .button:disabled, .edit-icon[disabled] {
             background-color: #cccccc !important;
             cursor: not-allowed;
             box-shadow: none;
@@ -191,7 +191,7 @@
             opacity: 0.6; /* Dim disabled icons */
         }
         /* The reset button now lives INSIDE the admin panel */
-        .reset-button {
+        .reset-button, .add-player-button { /* Apply similar styles to add player button */
             background-color: #6c757d;
             color: white;
             padding: 10px 20px;
@@ -203,14 +203,21 @@
             transition: background-color 0.2s ease, transform 0.1s ease;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
         }
-        .reset-button:hover {
+        .reset-button:hover, .add-player-button:hover {
             background-color: #5a6268;
             transform: translateY(-1px);
         }
-        .reset-button:active {
+        .reset-button:active, .add-player-button:active {
             transform: translateY(1px);
             box-shadow: none;
         }
+        .add-player-button {
+            background-color: #28a745; /* Green for add */
+        }
+        .add-player-button:hover {
+            background-color: #218838;
+        }
+
         .user-id-display {
             font-size: 0.8em;
             color: #777;
@@ -372,6 +379,11 @@
             <button id="activateAdminBtn">Ativar Modo Admin</button>
             <div id="adminStatus" class="text-sm text-red-600">Modo Admin: Desativado</div>
 
+            <!-- New: Add Player button -->
+            <button id="addPlayerBtn" class="add-player-button" disabled>
+                Adicionar Novo Jogador
+            </button>
+
             <!-- Reset All button is now inside the admin panel -->
             <button id="resetScoresBtn" class="reset-button" disabled>
                 Redefinir Tudo (Raios, Lambretas e Séries)
@@ -397,26 +409,20 @@
 
         // SEU OBJETO DE CONFIGURAÇÃO DO FIREBASE VAI AQUI!
         // Cole o objeto 'firebaseConfig' que você pegou do Console do Firebase.
-        // Exemplo:
-        // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+        // É CRUCIAL que estes dados sejam do SEU PROJETO FIREBASE.
         const firebaseConfig = {
-        apiKey: "AIzaSyBqpkxcl0GkBBHVO8Nxk7UpYd00H4Frklc",
-        authDomain: "placar-domino.firebaseapp.com",
-        projectId: "placar-domino",
-        storageBucket: "placar-domino.firebasestorage.app",
-        messagingSenderId: "187178310074",
-        appId: "1:187178310074:web:5f56292dea8dc776532583",
-        measurementId: "G-BL3W42DJ3M"
+            apiKey: "AIzaSyBqpkxcl0GkBBHVO8Nxk7UpYd00H4Frklc",
+            authDomain: "placar-domino.firebaseapp.com",
+            projectId: "placar-domino",
+            storageBucket: "placar-domino.firebasestorage.app",
+            messagingSenderId: "187178310074",
+            appId: "1:187178310074:web:5f56292dea8dc776532583",
+            measurementId: "G-BL3W42DJ3M"
         };
 
-
-
-        // Usamos uma coleção pública para o placar ser compartilhado entre todos os usuários
-        // ATENÇÃO: Se você mudou o projectId acima, certifique-se que o __app_id abaixo
-        // seja o mesmo 'appId' que está no seu firebaseConfig para o acesso público.
-        // Para hospedar no GitHub Pages, você pode usar um ID fixo ou o appId do firebaseConfig.
-        // Usaremos o appId do firebaseConfig para garantir que os dados fiquem no seu projeto.
-        const appIdentifier = firebaseConfig.appId;
+        // Use o appId do SEU firebaseConfig. Este será o ID usado no caminho do Firestore.
+        // Certifique-se de que este appIdentifier corresponda ao {appId} em suas regras do Firestore.
+        const appIdentifier = firebaseConfig.appId; 
         const playersCollectionRef = () => collection(db, `artifacts/${appIdentifier}/public/data/players`);
         const eventsCollectionRef = () => collection(db, `artifacts/${appIdentifier}/public/data/events`);
 
@@ -426,6 +432,7 @@
         const activateAdminBtn = document.getElementById('activateAdminBtn');
         const adminStatusDiv = document.getElementById('adminStatus');
         const resetScoresBtn = document.getElementById('resetScoresBtn');
+        const addPlayerBtn = document.getElementById('addPlayerBtn'); // Novo botão
         const eventsLogDiv = document.getElementById('eventsLog');
         const adminPanel = document.getElementById('adminPanel'); // Referência ao novo painel
         const toggleAdminControlsBtn = document.getElementById('toggleAdminControlsBtn'); // Novo botão
@@ -446,6 +453,7 @@
                 button.disabled = !isAdminMode;
             });
             resetScoresBtn.disabled = !isAdminMode;
+            addPlayerBtn.disabled = !isAdminMode; // Controla o novo botão
 
             const editIcons = document.querySelectorAll('.edit-icon');
             editIcons.forEach(icon => {
@@ -537,12 +545,10 @@
          */
         async function initializeFirebase() {
             try {
-                // Removemos o parse de __firebase_config e usamos o objeto firebaseConfig diretamente
                 app = initializeApp(firebaseConfig);
                 db = getFirestore(app);
                 auth = getAuth(app);
 
-                // No GitHub Pages, não teremos __initial_auth_token.
                 // Usamos signInAnonymously para uma autenticação básica e compartilhamento público.
                 await signInAnonymously(auth);
                 
@@ -563,7 +569,8 @@
 
             } catch (error) {
                 console.error("Erro ao inicializar Firebase ou autenticar:", error);
-                showMessage("Erro ao carregar o aplicativo. Tente novamente.", 'error');
+                // Exibe uma mensagem de erro mais útil se as credenciais estiverem incorretas.
+                showMessage("Erro ao carregar o aplicativo. Verifique as credenciais do Firebase e a ativação da autenticação anônima.", 'error');
                 document.getElementById('loadingMessage').textContent = 'Erro ao carregar.';
             }
         }
@@ -606,6 +613,11 @@
                 // Se não houver jogadores, adiciona jogadores padrão
                 if (playersData.length === 0) {
                     console.log("Nenhum jogador encontrado. Adicionando jogadores padrão.");
+                    // Este bloco só será executado se realmente não houver NENHUM jogador.
+                    // Isso evita que ele adicione jogadores padrão toda vez que o app carrega
+                    // se houver menos de 10 jogadores, mas já existirem alguns.
+                    // O problema de "desaparecerem" jogadores provavelmente não é aqui,
+                    // mas sim em como os dados são lidos/gravados ou regras do Firestore.
                     await addDefaultPlayers();
                 } else {
                     renderPlayers(playersData);
@@ -613,7 +625,7 @@
                 loadingMessage.style.display = 'none'; // Esconde a mensagem de carregamento
             }, (error) => {
                 console.error("Erro ao obter dados do Firestore (players):", error);
-                showMessage("Erro ao carregar dados do placar. Verifique sua conexão.", 'error');
+                showMessage("Erro ao carregar dados do placar. Verifique sua conexão e regras do Firebase.", 'error');
                 loadingMessage.textContent = 'Erro ao carregar dados.';
             });
 
@@ -916,6 +928,63 @@
         }
 
         /**
+         * Lida com a adição de um novo jogador.
+         * Abre um modal personalizado para o administrador inserir o nome do novo jogador.
+         */
+        async function handleAddPlayer() {
+            if (!isAdminMode) {
+                showMessage("Você precisa estar no Modo Administrador para adicionar jogadores.", 'error');
+                return;
+            }
+
+            const modalContent = document.createElement('div');
+            modalContent.className = 'custom-modal-content';
+            modalContent.innerHTML = `
+                <p class="text-lg font-semibold mb-3">Adicionar Novo Jogador</p>
+                <input type="text" id="newPlayerNameInput" placeholder="Nome do novo jogador">
+                <div class="modal-buttons">
+                    <button class="save-btn" id="saveAddPlayerBtn">Adicionar</button>
+                    <button class="cancel-btn" id="cancelAddPlayerBtn">Cancelar</button>
+                </div>
+            `;
+            
+            showMessage('Adicionar Jogador', 'modal', modalContent);
+
+            const newPlayerNameInput = document.getElementById('newPlayerNameInput');
+            const saveAddPlayerBtn = document.getElementById('saveAddPlayerBtn');
+            const cancelAddPlayerBtn = document.getElementById('cancelAddPlayerBtn');
+
+            newPlayerNameInput.focus();
+
+            saveAddPlayerBtn.onclick = async () => {
+                const newName = newPlayerNameInput.value.trim();
+                if (newName) {
+                    try {
+                        await addDoc(playersCollectionRef(), {
+                            name: newName,
+                            raios: 0,
+                            lambreta: 0,
+                            series: 'Amador'
+                        });
+                        showMessage(`Jogador "${newName}" adicionado com sucesso!`, 'success');
+                    } catch (error) {
+                        console.error("Erro ao adicionar jogador:", error);
+                        showMessage("Erro ao adicionar jogador.", 'error');
+                    }
+                } else {
+                    showMessage("O nome do jogador não pode ser vazio.", 'error');
+                }
+                closeMessageBox();
+            };
+
+            cancelAddPlayerBtn.onclick = () => {
+                showMessage("Adição de jogador cancelada.", 'info');
+                closeMessageBox();
+            };
+        }
+
+
+        /**
          * Redefine os valores de Raios, Lambreta e Série de todos os jogadores para o estado inicial.
          */
         async function resetAllScores() {
@@ -968,7 +1037,7 @@
 
                 // Adiciona um evento ao log para a redefinição global
                 await addDoc(eventsCollectionRef(), {
-                    message: "Placar completo foi redefinido para o início. 🔄",
+                    message: "Placar completo foi redefinido para o início. �",
                     timestamp: serverTimestamp()
                 });
 
@@ -1007,6 +1076,9 @@
 
         // Adiciona ouvinte de evento para o botão de redefinição
         resetScoresBtn.addEventListener('click', resetAllScores);
+        // Novo: Adiciona ouvinte de evento para o botão de adicionar jogador
+        addPlayerBtn.addEventListener('click', handleAddPlayer);
+
 
         // Inicializa o Firebase quando a janela carrega
         window.onload = initializeFirebase;
