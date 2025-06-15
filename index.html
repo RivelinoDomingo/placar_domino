@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Placar de Jogadores</title>
+    <title>Placar do Dominó</title>
     <!-- Tailwind CSS CDN for easy styling -->
     <script src="https://cdn.tailwindcss.com"></script>
     <style>        
@@ -224,15 +224,26 @@
             margin-top: 20px;
             word-break: break-all;
         }
+        /* Adjusted Message Box styles for better visibility */
         .message-box {
+            position: fixed; /* Fixed position relative to viewport */
+            top: 0;          /* Aligns to the top */
+            left: 50%;       /* Centers horizontally */
+            transform: translateX(-50%); /* Adjusts for half its width to truly center */
+            width: 90%;      /* Take 90% of the width */
+            max-width: 500px; /* Max width for larger screens */
+            padding: 10px;
+            border-radius: 0 0 8px 8px; /* Rounded corners only at the bottom */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            text-align: center;
+            z-index: 1001; /* Higher than modal backdrop */
+            display: none; /* Hidden by default */
+            box-sizing: border-box; /* Include padding in width */
+        }
+        .message-box.success {
             background-color: #e6ffed; /* Light green for success/info */
             color: #1a5e20; /* Darker green */
-            padding: 10px;
             border: 1px solid #b2f1c8;
-            border-radius: 8px;
-            margin-bottom: 15px;
-            display: none;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
         .message-box.error {
             background-color: #ffe6e6; /* Light red for error */
@@ -244,31 +255,7 @@
             color: #0056b3; /* Darker blue */
             border: 1px solid #bfdfff;
         }
-        .series-heading {
-            font-size: 1.5em;
-            font-weight: 700;
-            color: #2c3e50;
-            margin-top: 25px;
-            margin-bottom: 15px;
-            border-bottom: 2px solid #ddd;
-            padding-bottom: 5px;
-            text-align: left;
-        }
-        .edit-icon {
-            display: none; /* Hidden by default */
-            cursor: pointer;
-            vertical-align: middle;
-            margin-left: 8px;
-            color: #4a5568; /* Grayish color */
-            transition: color 0.2s ease, transform 0.1s ease;
-        }
-        .edit-icon:hover {
-            color: #3182ce; /* Blue on hover */
-            transform: scale(1.1);
-        }
-        .edit-icon[disabled] {
-            pointer-events: none; /* Make it non-clickable when disabled */
-        }
+
         /* Custom modal styles for renaming and confirmations */
         .custom-modal-content {
             padding: 15px;
@@ -380,6 +367,7 @@
             Carregando jogadores...
         </div>
 
+        <!-- This is the message box for success/error/info. It is now fixed at the top. -->
         <div id="messageBox" class="message-box"></div>
 
         <div id="playersList" class="space-y-3">
@@ -511,10 +499,18 @@
          * @param {HTMLElement} [contentElement] - O conteúdo HTML a ser inserido na mensagem (para modals).
          */
         function showMessage(message, type = 'info', contentElement = null) {
+            // Remove the previous position:fixed or sticky if it's a modal, to prevent conflicts
+            if (messageBox.classList.contains('modal')) {
+                messageBox.classList.remove('modal');
+                // Ensure other positioning properties are reset if needed
+                messageBox.style.position = 'fixed'; // Back to fixed for general messages
+            }
+
             messageBox.textContent = ''; // Limpa qualquer texto anterior
-            messageBox.className = 'message-box ' + type; // Aplica a classe baseada no tipo
+            messageBox.className = `message-box ${type}`; // Aplica a classe baseada no tipo
 
             if (contentElement) {
+                messageBox.innerHTML = ''; // Clear text content to insert complex HTML
                 messageBox.appendChild(contentElement);
             } else {
                 messageBox.textContent = message;
@@ -535,7 +531,7 @@
          */
         function closeMessageBox() {
             messageBox.style.display = 'none';
-            messageBox.className = 'message-box';
+            messageBox.className = 'message-box'; // Reseta a classe
             messageBox.innerHTML = ''; // Limpa o conteúdo
         }
 
@@ -1029,7 +1025,7 @@
             console.log("Exibindo modal de confirmação...");
             // Exibe uma confirmação simples ao invés de alert()
             const confirmReset = document.createElement('div');
-            confirmReset.className = 'message-box info custom-modal-content'; // Usa o estilo do modal
+            confirmReset.className = 'custom-modal-content'; // Usa o estilo do modal
             confirmReset.innerHTML = `
                 <p class="text-lg font-semibold mb-3">Confirmar Redefinição</p>
                 <p>Tem certeza que deseja redefinir todas as Raios, Lambretas e Séries para todos os jogadores?</p>
@@ -1074,7 +1070,7 @@
 
                 // Adiciona um evento ao log para a redefinição global
                 await addDoc(eventsCollectionRef(), {
-                    message: "Placar completo foi redefinido para o início. �",
+                    message: "Placar completo foi redefinido para o início. 🔄",
                     timestamp: serverTimestamp()
                 });
 
