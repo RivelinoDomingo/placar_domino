@@ -395,13 +395,30 @@
         let auth;
         let userId = 'anonymous'; // Padrão anônimo até autenticação
 
-        // Usamos uma coleção pública para o placar ser compartilhado entre todos os usuários
-        const playersCollectionRef = () => collection(db, `artifacts/${appId}/public/data/players`);
-        // Nova coleção pública para os eventos
-        const eventsCollectionRef = () => collection(db, `artifacts/${appId}/public/data/events`);
+        // SEU OBJETO DE CONFIGURAÇÃO DO FIREBASE VAI AQUI!
+        // Cole o objeto 'firebaseConfig' que você pegou do Console do Firebase.
+        // Exemplo:
+        // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+        const firebaseConfig = {
+        apiKey: "AIzaSyBqpkxcl0GkBBHVO8Nxk7UpYd00H4Frklc",
+        authDomain: "placar-domino.firebaseapp.com",
+        projectId: "placar-domino",
+        storageBucket: "placar-domino.firebasestorage.app",
+        messagingSenderId: "187178310074",
+        appId: "1:187178310074:web:5f56292dea8dc776532583",
+        measurementId: "G-BL3W42DJ3M"
+        };
 
-        // Obtém o ID do aplicativo do ambiente Canvas ou usa um padrão
-        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-scoreboard-app';
+
+
+        // Usamos uma coleção pública para o placar ser compartilhado entre todos os usuários
+        // ATENÇÃO: Se você mudou o projectId acima, certifique-se que o __app_id abaixo
+        // seja o mesmo 'appId' que está no seu firebaseConfig para o acesso público.
+        // Para hospedar no GitHub Pages, você pode usar um ID fixo ou o appId do firebaseConfig.
+        // Usaremos o appId do firebaseConfig para garantir que os dados fiquem no seu projeto.
+        const appIdentifier = firebaseConfig.appId;
+        const playersCollectionRef = () => collection(db, `artifacts/${appIdentifier}/public/data/players`);
+        const eventsCollectionRef = () => collection(db, `artifacts/${appIdentifier}/public/data/events`);
 
         // Elementos da UI
         const messageBox = document.getElementById('messageBox');
@@ -416,7 +433,7 @@
         // Define a ordem das séries (do mais alto para o mais baixo - para exibição e ordenação)
         const SERIES_ORDER = ['A', 'B', 'C', 'D', 'Amador'];
         const MAX_COUNT = 12; // Limite máximo para Raios e Lambretas
-        const ADMIN_KEY = 'SenhaDomino25'; // CHAVE DE ADMINISTRADOR - Mude para uma chave segura em produção!
+        const ADMIN_KEY = 'admin123'; // CHAVE DE ADMINISTRADOR - Mude para uma chave segura em produção!
 
         let isAdminMode = false; // Estado do modo administrador
 
@@ -520,18 +537,15 @@
          */
         async function initializeFirebase() {
             try {
-                const firebaseConfig = JSON.parse(__firebase_config);
+                // Removemos o parse de __firebase_config e usamos o objeto firebaseConfig diretamente
                 app = initializeApp(firebaseConfig);
                 db = getFirestore(app);
                 auth = getAuth(app);
 
-                // Autentica com token personalizado se disponível, caso contrário, entra anonimamente
-                if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
-                    await signInWithCustomToken(auth, __initial_auth_token);
-                } else {
-                    await signInAnonymously(auth);
-                }
-
+                // No GitHub Pages, não teremos __initial_auth_token.
+                // Usamos signInAnonymously para uma autenticação básica e compartilhamento público.
+                await signInAnonymously(auth);
+                
                 // Ouve mudanças no estado de autenticação e define o userId
                 onAuthStateChanged(auth, (user) => {
                     if (user) {
