@@ -356,6 +356,9 @@
             display: flex; /* Flexbox for centering content inside */
             flex-direction: column;
             align-items: center;
+            /* New: for handling overflow on smaller screens */
+            max-height: 90vh; /* Limit height to 90% of viewport height */
+            overflow-y: auto; /* Enable vertical scrolling if content exceeds max-height */
         }
         /* New style for delete icon */
         .delete-icon {
@@ -376,7 +379,7 @@
 </head>
 <body>
     <div class="container">
-        <h1 class="text-3xl font-bold mb-6 text-gray-800">Placar do Dominó</h1>
+        <h1 class="text-3xl font-bold mb-6 text-gray-800">Placar de Jogadores</h1>
 
         <div id="loadingMessage" class="text-gray-600 mb-4">
             Carregando jogadores...
@@ -1169,7 +1172,7 @@
 
                 // Adiciona um evento ao log para a redefinição global
                 await addDoc(eventsCollectionRef(), {
-                    message: "Placar completo foi redefinido para o início. 🔄",
+                    message: "Placar completo foi redefinido para o início. �",
                     timestamp: serverTimestamp()
                 });
 
