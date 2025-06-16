@@ -24,12 +24,23 @@ const messaging = firebase.messaging();
 // CÓDIGO NOVO E CORRIGIDO
 messaging.onBackgroundMessage((payload) => {
     console.log("[service-worker.js] Received background message ", payload);
-    // Lendo os dados do campo 'data' que a Cloud Function agora envia
+
     const notificationTitle = payload.data.title;
+
+    // Objeto de opções da notificação com as melhorias
     const notificationOptions = {
         body: payload.data.body,
-        icon: "/placar_domino/icone192.png",
+
+        // MELHORIA 1: Usando a URL completa e absoluta dos ícones
+        icon: "https://rivelinodomingo.github.io/placar_domino/icone192.png",
+
+        // MELHORIA 2: Adicionando a propriedade 'badge', crucial para o Android
+        badge: "https://rivelinodomingo.github.io/placar_domino/icone192.png",
+
+        // Opcional: Adicionar uma vibração para a notificação no celular
+        vibrate: [100, 50, 100],
     };
+
     self.registration.showNotification(notificationTitle, notificationOptions);
 });
 
