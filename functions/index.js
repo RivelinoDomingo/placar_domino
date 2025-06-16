@@ -1,4 +1,5 @@
 // Arquivo: functions/index.js - Versão final com depuração detalhada
+// Modificação para teste
 
 const {onDocumentUpdated} = require("firebase-functions/v2/firestore");
 const {logger} = require("firebase-functions");
