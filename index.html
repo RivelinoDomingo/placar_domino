@@ -485,7 +485,7 @@
 
     const SERIES_ORDER = ['A', 'B', 'C', 'D', 'Amador'];
     const MAX_COUNT = 12;
-    const ADMIN_KEY = 'SenhaDomino25';
+    const ADMIN_KEY = 'Domino25';
 
     // =======================================================
     // 3. DEFINIÇÃO DE TODAS AS FUNÇÕES
@@ -543,9 +543,21 @@
             const date = event.timestamp ? event.timestamp.toDate() : new Date();
             const formattedTime = date.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
             const formattedDate = date.toLocaleDateString('pt-BR');
-            eventItem.innerHTML = `<span class="timestamp">${formattedDate} ${formattedTime}</span><span>${event.message}</span>`;
+            eventItem.innerHTML = `
+            <span class="timestamp">${formattedDate} ${formattedTime}</span>
+            <span>${event.message}</span>
+            <svg class="delete-event-icon" data-event-id="${event.id}" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="cursor:pointer; margin-left: auto; display: none;">
+                <path d="M3 6h18"/>
+                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/> </svg>`;
             eventsLogDiv.appendChild(eventItem);
         });
+        // NOVO: Adiciona os ouvintes de clique nos ícones de lixeira
+        eventsLogDiv.querySelectorAll('.delete-event-icon').forEach(icon => {
+            icon.addEventListener('click', handleDeleteEvent);
+        });
+
+        // É importante chamar a função que atualiza a visibilidade aqui também
+        updateControlButtonsState();
     }
 
     function updateControlButtonsState() {
@@ -576,6 +588,12 @@
                 icon.style.display = 'none';
                 icon.setAttribute('disabled', 'true');
             }
+        });
+
+        // NOVO: Controla os ícones de exclusão de eventos
+        const deleteEventIcons = document.querySelectorAll('.delete-event-icon');
+        deleteEventIcons.forEach(icon => {
+            icon.style.display = isAdminMode ? 'inline-block' : 'none';
         });
 
         if (isAdminMode) {
@@ -612,10 +630,6 @@
             showMessage('Ocorreu um erro ao tentar ativar as notificações.', 'error');
         }
     }
-
-    // async function addDefaultPlayers() {
-    //     // ... (código da sua função addDefaultPlayers)
-    // }
 
     function renderPlayers(players) {
         const playersListDiv = document.getElementById('playersList');
@@ -801,7 +815,6 @@
         }
     }
 
-    // ... (COLE AQUI O RESTANTE DAS SUAS FUNÇÕES: handleRenamePlayer, handleAddPlayer, handleDeletePlayer, resetAllScores)
     async function handleRenamePlayer(event) {
         if (!isAdminMode) {
             showMessage("Você precisa estar no Modo Administrador para renomear jogadores.", 'error');
@@ -883,6 +896,29 @@
         };
     }
 
+    async function handleDeleteEvent(event) {
+        const icon = event.currentTarget;
+        const eventId = icon.dataset.eventId;
+
+        if (!isAdminMode || !eventId) return;
+
+        // Pede confirmação ao usuário
+        const userConfirmed = confirm("Tem certeza que deseja apagar este evento do histórico?");
+        if (!userConfirmed) {
+            return;
+        }
+
+        try {
+            const eventDocRef = doc(eventsCollectionRef(), eventId);
+            await deleteDoc(eventDocRef);
+            console.log(`Evento ${eventId} removido com sucesso.`);
+            // Não é preciso fazer mais nada. O onSnapshot vai atualizar a UI automaticamente!
+        } catch (error) {
+            console.error("Erro ao remover evento:", error);
+            showMessage("Erro ao remover o evento.", "error");
+        }
+    }
+
     async function handleDeletePlayer(event) {
         if (!isAdminMode) {
             showMessage("Você precisa estar no Modo Administrador para remover jogadores.", 'error');
@@ -949,7 +985,10 @@
         const qEvents = query(eventsCollectionRef(), orderBy('timestamp', 'desc'), limit(3));
         onSnapshot(qEvents, (snapshot) => {
             const eventsData = [];
-            snapshot.forEach((doc) => eventsData.push(doc.data()));
+            snapshot.forEach((doc) => {
+                // CORREÇÃO: Salvar o ID junto com os dados
+                eventsData.push({ id: doc.id, ...doc.data() });
+            });
             renderEvents(eventsData);
         });
     }
