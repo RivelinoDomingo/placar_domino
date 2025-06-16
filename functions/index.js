@@ -1,4 +1,4 @@
-// Arquivo: functions/index.js - Teste de envio individual
+// Arquivo: functions/index.js - Versão final com auto-limpeza de tokens
 
 const {onDocumentUpdated} = require("firebase-functions/v2/firestore");
 const {logger} = require("firebase-functions");
@@ -42,7 +42,6 @@ exports.sendPromotionDemotionNotification = onDocumentUpdated(
 
       const subscriptionsPath =
           `artifacts/${appIdentifier}/public/data/subscriptions`;
-      // Essa linha foi diminuida
       const subscriptionsSnapshot =
         await db.collection(subscriptionsPath).get();
 
@@ -54,9 +53,6 @@ exports.sendPromotionDemotionNotification = onDocumentUpdated(
       const tokens = subscriptionsSnapshot.docs.map((doc) => doc.id);
       logger.info(`Encontrados ${tokens.length} tokens para enviar.`);
 
-      // =================================================================
-      // NOVA LÓGICA DE ENVIO INDIVIDUAL
-      // =================================================================
       const payload = {
         data: {
           title: notificationTitle,
@@ -65,7 +61,6 @@ exports.sendPromotionDemotionNotification = onDocumentUpdated(
       };
 
       const sendPromises = tokens.map((token) => {
-        // Para cada token, criamos uma promessa de envio separada
         return admin.messaging().send({
           token: token,
           data: payload.data,
@@ -82,9 +77,21 @@ exports.sendPromotionDemotionNotification = onDocumentUpdated(
             successCount++;
           } else {
             failureCount++;
-            // Log do erro específico para aquele token
-            logger.error(`Falha ao enviar para o token [${tokens[index]}]:`,
-                result.reason);
+            const error = result.reason;
+            const failedToken = tokens[index];
+
+            logger.error(`Falha ao enviar para o token ` +
+            `[${failedToken}]:`, error);
+
+            // =======================================================
+            // ADIÇÃO: LÓGICA DE AUTO-LIMPEZA
+            // Se o erro for de token não registrado, apague-o do banco!
+            // =======================================================
+            if (error.code === "messaging/registration-token-not-registered") {
+              logger.info(`Token [${failedToken}] ` +
+              `está obsoleto. Removendo do Firestore.`);
+              db.collection(subscriptionsPath).doc(failedToken).delete();
+            }
           }
         });
 
