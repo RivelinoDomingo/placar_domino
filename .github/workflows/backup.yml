@@ -1,10 +1,8 @@
 name: Backup Diário do Firestore
 
 on:
-  # Aciona o workflow todo dia às 5:00 UTC (02:00 no horário de Brasília)
   schedule:
     - cron: '0 5 * * *'
-  # Permite acionar manualmente pela aba Actions do GitHub
   workflow_dispatch:
 
 jobs:
@@ -12,29 +10,29 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # 1. Clona o repositório para a máquina virtual da Action
       - name: Checkout do repositório
         uses: actions/checkout@v4
 
-      # 2. Configura o ambiente Node.js
+      # =================================================================
+      # ETAPA DE AUTENTICAÇÃO OFICIAL (A GRANDE MUDANÇA)
+      # =================================================================
+      - name: Autenticar com Google Cloud
+        uses: 'google-github-actions/auth@v2'
+        with:
+          credentials_json: '${{ secrets.FIREBASE_SERVICE_ACCOUNT_KEY }}'
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '20'
 
-      # 3. Instala as dependências do Firebase Admin
       - name: Instalar Firebase Admin SDK
         run: npm install firebase-admin
 
-      # 4. Executa o script de backup
+      # Agora o script de backup não precisa mais da variável de ambiente
       - name: Gerar arquivo de backup
-        # Define a variável de ambiente com o segredo que criamos
-        env:
-          FIREBASE_SERVICE_ACCOUNT_KEY: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_KEY }}
-        # Gera o nome do arquivo dinamicamente (backup-1.json para Segunda, ..., backup-7.json para Domingo)
         run: node backup.js backup-$(date +%u).json
 
-      # 5. Faz o commit do arquivo de backup para o repositório
       - name: Commit do arquivo de backup
         uses: stefanzweifel/git-auto-commit-action@v5
         with:

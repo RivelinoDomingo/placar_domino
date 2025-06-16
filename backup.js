@@ -1,20 +1,18 @@
-const { initializeApp, cert } = require('firebase-admin/app');
+const { initializeApp } = require('firebase-admin/app');
 const { getFirestore } = require('firebase-admin/firestore');
 const fs = require('fs');
 
-// Inicializa o app Firebase com as credenciais da Service Account
-// O JSON da chave vem da variável de ambiente que o GitHub Actions fornecerá
-initializeApp({
-  credential: cert(JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT_KEY))
-});
+// INICIALIZAÇÃO SIMPLIFICADA
+// O SDK agora detecta a autenticação feita pela Action do Google automaticamente.
+initializeApp();
 
 const db = getFirestore();
 const backupData = {};
 const collectionsToBackup = ['players', 'events', 'subscriptions'];
-const appIdentifier = "1:187178310074:web:5f56292dea8dc776532583"; // Seu App ID
+const appIdentifier = "1:187178310074:web:5f56292dea8dc776532583";
 
 async function createBackup() {
-  console.log('Iniciando o processo de backup...');
+  console.log('Iniciando o processo de backup com autenticação automática...');
 
   for (const collectionName of collectionsToBackup) {
     console.log(`Fazendo backup da coleção: ${collectionName}...`);
@@ -30,7 +28,6 @@ async function createBackup() {
     backupData[collectionName] = docs;
   }
 
-  // O nome do arquivo será passado como argumento pelo GitHub Action
   const fileName = process.argv[2];
   if (!fileName) {
     console.error('Nome do arquivo de backup não fornecido!');
