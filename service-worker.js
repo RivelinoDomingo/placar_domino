@@ -4,13 +4,13 @@ importScripts("https://www.gstatic.com/firebasejs/11.6.1/firebase-messaging-comp
 
 // Cole aqui a configuração do seu Firebase (o mesmo objeto do index.html)
 const firebaseConfig = {
-    apiKey: "AIzaSyBqpkxcl0GkBBHVO8Nxk7UpYd00H4Frklc",
-    authDomain: "placar-domino.firebaseapp.com",
-    projectId: "placar-domino",
-    storageBucket: "placar-domino.firebasestorage.app",
-    messagingSenderId: "187178310074",
-    appId: "1:187178310074:web:5f56292dea8dc776532583",
-    measurementId: "G-BL3W42DJ3M"
+  apiKey: "AIzaSyBqpkxcl0GkBBHVO8Nxk7UpYd00H4Frklc",
+  authDomain: "placar-domino.firebaseapp.com",
+  projectId: "placar-domino",
+  storageBucket: "placar-domino.firebasestorage.app",
+  messagingSenderId: "187178310074",
+  appId: "1:187178310074:web:5f56292dea8dc776532583",
+  measurementId: "G-BL3W42DJ3M"
 };
 
 // Inicializa o Firebase
@@ -21,20 +21,15 @@ const messaging = firebase.messaging();
 
 // Adiciona um ouvinte para quando uma notificação push é recebida
 // enquanto o app está em segundo plano.
+// CÓDIGO NOVO E CORRIGIDO
 messaging.onBackgroundMessage((payload) => {
-    console.log(
-        "[firebase-messaging-sw.js] Received background message ",
-        payload,
-    );
-
-    // Extrai o título e o corpo da notificação dos dados recebidos
-    const notificationTitle = payload.notification.title;
+    console.log("[service-worker.js] Received background message ", payload);
+    // Lendo os dados do campo 'data' que a Cloud Function agora envia
+    const notificationTitle = payload.data.title;
     const notificationOptions = {
-        body: payload.notification.body,
-        icon: "/placar_domino/icone192.png", // Ícone da notificação
+        body: payload.data.body,
+        icon: "/placar_domino/icone192.png",
     };
-
-    // Exibe a notificação para o usuário
     self.registration.showNotification(notificationTitle, notificationOptions);
 });
 

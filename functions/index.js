@@ -63,7 +63,7 @@ exports.sendPromotionDemotionNotification = onDocumentUpdated(
       const tokens = subscriptionsSnapshot.docs.map((doc) => doc.id);
 
       const message = {
-        notification: {
+        data: {//  <-- A MUDANÇA ESTÁ AQUI
           title: notificationTitle,
           body: notificationBody,
         },
