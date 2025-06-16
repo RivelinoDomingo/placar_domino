@@ -1,0 +1,151 @@
+{
+  "players": [
+    {
+      "id": "2uTKIpn00eUFJM0wXC5G",
+      "name": "Renata",
+      "series": "Amador",
+      "raios": 1,
+      "lambreta": 1
+    },
+    {
+      "id": "4lAtcPIEKcu6pYOpTbUf",
+      "name": "Alexandre",
+      "lambreta": 0,
+      "raios": 0,
+      "series": "Amador"
+    },
+    {
+      "id": "AYPmYnX34qqGae7HcIYU",
+      "name": "Kauê",
+      "series": "Amador",
+      "lambreta": 1,
+      "raios": 2
+    },
+    {
+      "id": "KUk2C2TEJlRyIm02hmDk",
+      "name": "Cassio",
+      "series": "Amador",
+      "lambreta": 0,
+      "raios": 2
+    },
+    {
+      "id": "M30KhNvKs2K2a8IESxt4",
+      "lambreta": 0,
+      "raios": 0,
+      "series": "Amador",
+      "name": "Hugo"
+    },
+    {
+      "id": "WD0AlKGzvX0i0p3xnrq6",
+      "lambreta": 0,
+      "name": "teste",
+      "series": "B",
+      "raios": 0
+    },
+    {
+      "id": "YOYDoV9WhNmAcbFws9Hl",
+      "name": "Rivelino",
+      "raios": 0,
+      "series": "Amador",
+      "lambreta": 3
+    },
+    {
+      "id": "u1423EoitFbGmcZOvytT",
+      "series": "Amador",
+      "lambreta": 0,
+      "name": "Ari",
+      "raios": 2
+    },
+    {
+      "id": "zNO2Zp7dZlyGMcL1xBS8",
+      "name": "Jorginho",
+      "lambreta": 0,
+      "raios": 0,
+      "series": "Amador"
+    }
+  ],
+  "events": [
+    {
+      "id": "BPF6RAnoT2J8lXsRjwLE",
+      "message": "teste subiu para a Série B! 🎉",
+      "timestamp": {
+        "_seconds": 1750091707,
+        "_nanoseconds": 392000000
+      }
+    },
+    {
+      "id": "t6O4n8R2g9o2HBdnGyAE",
+      "message": "teste subiu para a Série C! 🎉",
+      "timestamp": {
+        "_seconds": 1750091568,
+        "_nanoseconds": 254000000
+      }
+    },
+    {
+      "id": "tZNJZ1V2308RcKleynuE",
+      "message": "teste subiu para a Série D! 🎉",
+      "timestamp": {
+        "_seconds": 1750091453,
+        "_nanoseconds": 240000000
+      }
+    }
+  ],
+  "subscriptions": [
+    {
+      "id": "cwibUfTJwTGX2pWkvKZcJP:APA91bGoIN_dmml2QCgeL47c1NkFWT_VWEQ02sMG-Glq50VR_BxG4sFvze-7VyRW32Fc5jfSPPuS5pwZsypu0cDbmUgbjUTvV-wDYAInIeuSGApAhFh2I6Q",
+      "userId": "nasj2hDIrgfkbeYmqQQwHlJjSQC3",
+      "createdAt": {
+        "_seconds": 1750058201,
+        "_nanoseconds": 408000000
+      }
+    },
+    {
+      "id": "dN-nCKn0POQKkQweDGrIKi:APA91bErUnLxXqNee3ZgBn8nAnzCOMjc5N0gaP-jxV9gp5OkSf7RqbvPZEuztuQpSW0afEhUMKIe2Ek62pZ_VYIQ4WAWoOgxi_de4EMlfNPUbNzLj14pxvE",
+      "userId": "0SwKE99Br4MPVcSdPQ5pkEuKvkl1",
+      "createdAt": {
+        "_seconds": 1750056817,
+        "_nanoseconds": 484000000
+      }
+    },
+    {
+      "id": "diHm7BeT0Mv2Me6SV0J7kz:APA91bFVgf_pxyv_xh8RY80m44LRbldamy64npB6K77FlOpn69oFNBWjFKdNJsC8nVZnWZ9L4FPsOcQ6v_PU5D7ijCj1Wp3nCOgTTjPe2DEvuKwPRbw-jXw",
+      "userId": "bwpBDNwgFCPq3t3NsROyURSEdxl2",
+      "createdAt": {
+        "_seconds": 1750062897,
+        "_nanoseconds": 196000000
+      }
+    },
+    {
+      "id": "eV4EqWyPBF_K3oaupxXHC6:APA91bEiMYie-p_1sh1nC-OLdfIpXDtxv4eYEBZmm42Y1nlPa1HQ-qIM9Ae8yugVaMRPoNqbDTsgVJ6OHyb6UfacL0Qco3UJxRU_ibdkDlkrym9RZhZPvw0",
+      "userId": "5veJJjOfrNSsbRoloOnirOQE9um1",
+      "createdAt": {
+        "_seconds": 1750096480,
+        "_nanoseconds": 702000000
+      }
+    },
+    {
+      "id": "eo1B68W8K8xNSyKPwft1xi:APA91bFkesDvbX4B911ycBQqAYIhx7mI66tT6uUVuZan3lkNCPrUpnSy0181QK5XHkyORTcoVZ1prhDG7XHLGiEylrTx5wlWTE-TnPLJWfGZnazylSeyfiI",
+      "userId": "qGPjjOHSnqdyVCQzuPfpVfzlS4J2",
+      "createdAt": {
+        "_seconds": 1750096435,
+        "_nanoseconds": 103000000
+      }
+    },
+    {
+      "id": "fPZkhM4esrnzaLkT_B0NRk:APA91bGZlVzu14qSj2JqKPTWJp_XQRFrRbC0qoMPwzOKhWZBbVMPTpqbtStZxPIKlPWCSbVX9PtCIsppCPkXoWCSNOZpBFlvo7tOzntvFOcguEFiRR3dnEk",
+      "userId": "qfX9uZOHG7V8CcGDButswFj8EW22",
+      "createdAt": {
+        "_seconds": 1750091630,
+        "_nanoseconds": 135000000
+      }
+    },
+    {
+      "id": "fgRE1BUBdc6ISHn5llQUcO:APA91bGsFeQQvDN_b3TWs3tlOs9M0723tiAD2XTeH8aQIdigxCyiARQV3qwSwJA1PZO_OqbQIydS42AfqO_XfuZt6jdtYcQWAF7SlPjb4RSHjyQqfTTy6sI",
+      "userId": "WDxSHaztO6Mor0OszWJb75ByscD3",
+      "createdAt": {
+        "_seconds": 1750096367,
+        "_nanoseconds": 834000000
+      }
+    }
+  ]
+}
