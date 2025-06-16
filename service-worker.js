@@ -2,7 +2,7 @@
 importScripts("https://www.gstatic.com/firebasejs/11.6.1/firebase-app-compat.js");
 importScripts("https://www.gstatic.com/firebasejs/11.6.1/firebase-messaging-compat.js");
 
-// Cole aqui a configuração do seu Firebase (o mesmo objeto do index.html)
+// configuração do seu Firebase (o mesmo objeto do index.html)
 const firebaseConfig = {
   apiKey: "AIzaSyBqpkxcl0GkBBHVO8Nxk7UpYd00H4Frklc",
   authDomain: "placar-domino.firebaseapp.com",
