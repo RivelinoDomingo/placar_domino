@@ -29,18 +29,22 @@ exports.sendPromotionDemotionNotification = onDocumentUpdated(
       if (afterIndex < beforeIndex) {
         notificationTitle = "🎉 Promoção no Placar! 🎉";
         notificationBody = `${afterData.name} subiu da Série ` +
-                           `${beforeData.series} para a Série ${afterData.series}!`;
+                           `${beforeData.series} para a Série ` +
+                           `${afterData.series}!`;
       } else {
         notificationTitle = "⬇️ Rebaixamento no Placar ⬇️";
         notificationBody = `${afterData.name} caiu da Série ` +
-                           `${beforeData.series} para a Série ${afterData.series}.`;
+                           `${beforeData.series} para a Série ` +
+                           `${afterData.series}.`;
       }
 
       logger.info(`Preparando notificação: ${notificationBody}`);
 
       const subscriptionsPath =
           `artifacts/${appIdentifier}/public/data/subscriptions`;
-      const subscriptionsSnapshot = await db.collection(subscriptionsPath).get();
+      // Essa linha foi diminuida
+      const subscriptionsSnapshot =
+        await db.collection(subscriptionsPath).get();
 
       if (subscriptionsSnapshot.empty) {
         logger.warn("Nenhuma inscrição encontrada.");
