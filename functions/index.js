@@ -1,5 +1,4 @@
-// Este é o código corrigido para o arquivo
-// functions/index.js usando a SINTAXE V2
+// Arquivo: functions/index.js - Versão final com depuração detalhada
 
 const {onDocumentUpdated} = require("firebase-functions/v2/firestore");
 const {logger} = require("firebase-functions");
@@ -11,21 +10,14 @@ const db = admin.firestore();
 const messaging = admin.messaging();
 const appIdentifier = "1:187178310074:web:5f56292dea8dc776532583";
 
-// A sintaxe para V2 é diferente. Usamos onDocumentUpdated e passamos o caminho.
 exports.sendPromotionDemotionNotification = onDocumentUpdated(
     `artifacts/${appIdentifier}/public/data/players/{playerId}`,
     async (event) => {
-      // No V2, os dados "before" e "after" ficam dentro de event.data
       const beforeData = event.data.before.data();
       const afterData = event.data.after.data();
 
-      // A lógica interna continua a mesma
       if (beforeData.series === afterData.series) {
-        // Usando o logger do V2, que é a prática recomendada
-        logger.info(
-            `Série do jogador ${afterData.name}` +
-            `não mudou. Nenhuma notificação.`,
-        );
+        logger.info(`Série do jogador ${afterData.name} não mudou.`);
         return;
       }
 
@@ -48,7 +40,7 @@ exports.sendPromotionDemotionNotification = onDocumentUpdated(
                            `${afterData.series}.`;
       }
 
-      logger.info(`Enviando notificação: ${notificationBody}`);
+      logger.info(`Preparando notificação: ${notificationBody}`);
 
       const subscriptionsPath =
           `artifacts/${appIdentifier}/public/data/subscriptions`;
@@ -56,14 +48,15 @@ exports.sendPromotionDemotionNotification = onDocumentUpdated(
       await db.collection(subscriptionsPath).get();
 
       if (subscriptionsSnapshot.empty) {
-        logger.info("Nenhuma inscrição de notificação encontrada.");
+        logger.warn("Nenhuma inscrição de notificação encontrada para enviar.");
         return;
       }
 
       const tokens = subscriptionsSnapshot.docs.map((doc) => doc.id);
+      logger.info(`Encontrados ${tokens.length} tokens para enviar.`);
 
       const message = {
-        data: {//  <-- A MUDANÇA ESTÁ AQUI
+        data: {
           title: notificationTitle,
           body: notificationBody,
         },
@@ -72,18 +65,28 @@ exports.sendPromotionDemotionNotification = onDocumentUpdated(
 
       try {
         const response = await messaging.sendMulticast(message);
-        logger.info(
-            "Notificações enviadas com sucesso:",
-            response.successCount,
-        );
+        logger.info("Relatório de envio FCM:", {
+          successCount: response.successCount,
+          failureCount: response.failureCount,
+        });
+
+        // =================================================================
+        // BLOCO DE DEPURAÇÃO DETALHADA - A PARTE MAIS IMPORTANTE
+        // =================================================================
         if (response.failureCount > 0) {
-          logger.warn(
-              "Falha ao enviar para alguns tokens:",
-              response.failureCount,
-          );
+          const failedTokens = [];
+          response.responses.forEach((resp, idx) => {
+            if (!resp.success) {
+              failedTokens.push(tokens[idx]);
+              // Log detalhado do erro para cada token que falhou
+              logger.error(`Falha ao enviar para o ` +
+              `token [${tokens[idx]}]:`, resp.error);
+            }
+          });
+          logger.error("Lista de tokens que falharam:", failedTokens);
         }
       } catch (error) {
-        logger.error("Erro ao enviar notificações:", error);
+        logger.error("Erro CRÍTICO ao chamar messaging.sendMulticast:", error);
       }
     },
 );
