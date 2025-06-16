@@ -990,7 +990,7 @@
                 eventsData.push({ id: doc.id, ...doc.data() });
             });
             renderEvents(eventsData);
-        };
+        });
     }
 
     async function initializeFirebase() {
