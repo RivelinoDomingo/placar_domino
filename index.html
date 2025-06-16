@@ -986,7 +986,7 @@
         onSnapshot(qEvents, (snapshot) => {
             const eventsData = [];
             snapshot.forEach((doc) => {
-                // CORREÇÃO: Salvar o ID junto com os dados para remoção futura
+                // CORREÇÃO: Salvar o ID junto com os dados
                 eventsData.push({ id: doc.id, ...doc.data() });
             });
             renderEvents(eventsData);
