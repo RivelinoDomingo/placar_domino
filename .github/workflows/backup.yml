@@ -9,6 +9,10 @@ jobs:
   firestore-backup:
     runs-on: ubuntu-latest
 
+    # ADICIONE ESTE BLOCO DE PERMISSÕES
+    permissions:
+      contents: write
+
     steps:
       - name: Checkout do repositório
         uses: actions/checkout@v4
