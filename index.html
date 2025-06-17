@@ -376,6 +376,14 @@
             color: #c82333; /* Darker red on hover */
             transform: scale(1.1);
         }
+        /* NOVO: Estilo para o botão de reset quando estiver ativo */
+        .reset-button.active-red {
+            background-color: #dc3545; /* Vermelho perigo */
+            border-color: #dc3545;
+        }
+        .reset-button.active-red:hover {
+            background-color: #c82333; /* Vermelho mais escuro no hover */
+        }
     </style>
     <!-- Adicionando a referência ao Web App Manifest -->
     <link rel="manifest" href="/manifest.json">
@@ -424,15 +432,15 @@
         <!-- Admin Control Panel (hidden by default) -->
         <div id="adminPanel" class="admin-panel">
             <h2 class="text-xl font-semibold text-gray-700">Controle de Administrador</h2>
-            <p class="text-sm text-gray-600">Insira a chave de administrador para habilitar edições.</p>
+            <p class="text-sm text-gray-600">Insira a senha de administrador para habilitar edições.</p>
             <input type="password" id="adminKeyInput" placeholder="Chave de Administrador">
             <button id="activateAdminBtn">Ativar Modo Admin</button>
             <div id="adminStatus" class="text-sm text-red-600">Modo Admin: Desativado</div>
 
             <!-- New: Add Player button -->
-            <button id="addPlayerBtn" class="add-player-button" disabled>
+            <!--<button id="addPlayerBtn" class="add-player-button" disabled>
                 Adicionar Novo Jogador
-            </button>
+            </button>-->
 
             <!-- Reset All button is now inside the admin panel -->
             <button id="resetScoresBtn" class="reset-button" disabled>
@@ -567,49 +575,52 @@
     }
 
     function updateControlButtonsState() {
-        const allScoreButtons = document.querySelectorAll('.score-buttons button');
-        allScoreButtons.forEach(button => {
-            button.disabled = !isAdminMode;
-        });
-        resetScoresBtn.disabled = !isAdminMode;
-        addPlayerBtn.disabled = !isAdminMode;
-
-        const editIcons = document.querySelectorAll('.edit-icon');
-        editIcons.forEach(icon => {
+        // Controla botões de score, ícones de edição e exclusão de jogadores
+        const allScoreButtons = document.querySelectorAll('.score-buttons button, .edit-icon, .delete-icon');
+        allScoreButtons.forEach(el => {
             if (isAdminMode) {
-                icon.style.display = 'inline-block';
-                icon.removeAttribute('disabled');
+                el.style.display = 'inline-flex'; // ou 'inline-block'
+                el.removeAttribute('disabled');
             } else {
-                icon.style.display = 'none';
-                icon.setAttribute('disabled', 'true');
+                el.style.display = 'none';
+                el.setAttribute('disabled', 'true');
             }
         });
 
-        const deleteIcons = document.querySelectorAll('.delete-icon');
-        deleteIcons.forEach(icon => {
-            if (isAdminMode) {
-                icon.style.display = 'inline-block';
-                icon.removeAttribute('disabled');
-            } else {
-                icon.style.display = 'none';
-                icon.setAttribute('disabled', 'true');
-            }
-        });
-
-        // NOVO: Controla os ícones de exclusão de eventos
-        const deleteEventIcons = document.querySelectorAll('.delete-event-icon');
-        deleteEventIcons.forEach(icon => {
-            icon.style.display = isAdminMode ? 'inline-block' : 'none';
-        });
-
-        if (isAdminMode) {
-            adminStatusDiv.className = 'text-sm text-green-600';
-            adminStatusDiv.textContent = 'Modo Admin: Ativado';
-        } else {
-            adminStatusDiv.className = 'text-sm text-red-600';
-            adminStatusDiv.textContent = 'Modo Admin: Desativado';
+        // Controla o botão de ADICIONAR JOGADOR (agora na lista)
+        const addPlayerBtn = document.getElementById('addPlayerBtn');
+        if (addPlayerBtn) {
+            addPlayerBtn.style.display = isAdminMode ? 'inline-block' : 'none';
+            addPlayerBtn.disabled = !isAdminMode;
         }
+
+        // Controla o botão de RESETAR TUDO (cor e estado)
+        const resetScoresBtn = document.getElementById('resetScoresBtn');
+        if (resetScoresBtn) {
+            resetScoresBtn.disabled = !isAdminMode;
+            if (isAdminMode) {
+                resetScoresBtn.classList.add('active-red');
+            } else {
+                resetScoresBtn.classList.remove('active-red');
+            }
     }
+
+    // Controla os ícones de exclusão de eventos
+    const deleteEventIcons = document.querySelectorAll('.delete-event-icon');
+    deleteEventIcons.forEach(icon => {
+        icon.style.display = isAdminMode ? 'inline-block' : 'none';
+    });
+
+    // Controla o status do painel de admin
+    const adminStatusDiv = document.getElementById('adminStatus');
+    if (isAdminMode) {
+        adminStatusDiv.className = 'text-sm text-green-600';
+        adminStatusDiv.textContent = 'Modo Admin: Ativado';
+    } else {
+        adminStatusDiv.className = 'text-sm text-red-600';
+        adminStatusDiv.textContent = 'Modo Admin: Desativado';
+    }
+}
 
     async function requestPermissionAndGetToken(swRegistration) {
         console.log('Solicitando permissão para notificações...');
@@ -698,6 +709,28 @@
         playersListDiv.querySelectorAll('.plus-btn, .minus-btn').forEach(button => button.addEventListener('click', handleScoreChange));
         playersListDiv.querySelectorAll('.edit-icon').forEach(icon => icon.addEventListener('click', handleRenamePlayer));
         playersListDiv.querySelectorAll('.delete-icon').forEach(icon => icon.addEventListener('click', handleDeletePlayer));
+        updateControlButtonsState();
+        // =======================================================
+        // NOVO: CRIA E ADICIONA O BOTÃO "ADICIONAR JOGADOR"
+        // =======================================================
+        const addPlayerBtnContainer = document.createElement('div');
+        addPlayerBtnContainer.className = 'mt-4'; // Adiciona um pouco de espaço no topo
+
+        const newAddPlayerBtn = document.createElement('button');
+        newAddPlayerBtn.id = 'addPlayerBtn'; // Mantém o mesmo ID
+        newAddPlayerBtn.className = 'add-player-button'; // Usa a mesma classe de estilo
+        newAddPlayerBtn.textContent = 'Adicionar Novo Jogador';
+        newAddPlayerBtn.style.display = 'none'; // Começa escondido
+        newAddPlayerBtn.addEventListener('click', handleAddPlayer); // Conecta a função
+
+        addPlayerBtnContainer.appendChild(newAddPlayerBtn);
+        playersListDiv.appendChild(addPlayerBtnContainer);
+
+        // Adiciona ouvintes de eventos aos outros botões...
+        playersListDiv.querySelectorAll('.plus-btn, .minus-btn').forEach(button => button.addEventListener('click', handleScoreChange));
+        playersListDiv.querySelectorAll('.edit-icon').forEach(icon => icon.addEventListener('click', handleRenamePlayer));
+        playersListDiv.querySelectorAll('.delete-icon').forEach(icon => icon.addEventListener('click', handleDeletePlayer));
+
         updateControlButtonsState();
     }
 
