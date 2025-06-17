@@ -83,20 +83,15 @@
         </div>
     </div>
 
-    <!-- Admin FAB -->
     <div class="admin-fab-container"><div id="adminActionsPanel" class="admin-actions"><h3 class="font-bold text-lg mb-4 text-gray-800">Painel do Administrador</h3><div id="adminLoginView"><p class="text-sm text-gray-600 mb-2">Insira a senha para gerenciar.</p><input type="password" id="adminKeyInput" placeholder="Senha de Admin" class="w-full border-gray-300 rounded-md shadow-sm p-2"><button id="activateAdminBtn" class="w-full mt-3 bg-blue-600 text-white font-semibold py-2 rounded-md hover:bg-blue-700 transition">Ativar</button></div><div id="adminControlsView" class="hidden space-y-3"><button id="addPlayerBtn_fab" class="w-full bg-green-500 text-white font-semibold py-2 rounded-md hover:bg-green-600 transition">Adicionar Novo Jogador</button><button id="resetScoresBtn_fab" class="w-full bg-red-600 text-white font-semibold py-2 rounded-md hover:bg-red-700 transition">Redefinir Placar Geral</button><p id="adminStatus" class="text-center text-sm text-green-600 font-semibold pt-2">Modo Admin Ativado</p></div></div><div id="adminFabButton" class="admin-fab"><svg id="fabIconDefault" xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg><svg id="fabIconClose" xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="hidden"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></div></div>
 
-    <!-- Modal Genérico -->
     <div id="modalContainer" class="fixed inset-0 bg-black/60 hidden items-center justify-center p-4 z-50"><div id="modalContent" class="bg-white rounded-xl shadow-2xl p-6 w-full max-w-md m-auto"></div></div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, doc, addDoc, setDoc, updateDoc, deleteDoc, onSnapshot, collection, query, orderBy, limit, serverTimestamp, writeBatch, arrayUnion } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import { getFirestore, doc, addDoc, updateDoc, onSnapshot, collection, query, orderBy, limit, serverTimestamp, writeBatch } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-        // =======================================================
-        // CONFIGURAÇÃO E ESTADO INICIAL
-        // =======================================================
         const firebaseConfig = {
             apiKey: "AIzaSyBqpkxcl0GkBBHVO8Nxk7UpYd00H4Frklc",
             authDomain: "placar-domino.firebaseapp.com",
@@ -115,32 +110,21 @@
         const POINTS_TO_COMPLETE_RAIO = 4;
         const appIdentifier = firebaseConfig.appId;
 
-        let appState = {
-            players: {},
-            activityFeed: [],
-            isAdminMode: false,
-            userId: null,
-            gameState: {}
-        };
+        let appState = { players: {}, activityFeed: [], isAdminMode: false, userId: null, gameState: {}, unsubscribers: [] };
 
-        // Funções de referência ao Firestore
         const playersCollectionRef = () => collection(db, `artifacts/${appIdentifier}/public/data/players`);
-        const activityFeedCollectionRef = () => collection(db, `artifacts/${appIdentifier}/public/data/events`);
+        const activityFeedCollectionRef = () => collection(db, `artifacts/${appIdentifier}/public/data/activity`);
         const matchesCollectionRef = () => collection(db, `artifacts/${appIdentifier}/public/data/partidas`);
 
-        // SELETORES DE UI (agrupados para organização)
         const ui = {
             views: document.querySelectorAll('.view'),
             playersListDiv: document.getElementById('playersList'),
             activityFeedDiv: document.getElementById('activityFeed'),
             adminFab: { button: document.getElementById('adminFabButton'), panel: document.getElementById('adminActionsPanel'), defaultIcon: document.getElementById('fabIconDefault'), closeIcon: document.getElementById('fabIconClose'), loginView: document.getElementById('adminLoginView'), controlsView: document.getElementById('adminControlsView'), keyInput: document.getElementById('adminKeyInput'), activateBtn: document.getElementById('activateAdminBtn'), addPlayerBtn: document.getElementById('addPlayerBtn_fab'), resetBtn: document.getElementById('resetScoresBtn_fab')},
             modal: { container: document.getElementById('modalContainer'), content: document.getElementById('modalContent')},
-            gameMode: { goToBtn: document.getElementById('btnGoToGameMode'), backBtn: document.getElementById('btnBackToScoreboard'), modeButtons: document.querySelectorAll('gameModeBtn'), raioCheckbox: document.getElementById('raioModeCheckbox'), startBtn: document.getElementById('btnStartGame'), activeButtons: document.getElementById('activeGameButtons'), launchScoreBtn: document.getElementById('btnLaunchScore'), undoBtn: document.getElementById('btnUndoRound'), endBtn: document.getElementById('btnEndGame'), newGameBtn: document.getElementById('btnNewGame'), shareBtn: document.getElementById('btnShareWhatsapp'), statusText: document.getElementById('gameStatusText'), gameOver: { winnerText: document.getElementById('gameOverWinnerText'), scoreText: document.getElementById('gameOverScoreText')}}
+            gameMode: { goToBtn: document.getElementById('btnGoToGameMode'), backBtn: document.getElementById('btnBackToScoreboard'), modeButtons: document.querySelectorAll('.gameModeBtn'), raioCheckbox: document.getElementById('raioModeCheckbox'), startBtn: document.getElementById('btnStartGame'), activeButtons: document.getElementById('activeGameButtons'), launchScoreBtn: document.getElementById('btnLaunchScore'), undoBtn: document.getElementById('btnUndoRound'), endBtn: document.getElementById('btnEndGame'), newGameBtn: document.getElementById('btnNewGame'), shareBtn: document.getElementById('btnShareWhatsapp'), statusText: document.getElementById('gameStatusText'), gameOver: { winnerText: document.getElementById('gameOverWinnerText'), scoreText: document.getElementById('gameOverScoreText')}}
         };
 
-        // =======================================================
-        // FUNÇÕES PRINCIPAIS DE RENDERIZAÇÃO
-        // =======================================================
         function switchView(viewId) { ui.views.forEach(v => v.classList.toggle('active', v.id === viewId)); }
 
         function renderScoreboard() {
@@ -162,386 +146,158 @@
                     <div class="text-right"><div class="font-semibold text-blue-600">Vitórias: ${player.vitorias || 0}</div><div class="font-semibold text-yellow-600">Raios: ${player.raios || 0}</div></div>
                 </div>`).join('');
         }
-        function renderPlayers() {
-            ui.playersListDiv.innerHTML = Object.values(allPlayers).sort((a, b) => a.name.localeCompare(b.name)).map(player => `
-                <div class="bg-white p-4 rounded-xl shadow-sm flex items-center justify-between">
-                    <div><span class="font-bold text-lg player-name-clickable" data-player-id="${player.id}">${player.name}</span><span class="text-sm text-gray-500 ml-2">(Série ${player.series})</span></div>
-                    <div class="text-right"><div class="font-semibold text-blue-600">Raios: ${player.raios}</div><div class="font-semibold text-red-600">Lambretas: ${player.lambretas}</div></div>
-                </div>`).join('');
-        }
+
         function renderActivityFeed() {
-            activityFeedDiv.innerHTML = activityFeedData.length === 0 ? '<p class="text-gray-500 text-center">Nenhuma atividade recente.</p>' :
-                activityFeedData.map(item => {
+            ui.activityFeedDiv.innerHTML = appState.activityFeed.length === 0 ? '<p class="text-gray-500 text-center">Nenhuma atividade recente.</p>' :
+                appState.activityFeed.map(item => {
                     let icon = '💬';
                     if (item.type === 'promotion') icon = '▲';
                     else if (item.type === 'demotion') icon = '▼';
                     else if (item.type === 'achievement') icon = '⭐';
                     const color = item.type === 'promotion' ? 'green' : (item.type === 'demotion' ? 'red' : 'yellow');
-                    return `<div class="p-3 rounded-lg flex items-center gap-3"><span class="text-${color}-500">${icon}</span><div><p class="text-gray-800"><span class="font-semibold">${item.player}</span> ${item.text}</p><p class="text-xs text-gray-400">${item.timestamp.toLocaleString('pt-BR')}</p></div></div>`;
+                    const timestamp = item.timestamp?.seconds ? new Date(item.timestamp.seconds * 1000).toLocaleString('pt-BR') : 'agora';
+                    return `<div class="p-3 rounded-lg flex items-center gap-3"><span class="text-${color}-500">${icon}</span><div><p class="text-gray-800"><span class="font-semibold">${item.player}</span> ${item.text}</p><p class="text-xs text-gray-400">${timestamp}</p></div></div>`;
                 }).join('');
         }
-        function openModal(contentHTML) {
-            modalContent.innerHTML = contentHTML;
-            modalContainer.style.display = 'flex';
-        }
-        function closeModal() {
-            modalContainer.style.display = 'none';
-        }
 
-        // =======================================================
-        // FUNÇÕES DO MODO PARTIDA (COM INTEGRAÇÃO FIREBASE)
-        // =======================================================
+        function openModal(contentHTML) { ui.modal.content.innerHTML = contentHTML; ui.modal.container.style.display = 'flex'; }
+        function closeModal() { ui.modal.container.style.display = 'none'; }
 
         function openPlayerDetailsModal(playerId) {
-            const player = allPlayers[playerId];
+            const player = appState.players[playerId];
+            if (!player) return;
             const achievements = {
-                primeiro_rei: { icon: '👑', name: 'Primeiro Rei' },
-                imbativel: { icon: '🔥', name: 'Imbatível' },
-                azarao: { icon: '🚑', name: 'Azarão' },
+                primeiro_rei: { icon: '👑', name: 'Primeiro Rei', description: 'Chegou ao topo da Série A.' },
+                imbativel: { icon: '🔥', name: 'Imbatível', description: 'Venceu 3 partidas consecutivas.' },
+                azarao: { icon: '🚑', name: 'Azarão', description: 'Acumulou 3 lambretas numa partida.' },
             };
             let achievementsHTML = Object.keys(achievements).map(key => {
                 const ach = achievements[key];
-                const unlocked = player.conquistas.includes(key);
-                return `<div class="text-center p-2 rounded-lg ${unlocked ? 'bg-yellow-100' : 'bg-gray-100'}"><span class="achievement-icon ${unlocked ? 'unlocked' : ''}">${ach.icon}</span><p class="text-xs font-semibold mt-1 ${unlocked ? 'text-yellow-800' : 'text-gray-500'}">${ach.name}</p></div>`;
+                const unlocked = player.conquistas?.includes(key);
+                return `<div class="text-center p-2 rounded-lg ${unlocked ? 'bg-yellow-100' : 'bg-gray-100'}"><span class="achievement-icon ${unlocked ? 'unlocked' : ''}" title="${ach.name}: ${ach.description}">${ach.icon}</span><p class="text-xs font-semibold mt-1 ${unlocked ? 'text-yellow-800' : 'text-gray-500'}">${ach.name}</p></div>`;
             }).join('');
-            let adminControlsHTML = isAdminMode ? `<hr class="my-6"><div class="space-y-3"><button class="w-full bg-blue-500 text-white font-semibold py-2 rounded-md">Renomear</button><button class="w-full bg-red-600 text-white font-semibold py-2 rounded-md">Deletar</button></div>` : '';
-            const modalHTML = `<div class="flex justify-between items-start"><div><h3 class="text-2xl font-bold">${player.name}</h3><p class="text-gray-600">Série ${player.series}</p></div><button id="modal-close-btn" class="text-gray-400 hover:text-gray-700 text-2xl">&times;</button></div><div class="mt-6"><h4 class="font-semibold mb-2">Estatísticas</h4><div class="grid grid-cols-2 gap-4 text-center"><div class="bg-gray-50 p-3 rounded-lg"><p class="text-2xl font-bold">${player.vitorias}</p><p class="text-sm text-gray-500">Vitórias</p></div><div class="bg-gray-50 p-3 rounded-lg"><p class="text-2xl font-bold">${player.derrotas}</p><p class="text-sm text-gray-500">Derrotas</p></div></div></div><div class="mt-6"><h4 class="font-semibold mb-2">Conquistas</h4><div class="grid grid-cols-3 gap-2">${achievementsHTML}</div></div>${adminControlsHTML}`;
+            let adminControlsHTML = appState.isAdminMode ? `<hr class="my-6"><div class="space-y-3"><button class="w-full bg-blue-500 text-white font-semibold py-2 rounded-md">Renomear</button><button class="w-full bg-red-600 text-white font-semibold py-2 rounded-md">Deletar</button></div>` : '';
+            const modalHTML = `<div class="flex justify-between items-start"><div><h3 class="text-2xl font-bold">${player.name}</h3><p class="text-gray-600">Série ${player.series}</p></div><button id="modal-close-btn" class="text-gray-400 hover:text-gray-700 text-2xl">&times;</button></div><div class="mt-6"><h4 class="font-semibold mb-2">Estatísticas</h4><div class="grid grid-cols-2 gap-4 text-center"><div class="bg-gray-50 p-3 rounded-lg"><p class="text-2xl font-bold">${player.vitorias || 0}</p><p class="text-sm text-gray-500">Vitórias</p></div><div class="bg-gray-50 p-3 rounded-lg"><p class="text-2xl font-bold">${player.derrotas || 0}</p><p class="text-sm text-gray-500">Derrotas</p></div></div></div><div class="mt-6"><h4 class="font-semibold mb-2">Conquistas</h4><div class="grid grid-cols-3 gap-2">${achievementsHTML}</div></div>${adminControlsHTML}`;
             openModal(modalHTML);
         }
-        function createInitialGameState() {
-            return {
-                currentView: 'view-game-table', gameMode: 'individual', isRaioMatch: false,
-                selectedSlots: { 1: null, 2: null, 3: null, 4: null }, activeGame: null, targetSlot: null
-            };
-        }
+
+        function createInitialGameState() { return { gameMode: 'individual', isRaioMatch: false, selectedSlots: { 1: null, 2: null, 3: null, 4: null }, activeGame: null, activeGameId: null, activeGameListener: null }; }
+
         function resetGameState() {
-            gameState = createInitialGameState();
-            document.getElementById('gameStatusText').textContent = 'Selecione os jogadores para começar';
-            btnStartGame.style.display = 'block';
-            activeGameButtons.style.display = 'none';
+            if (appState.gameState.activeGameListener) {
+                appState.gameState.activeGameListener();
+            }
+            appState.gameState = createInitialGameState();
+            ui.gameMode.statusText.textContent = 'Selecione os jogadores para começar';
+            ui.gameMode.startBtn.style.display = 'block';
+            ui.gameMode.activeButtons.style.display = 'none';
             document.getElementById('game-type-selector').style.display = 'flex';
             document.getElementById('raio-mode-selector').style.display = 'flex';
-            raioModeCheckbox.checked = false;
+            ui.gameMode.raioCheckbox.checked = false;
             updateGameModeUI();
         }
+
         function updateGameModeUI() {
-            gameModeButtons.forEach(btn => btn.className = `gameModeBtn font-semibold py-2 px-4 rounded-lg ${btn.dataset.mode === gameState.gameMode ? 'shadow bg-blue-500 text-white' : 'bg-white text-gray-500'}`);
+            ui.gameMode.modeButtons.forEach(btn => btn.className = `gameModeBtn font-semibold py-2 px-4 rounded-lg ${btn.dataset.mode === appState.gameState.gameMode ? 'shadow bg-blue-500 text-white' : 'bg-white text-gray-500'}`);
             resetPlayerSlots();
         }
+
         function resetPlayerSlots() {
-            gameState.selectedSlots = { 1: null, 2: null, 3: null, 4: null };
+            appState.gameState.selectedSlots = { 1: null, 2: null, 3: null, 4: null };
             renderAllSlots();
         }
+
         function renderAllSlots() {
             document.querySelectorAll('.player-slot').forEach(slot => renderPlayerSlot(slot.id.split('-')[1]));
             checkStartGameCondition();
         }
+
+        function renderPlayerSlot(slotId) {
+            const slotDiv = document.getElementById(`slot-${slotId}`);
+            const playerId = appState.gameState.selectedSlots[slotId];
+            const player = playerId ? appState.players[playerId] : null;
+
+            slotDiv.innerHTML = '';
+            if (player) {
+                let teamIndicator = '';
+                if (appState.gameState.gameMode === 'duplas') {
+                    let teamName = (['2', '4'].includes(String(slotId))) ? 'Time A' : 'Time B';
+                    let teamColor = (teamName === 'Time A') ? 'bg-blue-200 text-blue-800' : 'bg-red-200 text-red-800';
+                    teamIndicator = `<div class="text-xs font-bold px-2 py-0.5 rounded-full ${teamColor}">${teamName}</div>`;
+                }
+                slotDiv.innerHTML = `<div class="bg-white p-3 rounded-lg shadow-md text-center w-32 sm:w-40 transition-all transform hover:scale-105 cursor-pointer" data-slot-id="${slotId}"><div class="font-bold text-lg truncate">${player.name}</div><div class="text-sm text-gray-500 mb-2">Série ${player.series}</div>${teamIndicator}<div id="score-${slotId}" class="flex flex-wrap justify-center items-center gap-2 mt-2 h-auto min-h-[20px] text-2xl"></div></div>`;
+                slotDiv.querySelector(`[data-slot-id="${slotId}"]`).addEventListener('click', () => openPlayerSelectionModal(slotId));
+            } else {
+                let legendHTML = '';
+                if (appState.gameState.gameMode === 'duplas') {
+                    legendHTML = `<div class="team-legend text-${(['2', '4'].includes(String(slotId)) ? 'blue' : 'red')}-300 text-xs mt-1 font-semibold">${(['2', '4'].includes(String(slotId)) ? 'Time A' : 'Time B')}</div>`;
+                }
+                slotDiv.innerHTML = `<button class="add-player-btn w-20 h-20 bg-white/20 rounded-full flex items-center justify-center text-4xl text-white/50 hover:bg-white/40 transition" data-slot-id="${slotId}">+</button>${legendHTML}`;
+                slotDiv.querySelector('.add-player-btn').addEventListener('click', () => openPlayerSelectionModal(slotId));
+            }
+        }
+
         function openPlayerSelectionModal(slotId) {
-            if (gameState.activeGame) return;
-            gameState.targetSlot = slotId;
-            const availablePlayers = Object.values(allPlayers).filter(p => !Object.values(gameState.selectedSlots).includes(p.id));
+            if (appState.gameState.activeGame) return;
+            appState.gameState.targetSlot = slotId;
+            const availablePlayers = Object.values(appState.players).filter(p => !Object.values(appState.gameState.selectedSlots).includes(p.id));
             const modalHTML = `<h3 class="text-2xl font-bold mb-4">Selecione um Jogador</h3><div class="space-y-2 max-h-64 overflow-y-auto">${availablePlayers.map(p => `<button class="w-full text-left p-3 bg-gray-100 rounded-lg hover:bg-blue-100 transition player-select-btn" data-player-id="${p.id}">${p.name}</button>`).join('')}</div><button id="modal-cancel-btn" class="mt-6 bg-gray-200 text-gray-800 font-semibold py-2 px-4 rounded-lg w-full">Cancelar</button>`;
             openModal(modalHTML);
         }
+
         function selectPlayer(playerId) {
-            const currentSlotOfPlayer = Object.keys(gameState.selectedSlots).find(key => gameState.selectedSlots[key] === playerId);
-            if (currentSlotOfPlayer) gameState.selectedSlots[currentSlotOfPlayer] = null;
-            gameState.selectedSlots[gameState.targetSlot] = playerId;
+            const currentSlotOfPlayer = Object.keys(appState.gameState.selectedSlots).find(key => appState.gameState.selectedSlots[key] === playerId);
+            if (currentSlotOfPlayer) appState.gameState.selectedSlots[currentSlotOfPlayer] = null;
+            appState.gameState.selectedSlots[appState.gameState.targetSlot] = playerId;
             closeModal();
             renderAllSlots();
         }
+
         function checkStartGameCondition() {
-            const selectedCount = Object.values(gameState.selectedSlots).filter(Boolean).length;
-            const canStart = (gameState.gameMode === 'duplas') ? (selectedCount === 4) : (selectedCount >= 2);
-            btnStartGame.disabled = !canStart;
-            btnStartGame.className = canStart ? 'bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-6 rounded-lg shadow-md transition' : 'bg-gray-400 text-white font-bold py-3 px-6 rounded-lg shadow-md cursor-not-allowed';
-        }
-        async function startGame() {
-            const selectedPlayerIds = Object.values(appState.gameState.selectedSlots).filter(Boolean);
-            const gameData = {
-                status: 'em_andamento',
-                mode: appState.gameState.gameMode,
-                isRaioMatch: appState.gameState.isRaioMatch,
-                jogadores: { ...appState.gameState.selectedSlots },
-                times: {},
-                placarAtual: {},
-                historicoRodadas: [],
-                dataCriacao: serverTimestamp()
-            };
-
-            if (gameData.mode === 'duplas') {
-                gameData.times = { timeA: [gameData.jogadores[2], gameData.jogadores[4]], timeB: [gameData.jogadores[1], gameData.jogadores[3]] };
-                gameData.placarAtual = { timeA: { pontos: 0, raios: 0 }, timeB: { pontos: 0, raios: 0 } };
-            } else {
-                selectedPlayerIds.forEach(pId => { gameData.times[pId] = [pId]; gameData.placarAtual[pId] = { pontos: 0, raios: 0 }; });
-            }
-
-            try {
-                const docRef = await addDoc(matchesCollectionRef(), gameData);
-                appState.gameState.activeGameId = docRef.id;
-                appState.gameState.activeGame = gameData; // Armazena localmente para evitar reads
-                // Inicia o ouvinte para esta partida específica (opcional, mas bom para multi-dispositivo)
-                // listenToActiveMatch(docRef.id);
-
-                // Atualiza UI
-                ui.gameMode.statusText.textContent = gameData.isRaioMatch ? 'Partida de Raio em andamento!' : 'Partida em andamento!';
-                ui.gameMode.startBtn.style.display = 'none';
-                ui.gameMode.activeButtons.style.display = 'flex';
-                document.getElementById('game-type-selector').style.display = 'none';
-                document.getElementById('raio-mode-selector').style.display = 'none';
-            } catch (error) {
-                console.error("Erro ao iniciar a partida:", error);
-                alert("Não foi possível iniciar a partida. Tente novamente.");
-            }
-        }
-        function openScoreRoundModal() {
-            let teamsOrPlayers, teamIds;
-            if (gameState.gameMode === 'duplas') {
-                const playersA = gameState.activeGame.times.timeA.map(pId => allPlayers[pId].name).join(' & ');
-                const playersB = gameState.activeGame.times.timeB.map(pId => allPlayers[pId].name).join(' & ');
-                teamsOrPlayers = [`Time A (${playersA})`, `Time B (${playersB})`];
-                teamIds = ['timeA', 'timeB'];
-            } else {
-                const activePlayers = Object.values(gameState.activeGame.jogadores).filter(Boolean);
-                teamsOrPlayers = activePlayers.map(pId => allPlayers[pId].name);
-                teamIds = activePlayers;
-            }
-            const modalHTML = `<h3 class="text-2xl font-bold mb-4">Quem venceu a rodada?</h3><div class="space-y-3">${teamsOrPlayers.map((name, index) => `<button class="w-full text-center p-3 bg-gray-100 rounded-lg hover:bg-blue-100 transition font-semibold score-round-btn" data-winner-id="${teamIds[index]}">${name}</button>`).join('')}</div><button id="modal-cancel-btn" class="mt-6 bg-gray-200 text-gray-800 font-semibold py-2 px-4 rounded-lg w-full">Cancelar</button>`;
-            openModal(modalHTML);
-        }
-        async function scoreRound(winnerId) {
-            if (!appState.gameState.activeGameId) return;
-            const matchDocRef = doc(matchesCollectionRef(), appState.gameState.activeGameId);
-            const game = appState.gameState.activeGame;
-
-            const newRound = { vencedor: winnerId, timestamp: new Date() };
-            game.historicoRodadas.push(newRound);
-
-            const placar = game.placarAtual;
-
-            // Lógica de pontuação
-            if (game.isRaioMatch) {
-                placar[winnerId].raios++;
-            } else {
-                placar[winnerId].pontos++;
-                if (placar[winnerId].pontos >= POINTS_TO_COMPLETE_RAIO) {
-                    placar[winnerId].raios++;
-
-                    let losersHadZero = true;
-                    Object.keys(placar).forEach(id => {
-                        if (id !== winnerId && placar[id].pontos > 0) losersHadZero = false;
-                        placar[id].pontos = 0; // Zera para todos
-                    });
-
-                    await updatePlayerStatsAfterRaio(winnerId, losersHadZero);
-                }
-            }
-
-            try {
-                await updateDoc(matchDocRef, {
-                    placarAtual: placar,
-                    historicoRodadas: game.historicoRodadas
-                });
-                // A UI será atualizada pelo ouvinte de partida (se implementado)
-                // ou manualmente:
-                updateScoreboardUI();
-                closeModal();
-            } catch (error) {
-                console.error("Erro ao lançar ponto:", error);
-                game.historicoRodadas.pop(); // Reverte a lógica local se falhar
-            }
-        }
-        function undoLastRound() {
-            if (!gameState.activeGame || gameState.activeGame.historicoRodadas.length === 0) {
-                alert('Nenhuma rodada para desfazer.');
-                return;
-            }
-            const lastRound = gameState.activeGame.historicoRodadas.pop();
-            const placar = gameState.activeGame.placarAtual;
-            const winnerId = lastRound.vencedor;
-
-            // Lógica de Desfazer Simplificada
-            if (gameState.activeGame.isRaioMatch) {
-                if (placar[winnerId].raios > 0) placar[winnerId].raios--;
-            } else {
-                if (placar[winnerId].pontos > 0) {
-                    placar[winnerId].pontos--;
-                } else if (placar[winnerId].raios > 0) {
-                    placar[winnerId].raios--;
-                    placar[winnerId].pontos = POINTS_TO_COMPLETE_RAIO - 1;
-                    // Nota: A lógica de reverter stats (raios/lambretas) não é implementada no undo para simplicidade.
-                }
-            }
-            updateScoreboardUI();
-        }
-        function endGame() {
-            if (!gameState.activeGame) return;
-            let winnerText, scoreText, rawWinnerText;
-            const placar = gameState.activeGame.placarAtual;
-            const getFinalScore = (score) => score.raios * POINTS_TO_COMPLETE_RAIO + score.pontos;
-
-            if (gameState.gameMode === 'duplas') {
-                const scoreA = getFinalScore(placar.timeA);
-                const scoreB = getFinalScore(placar.timeB);
-                const winner = scoreA > scoreB ? 'timeA' : (scoreB > scoreA ? 'timeB' : null);
-                if (winner) {
-                    const winnerPlayers = gameState.activeGame.times[winner].map(pId => allPlayers[pId].name).join(' e ');
-                    winnerText = `Vitória do ${winner.replace('time','Time ')}!`;
-                    scoreText = `(${winnerPlayers}) - Placar Final: ${scoreA} a ${scoreB}`;
-                    rawWinnerText = `O time de ${winnerPlayers}`;
-                } else {
-                    winnerText = "Empate!";
-                    scoreText = `Placar Final: Time A ${scoreA} - ${scoreB} Time B`;
-                    rawWinnerText = "A partida terminou empatada";
-                }
-            } else {
-                const scores = Object.entries(placar).map(([id, score]) => ({ id, score: getFinalScore(score) }));
-                scores.sort((a,b) => b.score - a.score);
-                const winnerId = scores[0].id;
-                const winnerPlayer = allPlayers[winnerId];
-                winnerText = `Vitória de ${winnerPlayer.name}!`;
-                scoreText = `Pontuação Final: ${scores[0].score} pontos`;
-                rawWinnerText = `O jogador ${winnerPlayer.name}`;
-            }
-
-            document.getElementById('gameOverWinnerText').textContent = winnerText;
-            document.getElementById('gameOverScoreText').textContent = scoreText;
-            const shareMessage = encodeURIComponent(`🏆 Vitória no Placar do Dominó! ${rawWinnerText} acaba de vencer a partida. #PlacarDoDomino`);
-            btnShareWhatsapp.onclick = () => window.open(`https://api.whatsapp.com/send?text=${shareMessage}`, '_blank');
-            switchView('view-game-over');
-        }
-        function updatePlayerStats(winnerId, losersHadZero) {
-                const winnerTeam = gameState.activeGame.times[winnerId];
-                winnerTeam.forEach(pId => allPlayers[pId].raios++);
-
-                if(losersHadZero) {
-                Object.keys(gameState.activeGame.times).forEach(teamId => {
-                    if(teamId !== winnerId) {
-                        gameState.activeGame.times[teamId].forEach(pId => allPlayers[pId].lambretas++);
-                    }
-                });
-                }
-                renderPlayers();
-        }
-        function updateScoreboardUI() {
-            if (!gameState.activeGame) return;
-            const isRaio = gameState.activeGame.isRaioMatch;
-            const getScoreHTML = (score, color = 'yellow') => {
-                const raios = score.raios;
-                const pontos = isRaio ? 0 : score.pontos;
-                const raioHTML = Array(raios).fill(`<span class="text-${color}-400">⚡️</span>`).join('');
-                const pontoHTML = Array(pontos).fill(`<div class="point-dot bg-${color}-500"></div>`).join('');
-                return `${raioHTML} ${pontoHTML}`;
-            };
-            if (gameState.gameMode === 'duplas') {
-                ['timeA', 'timeB'].forEach(teamId => {
-                    const score = gameState.activeGame.placarAtual[teamId];
-                    const teamColor = teamId === 'timeA' ? 'blue' : 'red';
-                    gameState.activeGame.times[teamId].forEach(pId => {
-                        const slotId = Object.keys(gameState.activeGame.jogadores).find(key => gameState.activeGame.jogadores[key] === pId);
-                        const scoreDiv = document.getElementById(`score-${slotId}`);
-                        if(scoreDiv) scoreDiv.innerHTML = getScoreHTML(score, teamColor);
-                    });
-                });
-            } else {
-                    Object.keys(gameState.activeGame.placarAtual).forEach(playerId => {
-                    const score = gameState.activeGame.placarAtual[playerId];
-                    const slotId = Object.keys(gameState.activeGame.jogadores).find(key => gameState.activeGame.jogadores[key] === playerId);
-                    const scoreDiv = document.getElementById(`score-${slotId}`);
-                    if(scoreDiv) scoreDiv.innerHTML = getScoreHTML(score, 'yellow');
-                    });
-            }
-        }
-        async function updatePlayerStatsAfterRaio(winnerId, losersHadZero) {
-            const batch = writeBatch(db);
-            const game = appState.gameState.activeGame;
-            const winnerTeamPlayerIds = game.times[winnerId];
-
-            const vitoriasToAdd = game.isRaioMatch ? 4 : 1;
-
-            winnerTeamPlayerIds.forEach(pId => {
-                const playerRef = doc(playersCollectionRef(), pId);
-                batch.update(playerRef, {
-                    raios: (appState.players[pId].raios || 0) + 1,
-                    vitorias: (appState.players[pId].vitorias || 0) + vitoriasToAdd
-                });
-            });
-
-            if (losersHadZero) {
-                Object.keys(game.times).forEach(teamId => {
-                    if (teamId !== winnerId) {
-                        game.times[teamId].forEach(pId => {
-                            const playerRef = doc(playersCollectionRef(), pId);
-                            batch.update(playerRef, {
-                                lambretas: (appState.players[pId].lambretas || 0) + 1
-                            });
-                        });
-                    }
-                });
-            }
-
-            try {
-                await batch.commit();
-                console.log("Estatísticas dos jogadores atualizadas após o Raio.");
-            } catch (error) {
-                console.error("Erro ao atualizar estatísticas:", error);
-            }
+            const selectedCount = Object.values(appState.gameState.selectedSlots).filter(Boolean).length;
+            const canStart = (appState.gameState.gameMode === 'duplas') ? (selectedCount === 4) : (selectedCount >= 2);
+            ui.gameMode.startBtn.disabled = !canStart;
+            ui.gameMode.startBtn.className = canStart ? 'bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-6 rounded-lg shadow-md transition' : 'bg-gray-400 text-white font-bold py-3 px-6 rounded-lg shadow-md cursor-not-allowed';
         }
 
         // =======================================================
-        // LÓGICA DO FIREBASE E INICIALIZAÇÃO
+        // LÓGICA DE ADMIN (FAB)
         // =======================================================
+        function toggleAdminPanel() { ui.adminFab.button.classList.toggle('active'); ui.adminFab.defaultIcon.classList.toggle('hidden'); ui.adminFab.closeIcon.classList.toggle('hidden'); ui.adminFab.panel.classList.toggle('active'); if (!ui.adminFab.panel.classList.contains('active') && !appState.isAdminMode) { ui.adminFab.loginView.style.display = 'block'; ui.adminFab.controlsView.style.display = 'none'; ui.adminFab.keyInput.value = ''; }}
+        function activateAdminMode() { if(ui.adminFab.keyInput.value === ADMIN_KEY) { appState.isAdminMode = true; ui.adminFab.loginView.style.display = 'none'; ui.adminFab.controlsView.style.display = 'block'; } else { alert('Senha incorreta!'); }}
 
-        function setupFirestoreListeners() {
-            onSnapshot(query(playersCollectionRef()), (snapshot) => {
-                const playersData = {};
-                snapshot.forEach(doc => {
-                    playersData[doc.id] = { id: doc.id, ...doc.data() };
-                });
-                appState.players = playersData;
-                renderScoreboard();
-            });
+        // =======================================================
+        // EVENT LISTENERS
+        // =======================================================
+        ui.adminFab.button.addEventListener('click', toggleAdminPanel);
+        ui.adminFab.activateBtn.addEventListener('click', activateAdminMode);
 
-            onSnapshot(query(activityFeedCollectionRef(), orderBy("timestamp", "desc"), limit(5)), (snapshot) => {
-                appState.activityFeed = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-                renderActivityFeed();
-            });
-        }
-
-        // LISTENERS
-        ui.gameMode.goToBtn.addEventListener('click', () => switchView('view-scoreboard'));
-        ui.gameMode.backBtn.addEventListener('click', () => { if (!gameState.activeGame) { gameState.gameMode = btn.dataset.mode; updateGameModeUI(); }});
-        ui.gameMode.raioCheckbox.addEventListener('change', (e) => { if (!gameState.activeGame) gameState.isRaioMatch = e.target.checked; });
+        ui.gameMode.goToBtn.addEventListener('click', () => { resetGameState(); switchView('view-game-table'); });
+        ui.gameMode.backBtn.addEventListener('click', () => switchView('view-scoreboard'));
+        ui.gameMode.modeButtons.forEach(btn => btn.addEventListener('click', () => { if (!appState.gameState.activeGame) { appState.gameState.gameMode = btn.dataset.mode; updateGameModeUI(); }}));
+        ui.gameMode.raioCheckbox.addEventListener('change', (e) => { if (!appState.gameState.activeGame) appState.gameState.isRaioMatch = e.target.checked; });
         ui.gameMode.startBtn.addEventListener('click', startGame);
-        ui.gameMode.launchScoreBtn.addEventListener('click', openScoreRoundModal);
-        ui.gameMode.undoBtn.addEventListener('click', undoLastRound); // CORREÇÃO: Listener adicionado
-        ui.gameMode.endBtn.addEventListener('click', endGame);         // CORREÇÃO: Listener adicionado
-        ui.gameMode.newGameBtn.addEventListener('click', () => { resetGameState(); switchView('view-game-table'); });
-        ui.playersListDiv.addEventListener('click', e => { const t = e.target.closest('.player-name-clickable'); if(t) openPlayerDetailsModal(t.dataset.playerId);});
+
+        ui.playersListDiv.addEventListener('click', e => {
+            const target = e.target.closest('.player-name-clickable');
+            if (target) openPlayerDetailsModal(target.dataset.playerId);
+        });
+
         ui.modal.container.addEventListener('click', e => {
             if (e.target.id === 'modalContainer' || e.target.closest('#modal-close-btn') || e.target.id === 'modal-cancel-btn') closeModal();
             const playerBtn = e.target.closest('.player-select-btn');
             if (playerBtn) selectPlayer(playerBtn.dataset.playerId);
-            const scoreBtn = e.target.closest('.score-round-btn');
-            if (scoreBtn) scoreRound(scoreBtn.dataset.winnerId);
         });
 
-
+        // =======================================================
         // INICIALIZAÇÃO
-        renderPlayers();
-        renderActivityFeed();
-        updateGameModeUI();
-
+        // =======================================================
         onAuthStateChanged(auth, async (user) => {
             if (user) {
                 appState.userId = user.uid;
                 setupFirestoreListeners();
             } else {
-                try {
-                    await signInAnonymously(auth);
-                } catch(e) {
-                    console.error("Erro ao fazer login anônimo:", e);
-                }
+                try { await signInAnonymously(auth); } catch(e) { console.error("Erro no login anônimo:", e); }
             }
         });
 
