@@ -143,33 +143,6 @@
         // =======================================================
         function switchView(viewId) { ui.views.forEach(v => v.classList.toggle('active', v.id === viewId)); }
 
-        function renderPlayers() {
-            ui.playersListDiv.innerHTML = Object.values(allPlayers).sort((a, b) => a.name.localeCompare(b.name)).map(player => `
-                <div class="bg-white p-4 rounded-xl shadow-sm flex items-center justify-between">
-                    <div><span class="font-bold text-lg player-name-clickable" data-player-id="${player.id}">${player.name}</span><span class="text-sm text-gray-500 ml-2">(Série ${player.series})</span></div>
-                    <div class="text-right"><div class="font-semibold text-blue-600">Raios: ${player.raios}</div><div class="font-semibold text-red-600">Lambretas: ${player.lambretas}</div></div>
-                </div>`).join('');
-        }
-
-        function renderActivityFeed() {
-            activityFeedDiv.innerHTML = activityFeedData.length === 0 ? '<p class="text-gray-500 text-center">Nenhuma atividade recente.</p>' :
-                activityFeedData.map(item => {
-                    let icon = '💬';
-                    if (item.type === 'promotion') icon = '▲';
-                    else if (item.type === 'demotion') icon = '▼';
-                    else if (item.type === 'achievement') icon = '⭐';
-                    const color = item.type === 'promotion' ? 'green' : (item.type === 'demotion' ? 'red' : 'yellow');
-                    return `<div class="p-3 rounded-lg flex items-center gap-3"><span class="text-${color}-500">${icon}</span><div><p class="text-gray-800"><span class="font-semibold">${item.player}</span> ${item.text}</p><p class="text-xs text-gray-400">${item.timestamp.toLocaleString('pt-BR')}</p></div></div>`;
-                }).join('');
-        }
-
-        function openModal(contentHTML) {
-            modalContent.innerHTML = contentHTML;
-            modalContainer.style.display = 'flex';
-        }
-        function closeModal() {
-            modalContainer.style.display = 'none';
-        }
         function renderScoreboard() {
             const players = Object.values(appState.players);
             const seriesOrder = ['A', 'B', 'C', 'D', 'Amador'];
@@ -189,6 +162,32 @@
                     <div class="text-right"><div class="font-semibold text-blue-600">Vitórias: ${player.vitorias || 0}</div><div class="font-semibold text-yellow-600">Raios: ${player.raios || 0}</div></div>
                 </div>`).join('');
         }
+        function renderPlayers() {
+            ui.playersListDiv.innerHTML = Object.values(allPlayers).sort((a, b) => a.name.localeCompare(b.name)).map(player => `
+                <div class="bg-white p-4 rounded-xl shadow-sm flex items-center justify-between">
+                    <div><span class="font-bold text-lg player-name-clickable" data-player-id="${player.id}">${player.name}</span><span class="text-sm text-gray-500 ml-2">(Série ${player.series})</span></div>
+                    <div class="text-right"><div class="font-semibold text-blue-600">Raios: ${player.raios}</div><div class="font-semibold text-red-600">Lambretas: ${player.lambretas}</div></div>
+                </div>`).join('');
+        }
+        function renderActivityFeed() {
+            activityFeedDiv.innerHTML = activityFeedData.length === 0 ? '<p class="text-gray-500 text-center">Nenhuma atividade recente.</p>' :
+                activityFeedData.map(item => {
+                    let icon = '💬';
+                    if (item.type === 'promotion') icon = '▲';
+                    else if (item.type === 'demotion') icon = '▼';
+                    else if (item.type === 'achievement') icon = '⭐';
+                    const color = item.type === 'promotion' ? 'green' : (item.type === 'demotion' ? 'red' : 'yellow');
+                    return `<div class="p-3 rounded-lg flex items-center gap-3"><span class="text-${color}-500">${icon}</span><div><p class="text-gray-800"><span class="font-semibold">${item.player}</span> ${item.text}</p><p class="text-xs text-gray-400">${item.timestamp.toLocaleString('pt-BR')}</p></div></div>`;
+                }).join('');
+        }
+        function openModal(contentHTML) {
+            modalContent.innerHTML = contentHTML;
+            modalContainer.style.display = 'flex';
+        }
+        function closeModal() {
+            modalContainer.style.display = 'none';
+        }
+
         // =======================================================
         // FUNÇÕES DO MODO PARTIDA (COM INTEGRAÇÃO FIREBASE)
         // =======================================================
