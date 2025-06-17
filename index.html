@@ -3,321 +3,1104 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Placar do Dominó v2.0 (Integrado)</title>
+    <title>Placar do Dominó</title>
+    <!-- Tailwind CSS CDN for easy styling -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=Roboto+Condensed:wght@700&display=swap" rel="stylesheet">
-    <style>
-        body { font-family: 'Inter', sans-serif; background-color: #f0f2f5; }
-        .font-condensed { font-family: 'Roboto Condensed', sans-serif; }
-        .view { display: none; }
-        .view.active { display: block; }
+    <style>        
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f0f2f5;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+        .container {
+            background-color: #ffffff;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 600px;
+            text-align: center;
+        }
+        /* Style for the button that toggles admin controls visibility */
+        .toggle-admin-btn {
+            background-color: #4a5568; /* Darker gray */
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.2s ease, transform 0.1s ease;
+            margin-top: 20px; /* Moved to bottom, so top margin */
+            margin-bottom: 0; /* No bottom margin, as it's at the end */
+            font-weight: 600;
+        }
+        .toggle-admin-btn:hover {
+            background-color: #2d3748; /* Even darker gray on hover */
+            transform: translateY(-1px);
+        }
 
-        .admin-fab-container { position: fixed; bottom: 2rem; right: 2rem; z-index: 1000; }
-        .admin-fab { width: 60px; height: 60px; border-radius: 50%; background-color: #1f2937; color: white; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 12px rgba(0,0,0,0.2); cursor: pointer; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
-        .admin-fab:hover { transform: scale(1.1); background-color: #374151; }
-        .admin-fab.active { transform: rotate(45deg); }
-        .admin-actions { position: absolute; bottom: 80px; right: 0; background-color: white; border-radius: 12px; box-shadow: 0 5px 20px rgba(0,0,0,0.15); padding: 1.5rem; width: 300px; transform-origin: bottom right; transform: scale(0.9) translateY(10px); opacity: 0; visibility: hidden; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
-        .admin-actions.active { transform: scale(1) translateY(0); opacity: 1; visibility: visible; }
+        /* Admin Control Panel itself */
+        .admin-panel {
+            margin-top: 20px; /* Separates from content above */
+            padding: 15px;
+            background-color: #e2f0f9;
+            border-radius: 8px;
+            border: 1px solid #c2e1f2;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+            transition: all 0.3s ease-in-out; /* Smooth transition for showing/hiding */
+            overflow: hidden; /* Hide overflow during transition */
+            max-height: 0; /* Hidden by default */
+            opacity: 0; /* Hidden by default */
+            margin-bottom: 20px; /* Space below panel */
+        }
+        .admin-panel.active {
+            max-height: 390px; /* Increased to accommodate new player button */
+            opacity: 1;
+            padding: 15px; /* Restore padding when active */
+        }
+        /* Restore padding for hidden state to prevent jumpiness on toggle */
+        .admin-panel:not(.active) {
+            padding: 0 15px;
+        }
 
-        .achievement-icon { font-size: 1.5rem; filter: grayscale(80%); opacity: 0.4; transition: all 0.3s; }
-        .achievement-icon.unlocked { filter: grayscale(0%); opacity: 1; }
+        .admin-panel input {
+            padding: 8px 12px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            width: 100%;
+            max-width: 250px;
+        }
+        .admin-panel button {
+            background-color: #4CAF50; /* Green */
+            color: white;
+            padding: 8px 15px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+        }
+        .admin-panel button:hover {
+            background-color: #45a049;
+        }
+        .player-item {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            align-items: flex-start;
+            padding: 15px 20px;
+            margin-bottom: 10px;
+            background-color: #f9f9f9;
+            border-radius: 8px;
+            border: 1px solid #e0e0e0;
+            transition: all 0.3s ease;
+        }
+        .player-item:hover {
+            background-color: #f0f0f0;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+        .player-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            margin-bottom: 10px;
+        }
+        .player-name {
+            font-size: 1.1em;
+            font-weight: 600;
+            color: #333;
+            text-align: left;
+            flex-grow: 1;
+            display: flex; /* For aligning name and icon */
+            align-items: center;
+        }
+        .player-series {
+            font-size: 1em;
+            font-weight: 500;
+            color: #666;
+            background-color: #e2e8f0;
+            padding: 4px 8px;
+            border-radius: 6px;
+        }
+        .counter-group {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            margin-bottom: 5px;
+        }
+        .counter-label {
+            font-size: 1em;
+            font-weight: 500;
+            color: #555;
+            flex-grow: 1;
+            text-align: left;
+        }
+        .counter-value {
+            font-size: 1.2em;
+            font-weight: 700;
+            color: #007bff;
+            min-width: 30px;
+            text-align: right;
+            margin-right: 15px;
+        }
+        .score-buttons button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 32px;
+            height: 32px;
+            font-size: 1.2em;
+            cursor: pointer;
+            transition: background-color 0.2s ease, transform 0.1s ease;
+            display: inline-flex;
+            justify-content: center;
+            align-items: center;
+            margin-left: 6px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+        .score-buttons button:hover {
+            background-color: #0056b3;
+            transform: translateY(-1px);
+        }
+        .score-buttons button:active {
+            transform: translateY(1px);
+            box-shadow: none;
+        }
+        .score-buttons button.minus {
+            background-color: #dc3545;
+        }
+        .score-buttons button.minus:hover {
+            background-color: #c82333;
+        }
+        /* Style for disabled buttons */
+        .score-buttons button:disabled, .admin-panel .button:disabled, .edit-icon[disabled], .delete-icon[disabled] {
+            background-color: #cccccc !important;
+            cursor: not-allowed;
+            box-shadow: none;
+            transform: none;
+            opacity: 0.6; /* Dim disabled icons */
+        }
+        /* The reset button now lives INSIDE the admin panel */
+        .reset-button, .add-player-button { /* Apply similar styles to add player button */
+            background-color: #6c757d;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1em;
+            cursor: pointer;
+            margin-top: 15px; /* Margin from other admin controls */
+            transition: background-color 0.2s ease, transform 0.1s ease;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+        .reset-button:hover, .add-player-button:hover {
+            background-color: #5a6268;
+            transform: translateY(-1px);
+        }
+        .reset-button:active, .add-player-button:active {
+            transform: translateY(1px);
+            box-shadow: none;
+        }
+        .add-player-button {
+            background-color: #28a745; /* Green for add */
+        }
+        .add-player-button:hover {
+            background-color: #218838;
+        }
 
-        .player-name-clickable { cursor: pointer; transition: color 0.2s; }
-        .player-name-clickable:hover { color: #2563eb; }
+        .user-id-display {
+            font-size: 0.8em;
+            color: #777;
+            margin-top: 20px;
+            word-break: break-all;
+        }
+        /* Adjusted Message Box styles for better visibility */
+        .message-box {
+            /* These are default styles for the top notification messages */
+            position: fixed; 
+            top: 0;          
+            left: 50%;       
+            transform: translateX(-50%); 
+            width: 90%;      
+            max-width: 500px; 
+            padding: 10px;
+            border-radius: 0 0 8px 8px; 
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            text-align: center;
+            z-index: 1001; 
+            display: none; 
+            box-sizing: border-box; 
+        }
+        .message-box.success {
+            background-color: #e6ffed; /* Light green for success/info */
+            color: #1a5e20; /* Darker green */
+            border: 1px solid #b2f1c8;
+        }
+        .message-box.error {
+            background-color: #ffe6e6; /* Light red for error */
+            color: #cc0000; /* Darker red */
+            border: 1px solid #ffb2b2;
+        }
+        .message-box.info {
+            background-color: #e0f2fe; /* Light blue for info */
+            color: #0056b3; /* Darker blue */
+            border: 1px solid #bfdfff;
+        }
 
-        .mesa-grid { display: grid; grid-template-columns: 1fr 2fr 1fr; grid-template-rows: 1fr 2fr 1fr; grid-template-areas: ". top ." "left middle right" ". bottom ."; aspect-ratio: 1.5 / 1; width: 100%; max-width: 800px; }
-        .player-slot-top { grid-area: top; }
-        .player-slot-left { grid-area: left; }
-        .player-slot-right { grid-area: right; }
-        .player-slot-bottom { grid-area: bottom; }
+        /* Custom modal styles for renaming and confirmations */
+        .custom-modal-content {
+            padding: 15px;
+            text-align: center;
+        }
+        .custom-modal-content input {
+            width: calc(100% - 20px); /* Adjust width for padding */
+            padding: 10px;
+            margin: 15px 0;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            font-size: 1em;
+            box-sizing: border-box; /* Include padding in width */
+        }
+        .custom-modal-content .modal-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+        }
+        .custom-modal-content .modal-buttons button {
+            padding: 8px 15px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+        }
+        .custom-modal-content .modal-buttons .save-btn {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+        }
+        .custom-modal-content .modal-buttons .save-btn:hover {
+            background-color: #45a049;
+        }
+        .custom-modal-content .modal-buttons .cancel-btn {
+            background-color: #6c757d;
+            color: white;
+            border: none;
+        }
+        .custom-modal-content .modal-buttons .cancel-btn:hover {
+            background-color: #5a6268;
+        }
+        /* Styles for Recent Events Log */
+        .recent-events {
+            margin-top: 30px;
+            padding: 20px;
+            background-color: #f0f8ff;
+            border-radius: 12px;
+            border: 1px solid #cceeff;
+            text-align: left;
+        }
+        .recent-events h2 {
+            font-size: 1.5em;
+            font-weight: 700;
+            color: #2c3e50;
+            margin-bottom: 15px;
+            border-bottom: 2px solid #b3d9ff;
+            padding-bottom: 5px;
+        }
+        .event-item {
+            font-size: 0.9em;
+            color: #555;
+            margin-bottom: 8px;
+            line-height: 1.4;
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+        }
+        .event-item .timestamp {
+            font-size: 0.8em;
+            color: #888;
+            min-width: 80px; /* Adjust as needed */
+        }
 
-        .fade-in { animation: fadeIn 0.5s ease-in-out; }
-        @keyframes fadeIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
+        /* Styles for the modal backdrop and content when messageBox acts as a modal */
+        .message-box.modal {
+            position: fixed !important; /* Override default messageBox positioning */
+            top: 0 !important;          
+            left: 0 !important;       
+            transform: none !important; /* IMPORTANT: No transform for full-screen modal */
+            width: 100% !important;      
+            height: 100% !important;     
+            background-color: rgba(0, 0, 0, 0.5) !important; /* Semi-transparent backdrop */
+            display: flex !important;    
+            justify-content: center !important;
+            align-items: center !important;
+            z-index: 1000 !important;    /* Ensure it's on top of everything */
+            padding: 20px !important;    /* Add padding to prevent content touching edges */
+            box-sizing: border-box !important; /* Include padding in width/height */
+            border-radius: 0 !important; /* No rounded corners for full backdrop */
+            box-shadow: none !important; /* No shadow for backdrop */
+        }
 
-        .point-dot { width: 10px; height: 10px; border-radius: 50%; transition: all 0.3s ease; }
-        .team-legend { transition: opacity 0.3s ease-in-out; }
+        .message-box.modal .custom-modal-content {
+            background-color: #ffffff;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 5px 25px rgba(0, 0, 0, 0.3);
+            width: 90%; 
+            max-width: 400px; /* Re-added max-width for modal content itself for better readability */
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+        /* New style for delete icon */
+        .delete-icon {
+            display: none; /* Hidden by default */
+            cursor: pointer;
+            vertical-align: middle;
+            margin-left: 8px;
+            color: #dc3545; /* Reddish color for delete */
+            transition: color 0.2s ease, transform 0.1s ease;
+        }
+        .delete-icon:hover {
+            color: #c82333; /* Darker red on hover */
+            transform: scale(1.1);
+        }
+        /* NOVO: Estilo para o botão de reset quando estiver ativo */
+        .reset-button.active-red {
+            background-color: #dc3545; /* Vermelho perigo */
+            border-color: #dc3545;
+        }
+        .reset-button.active-red:hover {
+            background-color: #c82333; /* Vermelho mais escuro no hover */
+        }
     </style>
+    <!-- Adicionando a referência ao Web App Manifest -->
+    <link rel="manifest" href="/manifest.json">
+    <!-- Favicon para o aplicativo -->
+    <link rel="icon" href="/placar_domino/favicon.ico" type="image/x-icon">
+    <!-- NOVO: Ícone PNG de alta resolução para navegadores e dispositivos -->
+    <link rel="icon" type="image/png" sizes="512x512" href="/placar_domino/icone512.png">
+    <!-- NOVO: Ícone PNG de alta resolução para navegadores e dispositivos -->
+    <link rel="icon" type="image/png" sizes="1024x1024" href="/placar_domino/icone1024.png">
+    <!-- Opcional: Ícone para Apple devices (se o nome do seu ícone for diferente) -->
+    <link rel="apple-touch-icon" href="/placar_domino/seu_icone_512x512.png">
 </head>
-<body class="text-gray-800">
+<body>
+    <div class="container">
+        <h1 class="text-3xl font-bold mb-6 text-gray-800">Placar de Jogadores</h1>
 
-    <div id="app-container" class="container mx-auto max-w-2xl p-4 sm:p-6 lg:p-8">
-
-        <div id="view-scoreboard" class="view active fade-in">
-            <div class="text-center mb-8"><h1 class="text-4xl font-bold font-condensed tracking-wider">PLACAR DO DOMINÓ</h1></div>
-            <div class="flex justify-center mb-12"><button id="btn-go-to-game-mode" class="bg-blue-600 text-white font-bold py-4 px-8 rounded-lg shadow-lg hover:bg-blue-700 transition-all duration-300 transform hover:scale-105"><span class="text-2xl mr-3">🀄</span> Iniciar Modo Partida</button></div>
-            <div id="playersList" class="space-y-3"><div class="text-center text-gray-500 p-8">Carregando placar...</div></div>
-            <div class="mt-10"><h2 class="text-xl font-bold text-gray-700 mb-3">Últimas Atividades</h2><div id="activity-feed" class="space-y-2 bg-white p-4 rounded-xl shadow-sm"><p class="text-gray-500 text-center">Carregando atividades...</p></div></div>
+        <div id="loadingMessage" class="text-gray-600 mb-4">
+            Carregando jogadores...
         </div>
 
-        <div id="view-game-table" class="view fade-in">
-            <div class="flex justify-between items-center mb-6">
-                <button id="btn-back-to-scoreboard" class="text-gray-500 hover:text-gray-800 transition">← Voltar ao Placar</button>
-                <div class="text-center"><h2 class="text-3xl font-bold font-condensed">MODO PARTIDA</h2><p id="game-status-text" class="text-gray-500">Selecione os jogadores para começar</p></div>
-                <div class="w-24"></div>
-            </div>
-            <div id="game-type-selector" class="flex justify-center gap-4 mb-4"><button data-mode="individual" class="game-mode-btn font-semibold py-2 px-4 rounded-lg shadow">Individual</button><button data-mode="duplas" class="game-mode-btn font-semibold py-2 px-4 rounded-lg">Duplas</button></div>
-            <div id="raio-mode-selector" class="flex justify-center items-center gap-2 mb-6"><input type="checkbox" id="raio-mode-checkbox" class="h-5 w-5 rounded border-gray-300 text-blue-600 focus:ring-blue-500 cursor-pointer"><label for="raio-mode-checkbox" class="font-semibold text-gray-700 cursor-pointer select-none">Partida de Raio ⚡️</label></div>
-            <div class="bg-green-800 border-8 border-yellow-800/50 rounded-2xl shadow-2xl p-4 sm:p-8 mesa-grid mx-auto">
-                <div class="flex items-center justify-center player-slot-top"><div id="slot-1" class="player-slot flex flex-col items-center"></div></div>
-                <div class="flex items-center justify-center player-slot-left"><div id="slot-4" class="player-slot flex flex-col items-center"></div></div>
-                <div class="bg-green-700/80 rounded-full flex items-center justify-center"><span class="text-5xl text-white/50 font-condensed">🀄</span></div>
-                <div class="flex items-center justify-center player-slot-right"><div id="slot-2" class="player-slot flex flex-col items-center"></div></div>
-                <div class="flex items-center justify-center player-slot-bottom"><div id="slot-3" class="player-slot flex flex-col items-center"></div></div>
-            </div>
-            <div class="mt-8 text-center space-y-4">
-                <button id="btn-start-game" class="bg-gray-400 text-white font-bold py-3 px-6 rounded-lg shadow-md cursor-not-allowed" disabled>Iniciar Jogo</button>
-                <div id="active-game-buttons" class="hidden flex-wrap justify-center gap-4"><button id="btn-launch-score" class="bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-6 rounded-lg shadow-md transition">Lançar Ponto</button><button id="btn-undo-round" class="bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-3 px-6 rounded-lg shadow-md transition">Desfazer</button><button id="btn-end-game" class="bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-6 rounded-lg shadow-md transition">Encerrar Partida</button></div>
+        <!-- This is the message box for success/error/info. It is now fixed at the top. -->
+        <div id="messageBox" class="message-box"></div>
+
+        <div id="playersList" class="space-y-3">
+            <!-- Player items will be rendered here by JavaScript, grouped by series -->
+        </div>
+
+        <!-- Recent Events Log Section -->
+        <div class="recent-events">
+            <h2>Últimos Eventos</h2>
+            <div id="eventsLog" class="space-y-2">
+                <!-- Event items will be rendered here by JavaScript -->
+                <p class="text-gray-500">Nenhum evento recente.</p>
             </div>
         </div>
 
-        <div id="view-game-over" class="view fade-in text-center">
-             <h2 class="text-2xl text-gray-600">Fim de Jogo</h2>
-            <p id="game-over-winner-text" class="text-5xl font-bold font-condensed my-4 text-blue-600"></p>
-            <p id="game-over-score-text" class="text-xl text-gray-500 mb-8"></p>
-            <div class="flex justify-center gap-4 flex-wrap">
-                 <button id="btn-share-whatsapp" class="bg-green-500 text-white font-bold py-3 px-6 rounded-lg shadow-lg hover:bg-green-600 transition flex items-center gap-2"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg> Compartilhar</button>
-                <button id="btn-new-game" class="bg-blue-600 text-white font-bold py-3 px-6 rounded-lg shadow-lg hover:bg-blue-700 transition">🀄 Nova Partida</button>
-            </div>
+        <!-- Toggle Admin Controls Button (now at the bottom) -->
+        <button id="toggleAdminControlsBtn" class="toggle-admin-btn">
+            Mostrar Controles do Administrador
+        </button>
+
+        <button id="enableNotificationsBtn" style="background-color: #ff9800; color: white; padding: 10px; border-radius: 8px; border: none; cursor: pointer; margin-top: 15px;">
+            🔔 Ativar Notificações
+        </button>
+
+        <!-- Admin Control Panel (hidden by default) -->
+        <div id="adminPanel" class="admin-panel">
+            <h2 class="text-xl font-semibold text-gray-700">Controle de Administrador</h2>
+            <p class="text-sm text-gray-600">Insira a senha de administrador para habilitar edições.</p>
+            <input type="password" id="adminKeyInput" placeholder="Chave de Administrador">
+            <button id="activateAdminBtn">Ativar Modo Admin</button>
+            <div id="adminStatus" class="text-sm text-red-600">Modo Admin: Desativado</div>
+
+            <!-- New: Add Player button -->
+            <!--<button id="addPlayerBtn" class="add-player-button" disabled>
+                Adicionar Novo Jogador
+            </button>-->
+
+            <!-- Reset All button is now inside the admin panel -->
+            <button id="resetScoresBtn" class="reset-button" disabled>
+                Redefinir Tudo (Raios, Lambretas e Séries)
+            </button>
+        </div>
+        
+        <div id="userIdDisplay" class="user-id-display">
+            Seu ID de Usuário: <span id="userIdValue"></span>
         </div>
     </div>
 
-    <!-- Admin FAB -->
-    <div class="admin-fab-container"><div id="admin-actions-panel" class="admin-actions"><h3 class="font-bold text-lg mb-4 text-gray-800">Painel do Administrador</h3><div id="admin-login-view"><p class="text-sm text-gray-600 mb-2">Insira a senha para gerenciar.</p><input type="password" id="adminKeyInput" placeholder="Senha de Admin" class="w-full border-gray-300 rounded-md shadow-sm p-2"><button id="activateAdminBtn" class="w-full mt-3 bg-blue-600 text-white font-semibold py-2 rounded-md hover:bg-blue-700 transition">Ativar</button></div><div id="admin-controls-view" class="hidden space-y-3"><button id="addPlayerBtn_fab" class="w-full bg-green-500 text-white font-semibold py-2 rounded-md hover:bg-green-600 transition">Adicionar Novo Jogador</button><button id="resetScoresBtn_fab" class="w-full bg-red-600 text-white font-semibold py-2 rounded-md hover:bg-red-700 transition">Redefinir Placar Geral</button><p id="adminStatus" class="text-center text-sm text-green-600 font-semibold pt-2">Modo Admin Ativado</p></div></div><div id="admin-fab-button" class="admin-fab"><svg id="fab-icon-default" xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg><svg id="fab-icon-close" xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="hidden"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></div></div>
-
-    <!-- Modal Genérico -->
-    <div id="modal-container" class="fixed inset-0 bg-black/60 hidden items-center justify-center p-4 z-50"><div id="modal-content" class="bg-white rounded-xl shadow-2xl p-6 w-full max-w-md m-auto"></div></div>
-
+    <!-- Firebase SDKs -->
     <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, doc, addDoc, setDoc, updateDoc, deleteDoc, onSnapshot, collection, query, orderBy, limit, serverTimestamp, writeBatch, arrayUnion } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+    // =======================================================
+    // 1. IMPORTS
+    // =======================================================
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+    import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+    import { getFirestore, doc, getDoc, addDoc, setDoc, updateDoc, deleteDoc, onSnapshot, collection, query, getDocs, orderBy, limit, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+    import { getMessaging, getToken, onMessage } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-messaging.js";
 
-        // =======================================================
-        // CONFIGURAÇÃO E ESTADO INICIAL
-        // =======================================================
-        const firebaseConfig = { /* SEU OBJETO DE CONFIGURAÇÃO DO FIREBASE AQUI */ };
+    // =======================================================
+    // 2. VARIÁVEIS GLOBAIS E CONSTANTES
+    // =======================================================
+    let app;
+    let db;
+    let auth;
+    let messaging;
+    let userId = 'anonymous';
+    let isAdminMode = false;
 
-        const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app);
-        const auth = getAuth(app);
+    const firebaseConfig = {
+        apiKey: "AIzaSyBqpkxcl0GkBBHVO8Nxk7UpYd00H4Frklc",
+        authDomain: "placar-domino.firebaseapp.com",
+        projectId: "placar-domino",
+        storageBucket: "placar-domino.firebasestorage.app",
+        messagingSenderId: "187178310074",
+        appId: "1:187178310074:web:5f56292dea8dc776532583",
+        measurementId: "G-BL3W42DJ3M"
+    };
 
-        const ADMIN_KEY = 'Domino25';
-        const POINTS_TO_COMPLETE_RAIO = 4;
-        const appIdentifier = firebaseConfig.appId;
+    const appIdentifier = firebaseConfig.appId;
+    const playersCollectionRef = () => collection(db, `artifacts/${appIdentifier}/public/data/players`);
+    const eventsCollectionRef = () => collection(db, `artifacts/${appIdentifier}/public/data/events`);
 
-        let appState = {
-            players: {},
-            activityFeed: [],
-            isAdminMode: false,
-            userId: null,
-            gameState: {}
-        };
+    const messageBox = document.getElementById('messageBox');
+    const adminKeyInput = document.getElementById('adminKeyInput');
+    const activateAdminBtn = document.getElementById('activateAdminBtn');
+    const adminStatusDiv = document.getElementById('adminStatus');
+    const resetScoresBtn = document.getElementById('resetScoresBtn');
+    const addPlayerBtn = document.getElementById('addPlayerBtn');
+    const eventsLogDiv = document.getElementById('eventsLog');
+    const adminPanel = document.getElementById('adminPanel');
+    const toggleAdminControlsBtn = document.getElementById('toggleAdminControlsBtn');
 
-        // Funções de referência ao Firestore
-        const playersCollectionRef = () => collection(db, `artifacts/${appIdentifier}/public/data/players`);
-        const activityFeedCollectionRef = () => collection(db, `artifacts/${appIdentifier}/public/data/activity`);
-        const matchesCollectionRef = () => collection(db, `artifacts/${appIdentifier}/public/data/matches`);
+    const SERIES_ORDER = ['A', 'B', 'C', 'D', 'Amador'];
+    const MAX_COUNT = 12;
+    const ADMIN_KEY = 'Domino25';
 
-        // SELETORES DE UI (agrupados para organização)
-        const ui = {
-            views: document.querySelectorAll('.view'),
-            playersListDiv: document.getElementById('playersList'),
-            activityFeedDiv: document.getElementById('activity-feed'),
-            adminFab: { button: document.getElementById('admin-fab-button'), panel: document.getElementById('admin-actions-panel'), defaultIcon: document.getElementById('fab-icon-default'), closeIcon: document.getElementById('fab-icon-close'), loginView: document.getElementById('admin-login-view'), controlsView: document.getElementById('admin-controls-view'), keyInput: document.getElementById('adminKeyInput'), activateBtn: document.getElementById('activateAdminBtn'), addPlayerBtn: document.getElementById('addPlayerBtn_fab'), resetBtn: document.getElementById('resetScoresBtn_fab')},
-            modal: { container: document.getElementById('modal-container'), content: document.getElementById('modal-content')},
-            gameMode: { goToBtn: document.getElementById('btn-go-to-game-mode'), backBtn: document.getElementById('btn-back-to-scoreboard'), modeButtons: document.querySelectorAll('.game-mode-btn'), raioCheckbox: document.getElementById('raio-mode-checkbox'), startBtn: document.getElementById('btn-start-game'), activeButtons: document.getElementById('active-game-buttons'), launchScoreBtn: document.getElementById('btn-launch-score'), undoBtn: document.getElementById('btn-undo-round'), endBtn: document.getElementById('btn-end-game'), newGameBtn: document.getElementById('btn-new-game'), shareBtn: document.getElementById('btn-share-whatsapp'), statusText: document.getElementById('game-status-text'), gameOver: { winnerText: document.getElementById('game-over-winner-text'), scoreText: document.getElementById('game-over-score-text')}}
-        };
+    // =======================================================
+    // 3. DEFINIÇÃO DE TODAS AS FUNÇÕES
+    // =======================================================
 
-        // =======================================================
-        // FUNÇÕES PRINCIPAIS DE RENDERIZAÇÃO
-        // =======================================================
-        function switchView(viewId) { ui.views.forEach(v => v.classList.toggle('active', v.id === viewId)); }
+    function showMessage(message, type = 'info', contentElement = null) {
+        messageBox.style.cssText = '';
+        messageBox.textContent = '';
+        messageBox.className = `message-box ${type}`;
 
-        function renderScoreboard() {
-            const players = Object.values(appState.players);
-            const seriesOrder = ['A', 'B', 'C', 'D', 'Amador'];
-
-            players.sort((a, b) => {
-                const seriesIndexA = seriesOrder.indexOf(a.series || 'Amador');
-                const seriesIndexB = seriesOrder.indexOf(b.series || 'Amador');
-                if (seriesIndexA !== seriesIndexB) return seriesIndexA - seriesIndexB;
-                if ((b.raios || 0) !== (a.raios || 0)) return (b.raios || 0) - (a.raios || 0);
-                if ((b.vitorias || 0) !== (a.vitorias || 0)) return (b.vitorias || 0) - (a.vitorias || 0);
-                return (a.lambretas || 0) - (b.lambretas || 0);
+        if (contentElement) {
+            messageBox.innerHTML = '';
+            messageBox.appendChild(contentElement);
+            messageBox.classList.add('modal');
+            Object.assign(messageBox.style, {
+                position: 'fixed', top: '0', left: '0', transform: 'none',
+                width: '100%', height: '100%', backgroundColor: 'rgba(0, 0, 0, 0.5)',
+                display: 'flex', justifyContent: 'center', alignItems: 'center',
+                zIndex: '1000', padding: '20px', borderRadius: '0', boxShadow: 'none'
             });
+        } else {
+            messageBox.textContent = message;
+            Object.assign(messageBox.style, {
+                position: 'fixed', top: '0', left: '50%', transform: 'translateX(-50%)',
+                width: '90%', maxWidth: '500px', padding: '10px',
+                borderRadius: '0 0 8px 8px', boxShadow: '0 4px 8px rgba(0, 0, 0, 0.2)',
+                textAlign: 'center', zIndex: '1001', display: 'block', height: '', backgroundColor: ''
+            });
+        }
+        messageBox.style.display = 'block';
 
-            ui.playersListDiv.innerHTML = players.map(player => `
-                <div class="bg-white p-4 rounded-xl shadow-sm flex items-center justify-between">
-                    <div><span class="font-bold text-lg player-name-clickable" data-player-id="${player.id}">${player.name}</span><span class="text-sm text-gray-500 ml-2">(Série ${player.series})</span></div>
-                    <div class="text-right"><div class="font-semibold text-blue-600">Vitórias: ${player.vitorias || 0}</div><div class="font-semibold text-yellow-600">Raios: ${player.raios || 0}</div></div>
-                </div>`).join('');
+        if (type !== 'modal') {
+            setTimeout(() => { closeMessageBox(); }, 5000);
+        }
+    }
+
+    function closeMessageBox() {
+        messageBox.style.display = 'none';
+        messageBox.className = 'message-box';
+        messageBox.innerHTML = '';
+        messageBox.style.cssText = '';
+    }
+
+    function renderEvents(events) {
+        eventsLogDiv.innerHTML = '';
+
+        if (events.length === 0) {
+            eventsLogDiv.innerHTML = '<p class="text-gray-500">Nenhum evento recente.</p>';
+            return;
         }
 
-        // ... (resto das funções de renderização)
+        events.forEach(event => {
+            const eventItem = document.createElement('div');
+            eventItem.className = 'event-item';
+            const date = event.timestamp ? event.timestamp.toDate() : new Date();
+            const formattedTime = date.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+            const formattedDate = date.toLocaleDateString('pt-BR');
+            eventItem.innerHTML = `
+            <span class="timestamp">${formattedDate} ${formattedTime}</span>
+            <span>${event.message}</span>
+            <svg class="delete-event-icon" data-event-id="${event.id}" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="cursor:pointer; margin-left: auto; display: none;">
+                <path d="M3 6h18"/>
+                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/> </svg>`;
+            eventsLogDiv.appendChild(eventItem);
+        });
+        // NOVO: Adiciona os ouvintes de clique nos ícones de lixeira
+        eventsLogDiv.querySelectorAll('.delete-event-icon').forEach(icon => {
+            icon.addEventListener('click', handleDeleteEvent);
+        });
 
-        // =======================================================
-        // FUNÇÕES DO MODO PARTIDA (COM INTEGRAÇÃO FIREBASE)
-        // =======================================================
+        // É importante chamar a função que atualiza a visibilidade aqui também
+        updateControlButtonsState();
+    }
 
-        function createInitialGameState() { /* ... */ }
-        function resetGameState() { /* ... */ }
-        function renderAllSlots() { /* ... */ }
-
-        async function startGame() {
-            const selectedPlayerIds = Object.values(appState.gameState.selectedSlots).filter(Boolean);
-            const gameData = {
-                status: 'em_andamento',
-                mode: appState.gameState.gameMode,
-                isRaioMatch: appState.gameState.isRaioMatch,
-                jogadores: { ...appState.gameState.selectedSlots },
-                times: {},
-                placarAtual: {},
-                historicoRodadas: [],
-                dataCriacao: serverTimestamp()
-            };
-
-            if (gameData.mode === 'duplas') {
-                gameData.times = { timeA: [gameData.jogadores[2], gameData.jogadores[4]], timeB: [gameData.jogadores[1], gameData.jogadores[3]] };
-                gameData.placarAtual = { timeA: { pontos: 0, raios: 0 }, timeB: { pontos: 0, raios: 0 } };
+    function updateControlButtonsState() {
+        // Controla botões de score, ícones de edição e exclusão de jogadores
+        const allScoreButtons = document.querySelectorAll('.score-buttons button, .edit-icon, .delete-icon');
+        allScoreButtons.forEach(el => {
+            if (isAdminMode) {
+                el.style.display = 'inline-flex'; // ou 'inline-block'
+                el.removeAttribute('disabled');
             } else {
-                selectedPlayerIds.forEach(pId => { gameData.times[pId] = [pId]; gameData.placarAtual[pId] = { pontos: 0, raios: 0 }; });
-            }
-
-            try {
-                const docRef = await addDoc(matchesCollectionRef(), gameData);
-                appState.gameState.activeGameId = docRef.id;
-                appState.gameState.activeGame = gameData; // Armazena localmente para evitar reads
-                // Inicia o ouvinte para esta partida específica (opcional, mas bom para multi-dispositivo)
-                // listenToActiveMatch(docRef.id);
-
-                // Atualiza UI
-                ui.gameMode.statusText.textContent = gameData.isRaioMatch ? 'Partida de Raio em andamento!' : 'Partida em andamento!';
-                ui.gameMode.startBtn.style.display = 'none';
-                ui.gameMode.activeButtons.style.display = 'flex';
-                document.getElementById('game-type-selector').style.display = 'none';
-                document.getElementById('raio-mode-selector').style.display = 'none';
-            } catch (error) {
-                console.error("Erro ao iniciar a partida:", error);
-                alert("Não foi possível iniciar a partida. Tente novamente.");
-            }
-        }
-
-        async function scoreRound(winnerId) {
-            if (!appState.gameState.activeGameId) return;
-            const matchDocRef = doc(matchesCollectionRef(), appState.gameState.activeGameId);
-            const game = appState.gameState.activeGame;
-
-            const newRound = { vencedor: winnerId, timestamp: new Date() };
-            game.historicoRodadas.push(newRound);
-
-            const placar = game.placarAtual;
-
-            // Lógica de pontuação
-            if (game.isRaioMatch) {
-                placar[winnerId].raios++;
-            } else {
-                placar[winnerId].pontos++;
-                if (placar[winnerId].pontos >= POINTS_TO_COMPLETE_RAIO) {
-                    placar[winnerId].raios++;
-
-                    let losersHadZero = true;
-                    Object.keys(placar).forEach(id => {
-                        if (id !== winnerId && placar[id].pontos > 0) losersHadZero = false;
-                        placar[id].pontos = 0; // Zera para todos
-                    });
-
-                    await updatePlayerStatsAfterRaio(winnerId, losersHadZero);
-                }
-            }
-
-            try {
-                await updateDoc(matchDocRef, {
-                    placarAtual: placar,
-                    historicoRodadas: game.historicoRodadas
-                });
-                // A UI será atualizada pelo ouvinte de partida (se implementado)
-                // ou manualmente:
-                updateScoreboardUI();
-                closeModal();
-            } catch (error) {
-                console.error("Erro ao lançar ponto:", error);
-                game.historicoRodadas.pop(); // Reverte a lógica local se falhar
-            }
-        }
-
-        async function updatePlayerStatsAfterRaio(winnerId, losersHadZero) {
-            const batch = writeBatch(db);
-            const game = appState.gameState.activeGame;
-            const winnerTeamPlayerIds = game.times[winnerId];
-
-            const vitoriasToAdd = game.isRaioMatch ? 4 : 1;
-
-            winnerTeamPlayerIds.forEach(pId => {
-                const playerRef = doc(playersCollectionRef(), pId);
-                batch.update(playerRef, {
-                    raios: (appState.players[pId].raios || 0) + 1,
-                    vitorias: (appState.players[pId].vitorias || 0) + vitoriasToAdd
-                });
-            });
-
-            if (losersHadZero) {
-                Object.keys(game.times).forEach(teamId => {
-                    if (teamId !== winnerId) {
-                        game.times[teamId].forEach(pId => {
-                            const playerRef = doc(playersCollectionRef(), pId);
-                            batch.update(playerRef, {
-                                lambretas: (appState.players[pId].lambretas || 0) + 1
-                            });
-                        });
-                    }
-                });
-            }
-
-            try {
-                await batch.commit();
-                console.log("Estatísticas dos jogadores atualizadas após o Raio.");
-            } catch (error) {
-                console.error("Erro ao atualizar estatísticas:", error);
-            }
-        }
-
-        // ... (Restante das funções de jogo: endGame, undoRound, etc. precisam ser adaptadas)
-
-        // =======================================================
-        // LÓGICA DO FIREBASE E INICIALIZAÇÃO
-        // =======================================================
-
-        function setupFirestoreListeners() {
-            onSnapshot(query(playersCollectionRef()), (snapshot) => {
-                const playersData = {};
-                snapshot.forEach(doc => {
-                    playersData[doc.id] = { id: doc.id, ...doc.data() };
-                });
-                appState.players = playersData;
-                renderScoreboard();
-            });
-
-            onSnapshot(query(activityFeedCollectionRef(), orderBy("timestamp", "desc"), limit(5)), (snapshot) => {
-                appState.activityFeed = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-                renderActivityFeed();
-            });
-        }
-
-        onAuthStateChanged(auth, async (user) => {
-            if (user) {
-                appState.userId = user.uid;
-                setupFirestoreListeners();
-            } else {
-                try {
-                    await signInAnonymously(auth);
-                } catch(e) {
-                    console.error("Erro ao fazer login anônimo:", e);
-                }
+                el.style.display = 'none';
+                el.setAttribute('disabled', 'true');
             }
         });
 
-    </script>
+        // Controla o botão de ADICIONAR JOGADOR (agora na lista)
+        const addPlayerBtn = document.getElementById('addPlayerBtn');
+        if (addPlayerBtn) {
+            addPlayerBtn.style.display = isAdminMode ? 'inline-block' : 'none';
+            addPlayerBtn.disabled = !isAdminMode;
+        }
+
+        // Controla o botão de RESETAR TUDO (cor e estado)
+        const resetScoresBtn = document.getElementById('resetScoresBtn');
+        if (resetScoresBtn) {
+            resetScoresBtn.disabled = !isAdminMode;
+            if (isAdminMode) {
+                resetScoresBtn.classList.add('active-red');
+            } else {
+                resetScoresBtn.classList.remove('active-red');
+            }
+    }
+
+    // Controla os ícones de exclusão de eventos
+    const deleteEventIcons = document.querySelectorAll('.delete-event-icon');
+    deleteEventIcons.forEach(icon => {
+        icon.style.display = isAdminMode ? 'inline-block' : 'none';
+    });
+
+    // Controla o status do painel de admin
+    const adminStatusDiv = document.getElementById('adminStatus');
+    if (isAdminMode) {
+        adminStatusDiv.className = 'text-sm text-green-600';
+        adminStatusDiv.textContent = 'Modo Admin: Ativado';
+    } else {
+        adminStatusDiv.className = 'text-sm text-red-600';
+        adminStatusDiv.textContent = 'Modo Admin: Desativado';
+    }
+}
+
+    async function requestPermissionAndGetToken(swRegistration) {
+        console.log('Solicitando permissão para notificações...');
+        try {
+            const permission = await Notification.requestPermission();
+            if (permission === 'granted') {
+                console.log('Permissão para notificação concedida.');
+                const fcmToken = await getToken(messaging, {
+                    vapidKey: 'BJdf45m2Tewt6PAawR7dbwpIwhP_iEsA4wirxSSOxd6dqhj1tGAJe_zTo3CznlFeTeHLdvOTYi6XjOdnbaYcqQw',
+                    serviceWorkerRegistration: swRegistration
+                });
+                if (fcmToken) {
+                    console.log('Token FCM obtido:', fcmToken);
+                    const subscriptionsCollectionRef = collection(db, `artifacts/${appIdentifier}/public/data/subscriptions`);
+                    const tokenDocRef = doc(subscriptionsCollectionRef, fcmToken);
+                    await setDoc(tokenDocRef, { userId: userId, createdAt: serverTimestamp() });
+                    showMessage('Notificações ativadas com sucesso!', 'success');
+                }
+            } else {
+                showMessage('Você não permitiu o envio de notificações.', 'info');
+            }
+        } catch (error) {
+            console.error('Erro ao solicitar permissão ou obter token:', error);
+            showMessage('Ocorreu um erro ao tentar ativar as notificações.', 'error');
+        }
+    }
+
+    function renderPlayers(players) {
+        const playersListDiv = document.getElementById('playersList');
+        playersListDiv.innerHTML = '';
+
+        if (players.length === 0) {
+            playersListDiv.innerHTML = '<p class="text-gray-500">Nenhum jogador para exibir.</p>';
+            return;
+        }
+
+        const playersBySeries = SERIES_ORDER.reduce((acc, series) => {
+            acc[series] = [];
+            return acc;
+        }, {});
+
+        players.forEach(player => {
+            const series = player.series || 'Amador';
+            if (playersBySeries[series]) {
+                playersBySeries[series].push(player);
+            } else {
+                playersBySeries['Amador'].push(player);
+            }
+        });
+
+        SERIES_ORDER.forEach(series => {
+            if (playersBySeries[series].length > 0) {
+                const seriesHeading = document.createElement('h2');
+                seriesHeading.className = 'series-heading';
+                seriesHeading.textContent = `Série ${series}`;
+                playersListDiv.appendChild(seriesHeading);
+
+                playersBySeries[series].forEach(player => {
+                    const playerItem = document.createElement('div');
+                    playerItem.className = 'player-item';
+                    playerItem.dataset.playerId = player.id;
+                    playerItem.innerHTML = `
+                        <div class="player-info">
+                            <span class="player-name">
+                                ${player.name}
+                                <svg class="edit-icon" data-id="${player.id}" data-name="${player.name}" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/><path d="M18 13V7"/></svg>
+                                <svg class="delete-icon" data-id="${player.id}" data-name="${player.name}" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg>
+                            </span>
+                            <span class="player-series">Série: ${player.series || 'Amador'}</span>
+                        </div>
+                        <div class="counter-group">
+                            <span class="counter-label">Raios:</span>
+                            <span class="counter-value" data-raios>${player.raios}</span>
+                            <div class="score-buttons"><button class="minus-btn" data-id="${player.id}" data-type="raios" data-action="minus">-</button><button class="plus-btn" data-id="${player.id}" data-type="raios" data-action="plus">+</button></div>
+                        </div>
+                        <div class="counter-group">
+                            <span class="counter-label">Lambreta:</span>
+                            <span class="counter-value" data-lambreta>${player.lambreta}</span>
+                            <div class="score-buttons"><button class="minus-btn" data-id="${player.id}" data-type="lambreta" data-action="minus">-</button><button class="plus-btn" data-id="${player.id}" data-type="lambreta" data-action="plus">+</button></div>
+                        </div>`;
+                    playersListDiv.appendChild(playerItem);
+                });
+            }
+        });
+        // =======================================================
+        // NOVO: CRIA E ADICIONA O BOTÃO "ADICIONAR JOGADOR"
+        // =======================================================
+        const addPlayerBtnContainer = document.createElement('div');
+        addPlayerBtnContainer.className = 'mt-4'; // Adiciona um pouco de espaço no topo
+
+        const newAddPlayerBtn = document.createElement('button');
+        newAddPlayerBtn.id = 'addPlayerBtn'; // Mantém o mesmo ID
+        newAddPlayerBtn.className = 'add-player-button'; // Usa a mesma classe de estilo
+        newAddPlayerBtn.textContent = 'Adicionar Novo Jogador';
+        newAddPlayerBtn.style.display = 'none'; // Começa escondido
+        newAddPlayerBtn.addEventListener('click', handleAddPlayer); // Conecta a função
+
+        addPlayerBtnContainer.appendChild(newAddPlayerBtn);
+        playersListDiv.appendChild(addPlayerBtnContainer);
+
+        // Adiciona ouvintes de eventos aos outros botões...
+        playersListDiv.querySelectorAll('.plus-btn, .minus-btn').forEach(button => button.addEventListener('click', handleScoreChange));
+        playersListDiv.querySelectorAll('.edit-icon').forEach(icon => icon.addEventListener('click', handleRenamePlayer));
+        playersListDiv.querySelectorAll('.delete-icon').forEach(icon => icon.addEventListener('click', handleDeletePlayer));
+
+        updateControlButtonsState();
+    }
+
+    async function handleScoreChange(event) {
+        if (!isAdminMode) {
+            showMessage("Você precisa estar no Modo Administrador para fazer alterações.", 'error');
+            return;
+        }
+
+        const playerId = event.target.dataset.id;
+        const action = event.target.dataset.action;
+        const type = event.target.dataset.type;
+        const playerDocRef = doc(playersCollectionRef(), playerId);
+
+        try {
+            const docSnap = await getDoc(playerDocRef);
+            if (docSnap.exists()) {
+                let playerData = docSnap.data();
+                let currentRaios = playerData.raios || 0;
+                let currentLambreta = playerData.lambreta || 0;
+                let currentSeries = playerData.series || 'Amador';
+                let newRaios = currentRaios;
+                let newLambreta = currentLambreta;
+                let newSeries = currentSeries;
+                let shouldResetCounts = false;
+                let eventMessage = '';
+
+                if (type === 'raios') {
+                    newRaios = Math.max(0, currentRaios + (action === 'plus' ? 1 : -1));
+                    if (newRaios === MAX_COUNT && currentLambreta < MAX_COUNT) {
+                        const currentIndex = SERIES_ORDER.indexOf(currentSeries);
+                        if (currentIndex > 0) {
+                            newSeries = SERIES_ORDER[currentIndex - 1];
+                            shouldResetCounts = true;
+                            eventMessage = `${playerData.name} subiu para a Série ${newSeries}! 🎉`;
+                        } else {
+                            shouldResetCounts = true;
+                            eventMessage = `${playerData.name} alcançou ${MAX_COUNT} Raios na Série ${newSeries}! ✨`;
+                        }
+                    }
+                } else if (type === 'lambreta') {
+                    newLambreta = Math.max(0, currentLambreta + (action === 'plus' ? 1 : -1));
+                    if (newLambreta === MAX_COUNT && currentRaios < MAX_COUNT) {
+                        const currentIndex = SERIES_ORDER.indexOf(currentSeries);
+                        if (currentIndex < SERIES_ORDER.length - 1) {
+                            newSeries = SERIES_ORDER[currentIndex + 1];
+                            shouldResetCounts = true;
+                            eventMessage = `${playerData.name} caiu para a Série ${newSeries}. ⬇️`;
+                        } else {
+                            shouldResetCounts = true;
+                            eventMessage = `${playerData.name} alcançou ${MAX_COUNT} Lambretas e permaneceu na Série ${newSeries}. 😔`;
+                        }
+                    }
+                }
+
+                const updates = {};
+                let hasChanged = false;
+
+                if (shouldResetCounts) {
+                    updates.raios = 0;
+                    updates.lambreta = 0;
+                    hasChanged = true;
+                } else {
+                    if (newRaios !== currentRaios) { updates.raios = newRaios; hasChanged = true; }
+                    if (newLambreta !== currentLambreta) { updates.lambreta = newLambreta; hasChanged = true; }
+                }
+                if (newSeries !== currentSeries) { updates.series = newSeries; hasChanged = true; }
+
+                if (hasChanged) {
+                    await updateDoc(playerDocRef, updates);
+                    if (eventMessage) {
+                        await addDoc(eventsCollectionRef(), { message: eventMessage, timestamp: serverTimestamp() });
+                        showMessage(eventMessage, 'success');
+                    }
+                }
+            } else {
+                showMessage("Erro: Jogador não encontrado.", 'error');
+            }
+        } catch (error) {
+            showMessage(`Erro ao atualizar ${type}.`, 'error');
+        }
+    }
+
+    async function resetAllScores() {
+        if (!isAdminMode) {
+            showMessage("Você precisa estar no Modo Administrador para redefinir o placar.", 'error');
+            return;
+        }
+
+        const confirmReset = document.createElement('div');
+        confirmReset.className = 'custom-modal-content';
+        confirmReset.innerHTML = `
+            <p class="text-lg font-semibold mb-3">Confirmar Redefinição</p>
+            <p>Tem certeza que deseja redefinir todas as Raios, Lambretas e Séries para todos os jogadores?</p>
+            <div class="modal-buttons mt-4"><button id="confirmResetYes" class="save-btn">Sim</button><button id="confirmResetNo" class="cancel-btn">Não</button></div>`;
+        showMessage('Confirmar', 'modal', confirmReset);
+
+        const userConfirmed = await new Promise((resolve) => {
+            document.getElementById('confirmResetYes').onclick = () => { closeMessageBox(); resolve(true); };
+            document.getElementById('confirmResetNo').onclick = () => { closeMessageBox(); resolve(false); };
+        });
+
+        if (!userConfirmed) {
+            showMessage("Redefinição cancelada.", 'info');
+            return;
+        }
+
+        showMessage("Redefinindo tudo...", 'info');
+
+        try {
+            const querySnapshot = await getDocs(query(playersCollectionRef()));
+            const batchPromises = querySnapshot.docs.map(playerDoc => {
+                return updateDoc(doc(playersCollectionRef(), playerDoc.id), { raios: 0, lambreta: 0, series: 'Amador' });
+            });
+            await Promise.all(batchPromises);
+
+            await addDoc(eventsCollectionRef(), { message: "Placar completo foi redefinido.", timestamp: serverTimestamp() });
+            showMessage("Todas as pontuações foram redefinidas!", 'success');
+        } catch (error) {
+            showMessage("Erro ao redefinir tudo.", 'error');
+        }
+    }
+
+    async function handleRenamePlayer(event) {
+        if (!isAdminMode) {
+            showMessage("Você precisa estar no Modo Administrador para renomear jogadores.", 'error');
+            return;
+        }
+
+        const playerId = event.target.closest('.edit-icon').dataset.id;
+        const currentName = event.target.closest('.edit-icon').dataset.name;
+        const playerDocRef = doc(playersCollectionRef(), playerId);
+
+        const modalContent = document.createElement('div');
+        modalContent.className = 'custom-modal-content';
+        modalContent.innerHTML = `
+            <p class="text-lg font-semibold mb-3">Renomear Jogador</p>
+            <input type="text" id="newPlayerNameInput" value="${currentName}" placeholder="Novo nome do jogador">
+            <div class="modal-buttons"><button class="save-btn" id="saveRenameBtn">Salvar</button><button class="cancel-btn" id="cancelRenameBtn">Cancelar</button></div>`;
+
+        showMessage('Renomear', 'modal', modalContent);
+
+        const newPlayerNameInput = document.getElementById('newPlayerNameInput');
+        newPlayerNameInput.focus();
+        newPlayerNameInput.select();
+
+        document.getElementById('saveRenameBtn').onclick = async () => {
+            const newName = newPlayerNameInput.value.trim();
+            if (newName && newName !== currentName) {
+                try {
+                    await updateDoc(playerDocRef, { name: newName });
+                    showMessage(`Nome do jogador atualizado para "${newName}"!`, 'success');
+                } catch (error) { showMessage("Erro ao renomear jogador.", 'error'); }
+            } else if (newName) {
+                showMessage("O nome é o mesmo. Nenhuma alteração.", 'info');
+            } else {
+                showMessage("O nome não pode ser vazio.", 'error');
+            }
+            closeMessageBox();
+        };
+
+        document.getElementById('cancelRenameBtn').onclick = () => {
+            showMessage("Renomeação cancelada.", 'info');
+            closeMessageBox();
+        };
+    }
+
+    async function handleAddPlayer() {
+        if (!isAdminMode) {
+            showMessage("Você precisa estar no Modo Administrador para adicionar jogadores.", 'error');
+            return;
+        }
+
+        const modalContent = document.createElement('div');
+        modalContent.className = 'custom-modal-content';
+        modalContent.innerHTML = `
+            <p class="text-lg font-semibold mb-3">Adicionar Novo Jogador</p>
+            <input type="text" id="newPlayerNameInput" placeholder="Nome do novo jogador">
+            <div class="modal-buttons"><button class="save-btn" id="saveAddPlayerBtn">Adicionar</button><button class="cancel-btn" id="cancelAddPlayerBtn">Cancelar</button></div>`;
+
+        showMessage('Adicionar Jogador', 'modal', modalContent);
+
+        const newPlayerNameInput = document.getElementById('newPlayerNameInput');
+        newPlayerNameInput.focus();
+
+        document.getElementById('saveAddPlayerBtn').onclick = async () => {
+            const newName = newPlayerNameInput.value.trim();
+            if (newName) {
+                try {
+                    await addDoc(playersCollectionRef(), { name: newName, raios: 0, lambreta: 0, series: 'Amador' });
+                    showMessage(`Jogador "${newName}" adicionado com sucesso!`, 'success');
+                } catch (error) { showMessage("Erro ao adicionar jogador.", 'error'); }
+            } else {
+                showMessage("O nome do jogador não pode ser vazio.", 'error');
+            }
+            closeMessageBox();
+        };
+
+        document.getElementById('cancelAddPlayerBtn').onclick = () => {
+            showMessage("Adição de jogador cancelada.", 'info');
+            closeMessageBox();
+        };
+    }
+
+    async function handleDeleteEvent(event) {
+        const icon = event.currentTarget;
+        const eventId = icon.dataset.eventId;
+
+        if (!isAdminMode || !eventId) return;
+
+        // Pede confirmação ao usuário
+        const userConfirmed = confirm("Tem certeza que deseja apagar este evento do histórico?");
+        if (!userConfirmed) {
+            return;
+        }
+
+        try {
+            const eventDocRef = doc(eventsCollectionRef(), eventId);
+            await deleteDoc(eventDocRef);
+            console.log(`Evento ${eventId} removido com sucesso.`);
+            // Não é preciso fazer mais nada. O onSnapshot vai atualizar a UI automaticamente!
+        } catch (error) {
+            console.error("Erro ao remover evento:", error);
+            showMessage("Erro ao remover o evento.", "error");
+        }
+    }
+
+    async function handleDeletePlayer(event) {
+        if (!isAdminMode) {
+            showMessage("Você precisa estar no Modo Administrador para remover jogadores.", 'error');
+            return;
+        }
+
+        const playerId = event.target.closest('.delete-icon').dataset.id;
+        const playerName = event.target.closest('.delete-icon').dataset.name;
+        const playerDocRef = doc(playersCollectionRef(), playerId);
+
+        const modalContent = document.createElement('div');
+        modalContent.className = 'custom-modal-content';
+        modalContent.innerHTML = `
+            <p class="text-lg font-semibold mb-3">Confirmar Exclusão</p>
+            <p>Tem certeza que deseja remover o jogador "${playerName}"?</p>
+            <div class="modal-buttons mt-4"><button class="save-btn" id="confirmDeleteYes">Sim</button><button class="cancel-btn" id="confirmDeleteNo">Não</button></div>`;
+        showMessage('Confirmar Exclusão', 'modal', modalContent);
+
+        const userConfirmed = await new Promise((resolve) => {
+            document.getElementById('confirmDeleteYes').onclick = () => { closeMessageBox(); resolve(true); };
+            document.getElementById('confirmDeleteNo').onclick = () => { closeMessageBox(); resolve(false); };
+        });
+
+        if (!userConfirmed) {
+            showMessage("Exclusão de jogador cancelada.", 'info');
+            return;
+        }
+
+        showMessage(`Removendo jogador "${playerName}"...`, 'info');
+        try {
+            await deleteDoc(playerDocRef);
+            await addDoc(eventsCollectionRef(), { message: `Jogador "${playerName}" foi removido. 🗑️`, timestamp: serverTimestamp() });
+            showMessage(`Jogador "${playerName}" removido com sucesso!`, 'success');
+        } catch (error) { showMessage("Erro ao remover jogador.", 'error'); }
+    }
+
+    async function setupFirestoreListeners() {
+        const loadingMessage = document.getElementById('loadingMessage');
+        loadingMessage.textContent = 'Carregando jogadores...';
+
+        onSnapshot(playersCollectionRef(), (snapshot) => {
+            const playersData = [];
+            snapshot.forEach((doc) => playersData.push({ id: doc.id, ...doc.data() }));
+
+            playersData.sort((a, b) => {
+                const seriesIndexA = SERIES_ORDER.indexOf(a.series || 'Amador');
+                const seriesIndexB = SERIES_ORDER.indexOf(b.series || 'Amador');
+                if (seriesIndexA !== seriesIndexB) return seriesIndexA - seriesIndexB;
+                if ((b.raios || 0) !== (a.raios || 0)) return (b.raios || 0) - (a.raios || 0);
+                return (a.lambreta || 0) - (b.lambreta || 0);
+            });
+
+            if (playersData.length === 0) {
+                addDefaultPlayers();
+            } else {
+                renderPlayers(playersData);
+            }
+            loadingMessage.style.display = 'none';
+        }, (error) => {
+            console.error("Erro ao obter dados dos jogadores:", error);
+            showMessage("Erro ao carregar dados do placar.", 'error');
+        });
+
+        const qEvents = query(eventsCollectionRef(), orderBy('timestamp', 'desc'), limit(5));
+        onSnapshot(qEvents, (snapshot) => {
+            const eventsData = [];
+            snapshot.forEach((doc) => {
+                // CORREÇÃO: Salvar o ID junto com os dados
+                eventsData.push({ id: doc.id, ...doc.data() });
+            });
+            renderEvents(eventsData);
+        });
+    }
+
+    async function initializeFirebase() {
+        try {
+            app = initializeApp(firebaseConfig);
+            db = getFirestore(app);
+            auth = getAuth(app);
+            messaging = getMessaging(app);
+
+            // CORREÇÃO PARA O ERRO 2: Ouvinte de notificações em primeiro plano
+            onMessage(messaging, (payload) => {
+                console.log('Mensagem recebida em primeiro plano: ', payload);
+                // Mostra a notificação usando nossa função de mensagem interna
+                const title = payload.notification.title;
+                const body = payload.notification.body;
+                showMessage(`${title} - ${body}`, 'info');
+            });
+
+            await signInAnonymously(auth);
+
+            onAuthStateChanged(auth, (user) => {
+                if (user) {
+                    userId = user.uid;
+                    document.getElementById('userIdValue').textContent = userId;
+                    console.log("Firebase inicializado. Chamando ouvintes...");
+                    // Agora as funções já estão definidas antes desta chamada
+                    setupFirestoreListeners();
+                    updateControlButtonsState();
+                }
+            });
+        } catch (error) {
+            console.error("Erro ao inicializar Firebase:", error);
+        }
+    }
+
+    // Ouve os cliques nos botões de admin
+    toggleAdminControlsBtn.addEventListener('click', () => {
+        adminPanel.classList.toggle('active');
+        toggleAdminControlsBtn.textContent = adminPanel.classList.contains('active') ?
+            'Ocultar Controles do Administrador' : 'Mostrar Controles do Administrador';
+    });
+
+    activateAdminBtn.addEventListener('click', () => {
+        if (adminKeyInput.value === ADMIN_KEY) {
+            isAdminMode = true;
+            showMessage("Modo Administrador ativado!", 'success');
+            adminKeyInput.value = '';
+        } else {
+            isAdminMode = false;
+            showMessage("Chave de administrador incorreta.", 'error');
+        }
+        updateControlButtonsState();
+    });
+
+    // Ouve o clique no botão de notificação
+    document.getElementById('enableNotificationsBtn').addEventListener('click', () => {
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('/placar_domino/service-worker.js')
+                .then(registration => {
+                    console.log('Service Worker registrado, pedindo permissão...');
+                    requestPermissionAndGetToken(registration);
+                })
+                .catch(error => {
+                    console.error('Falha no registro do Service Worker:', error);
+                });
+        }
+    });
+
+    // Adiciona ouvinte de evento para o botão de redefinição
+    resetScoresBtn.addEventListener('click', resetAllScores);
+    // Novo: Adiciona ouvinte de evento para o botão de adicionar jogador
+    // addPlayerBtn.addEventListener('click', handleAddPlayer);
+
+    // Finalmente, inicializa tudo quando a janela carregar
+    window.onload = initializeFirebase;
+
+</script>
 </body>
 </html>
