@@ -493,8 +493,6 @@
             }
         }
 
-        // ... (Restante das funções de jogo: endGame, undoRound, etc. precisam ser adaptadas)
-
         // =======================================================
         // LÓGICA DO FIREBASE E INICIALIZAÇÃO
         // =======================================================
@@ -514,6 +512,18 @@
                 renderActivityFeed();
             });
         }
+        function onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                appState.userId = user.uid;
+                setupFirestoreListeners();
+            } else {
+                try {
+                    await signInAnonymously(auth);
+                } catch(e) {
+                    console.error("Erro ao fazer login anônimo:", e);
+                }
+            }
+        });
         // LISTENERS
         btn-go-to-game-mode.addEventListener('click', () => { resetGameState(); switchView('view-game-table'); });
         btn-back-to-scoreboard.addEventListener('click', () => switchView('view-scoreboard'));
@@ -533,18 +543,6 @@
             if (scoreBtn) scoreRound(scoreBtn.dataset.winnerId);
         });
 
-        onAuthStateChanged(auth, async (user) => {
-            if (user) {
-                appState.userId = user.uid;
-                setupFirestoreListeners();
-            } else {
-                try {
-                    await signInAnonymously(auth);
-                } catch(e) {
-                    console.error("Erro ao fazer login anônimo:", e);
-                }
-            }
-        });
 
         // INICIALIZAÇÃO
         renderPlayers();
