@@ -510,7 +510,6 @@
         }
 
         // LISTENERS
-        btnGoToGameMode.addEventListener('click', () => { resetGameState(); switchView('view-game-table'); });
         ui.gameMode.goToBtn.addEventListener('click', () => switchView('view-scoreboard'));
         ui.gameMode.backBtn.addEventListener('click', () => { if (!gameState.activeGame) { gameState.gameMode = btn.dataset.mode; updateGameModeUI(); }});
         ui.gameMode.raioCheckbox.addEventListener('change', (e) => { if (!gameState.activeGame) gameState.isRaioMatch = e.target.checked; });
@@ -519,7 +518,7 @@
         ui.gameMode.undoBtn.addEventListener('click', undoLastRound); // CORREÇÃO: Listener adicionado
         ui.gameMode.endBtn.addEventListener('click', endGame);         // CORREÇÃO: Listener adicionado
         ui.gameMode.newGameBtn.addEventListener('click', () => { resetGameState(); switchView('view-game-table'); });
-        players-list-div.addEventListener('click', e => { const t = e.target.closest('.player-name-clickable'); if(t) openPlayerDetailsModal(t.dataset.playerId);});
+        ui.playersListDiv.addEventListener('click', e => { const t = e.target.closest('.player-name-clickable'); if(t) openPlayerDetailsModal(t.dataset.playerId);});
         ui.modal.container.addEventListener('click', e => {
             if (e.target.id === 'modalContainer' || e.target.closest('#modal-close-btn') || e.target.id === 'modal-cancel-btn') closeModal();
             const playerBtn = e.target.closest('.player-select-btn');
