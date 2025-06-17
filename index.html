@@ -135,7 +135,7 @@
             activityFeedDiv: document.getElementById('activityFeed'),
             adminFab: { button: document.getElementById('adminFabButton'), panel: document.getElementById('adminActionsPanel'), defaultIcon: document.getElementById('fabIconDefault'), closeIcon: document.getElementById('fabIconClose'), loginView: document.getElementById('adminLoginView'), controlsView: document.getElementById('adminControlsView'), keyInput: document.getElementById('adminKeyInput'), activateBtn: document.getElementById('activateAdminBtn'), addPlayerBtn: document.getElementById('addPlayerBtn_fab'), resetBtn: document.getElementById('resetScoresBtn_fab')},
             modal: { container: document.getElementById('modalContainer'), content: document.getElementById('modalContent')},
-            gameModeBtn: { goToBtn: document.getElementById('btnGoToGameMode'), backBtn: document.getElementById('btnBackToScoreboard'), modeButtons: document.querySelectorAll('gameModeBtn'), raioCheckbox: document.getElementById('raioModeCheckbox'), startBtn: document.getElementById('btnStartGame'), activeButtons: document.getElementById('activeGameButtons'), launchScoreBtn: document.getElementById('btnLaunchScore'), undoBtn: document.getElementById('btnUndoRound'), endBtn: document.getElementById('btnEndGame'), newGameBtn: document.getElementById('btnNewGame'), shareBtn: document.getElementById('btnShareWhatsapp'), statusText: document.getElementById('gameStatusText'), gameOver: { winnerText: document.getElementById('gameOverWinnerText'), scoreText: document.getElementById('gameOverScoreText')}}
+            gameMode: { goToBtn: document.getElementById('btnGoToGameMode'), backBtn: document.getElementById('btnBackToScoreboard'), modeButtons: document.querySelectorAll('gameModeBtn'), raioCheckbox: document.getElementById('raioModeCheckbox'), startBtn: document.getElementById('btnStartGame'), activeButtons: document.getElementById('activeGameButtons'), launchScoreBtn: document.getElementById('btnLaunchScore'), undoBtn: document.getElementById('btnUndoRound'), endBtn: document.getElementById('btnEndGame'), newGameBtn: document.getElementById('btnNewGame'), shareBtn: document.getElementById('btnShareWhatsapp'), statusText: document.getElementById('gameStatusText'), gameOver: { winnerText: document.getElementById('gameOverWinnerText'), scoreText: document.getElementById('gameOverScoreText')}}
         };
 
         // =======================================================
@@ -511,16 +511,16 @@
 
         // LISTENERS
         btnGoToGameMode.addEventListener('click', () => { resetGameState(); switchView('view-game-table'); });
-        btnBackToScoreboard.addEventListener('click', () => switchView('view-scoreboard'));
-        gameModeBtn.forEach(btn => btn.addEventListener('click', () => { if (!gameState.activeGame) { gameState.gameMode = btn.dataset.mode; updateGameModeUI(); }}));
-        raioModeCheckbox.addEventListener('change', (e) => { if (!gameState.activeGame) gameState.isRaioMatch = e.target.checked; });
-        raioModeCheckbox.addEventListener('click', startGame);
-        btnLaunchScore.addEventListener('click', openScoreRoundModal);
-        btnUndoRound.addEventListener('click', undoLastRound); // CORREÇÃO: Listener adicionado
-        btnEndGame.addEventListener('click', endGame);         // CORREÇÃO: Listener adicionado
-        btnNewGame.addEventListener('click', () => { resetGameState(); switchView('view-game-table'); });
+        ui.gameMode.goToBtn.addEventListener('click', () => switchView('view-scoreboard'));
+        ui.gameMode.backBtn.addEventListener('click', () => { if (!gameState.activeGame) { gameState.gameMode = btn.dataset.mode; updateGameModeUI(); }});
+        ui.gameMode.raioCheckbox.addEventListener('change', (e) => { if (!gameState.activeGame) gameState.isRaioMatch = e.target.checked; });
+        ui.gameMode.startBtn.addEventListener('click', startGame);
+        ui.gameMode.launchScoreBtn.addEventListener('click', openScoreRoundModal);
+        ui.gameMode.undoBtn.addEventListener('click', undoLastRound); // CORREÇÃO: Listener adicionado
+        ui.gameMode.endBtn.addEventListener('click', endGame);         // CORREÇÃO: Listener adicionado
+        ui.gameMode.newGameBtn.addEventListener('click', () => { resetGameState(); switchView('view-game-table'); });
         players-list-div.addEventListener('click', e => { const t = e.target.closest('.player-name-clickable'); if(t) openPlayerDetailsModal(t.dataset.playerId);});
-        modalContainer.addEventListener('click', e => {
+        ui.modal.container.addEventListener('click', e => {
             if (e.target.id === 'modalContainer' || e.target.closest('#modal-close-btn') || e.target.id === 'modal-cancel-btn') closeModal();
             const playerBtn = e.target.closest('.player-select-btn');
             if (playerBtn) selectPlayer(playerBtn.dataset.playerId);
