@@ -107,7 +107,7 @@
             let appState = { players: {}, activityFeed: [], isAdminMode: false, userId: null, gameState: {}, unsubscribers: [] };
 
             const playersCollectionRef = () => collection(db, `artifacts/${appIdentifier}/public/data/players`);
-            const activityFeedCollectionRef = () => collection(db, `artifacts/${appIdentifier}/public/data/activity`);
+            const activityFeedCollectionRef = () => collection(db, `artifacts/${appIdentifier}/public/data/events`);
             const matchesCollectionRef = () => collection(db, `artifacts/${appIdentifier}/public/data/partidas`);
 
             const ui = {
