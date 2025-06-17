@@ -143,6 +143,34 @@
         // =======================================================
         function switchView(viewId) { ui.views.forEach(v => v.classList.toggle('active', v.id === viewId)); }
 
+        function renderPlayers() {
+            playersListDiv.innerHTML = Object.values(allPlayers).sort((a, b) => a.name.localeCompare(b.name)).map(player => `
+                <div class="bg-white p-4 rounded-xl shadow-sm flex items-center justify-between">
+                    <div><span class="font-bold text-lg player-name-clickable" data-player-id="${player.id}">${player.name}</span><span class="text-sm text-gray-500 ml-2">(Série ${player.series})</span></div>
+                    <div class="text-right"><div class="font-semibold text-blue-600">Raios: ${player.raios}</div><div class="font-semibold text-red-600">Lambretas: ${player.lambretas}</div></div>
+                </div>`).join('');
+        }
+
+        function renderActivityFeed() {
+            activityFeedDiv.innerHTML = activityFeedData.length === 0 ? '<p class="text-gray-500 text-center">Nenhuma atividade recente.</p>' :
+                activityFeedData.map(item => {
+                    let icon = '💬';
+                    if (item.type === 'promotion') icon = '▲';
+                    else if (item.type === 'demotion') icon = '▼';
+                    else if (item.type === 'achievement') icon = '⭐';
+                    const color = item.type === 'promotion' ? 'green' : (item.type === 'demotion' ? 'red' : 'yellow');
+                    return `<div class="p-3 rounded-lg flex items-center gap-3"><span class="text-${color}-500">${icon}</span><div><p class="text-gray-800"><span class="font-semibold">${item.player}</span> ${item.text}</p><p class="text-xs text-gray-400">${item.timestamp.toLocaleString('pt-BR')}</p></div></div>`;
+                }).join('');
+        }
+
+        function openModal(contentHTML) {
+            modalContent.innerHTML = contentHTML;
+            modalContainer.style.display = 'flex';
+        }
+        function closeModal() {
+            modalContainer.style.display = 'none';
+        }
+
         function renderScoreboard() {
             const players = Object.values(appState.players);
             const seriesOrder = ['A', 'B', 'C', 'D', 'Amador'];
@@ -169,10 +197,70 @@
         // FUNÇÕES DO MODO PARTIDA (COM INTEGRAÇÃO FIREBASE)
         // =======================================================
 
-        function createInitialGameState() { /* ... */ }
-        function resetGameState() { /* ... */ }
-        function renderAllSlots() { /* ... */ }
-
+        function openPlayerDetailsModal(playerId) {
+            const player = allPlayers[playerId];
+            const achievements = {
+                primeiro_rei: { icon: '👑', name: 'Primeiro Rei' },
+                imbativel: { icon: '🔥', name: 'Imbatível' },
+                azarao: { icon: '🚑', name: 'Azarão' },
+            };
+            let achievementsHTML = Object.keys(achievements).map(key => {
+                const ach = achievements[key];
+                const unlocked = player.conquistas.includes(key);
+                return `<div class="text-center p-2 rounded-lg ${unlocked ? 'bg-yellow-100' : 'bg-gray-100'}"><span class="achievement-icon ${unlocked ? 'unlocked' : ''}">${ach.icon}</span><p class="text-xs font-semibold mt-1 ${unlocked ? 'text-yellow-800' : 'text-gray-500'}">${ach.name}</p></div>`;
+            }).join('');
+            let adminControlsHTML = isAdminMode ? `<hr class="my-6"><div class="space-y-3"><button class="w-full bg-blue-500 text-white font-semibold py-2 rounded-md">Renomear</button><button class="w-full bg-red-600 text-white font-semibold py-2 rounded-md">Deletar</button></div>` : '';
+            const modalHTML = `<div class="flex justify-between items-start"><div><h3 class="text-2xl font-bold">${player.name}</h3><p class="text-gray-600">Série ${player.series}</p></div><button id="modal-close-btn" class="text-gray-400 hover:text-gray-700 text-2xl">&times;</button></div><div class="mt-6"><h4 class="font-semibold mb-2">Estatísticas</h4><div class="grid grid-cols-2 gap-4 text-center"><div class="bg-gray-50 p-3 rounded-lg"><p class="text-2xl font-bold">${player.vitorias}</p><p class="text-sm text-gray-500">Vitórias</p></div><div class="bg-gray-50 p-3 rounded-lg"><p class="text-2xl font-bold">${player.derrotas}</p><p class="text-sm text-gray-500">Derrotas</p></div></div></div><div class="mt-6"><h4 class="font-semibold mb-2">Conquistas</h4><div class="grid grid-cols-3 gap-2">${achievementsHTML}</div></div>${adminControlsHTML}`;
+            openModal(modalHTML);
+        }
+        function createInitialGameState() {
+            return {
+                currentView: 'view-game-table', gameMode: 'individual', isRaioMatch: false,
+                selectedSlots: { 1: null, 2: null, 3: null, 4: null }, activeGame: null, targetSlot: null
+            };
+        }
+        function resetGameState() {
+            gameState = createInitialGameState();
+            document.getElementById('game-status-text').textContent = 'Selecione os jogadores para começar';
+            btnStartGame.style.display = 'block';
+            activeGameButtons.style.display = 'none';
+            document.getElementById('game-type-selector').style.display = 'flex';
+            document.getElementById('raio-mode-selector').style.display = 'flex';
+            raioModeCheckbox.checked = false;
+            updateGameModeUI();
+        }
+        function updateGameModeUI() {
+            gameModeButtons.forEach(btn => btn.className = `game-mode-btn font-semibold py-2 px-4 rounded-lg ${btn.dataset.mode === gameState.gameMode ? 'shadow bg-blue-500 text-white' : 'bg-white text-gray-500'}`);
+            resetPlayerSlots();
+        }
+        function resetPlayerSlots() {
+            gameState.selectedSlots = { 1: null, 2: null, 3: null, 4: null };
+            renderAllSlots();
+        }
+        function renderAllSlots() {
+            document.querySelectorAll('.player-slot').forEach(slot => renderPlayerSlot(slot.id.split('-')[1]));
+            checkStartGameCondition();
+        }
+        function openPlayerSelectionModal(slotId) {
+            if (gameState.activeGame) return;
+            gameState.targetSlot = slotId;
+            const availablePlayers = Object.values(allPlayers).filter(p => !Object.values(gameState.selectedSlots).includes(p.id));
+            const modalHTML = `<h3 class="text-2xl font-bold mb-4">Selecione um Jogador</h3><div class="space-y-2 max-h-64 overflow-y-auto">${availablePlayers.map(p => `<button class="w-full text-left p-3 bg-gray-100 rounded-lg hover:bg-blue-100 transition player-select-btn" data-player-id="${p.id}">${p.name}</button>`).join('')}</div><button id="modal-cancel-btn" class="mt-6 bg-gray-200 text-gray-800 font-semibold py-2 px-4 rounded-lg w-full">Cancelar</button>`;
+            openModal(modalHTML);
+        }
+        function selectPlayer(playerId) {
+            const currentSlotOfPlayer = Object.keys(gameState.selectedSlots).find(key => gameState.selectedSlots[key] === playerId);
+            if (currentSlotOfPlayer) gameState.selectedSlots[currentSlotOfPlayer] = null;
+            gameState.selectedSlots[gameState.targetSlot] = playerId;
+            closeModal();
+            renderAllSlots();
+        }
+        function checkStartGameCondition() {
+            const selectedCount = Object.values(gameState.selectedSlots).filter(Boolean).length;
+            const canStart = (gameState.gameMode === 'duplas') ? (selectedCount === 4) : (selectedCount >= 2);
+            btnStartGame.disabled = !canStart;
+            btnStartGame.className = canStart ? 'bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-6 rounded-lg shadow-md transition' : 'bg-gray-400 text-white font-bold py-3 px-6 rounded-lg shadow-md cursor-not-allowed';
+        }
         async function startGame() {
             const selectedPlayerIds = Object.values(appState.gameState.selectedSlots).filter(Boolean);
             const gameData = {
@@ -211,7 +299,21 @@
                 alert("Não foi possível iniciar a partida. Tente novamente.");
             }
         }
-
+        function openScoreRoundModal() {
+            let teamsOrPlayers, teamIds;
+            if (gameState.gameMode === 'duplas') {
+                const playersA = gameState.activeGame.times.timeA.map(pId => allPlayers[pId].name).join(' & ');
+                const playersB = gameState.activeGame.times.timeB.map(pId => allPlayers[pId].name).join(' & ');
+                teamsOrPlayers = [`Time A (${playersA})`, `Time B (${playersB})`];
+                teamIds = ['timeA', 'timeB'];
+            } else {
+                const activePlayers = Object.values(gameState.activeGame.jogadores).filter(Boolean);
+                teamsOrPlayers = activePlayers.map(pId => allPlayers[pId].name);
+                teamIds = activePlayers;
+            }
+            const modalHTML = `<h3 class="text-2xl font-bold mb-4">Quem venceu a rodada?</h3><div class="space-y-3">${teamsOrPlayers.map((name, index) => `<button class="w-full text-center p-3 bg-gray-100 rounded-lg hover:bg-blue-100 transition font-semibold score-round-btn" data-winner-id="${teamIds[index]}">${name}</button>`).join('')}</div><button id="modal-cancel-btn" class="mt-6 bg-gray-200 text-gray-800 font-semibold py-2 px-4 rounded-lg w-full">Cancelar</button>`;
+            openModal(modalHTML);
+        }
         async function scoreRound(winnerId) {
             if (!appState.gameState.activeGameId) return;
             const matchDocRef = doc(matchesCollectionRef(), appState.gameState.activeGameId);
@@ -254,7 +356,107 @@
                 game.historicoRodadas.pop(); // Reverte a lógica local se falhar
             }
         }
+        function undoLastRound() {
+            if (!gameState.activeGame || gameState.activeGame.historicoRodadas.length === 0) {
+                alert('Nenhuma rodada para desfazer.');
+                return;
+            }
+            const lastRound = gameState.activeGame.historicoRodadas.pop();
+            const placar = gameState.activeGame.placarAtual;
+            const winnerId = lastRound.vencedor;
 
+            // Lógica de Desfazer Simplificada
+            if (gameState.activeGame.isRaioMatch) {
+                if (placar[winnerId].raios > 0) placar[winnerId].raios--;
+            } else {
+                if (placar[winnerId].pontos > 0) {
+                    placar[winnerId].pontos--;
+                } else if (placar[winnerId].raios > 0) {
+                    placar[winnerId].raios--;
+                    placar[winnerId].pontos = POINTS_TO_COMPLETE_RAIO - 1;
+                    // Nota: A lógica de reverter stats (raios/lambretas) não é implementada no undo para simplicidade.
+                }
+            }
+            updateScoreboardUI();
+        }
+        function endGame() {
+            if (!gameState.activeGame) return;
+            let winnerText, scoreText, rawWinnerText;
+            const placar = gameState.activeGame.placarAtual;
+            const getFinalScore = (score) => score.raios * POINTS_TO_COMPLETE_RAIO + score.pontos;
+
+            if (gameState.gameMode === 'duplas') {
+                const scoreA = getFinalScore(placar.timeA);
+                const scoreB = getFinalScore(placar.timeB);
+                const winner = scoreA > scoreB ? 'timeA' : (scoreB > scoreA ? 'timeB' : null);
+                if (winner) {
+                    const winnerPlayers = gameState.activeGame.times[winner].map(pId => allPlayers[pId].name).join(' e ');
+                    winnerText = `Vitória do ${winner.replace('time','Time ')}!`;
+                    scoreText = `(${winnerPlayers}) - Placar Final: ${scoreA} a ${scoreB}`;
+                    rawWinnerText = `O time de ${winnerPlayers}`;
+                } else {
+                    winnerText = "Empate!";
+                    scoreText = `Placar Final: Time A ${scoreA} - ${scoreB} Time B`;
+                    rawWinnerText = "A partida terminou empatada";
+                }
+            } else {
+                const scores = Object.entries(placar).map(([id, score]) => ({ id, score: getFinalScore(score) }));
+                scores.sort((a,b) => b.score - a.score);
+                const winnerId = scores[0].id;
+                const winnerPlayer = allPlayers[winnerId];
+                winnerText = `Vitória de ${winnerPlayer.name}!`;
+                scoreText = `Pontuação Final: ${scores[0].score} pontos`;
+                rawWinnerText = `O jogador ${winnerPlayer.name}`;
+            }
+
+            document.getElementById('game-over-winner-text').textContent = winnerText;
+            document.getElementById('game-over-score-text').textContent = scoreText;
+            const shareMessage = encodeURIComponent(`🏆 Vitória no Placar do Dominó! ${rawWinnerText} acaba de vencer a partida. #PlacarDoDomino`);
+            btnShareWhatsapp.onclick = () => window.open(`https://api.whatsapp.com/send?text=${shareMessage}`, '_blank');
+            switchView('view-game-over');
+        }
+        function updatePlayerStats(winnerId, losersHadZero) {
+                const winnerTeam = gameState.activeGame.times[winnerId];
+                winnerTeam.forEach(pId => allPlayers[pId].raios++);
+
+                if(losersHadZero) {
+                Object.keys(gameState.activeGame.times).forEach(teamId => {
+                    if(teamId !== winnerId) {
+                        gameState.activeGame.times[teamId].forEach(pId => allPlayers[pId].lambretas++);
+                    }
+                });
+                }
+                renderPlayers();
+        }
+        function updateScoreboardUI() {
+            if (!gameState.activeGame) return;
+            const isRaio = gameState.activeGame.isRaioMatch;
+            const getScoreHTML = (score, color = 'yellow') => {
+                const raios = score.raios;
+                const pontos = isRaio ? 0 : score.pontos;
+                const raioHTML = Array(raios).fill(`<span class="text-${color}-400">⚡️</span>`).join('');
+                const pontoHTML = Array(pontos).fill(`<div class="point-dot bg-${color}-500"></div>`).join('');
+                return `${raioHTML} ${pontoHTML}`;
+            };
+            if (gameState.gameMode === 'duplas') {
+                ['timeA', 'timeB'].forEach(teamId => {
+                    const score = gameState.activeGame.placarAtual[teamId];
+                    const teamColor = teamId === 'timeA' ? 'blue' : 'red';
+                    gameState.activeGame.times[teamId].forEach(pId => {
+                        const slotId = Object.keys(gameState.activeGame.jogadores).find(key => gameState.activeGame.jogadores[key] === pId);
+                        const scoreDiv = document.getElementById(`score-${slotId}`);
+                        if(scoreDiv) scoreDiv.innerHTML = getScoreHTML(score, teamColor);
+                    });
+                });
+            } else {
+                    Object.keys(gameState.activeGame.placarAtual).forEach(playerId => {
+                    const score = gameState.activeGame.placarAtual[playerId];
+                    const slotId = Object.keys(gameState.activeGame.jogadores).find(key => gameState.activeGame.jogadores[key] === playerId);
+                    const scoreDiv = document.getElementById(`score-${slotId}`);
+                    if(scoreDiv) scoreDiv.innerHTML = getScoreHTML(score, 'yellow');
+                    });
+            }
+        }
         async function updatePlayerStatsAfterRaio(winnerId, losersHadZero) {
             const batch = writeBatch(db);
             const game = appState.gameState.activeGame;
@@ -312,6 +514,24 @@
                 renderActivityFeed();
             });
         }
+        // LISTENERS
+        btnGoToGameMode.addEventListener('click', () => { resetGameState(); switchView('view-game-table'); });
+        btnBackToScoreboard.addEventListener('click', () => switchView('view-scoreboard'));
+        gameModeButtons.forEach(btn => btn.addEventListener('click', () => { if (!gameState.activeGame) { gameState.gameMode = btn.dataset.mode; updateGameModeUI(); }}));
+        raioModeCheckbox.addEventListener('change', (e) => { if (!gameState.activeGame) gameState.isRaioMatch = e.target.checked; });
+        btnStartGame.addEventListener('click', startGame);
+        btnLaunchScore.addEventListener('click', openScoreRoundModal);
+        btnUndoRound.addEventListener('click', undoLastRound); // CORREÇÃO: Listener adicionado
+        btnEndGame.addEventListener('click', endGame);         // CORREÇÃO: Listener adicionado
+        btnNewGame.addEventListener('click', () => { resetGameState(); switchView('view-game-table'); });
+        playersListDiv.addEventListener('click', e => { const t = e.target.closest('.player-name-clickable'); if(t) openPlayerDetailsModal(t.dataset.playerId);});
+        modalContainer.addEventListener('click', e => {
+            if (e.target.id === 'modal-container' || e.target.closest('#modal-close-btn') || e.target.id === 'modal-cancel-btn') closeModal();
+            const playerBtn = e.target.closest('.player-select-btn');
+            if (playerBtn) selectPlayer(playerBtn.dataset.playerId);
+            const scoreBtn = e.target.closest('.score-round-btn');
+            if (scoreBtn) scoreRound(scoreBtn.dataset.winnerId);
+        });
 
         onAuthStateChanged(auth, async (user) => {
             if (user) {
