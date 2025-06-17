@@ -515,16 +515,16 @@
             });
         }
         // LISTENERS
-        btnGoToGameMode.addEventListener('click', () => { resetGameState(); switchView('view-game-table'); });
-        btnBackToScoreboard.addEventListener('click', () => switchView('view-scoreboard'));
-        gameModeButtons.forEach(btn => btn.addEventListener('click', () => { if (!gameState.activeGame) { gameState.gameMode = btn.dataset.mode; updateGameModeUI(); }}));
-        raioModeCheckbox.addEventListener('change', (e) => { if (!gameState.activeGame) gameState.isRaioMatch = e.target.checked; });
-        btnStartGame.addEventListener('click', startGame);
-        btnLaunchScore.addEventListener('click', openScoreRoundModal);
-        btnUndoRound.addEventListener('click', undoLastRound); // CORREÇÃO: Listener adicionado
-        btnEndGame.addEventListener('click', endGame);         // CORREÇÃO: Listener adicionado
-        btnNewGame.addEventListener('click', () => { resetGameState(); switchView('view-game-table'); });
-        playersListDiv.addEventListener('click', e => { const t = e.target.closest('.player-name-clickable'); if(t) openPlayerDetailsModal(t.dataset.playerId);});
+        btn-go-to-game-mode.addEventListener('click', () => { resetGameState(); switchView('view-game-table'); });
+        btn-back-to-scoreboard.addEventListener('click', () => switchView('view-scoreboard'));
+        game-mode-btn.forEach(btn => btn.addEventListener('click', () => { if (!gameState.activeGame) { gameState.gameMode = btn.dataset.mode; updateGameModeUI(); }}));
+        raio-mode-checkbox.addEventListener('change', (e) => { if (!gameState.activeGame) gameState.isRaioMatch = e.target.checked; });
+        raio-mode-checkbox.addEventListener('click', startGame);
+        btn-launch-score.addEventListener('click', openScoreRoundModal);
+        btn-undo-round.addEventListener('click', undoLastRound); // CORREÇÃO: Listener adicionado
+        btn-end-game.addEventListener('click', endGame);         // CORREÇÃO: Listener adicionado
+        btn-new-game.addEventListener('click', () => { resetGameState(); switchView('view-game-table'); });
+        players-list-div.addEventListener('click', e => { const t = e.target.closest('.player-name-clickable'); if(t) openPlayerDetailsModal(t.dataset.playerId);});
         modalContainer.addEventListener('click', e => {
             if (e.target.id === 'modal-container' || e.target.closest('#modal-close-btn') || e.target.id === 'modal-cancel-btn') closeModal();
             const playerBtn = e.target.closest('.player-select-btn');
@@ -545,6 +545,11 @@
                 }
             }
         });
+
+        // INICIALIZAÇÃO
+        renderPlayers();
+        renderActivityFeed();
+        updateGameModeUI();
 
     </script>
 </body>
