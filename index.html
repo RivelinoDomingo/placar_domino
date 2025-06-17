@@ -97,7 +97,15 @@
         // =======================================================
         // CONFIGURAÇÃO E ESTADO INICIAL
         // =======================================================
-        const firebaseConfig = { /* SEU OBJETO DE CONFIGURAÇÃO DO FIREBASE AQUI */ };
+        const firebaseConfig = {
+            apiKey: "AIzaSyBqpkxcl0GkBBHVO8Nxk7UpYd00H4Frklc",
+            authDomain: "placar-domino.firebaseapp.com",
+            projectId: "placar-domino",
+            storageBucket: "placar-domino.firebasestorage.app",
+            messagingSenderId: "187178310074",
+            appId: "1:187178310074:web:5f56292dea8dc776532583",
+            measurementId: "G-BL3W42DJ3M"
+        };
 
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
