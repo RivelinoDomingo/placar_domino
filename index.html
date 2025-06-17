@@ -125,8 +125,8 @@
 
         // Funções de referência ao Firestore
         const playersCollectionRef = () => collection(db, `artifacts/${appIdentifier}/public/data/players`);
-        const activityFeedCollectionRef = () => collection(db, `artifacts/${appIdentifier}/public/data/activity`);
-        const matchesCollectionRef = () => collection(db, `artifacts/${appIdentifier}/public/data/matches`);
+        const activityFeedCollectionRef = () => collection(db, `artifacts/${appIdentifier}/public/data/events`);
+        const matchesCollectionRef = () => collection(db, `artifacts/${appIdentifier}/public/data/partidas`);
 
         // SELETORES DE UI (agrupados para organização)
         const ui = {
@@ -170,7 +170,6 @@
         function closeModal() {
             modalContainer.style.display = 'none';
         }
-
         function renderScoreboard() {
             const players = Object.values(appState.players);
             const seriesOrder = ['A', 'B', 'C', 'D', 'Amador'];
@@ -190,9 +189,6 @@
                     <div class="text-right"><div class="font-semibold text-blue-600">Vitórias: ${player.vitorias || 0}</div><div class="font-semibold text-yellow-600">Raios: ${player.raios || 0}</div></div>
                 </div>`).join('');
         }
-
-        // ... (resto das funções de renderização)
-
         // =======================================================
         // FUNÇÕES DO MODO PARTIDA (COM INTEGRAÇÃO FIREBASE)
         // =======================================================
