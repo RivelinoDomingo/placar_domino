@@ -512,18 +512,7 @@
                 renderActivityFeed();
             });
         }
-        onAuthStateChanged(auth, async (user) => {
-            if (user) {
-                appState.userId = user.uid;
-                setupFirestoreListeners();
-            } else {
-                try {
-                    await signInAnonymously(auth);
-                } catch(e) {
-                    console.error("Erro ao fazer login anônimo:", e);
-                }
-            }
-        });
+
         // LISTENERS
         btn-go-to-game-mode.addEventListener('click', () => { resetGameState(); switchView('view-game-table'); });
         btn-back-to-scoreboard.addEventListener('click', () => switchView('view-scoreboard'));
@@ -548,6 +537,19 @@
         renderPlayers();
         renderActivityFeed();
         updateGameModeUI();
+
+        onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                appState.userId = user.uid;
+                setupFirestoreListeners();
+            } else {
+                try {
+                    await signInAnonymously(auth);
+                } catch(e) {
+                    console.error("Erro ao fazer login anônimo:", e);
+                }
+            }
+        });
 
     </script>
 </body>
