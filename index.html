@@ -512,7 +512,7 @@
                 renderActivityFeed();
             });
         }
-        function onAuthStateChanged(auth, async (user) => {
+        onAuthStateChanged(auth, async (user) => {
             if (user) {
                 appState.userId = user.uid;
                 setupFirestoreListeners();
