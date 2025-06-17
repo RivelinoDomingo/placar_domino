@@ -144,7 +144,7 @@
         function switchView(viewId) { ui.views.forEach(v => v.classList.toggle('active', v.id === viewId)); }
 
         function renderPlayers() {
-            playersListDiv.innerHTML = Object.values(allPlayers).sort((a, b) => a.name.localeCompare(b.name)).map(player => `
+            ui.playersListDiv.innerHTML = Object.values(allPlayers).sort((a, b) => a.name.localeCompare(b.name)).map(player => `
                 <div class="bg-white p-4 rounded-xl shadow-sm flex items-center justify-between">
                     <div><span class="font-bold text-lg player-name-clickable" data-player-id="${player.id}">${player.name}</span><span class="text-sm text-gray-500 ml-2">(Série ${player.series})</span></div>
                     <div class="text-right"><div class="font-semibold text-blue-600">Raios: ${player.raios}</div><div class="font-semibold text-red-600">Lambretas: ${player.lambretas}</div></div>
