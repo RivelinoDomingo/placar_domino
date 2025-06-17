@@ -295,7 +295,7 @@
             ui.gameMode.backBtn.addEventListener('click', () => switchView('view-scoreboard'));
             ui.gameMode.modeButtons.forEach(btn => btn.addEventListener('click', () => { if (!appState.gameState.activeGame) { appState.gameState.gameMode = btn.dataset.mode; updateGameModeUI(); }}));
             ui.gameMode.raioCheckbox.addEventListener('change', (e) => { if (!appState.gameState.activeGame) appState.gameState.isRaioMatch = e.target.checked; });
-            ui.gameMode.startBtn.addEventListener('click', startGame); // startGame precisa ser definida
+             // ui.gameMode.startBtn.addEventListener('click', startGame); // startGame precisa ser definida
 
             ui.playersListDiv.addEventListener('click', e => {
                 const target = e.target.closest('.player-name-clickable');
