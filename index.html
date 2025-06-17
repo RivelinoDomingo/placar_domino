@@ -705,11 +705,6 @@
                 });
             }
         });
-
-        playersListDiv.querySelectorAll('.plus-btn, .minus-btn').forEach(button => button.addEventListener('click', handleScoreChange));
-        playersListDiv.querySelectorAll('.edit-icon').forEach(icon => icon.addEventListener('click', handleRenamePlayer));
-        playersListDiv.querySelectorAll('.delete-icon').forEach(icon => icon.addEventListener('click', handleDeletePlayer));
-        updateControlButtonsState();
         // =======================================================
         // NOVO: CRIA E ADICIONA O BOTÃO "ADICIONAR JOGADOR"
         // =======================================================
@@ -1021,7 +1016,7 @@
             showMessage("Erro ao carregar dados do placar.", 'error');
         });
 
-        const qEvents = query(eventsCollectionRef(), orderBy('timestamp', 'desc'), limit(3));
+        const qEvents = query(eventsCollectionRef(), orderBy('timestamp', 'desc'), limit(5));
         onSnapshot(qEvents, (snapshot) => {
             const eventsData = [];
             snapshot.forEach((doc) => {
