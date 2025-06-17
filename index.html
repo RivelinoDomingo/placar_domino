@@ -1,309 +1,314 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Placar do Dominó v2.0 (Integrado)</title>
-    <script src="[https://cdn.tailwindcss.com](https://cdn.tailwindcss.com)"></script>
-    <link rel="preconnect" href="[https://fonts.googleapis.com](https://fonts.googleapis.com)">
-    <link rel="preconnect" href="[https://fonts.gstatic.com](https://fonts.gstatic.com)" crossorigin>
-    <link href="[https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=Roboto+Condensed:wght@700&display=swap](https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=Roboto+Condensed:wght@700&display=swap)" rel="stylesheet">
-    <style>
-        body { font-family: 'Inter', sans-serif; background-color: #f0f2f5; }
-        .font-condensed { font-family: 'Roboto Condensed', sans-serif; }
-        .view { display: none; }
-        .view.active { display: block; }
+    <!DOCTYPE html>
+    <html lang="pt-BR">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Placar do Dominó v2.0 (Integrado)</title>
+        <script src="https://cdn.tailwindcss.com"></script>
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=Roboto+Condensed:wght@700&display=swap" rel="stylesheet">
+        <style>
+            body { font-family: 'Inter', sans-serif; background-color: #f0f2f5; }
+            .font-condensed { font-family: 'Roboto Condensed', sans-serif; }
+            .view { display: none; }
+            .view.active { display: block; }
+            .admin-fab-container { position: fixed; bottom: 2rem; right: 2rem; z-index: 1000; }
+            .admin-fab { width: 60px; height: 60px; border-radius: 50%; background-color: #1f2937; color: white; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 12px rgba(0,0,0,0.2); cursor: pointer; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+            .admin-fab:hover { transform: scale(1.1); background-color: #374151; }
+            .admin-fab.active { transform: rotate(45deg); }
+            .admin-actions { position: absolute; bottom: 80px; right: 0; background-color: white; border-radius: 12px; box-shadow: 0 5px 20px rgba(0,0,0,0.15); padding: 1.5rem; width: 300px; transform-origin: bottom right; transform: scale(0.9) translateY(10px); opacity: 0; visibility: hidden; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+            .admin-actions.active { transform: scale(1) translateY(0); opacity: 1; visibility: visible; }
+            .achievement-icon { font-size: 1.5rem; filter: grayscale(80%); opacity: 0.4; transition: all 0.3s; }
+            .achievement-icon.unlocked { filter: grayscale(0%); opacity: 1; }
+            .player-name-clickable { cursor: pointer; transition: color 0.2s; }
+            .player-name-clickable:hover { color: #2563eb; }
+            .mesa-grid { display: grid; grid-template-columns: 1fr 2fr 1fr; grid-template-rows: 1fr 2fr 1fr; grid-template-areas: ". top ." "left middle right" ". bottom ."; aspect-ratio: 1.5 / 1; width: 100%; max-width: 800px; }
+            .player-slot-top { grid-area: top; }
+            .player-slot-left { grid-area: left; }
+            .player-slot-right { grid-area: right; }
+            .player-slot-bottom { grid-area: bottom; }
+            .fade-in { animation: fadeIn 0.5s ease-in-out; }
+            @keyframes fadeIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
+            .point-dot { width: 10px; height: 10px; border-radius: 50%; transition: all 0.3s ease; }
+            .team-legend { transition: opacity 0.3s ease-in-out; }
+        </style>
+    </head>
+    <body class="text-gray-800">
 
-        .admin-fab-container { position: fixed; bottom: 1.5rem; right: 1.5rem; z-index: 1000; }
-        .admin-fab { width: 60px; height: 60px; border-radius: 50%; background-color: #1f2937; color: white; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 12px rgba(0,0,0,0.2); cursor: pointer; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
-        .admin-fab:hover { transform: scale(1.1); background-color: #374151; }
-        .admin-fab.active { transform: rotate(45deg); }
-        .admin-actions { position: absolute; bottom: 80px; right: 0; background-color: white; border-radius: 12px; box-shadow: 0 5px 20px rgba(0,0,0,0.15); padding: 1.5rem; width: 300px; transform-origin: bottom right; transform: scale(0.9) translateY(10px); opacity: 0; visibility: hidden; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
-        .admin-actions.active { transform: scale(1) translateY(0); opacity: 1; visibility: visible; }
+        <div id="app-container" class="container mx-auto max-w-2xl p-4 sm:p-6 lg:p-8">
 
-        .achievement-icon { font-size: 1.5rem; filter: grayscale(80%); opacity: 0.4; transition: all 0.3s; }
-        .achievement-icon.unlocked { filter: grayscale(0%); opacity: 1; }
-
-        .player-name-clickable { cursor: pointer; transition: color 0.2s; }
-        .player-name-clickable:hover { color: #2563eb; }
-
-        .mesa-grid { display: grid; grid-template-columns: 1fr 2fr 1fr; grid-template-rows: 1fr 2fr 1fr; grid-template-areas: ". top ." "left middle right" ". bottom ."; aspect-ratio: 1.5 / 1; width: 100%; max-width: 800px; }
-        .player-slot-top { grid-area: top; }
-        .player-slot-left { grid-area: left; }
-        .player-slot-right { grid-area: right; }
-        .player-slot-bottom { grid-area: bottom; }
-
-        .fade-in { animation: fadeIn 0.5s ease-in-out; }
-        @keyframes fadeIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
-
-        .point-dot { width: 10px; height: 10px; border-radius: 50%; transition: all 0.3s ease; }
-        .team-legend { transition: opacity 0.3s ease-in-out; }
-    </style>
-</head>
-<body class="text-gray-800">
-
-    <div id="app-container" class="container mx-auto max-w-3xl p-4 sm:p-6 lg:p-8">
-
-        <div id="view-scoreboard" class="view active fade-in">
-            <div class="text-center mb-8"><h1 class="text-4xl font-bold font-condensed tracking-wider">PLACAR DO DOMINÓ</h1></div>
-            <div class="flex justify-center mb-12"><button id="btnGoToGameMode" class="bg-blue-600 text-white font-bold py-4 px-8 rounded-lg shadow-lg hover:bg-blue-700 transition-all duration-300 transform hover:scale-105"><span class="text-2xl mr-3">🀄</span> Iniciar Modo Partida</button></div>
-            <div id="playersList" class="space-y-3"><div class="text-center text-gray-500 p-8">Carregando placar...</div></div>
-            <div class="mt-10"><h2 class="text-xl font-bold text-gray-700 mb-3">Últimas Atividades</h2><div id="activityFeed" class="space-y-2 bg-white p-4 rounded-xl shadow-sm"><p class="text-gray-500 text-center">Carregando atividades...</p></div></div>
-        </div>
-
-        <div id="view-game-table" class="view fade-in">
-            <div class="flex justify-between items-center mb-6">
-                <button id="btnBackToScoreboard" class="text-gray-500 hover:text-gray-800 transition">← Voltar ao Placar</button>
-                <div class="text-center"><h2 class="text-3xl font-bold font-condensed">MODO PARTIDA</h2><p id="gameStatusText" class="text-gray-500">Selecione os jogadores para começar</p></div>
-                <div class="w-24"></div>
+            <div id="view-scoreboard" class="view active fade-in">
+                <div class="text-center mb-8"><h1 class="text-4xl font-bold font-condensed tracking-wider">PLACAR DO DOMINÓ</h1></div>
+                <div class="flex justify-center mb-12"><button id="btnGoToGameMode" class="bg-blue-600 text-white font-bold py-4 px-8 rounded-lg shadow-lg hover:bg-blue-700 transition-all duration-300 transform hover:scale-105"><span class="text-2xl mr-3">🀄</span> Iniciar Modo Partida</button></div>
+                <div id="playersList" class="space-y-3"><div class="text-center text-gray-500 p-8">Carregando placar...</div></div>
+                <div class="mt-10"><h2 class="text-xl font-bold text-gray-700 mb-3">Últimas Atividades</h2><div id="activityFeed" class="space-y-2 bg-white p-4 rounded-xl shadow-sm"><p class="text-gray-500 text-center">Carregando atividades...</p></div></div>
             </div>
-            <div id="game-type-selector" class="flex justify-center gap-4 mb-4"><button data-mode="individual" class="gameModeBtn font-semibold py-2 px-4 rounded-lg shadow">Individual</button><button data-mode="duplas" class="gameModeBtn font-semibold py-2 px-4 rounded-lg">Duplas</button></div>
-            <div id="raio-mode-selector" class="flex justify-center items-center gap-2 mb-6"><input type="checkbox" id="raioModeCheckbox" class="h-5 w-5 rounded border-gray-300 text-blue-600 focus:ring-blue-500 cursor-pointer"><label for="raioModeCheckbox" class="font-semibold text-gray-700 cursor-pointer select-none">Partida de Raio ⚡️</label></div>
-            <div class="bg-green-800 border-8 border-yellow-800/50 rounded-2xl shadow-2xl p-4 sm:p-8 mesa-grid mx-auto">
-                <div class="flex items-center justify-center player-slot-top"><div id="slot-1" class="player-slot flex flex-col items-center"></div></div>
-                <div class="flex items-center justify-center player-slot-left"><div id="slot-4" class="player-slot flex flex-col items-center"></div></div>
-                <div class="bg-green-700/80 rounded-full flex items-center justify-center"><span class="text-5xl text-white/50 font-condensed">🀄</span></div>
-                <div class="flex items-center justify-center player-slot-right"><div id="slot-2" class="player-slot flex flex-col items-center"></div></div>
-                <div class="flex items-center justify-center player-slot-bottom"><div id="slot-3" class="player-slot flex flex-col items-center"></div></div>
-            </div>
-            <div class="mt-8 text-center space-y-4">
-                <button id="btnStartGame" class="bg-gray-400 text-white font-bold py-3 px-6 rounded-lg shadow-md cursor-not-allowed" disabled>Iniciar Jogo</button>
-                <div id="activeGameButtons" class="hidden flex-wrap justify-center gap-4"><button id="btnLaunchScore" class="bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-6 rounded-lg shadow-md transition">Lançar Ponto</button><button id="btnUndoRound" class="bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-3 px-6 rounded-lg shadow-md transition">Desfazer</button><button id="btnEndGame" class="bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-6 rounded-lg shadow-md transition">Encerrar Partida</button></div>
-            </div>
-        </div>
 
-        <div id="view-game-over" class="view fade-in text-center">
-             <h2 class="text-2xl text-gray-600">Fim de Jogo</h2>
-            <p id="gameOverWinnerText" class="text-5xl font-bold font-condensed my-4 text-blue-600"></p>
-            <p id="gameOverScoreText" class="text-xl text-gray-500 mb-8"></p>
-            <div class="flex justify-center gap-4 flex-wrap">
-                 <button id="btnShareWhatsapp" class="bg-green-500 text-white font-bold py-3 px-6 rounded-lg shadow-lg hover:bg-green-600 transition flex items-center gap-2"><svg xmlns="[http://www.w3.org/2000/svg](http://www.w3.org/2000/svg)" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg> Compartilhar</button>
-                <button id="btnNewGame" class="bg-blue-600 text-white font-bold py-3 px-6 rounded-lg shadow-lg hover:bg-blue-700 transition">🀄 Nova Partida</button>
+            <div id="view-game-table" class="view fade-in">
+                <div class="flex justify-between items-center mb-6">
+                    <button id="btnBackToScoreboard" class="text-gray-500 hover:text-gray-800 transition">← Voltar ao Placar</button>
+                    <div class="text-center"><h2 class="text-3xl font-bold font-condensed">MODO PARTIDA</h2><p id="gameStatusText" class="text-gray-500">Selecione os jogadores para começar</p></div>
+                    <div class="w-24"></div>
+                </div>
+                <div id="game-type-selector" class="flex justify-center gap-4 mb-4"><button data-mode="individual" class="gameModeBtn font-semibold py-2 px-4 rounded-lg shadow">Individual</button><button data-mode="duplas" class="gameModeBtn font-semibold py-2 px-4 rounded-lg">Duplas</button></div>
+                <div id="raio-mode-selector" class="flex justify-center items-center gap-2 mb-6"><input type="checkbox" id="raioModeCheckbox" class="h-5 w-5 rounded border-gray-300 text-blue-600 focus:ring-blue-500 cursor-pointer"><label for="raioModeCheckbox" class="font-semibold text-gray-700 cursor-pointer select-none">Partida de Raio ⚡️</label></div>
+                <div class="bg-green-800 border-8 border-yellow-800/50 rounded-2xl shadow-2xl p-4 sm:p-8 mesa-grid mx-auto">
+                    <div class="flex items-center justify-center player-slot-top"><div id="slot-1" class="player-slot flex flex-col items-center"></div></div>
+                    <div class="flex items-center justify-center player-slot-left"><div id="slot-4" class="player-slot flex flex-col items-center"></div></div>
+                    <div class="bg-green-700/80 rounded-full flex items-center justify-center"><span class="text-5xl text-white/50 font-condensed">🀄</span></div>
+                    <div class="flex items-center justify-center player-slot-right"><div id="slot-2" class="player-slot flex flex-col items-center"></div></div>
+                    <div class="flex items-center justify-center player-slot-bottom"><div id="slot-3" class="player-slot flex flex-col items-center"></div></div>
+                </div>
+                <div class="mt-8 text-center space-y-4">
+                    <button id="btnStartGame" class="bg-gray-400 text-white font-bold py-3 px-6 rounded-lg shadow-md cursor-not-allowed" disabled>Iniciar Jogo</button>
+                    <div id="activeGameButtons" class="hidden flex-wrap justify-center gap-4"><button id="btnLaunchScore" class="bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-6 rounded-lg shadow-md transition">Lançar Ponto</button><button id="btnUndoRound" class="bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-3 px-6 rounded-lg shadow-md transition">Desfazer</button><button id="btnEndGame" class="bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-6 rounded-lg shadow-md transition">Encerrar Partida</button></div>
+                </div>
+            </div>
+
+            <div id="view-game-over" class="view fade-in text-center">
+                <h2 class="text-2xl text-gray-600">Fim de Jogo</h2>
+                <p id="gameOverWinnerText" class="text-5xl font-bold font-condensed my-4 text-blue-600"></p>
+                <p id="gameOverScoreText" class="text-xl text-gray-500 mb-8"></p>
+                <div class="flex justify-center gap-4 flex-wrap">
+                    <button id="btnShareWhatsapp" class="bg-green-500 text-white font-bold py-3 px-6 rounded-lg shadow-lg hover:bg-green-600 transition flex items-center gap-2"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg> Compartilhar</button>
+                    <button id="btnNewGame" class="bg-blue-600 text-white font-bold py-3 px-6 rounded-lg shadow-lg hover:bg-blue-700 transition">🀄 Nova Partida</button>
+                </div>
             </div>
         </div>
-    </div>
 
-    <div class="admin-fab-container"><div id="adminActionsPanel" class="admin-actions"><h3 class="font-bold text-lg mb-4 text-gray-800">Painel do Administrador</h3><div id="adminLoginView"><p class="text-sm text-gray-600 mb-2">Insira a senha para gerenciar.</p><input type="password" id="adminKeyInput" placeholder="Senha de Admin" class="w-full border-gray-300 rounded-md shadow-sm p-2"><button id="activateAdminBtn" class="w-full mt-3 bg-blue-600 text-white font-semibold py-2 rounded-md hover:bg-blue-700 transition">Ativar</button></div><div id="adminControlsView" class="hidden space-y-3"><button id="addPlayerBtn_fab" class="w-full bg-green-500 text-white font-semibold py-2 rounded-md hover:bg-green-600 transition">Adicionar Jogador</button><button id="resetScoresBtn_fab" class="w-full bg-red-600 text-white font-semibold py-2 rounded-md hover:bg-red-700 transition">Redefinir Placar Geral</button><p id="adminStatus" class="text-center text-sm text-green-600 font-semibold pt-2">Modo Admin Ativado</p></div></div><div id="adminFabButton" class="admin-fab"><svg id="fabIconDefault" xmlns="[http://www.w3.org/2000/svg](http://www.w3.org/2000/svg)" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg><svg id="fabIconClose" xmlns="[http://www.w3.org/2000/svg](http://www.w3.org/2000/svg)" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="hidden"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></div></div>
+        <div class="admin-fab-container"><div id="adminActionsPanel" class="admin-actions"><h3 class="font-bold text-lg mb-4 text-gray-800">Painel do Administrador</h3><div id="adminLoginView"><p class="text-sm text-gray-600 mb-2">Insira a senha para gerenciar.</p><input type="password" id="adminKeyInput" placeholder="Senha de Admin" class="w-full border-gray-300 rounded-md shadow-sm p-2"><button id="activateAdminBtn" class="w-full mt-3 bg-blue-600 text-white font-semibold py-2 rounded-md hover:bg-blue-700 transition">Ativar</button></div><div id="adminControlsView" class="hidden space-y-3"><button id="addPlayerBtn_fab" class="w-full bg-green-500 text-white font-semibold py-2 rounded-md hover:bg-green-600 transition">Adicionar Novo Jogador</button><button id="resetScoresBtn_fab" class="w-full bg-red-600 text-white font-semibold py-2 rounded-md hover:bg-red-700 transition">Redefinir Placar Geral</button><p id="adminStatus" class="text-center text-sm text-green-600 font-semibold pt-2">Modo Admin Ativado</p></div></div><div id="adminFabButton" class="admin-fab"><svg id="fabIconDefault" xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg><svg id="fabIconClose" xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="hidden"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></div></div>
 
-    <div id="modalContainer" class="fixed inset-0 bg-black/60 hidden items-center justify-center p-4 z-50"><div id="modalContent" class="bg-white rounded-xl shadow-2xl p-6 w-full max-w-md m-auto"></div></div>
+        <div id="modalContainer" class="fixed inset-0 bg-black/60 hidden items-center justify-center p-4 z-50"><div id="modalContent" class="bg-white rounded-xl shadow-2xl p-6 w-full max-w-md m-auto"></div></div>
 
-    <script type="module">
-        import { initializeApp } from "[https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js](https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js)";
-        import { getAuth, signInAnonymously, onAuthStateChanged } from "[https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js](https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js)";
-        import { getFirestore, doc, addDoc, updateDoc, deleteDoc, onSnapshot, collection, query, orderBy, limit, serverTimestamp, writeBatch, increment } from "[https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js](https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js)";
+        <script type="module">
+            import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+            import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+            import { getFirestore, doc, addDoc, updateDoc, onSnapshot, collection, query, orderBy, limit, serverTimestamp, writeBatch } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-        const firebaseConfig = {
-            apiKey: "AIzaSyBqpkxcl0GkBBHVO8Nxk7UpYd00H4Frklc",
-            authDomain: "placar-domino.firebaseapp.com",
-            projectId: "placar-domino",
-            storageBucket: "placar-domino.firebasestorage.app",
-            messagingSenderId: "187178310074",
-            appId: "1:187178310074:web:5f56292dea8dc776532583",
-            measurementId: "G-BL3W42DJ3M"
-        };
-
-        const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app);
-        const auth = getAuth(app);
-
-        const ADMIN_KEY = 'Domino25';
-        const POINTS_TO_COMPLETE_RAIO = 4;
-        const appIdentifier = firebaseConfig.appId;
-
-        let appState = { players: {}, activityFeed: [], isAdminMode: false, userId: null, gameState: {}, unsubscribers: [] };
-
-        const playersCollectionRef = () => collection(db, `artifacts/${appIdentifier}/public/data/players`);
-        const activityFeedCollectionRef = () => collection(db, `artifacts/${appIdentifier}/public/data/activity`);
-        const matchesCollectionRef = () => collection(db, `artifacts/${appIdentifier}/public/data/partidas`);
-
-        const ui = {
-            views: document.querySelectorAll('.view'),
-            playersListDiv: document.getElementById('playersList'),
-            activityFeedDiv: document.getElementById('activityFeed'),
-            adminFab: { button: document.getElementById('adminFabButton'), panel: document.getElementById('adminActionsPanel'), defaultIcon: document.getElementById('fabIconDefault'), closeIcon: document.getElementById('fabIconClose'), loginView: document.getElementById('adminLoginView'), controlsView: document.getElementById('adminControlsView'), keyInput: document.getElementById('adminKeyInput'), activateBtn: document.getElementById('activateAdminBtn'), addPlayerBtn: document.getElementById('addPlayerBtn_fab'), resetBtn: document.getElementById('resetScoresBtn_fab')},
-            modal: { container: document.getElementById('modalContainer'), content: document.getElementById('modalContent')},
-            gameMode: { goToBtn: document.getElementById('btnGoToGameMode'), backBtn: document.getElementById('btnBackToScoreboard'), modeButtons: document.querySelectorAll('.gameModeBtn'), raioCheckbox: document.getElementById('raioModeCheckbox'), startBtn: document.getElementById('btnStartGame'), activeButtons: document.getElementById('activeGameButtons'), launchScoreBtn: document.getElementById('btnLaunchScore'), undoBtn: document.getElementById('btnUndoRound'), endBtn: document.getElementById('btnEndGame'), newGameBtn: document.getElementById('btnNewGame'), shareBtn: document.getElementById('btnShareWhatsapp'), statusText: document.getElementById('gameStatusText'), gameOver: { winnerText: document.getElementById('gameOverWinnerText'), scoreText: document.getElementById('gameOverScoreText')}}
-        };
-
-        function switchView(viewId) { ui.views.forEach(v => v.classList.toggle('active', v.id === viewId)); }
-
-        function renderScoreboard() {
-            const players = Object.values(appState.players);
-            const seriesOrder = ['A', 'B', 'C', 'D', 'Amador'];
-
-            players.sort((a, b) => {
-                const seriesIndexA = seriesOrder.indexOf(a.series || 'Amador');
-                const seriesIndexB = seriesOrder.indexOf(b.series || 'Amador');
-                if (seriesIndexA !== seriesIndexB) return seriesIndexA - seriesIndexB;
-                if ((b.raios || 0) !== (a.raios || 0)) return (b.raios || 0) - (a.raios || 0);
-                if ((b.vitorias || 0) !== (a.vitorias || 0)) return (b.vitorias || 0) - (a.vitorias || 0);
-                return (a.lambretas || 0) - (b.lambretas || 0);
-            });
-
-            ui.playersListDiv.innerHTML = players.map(player => `
-                <div class="bg-white p-4 rounded-xl shadow-sm flex items-center justify-between">
-                    <div><span class="font-bold text-lg player-name-clickable" data-player-id="${player.id}">${player.name}</span><span class="text-sm text-gray-500 ml-2">(Série ${player.series})</span></div>
-                    <div class="text-right"><div class="font-semibold text-blue-600">Vitórias: ${player.vitorias || 0}</div><div class="font-semibold text-yellow-600">Raios: ${player.raios || 0}</div></div>
-                </div>`).join('');
-        }
-
-        function renderActivityFeed() {
-            ui.activityFeedDiv.innerHTML = appState.activityFeed.length === 0 ? '<p class="text-gray-500 text-center">Nenhuma atividade recente.</p>' :
-                appState.activityFeed.map(item => {
-                    let icon = '💬';
-                    if (item.type === 'promotion') icon = '▲';
-                    else if (item.type === 'demotion') icon = '▼';
-                    else if (item.type === 'achievement') icon = '⭐';
-                    const color = item.type === 'promotion' ? 'green' : (item.type === 'demotion' ? 'red' : 'yellow');
-                    const timestamp = item.timestamp?.seconds ? new Date(item.timestamp.seconds * 1000).toLocaleString('pt-BR') : 'agora';
-                    return `<div class="p-3 rounded-lg flex items-center gap-3"><span class="text-${color}-500">${icon}</span><div><p class="text-gray-800"><span class="font-semibold">${item.player}</span> ${item.text}</p><p class="text-xs text-gray-400">${timestamp}</p></div></div>`;
-                }).join('');
-        }
-
-        function openModal(contentHTML) { ui.modal.content.innerHTML = contentHTML; ui.modal.container.style.display = 'flex'; }
-        function closeModal() { ui.modal.container.style.display = 'none'; }
-
-        function openPlayerDetailsModal(playerId) {
-            const player = appState.players[playerId];
-            if (!player) return;
-            const achievements = {
-                primeiro_rei: { icon: '👑', name: 'Primeiro Rei', description: 'Chegou ao topo da Série A.' },
-                imbativel: { icon: '🔥', name: 'Imbatível', description: 'Venceu 3 partidas consecutivas.' },
-                azarao: { icon: '🚑', name: 'Azarão', description: 'Acumulou 3 lambretas numa partida.' },
+            const firebaseConfig = {
+                apiKey: "AIzaSyBqpkxcl0GkBBHVO8Nxk7UpYd00H4Frklc",
+                authDomain: "placar-domino.firebaseapp.com",
+                projectId: "placar-domino",
+                storageBucket: "placar-domino.firebasestorage.app",
+                messagingSenderId: "187178310074",
+                appId: "1:187178310074:web:5f56292dea8dc776532583",
+                measurementId: "G-BL3W42DJ3M"
             };
-            let achievementsHTML = Object.keys(achievements).map(key => {
-                const ach = achievements[key];
-                const unlocked = player.conquistas?.includes(key);
-                return `<div class="text-center p-2 rounded-lg ${unlocked ? 'bg-yellow-100' : 'bg-gray-100'}"><span class="achievement-icon ${unlocked ? 'unlocked' : ''}" title="${ach.name}: ${ach.description}">${ach.icon}</span><p class="text-xs font-semibold mt-1 ${unlocked ? 'text-yellow-800' : 'text-gray-500'}">${ach.name}</p></div>`;
-            }).join('');
-            let adminControlsHTML = appState.isAdminMode ? `<hr class="my-6"><div class="space-y-3"><button class="w-full bg-blue-500 text-white font-semibold py-2 rounded-md modal-rename-btn" data-player-id="${playerId}">Renomear</button><button class="w-full bg-red-600 text-white font-semibold py-2 rounded-md modal-delete-btn" data-player-id="${playerId}">Deletar</button></div>` : '';
-            const modalHTML = `<div class="flex justify-between items-start"><div><h3 class="text-2xl font-bold">${player.name}</h3><p class="text-gray-600">Série ${player.series}</p></div><button id="modal-close-btn" class="text-gray-400 hover:text-gray-700 text-2xl">&times;</button></div><div class="mt-6"><h4 class="font-semibold mb-2">Estatísticas</h4><div class="grid grid-cols-2 gap-4 text-center"><div class="bg-gray-50 p-3 rounded-lg"><p class="text-2xl font-bold">${player.vitorias || 0}</p><p class="text-sm text-gray-500">Vitórias</p></div><div class="bg-gray-50 p-3 rounded-lg"><p class="text-2xl font-bold">${player.derrotas || 0}</p><p class="text-sm text-gray-500">Derrotas</p></div></div></div><div class="mt-6"><h4 class="font-semibold mb-2">Conquistas</h4><div class="grid grid-cols-3 gap-2">${achievementsHTML}</div></div>${adminControlsHTML}`;
-            openModal(modalHTML);
-        }
 
-        function createInitialGameState() { return { gameMode: 'individual', isRaioMatch: false, selectedSlots: { 1: null, 2: null, 3: null, 4: null }, activeGame: null, activeGameId: null, activeGameListener: null }; }
+            const app = initializeApp(firebaseConfig);
+            const db = getFirestore(app);
+            const auth = getAuth(app);
 
-        function resetGameState() {
-            if (appState.gameState.activeGameListener) { appState.gameState.activeGameListener(); }
-            appState.gameState = createInitialGameState();
-            ui.gameMode.statusText.textContent = 'Selecione os jogadores para começar';
-            ui.gameMode.startBtn.style.display = 'block';
-            ui.gameMode.activeButtons.style.display = 'none';
-            document.getElementById('game-type-selector').style.display = 'flex';
-            document.getElementById('raio-mode-selector').style.display = 'flex';
-            ui.gameMode.raioCheckbox.checked = false;
-            updateGameModeUI();
-        }
+            const ADMIN_KEY = 'Domino25';
+            const POINTS_TO_COMPLETE_RAIO = 4;
+            const appIdentifier = firebaseConfig.appId;
 
-        function updateGameModeUI() {
-            ui.gameMode.modeButtons.forEach(btn => btn.className = `gameModeBtn font-semibold py-2 px-4 rounded-lg ${btn.dataset.mode === appState.gameState.gameMode ? 'shadow bg-blue-500 text-white' : 'bg-white text-gray-500'}`);
-            resetPlayerSlots();
-        }
+            let appState = { players: {}, activityFeed: [], isAdminMode: false, userId: null, gameState: {}, unsubscribers: [] };
 
-        function resetPlayerSlots() {
-            appState.gameState.selectedSlots = { 1: null, 2: null, 3: null, 4: null };
-            renderAllSlots();
-        }
+            const playersCollectionRef = () => collection(db, `artifacts/${appIdentifier}/public/data/players`);
+            const activityFeedCollectionRef = () => collection(db, `artifacts/${appIdentifier}/public/data/activity`);
+            const matchesCollectionRef = () => collection(db, `artifacts/${appIdentifier}/public/data/partidas`);
 
-        function renderAllSlots() {
-            document.querySelectorAll('.player-slot').forEach(slot => renderPlayerSlot(slot.id.split('-')[1]));
-            checkStartGameCondition();
-        }
+            const ui = {
+                views: document.querySelectorAll('.view'),
+                playersListDiv: document.getElementById('playersList'),
+                activityFeedDiv: document.getElementById('activityFeed'),
+                adminFab: { button: document.getElementById('adminFabButton'), panel: document.getElementById('adminActionsPanel'), defaultIcon: document.getElementById('fabIconDefault'), closeIcon: document.getElementById('fabIconClose'), loginView: document.getElementById('adminLoginView'), controlsView: document.getElementById('adminControlsView'), keyInput: document.getElementById('adminKeyInput'), activateBtn: document.getElementById('activateAdminBtn'), addPlayerBtn: document.getElementById('addPlayerBtn_fab'), resetBtn: document.getElementById('resetScoresBtn_fab')},
+                modal: { container: document.getElementById('modalContainer'), content: document.getElementById('modalContent')},
+                gameMode: { goToBtn: document.getElementById('btnGoToGameMode'), backBtn: document.getElementById('btnBackToScoreboard'), modeButtons: document.querySelectorAll('.gameModeBtn'), raioCheckbox: document.getElementById('raioModeCheckbox'), startBtn: document.getElementById('btnStartGame'), activeButtons: document.getElementById('activeGameButtons'), launchScoreBtn: document.getElementById('btnLaunchScore'), undoBtn: document.getElementById('btnUndoRound'), endBtn: document.getElementById('btnEndGame'), newGameBtn: document.getElementById('btnNewGame'), shareBtn: document.getElementById('btnShareWhatsapp'), statusText: document.getElementById('gameStatusText'), gameOver: { winnerText: document.getElementById('gameOverWinnerText'), scoreText: document.getElementById('gameOverScoreText')}}
+            };
 
-        function renderPlayerSlot(slotId) {
-            const slotDiv = document.getElementById(`slot-${slotId}`);
-            const playerId = appState.gameState.selectedSlots[slotId];
-            const player = playerId ? appState.players[playerId] : null;
+            function switchView(viewId) { ui.views.forEach(v => v.classList.toggle('active', v.id === viewId)); }
 
-            slotDiv.innerHTML = '';
-            if (player) {
-                let teamIndicator = '';
-                if (appState.gameState.gameMode === 'duplas') {
-                    let teamName = (['2', '4'].includes(String(slotId))) ? 'Time A' : 'Time B';
-                    let teamColor = (teamName === 'Time A') ? 'bg-blue-200 text-blue-800' : 'bg-red-200 text-red-800';
-                    teamIndicator = `<div class="text-xs font-bold px-2 py-0.5 rounded-full ${teamColor}">${teamName}</div>`;
-                }
-                slotDiv.innerHTML = `<div class="bg-white p-3 rounded-lg shadow-md text-center w-32 sm:w-40 transition-all transform hover:scale-105 cursor-pointer" data-slot-id="${slotId}"><div class="font-bold text-lg truncate">${player.name}</div><div class="text-sm text-gray-500 mb-2">Série ${player.series}</div>${teamIndicator}<div id="score-${slotId}" class="flex flex-wrap justify-center items-center gap-2 mt-2 h-auto min-h-[20px] text-2xl"></div></div>`;
-                slotDiv.querySelector(`[data-slot-id="${slotId}"]`).addEventListener('click', () => openPlayerSelectionModal(slotId));
-            } else {
-                let legendHTML = '';
-                if (appState.gameState.gameMode === 'duplas') {
-                    legendHTML = `<div class="team-legend text-${(['2', '4'].includes(String(slotId)) ? 'blue' : 'red')}-300 text-xs mt-1 font-semibold">${(['2', '4'].includes(String(slotId)) ? 'Time A' : 'Time B')}</div>`;
-                }
-                slotDiv.innerHTML = `<button class="add-player-btn w-20 h-20 bg-white/20 rounded-full flex items-center justify-center text-4xl text-white/50 hover:bg-white/40 transition" data-slot-id="${slotId}">+</button>${legendHTML}`;
-                slotDiv.querySelector('.add-player-btn').addEventListener('click', () => openPlayerSelectionModal(slotId));
+            function renderScoreboard() {
+                const players = Object.values(appState.players);
+                const seriesOrder = ['A', 'B', 'C', 'D', 'Amador'];
+
+                players.sort((a, b) => {
+                    const seriesIndexA = seriesOrder.indexOf(a.series || 'Amador');
+                    const seriesIndexB = seriesOrder.indexOf(b.series || 'Amador');
+                    if (seriesIndexA !== seriesIndexB) return seriesIndexA - seriesIndexB;
+                    if ((b.raios || 0) !== (a.raios || 0)) return (b.raios || 0) - (a.raios || 0);
+                    if ((b.vitorias || 0) !== (a.vitorias || 0)) return (b.vitorias || 0) - (a.vitorias || 0);
+                    return (a.lambretas || 0) - (b.lambretas || 0);
+                });
+
+                ui.playersListDiv.innerHTML = players.map(player => `
+                    <div class="bg-white p-4 rounded-xl shadow-sm flex items-center justify-between">
+                        <div><span class="font-bold text-lg player-name-clickable" data-player-id="${player.id}">${player.name}</span><span class="text-sm text-gray-500 ml-2">(Série ${player.series})</span></div>
+                        <div class="text-right"><div class="font-semibold text-blue-600">Vitórias: ${player.vitorias || 0}</div><div class="font-semibold text-yellow-600">Raios: ${player.raios || 0}</div></div>
+                    </div>`).join('');
             }
-        }
 
-        function openPlayerSelectionModal(slotId) {
-            if (appState.gameState.activeGame) return;
-            appState.gameState.targetSlot = slotId;
-            const availablePlayers = Object.values(appState.players).filter(p => !Object.values(appState.gameState.selectedSlots).includes(p.id));
-            const modalHTML = `<h3 class="text-2xl font-bold mb-4">Selecione um Jogador</h3><div class="space-y-2 max-h-64 overflow-y-auto">${availablePlayers.map(p => `<button class="w-full text-left p-3 bg-gray-100 rounded-lg hover:bg-blue-100 transition player-select-btn" data-player-id="${p.id}">${p.name}</button>`).join('')}</div><hr class="my-4"><button class="w-full bg-green-500 text-white font-semibold py-2 rounded-md hover:bg-green-600 transition" id="modal-add-player-btn">+ Adicionar Novo Jogador</button><button id="modal-cancel-btn" class="mt-4 bg-gray-200 text-gray-800 font-semibold py-2 px-4 rounded-lg w-full">Cancelar</button>`;
-            openModal(modalHTML);
-        }
+            function renderActivityFeed() {
+                ui.activityFeedDiv.innerHTML = appState.activityFeed.length === 0 ? '<p class="text-gray-500 text-center">Nenhuma atividade recente.</p>' :
+                    appState.activityFeed.map(item => {
+                        let icon = '💬';
+                        if (item.type === 'promotion') icon = '▲';
+                        else if (item.type === 'demotion') icon = '▼';
+                        else if (item.type === 'achievement') icon = '⭐';
+                        const color = item.type === 'promotion' ? 'green' : (item.type === 'demotion' ? 'red' : 'yellow');
+                        const timestamp = item.timestamp?.seconds ? new Date(item.timestamp.seconds * 1000).toLocaleString('pt-BR') : 'agora';
+                        return `<div class="p-3 rounded-lg flex items-center gap-3"><span class="text-${color}-500">${icon}</span><div><p class="text-gray-800"><span class="font-semibold">${item.player}</span> ${item.text}</p><p class="text-xs text-gray-400">${timestamp}</p></div></div>`;
+                    }).join('');
+            }
 
-        function selectPlayer(playerId) {
-            const currentSlotOfPlayer = Object.keys(appState.gameState.selectedSlots).find(key => appState.gameState.selectedSlots[key] === playerId);
-            if (currentSlotOfPlayer) appState.gameState.selectedSlots[currentSlotOfPlayer] = null;
-            appState.gameState.selectedSlots[appState.gameState.targetSlot] = playerId;
-            closeModal();
-            renderAllSlots();
-        }
+            function openModal(contentHTML) { ui.modal.content.innerHTML = contentHTML; ui.modal.container.style.display = 'flex'; }
+            function closeModal() { ui.modal.container.style.display = 'none'; }
 
-        function checkStartGameCondition() {
-            const selectedCount = Object.values(appState.gameState.selectedSlots).filter(Boolean).length;
-            const canStart = (appState.gameState.gameMode === 'duplas') ? (selectedCount === 4) : (selectedCount >= 2);
-            ui.gameMode.startBtn.disabled = !canStart;
-            ui.gameMode.startBtn.className = canStart ? 'bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-6 rounded-lg shadow-md transition' : 'bg-gray-400 text-white font-bold py-3 px-6 rounded-lg shadow-md cursor-not-allowed';
-        }
+            function openPlayerDetailsModal(playerId) {
+                const player = appState.players[playerId];
+                if (!player) return;
+                const achievements = {
+                    primeiro_rei: { icon: '👑', name: 'Primeiro Rei', description: 'Chegou ao topo da Série A.' },
+                    imbativel: { icon: '🔥', name: 'Imbatível', description: 'Venceu 3 partidas consecutivas.' },
+                    azarao: { icon: '🚑', name: 'Azarão', description: 'Acumulou 3 lambretas numa partida.' },
+                };
+                let achievementsHTML = Object.keys(achievements).map(key => {
+                    const ach = achievements[key];
+                    const unlocked = player.conquistas?.includes(key);
+                    return `<div class="text-center p-2 rounded-lg ${unlocked ? 'bg-yellow-100' : 'bg-gray-100'}"><span class="achievement-icon ${unlocked ? 'unlocked' : ''}" title="${ach.name}: ${ach.description}">${ach.icon}</span><p class="text-xs font-semibold mt-1 ${unlocked ? 'text-yellow-800' : 'text-gray-500'}">${ach.name}</p></div>`;
+                }).join('');
+                let adminControlsHTML = appState.isAdminMode ? `<hr class="my-6"><div class="space-y-3"><button class="w-full bg-blue-500 text-white font-semibold py-2 rounded-md">Renomear</button><button class="w-full bg-red-600 text-white font-semibold py-2 rounded-md">Deletar</button></div>` : '';
+                const modalHTML = `<div class="flex justify-between items-start"><div><h3 class="text-2xl font-bold">${player.name}</h3><p class="text-gray-600">Série ${player.series}</p></div><button id="modal-close-btn" class="text-gray-400 hover:text-gray-700 text-2xl">&times;</button></div><div class="mt-6"><h4 class="font-semibold mb-2">Estatísticas</h4><div class="grid grid-cols-2 gap-4 text-center"><div class="bg-gray-50 p-3 rounded-lg"><p class="text-2xl font-bold">${player.vitorias || 0}</p><p class="text-sm text-gray-500">Vitórias</p></div><div class="bg-gray-50 p-3 rounded-lg"><p class="text-2xl font-bold">${player.derrotas || 0}</p><p class="text-sm text-gray-500">Derrotas</p></div></div></div><div class="mt-6"><h4 class="font-semibold mb-2">Conquistas</h4><div class="grid grid-cols-3 gap-2">${achievementsHTML}</div></div>${adminControlsHTML}`;
+                openModal(modalHTML);
+            }
 
-        function toggleAdminPanel() { ui.adminFab.button.classList.toggle('active'); ui.adminFab.defaultIcon.classList.toggle('hidden'); ui.adminFab.closeIcon.classList.toggle('hidden'); ui.adminFab.panel.classList.toggle('active'); if (!ui.adminFab.panel.classList.contains('active') && !appState.isAdminMode) { ui.adminFab.loginView.style.display = 'block'; ui.adminFab.controlsView.style.display = 'none'; ui.adminFab.keyInput.value = ''; }}
-        function activateAdminMode() { if(ui.adminFab.keyInput.value === ADMIN_KEY) { appState.isAdminMode = true; ui.adminFab.loginView.style.display = 'none'; ui.adminFab.controlsView.style.display = 'block'; } else { alert('Senha incorreta!'); }}
+            function createInitialGameState() { return { gameMode: 'individual', isRaioMatch: false, selectedSlots: { 1: null, 2: null, 3: null, 4: null }, activeGame: null, activeGameId: null, activeGameListener: null }; }
 
-        function setupFirestoreListeners() {
-            appState.unsubscribers.forEach(unsub => unsub());
-            appState.unsubscribers = [];
+            function resetGameState() {
+                if (appState.gameState.activeGameListener) {
+                    appState.gameState.activeGameListener();
+                }
+                appState.gameState = createInitialGameState();
+                ui.gameMode.statusText.textContent = 'Selecione os jogadores para começar';
+                ui.gameMode.startBtn.style.display = 'block';
+                ui.gameMode.activeButtons.style.display = 'none';
+                document.getElementById('game-type-selector').style.display = 'flex';
+                document.getElementById('raio-mode-selector').style.display = 'flex';
+                ui.gameMode.raioCheckbox.checked = false;
+                updateGameModeUI();
+            }
 
-            const unsubPlayers = onSnapshot(query(playersCollectionRef()), (snapshot) => {
-                appState.players = {};
-                snapshot.forEach(doc => { appState.players[doc.id] = { id: doc.id, ...doc.data() }; });
-                renderScoreboard();
+            function updateGameModeUI() {
+                ui.gameMode.modeButtons.forEach(btn => btn.className = `gameModeBtn font-semibold py-2 px-4 rounded-lg ${btn.dataset.mode === appState.gameState.gameMode ? 'shadow bg-blue-500 text-white' : 'bg-white text-gray-500'}`);
+                resetPlayerSlots();
+            }
+
+            function resetPlayerSlots() {
+                appState.gameState.selectedSlots = { 1: null, 2: null, 3: null, 4: null };
+                renderAllSlots();
+            }
+
+            function renderAllSlots() {
+                document.querySelectorAll('.player-slot').forEach(slot => renderPlayerSlot(slot.id.split('-')[1]));
+                checkStartGameCondition();
+            }
+
+            function renderPlayerSlot(slotId) {
+                const slotDiv = document.getElementById(`slot-${slotId}`);
+                const playerId = appState.gameState.selectedSlots[slotId];
+                const player = playerId ? appState.players[playerId] : null;
+
+                slotDiv.innerHTML = '';
+                if (player) {
+                    let teamIndicator = '';
+                    if (appState.gameState.gameMode === 'duplas') {
+                        let teamName = (['2', '4'].includes(String(slotId))) ? 'Time A' : 'Time B';
+                        let teamColor = (teamName === 'Time A') ? 'bg-blue-200 text-blue-800' : 'bg-red-200 text-red-800';
+                        teamIndicator = `<div class="text-xs font-bold px-2 py-0.5 rounded-full ${teamColor}">${teamName}</div>`;
+                    }
+                    slotDiv.innerHTML = `<div class="bg-white p-3 rounded-lg shadow-md text-center w-32 sm:w-40 transition-all transform hover:scale-105 cursor-pointer" data-slot-id="${slotId}"><div class="font-bold text-lg truncate">${player.name}</div><div class="text-sm text-gray-500 mb-2">Série ${player.series}</div>${teamIndicator}<div id="score-${slotId}" class="flex flex-wrap justify-center items-center gap-2 mt-2 h-auto min-h-[20px] text-2xl"></div></div>`;
+                    slotDiv.querySelector(`[data-slot-id="${slotId}"]`).addEventListener('click', () => openPlayerSelectionModal(slotId));
+                } else {
+                    let legendHTML = '';
+                    if (appState.gameState.gameMode === 'duplas') {
+                        legendHTML = `<div class="team-legend text-${(['2', '4'].includes(String(slotId)) ? 'blue' : 'red')}-300 text-xs mt-1 font-semibold">${(['2', '4'].includes(String(slotId)) ? 'Time A' : 'Time B')}</div>`;
+                    }
+                    slotDiv.innerHTML = `<button class="add-player-btn w-20 h-20 bg-white/20 rounded-full flex items-center justify-center text-4xl text-white/50 hover:bg-white/40 transition" data-slot-id="${slotId}">+</button>${legendHTML}`;
+                    slotDiv.querySelector('.add-player-btn').addEventListener('click', () => openPlayerSelectionModal(slotId));
+                }
+            }
+
+            function openPlayerSelectionModal(slotId) {
+                if (appState.gameState.activeGame) return;
+                appState.gameState.targetSlot = slotId;
+                const availablePlayers = Object.values(appState.players).filter(p => !Object.values(appState.gameState.selectedSlots).includes(p.id));
+                const modalHTML = `<h3 class="text-2xl font-bold mb-4">Selecione um Jogador</h3><div class="space-y-2 max-h-64 overflow-y-auto">${availablePlayers.map(p => `<button class="w-full text-left p-3 bg-gray-100 rounded-lg hover:bg-blue-100 transition player-select-btn" data-player-id="${p.id}">${p.name}</button>`).join('')}</div><button id="modal-cancel-btn" class="mt-6 bg-gray-200 text-gray-800 font-semibold py-2 px-4 rounded-lg w-full">Cancelar</button>`;
+                openModal(modalHTML);
+            }
+
+            function selectPlayer(playerId) {
+                const currentSlotOfPlayer = Object.keys(appState.gameState.selectedSlots).find(key => appState.gameState.selectedSlots[key] === playerId);
+                if (currentSlotOfPlayer) appState.gameState.selectedSlots[currentSlotOfPlayer] = null;
+                appState.gameState.selectedSlots[appState.gameState.targetSlot] = playerId;
+                closeModal();
+                renderAllSlots();
+            }
+
+            function checkStartGameCondition() {
+                const selectedCount = Object.values(appState.gameState.selectedSlots).filter(Boolean).length;
+                const canStart = (appState.gameState.gameMode === 'duplas') ? (selectedCount === 4) : (selectedCount >= 2);
+                ui.gameMode.startBtn.disabled = !canStart;
+                ui.gameMode.startBtn.className = canStart ? 'bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-6 rounded-lg shadow-md transition' : 'bg-gray-400 text-white font-bold py-3 px-6 rounded-lg shadow-md cursor-not-allowed';
+            }
+
+            function toggleAdminPanel() { ui.adminFab.button.classList.toggle('active'); ui.adminFab.defaultIcon.classList.toggle('hidden'); ui.adminFab.closeIcon.classList.toggle('hidden'); ui.adminFab.panel.classList.toggle('active'); if (!ui.adminFab.panel.classList.contains('active') && !appState.isAdminMode) { ui.adminFab.loginView.style.display = 'block'; ui.adminFab.controlsView.style.display = 'none'; ui.adminFab.keyInput.value = ''; }}
+            function activateAdminMode() { if(ui.adminFab.keyInput.value === ADMIN_KEY) { appState.isAdminMode = true; ui.adminFab.loginView.style.display = 'none'; ui.adminFab.controlsView.style.display = 'block'; } else { alert('Senha incorreta!'); }}
+
+            function setupFirestoreListeners() {
+                appState.unsubscribers.forEach(unsub => unsub());
+                appState.unsubscribers = [];
+
+                const unsubPlayers = onSnapshot(query(playersCollectionRef()), (snapshot) => {
+                    const playersData = {};
+                    snapshot.forEach(doc => {
+                        playersData[doc.id] = { id: doc.id, ...doc.data() };
+                    });
+                    appState.players = playersData;
+                    renderScoreboard();
+                });
+
+                const unsubFeed = onSnapshot(query(activityFeedCollectionRef(), orderBy("timestamp", "desc"), limit(5)), (snapshot) => {
+                    appState.activityFeed = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                    renderActivityFeed();
+                });
+
+                appState.unsubscribers.push(unsubPlayers, unsubFeed);
+            }
+
+            onAuthStateChanged(auth, async (user) => {
+                if (user) {
+                    appState.userId = user.uid;
+                    setupFirestoreListeners();
+                } else {
+                    try { await signInAnonymously(auth); } catch(e) { console.error("Erro no login anônimo:", e); }
+                }
             });
 
-            const unsubFeed = onSnapshot(query(activityFeedCollectionRef(), orderBy("timestamp", "desc"), limit(5)), (snapshot) => {
-                appState.activityFeed = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-                renderActivityFeed();
+            // EVENT LISTENERS
+            ui.adminFab.button.addEventListener('click', toggleAdminPanel);
+            ui.adminFab.activateBtn.addEventListener('click', activateAdminMode);
+
+            ui.gameMode.goToBtn.addEventListener('click', () => { resetGameState(); switchView('view-game-table'); });
+            ui.gameMode.backBtn.addEventListener('click', () => switchView('view-scoreboard'));
+            ui.gameMode.modeButtons.forEach(btn => btn.addEventListener('click', () => { if (!appState.gameState.activeGame) { appState.gameState.gameMode = btn.dataset.mode; updateGameModeUI(); }}));
+            ui.gameMode.raioCheckbox.addEventListener('change', (e) => { if (!appState.gameState.activeGame) appState.gameState.isRaioMatch = e.target.checked; });
+            ui.gameMode.startBtn.addEventListener('click', startGame); // startGame precisa ser definida
+
+            ui.playersListDiv.addEventListener('click', e => {
+                const target = e.target.closest('.player-name-clickable');
+                if (target) openPlayerDetailsModal(target.dataset.playerId);
             });
 
-            appState.unsubscribers.push(unsubPlayers, unsubFeed);
-        }
+            ui.modal.container.addEventListener('click', e => {
+                if (e.target.id === 'modalContainer' || e.target.closest('#modal-close-btn') || e.target.id === 'modal-cancel-btn') closeModal();
+                const playerBtn = e.target.closest('.player-select-btn');
+                if (playerBtn) selectPlayer(playerBtn.dataset.playerId);
+            });
 
-        onAuthStateChanged(auth, async (user) => {
-            if (user) { appState.userId = user.uid; setupFirestoreListeners(); }
-            else { try { await signInAnonymously(auth); } catch(e) { console.error("Erro no login anônimo:", e); }}
-        });
+        </script>
+    </body>
+    </html>
 
-        // EVENT LISTENERS
-        ui.adminFab.button.addEventListener('click', toggleAdminPanel);
-        ui.adminFab.activateBtn.addEventListener('click', activateAdminMode);
-
-        ui.gameMode.goToBtn.addEventListener('click', () => { resetGameState(); switchView('view-game-table'); });
-        ui.gameMode.backBtn.addEventListener('click', () => switchView('view-scoreboard'));
-        ui.gameMode.modeButtons.forEach(btn => btn.addEventListener('click', () => { if (!appState.gameState.activeGame) { appState.gameState.gameMode = btn.dataset.mode; updateGameModeUI(); }}));
-        ui.gameMode.raioCheckbox.addEventListener('change', (e) => { if (!appState.gameState.activeGame) appState.gameState.isRaioMatch = e.target.checked; });
-
-        ui.playersListDiv.addEventListener('click', e => {
-            const target = e.target.closest('.player-name-clickable');
-            if (target) openPlayerDetailsModal(target.dataset.playerId);
-        });
-
-        ui.modal.container.addEventListener('click', e => {
-            if (e.target.id === 'modalContainer' || e.target.closest('#modal-close-btn') || e.target.id === 'modal-cancel-btn') closeModal();
-            const playerBtn = e.target.closest('.player-select-btn');
-            if (playerBtn) selectPlayer(playerBtn.dataset.playerId);
-        });
-
-    </script>
-</body>
-</html>
