@@ -191,7 +191,19 @@
             opacity: 0.6; /* Dim disabled icons */
         }
         /* The reset button now lives INSIDE the admin panel */
-        .reset-button, .add-player-button { /* Apply similar styles to add player button */
+        .reset-button { /* Apply similar styles to add player button */
+            background-color: #6c757d;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1em;
+            cursor: pointer;
+            margin-top: 15px; /* Margin from other admin controls */
+            transition: background-color 0.2s ease, transform 0.1s ease;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+        .add-player-button { /* Apply similar styles to add player button */
             background-color: #6c757d;
             color: white;
             padding: 10px 20px;
