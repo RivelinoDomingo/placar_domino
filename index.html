@@ -45,6 +45,9 @@
                 <div class="mt-10"><h2 class="text-xl font-bold text-gray-700 mb-3">Últimas Atividades</h2><div id="activityFeed" class="space-y-2 bg-white p-4 rounded-xl shadow-sm"><p class="text-gray-500 text-center">Carregando atividades...</p></div></div>
             </div>
 
+            <!-- This is the message box for success/error/info. It is now fixed at the top. -->
+            <div id="messageBox" class="message-box"></div>
+
             <div id="view-game-table" class="view fade-in">
                 <div class="flex justify-between items-center mb-6">
                     <button id="btnBackToScoreboard" class="text-gray-500 hover:text-gray-800 transition">← Voltar ao Placar</button>
@@ -72,7 +75,7 @@
                 <p id="gameOverScoreText" class="text-xl text-gray-500 mb-8"></p>
                 <div class="flex justify-center gap-4 flex-wrap">
                     <button id="btnShareWhatsapp" class="bg-green-500 text-white font-bold py-3 px-6 rounded-lg shadow-lg hover:bg-green-600 transition flex items-center gap-2"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg> Compartilhar</button>
-                    <button id="btnNewGame" class="bg-blue-600 text-white font-bold py-3 px-6 rounded-lg shadow-lg hover:bg-blue-700 transition">🀄 Nova Partida</button>
+                    <button id="btnNewGame" class="bg-blue-600 text-white font-bold py-3 px-6 rounded-lg shadow-lg hover:bg-blue-700 transition">🀄 Nova Partida</button><button id="btnBackToScoreboard_GameOver" class="bg-gray-500 text-white font-bold py-3 px-6 rounded-lg shadow-lg hover:bg-gray-600 transition">← Voltar ao Placar</button>
                 </div>
             </div>
         </div>
@@ -84,7 +87,7 @@
         <script type="module">
             import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
             import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-            import { getFirestore, doc, addDoc, updateDoc, onSnapshot, collection, query, orderBy, limit, serverTimestamp, writeBatch } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+            import { getFirestore, doc, getDoc, addDoc, setDoc, updateDoc, deleteDoc, onSnapshot, collection, query, getDocs, orderBy, limit, serverTimestamp, writeBatch, increment } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
             const firebaseConfig = {
                 apiKey: "AIzaSyBqpkxcl0GkBBHVO8Nxk7UpYd00H4Frklc",
@@ -112,12 +115,379 @@
 
             const ui = {
                 views: document.querySelectorAll('.view'),
+                messageBox: document.getElementById('messageBox'),
                 playersListDiv: document.getElementById('playersList'),
                 activityFeedDiv: document.getElementById('activityFeed'),
                 adminFab: { button: document.getElementById('adminFabButton'), panel: document.getElementById('adminActionsPanel'), defaultIcon: document.getElementById('fabIconDefault'), closeIcon: document.getElementById('fabIconClose'), loginView: document.getElementById('adminLoginView'), controlsView: document.getElementById('adminControlsView'), keyInput: document.getElementById('adminKeyInput'), activateBtn: document.getElementById('activateAdminBtn'), addPlayerBtn: document.getElementById('addPlayerBtn_fab'), resetBtn: document.getElementById('resetScoresBtn_fab')},
                 modal: { container: document.getElementById('modalContainer'), content: document.getElementById('modalContent')},
-                gameMode: { goToBtn: document.getElementById('btnGoToGameMode'), backBtn: document.getElementById('btnBackToScoreboard'), modeButtons: document.querySelectorAll('.gameModeBtn'), raioCheckbox: document.getElementById('raioModeCheckbox'), startBtn: document.getElementById('btnStartGame'), activeButtons: document.getElementById('activeGameButtons'), launchScoreBtn: document.getElementById('btnLaunchScore'), undoBtn: document.getElementById('btnUndoRound'), endBtn: document.getElementById('btnEndGame'), newGameBtn: document.getElementById('btnNewGame'), shareBtn: document.getElementById('btnShareWhatsapp'), statusText: document.getElementById('gameStatusText'), gameOver: { winnerText: document.getElementById('gameOverWinnerText'), scoreText: document.getElementById('gameOverScoreText')}}
+                gameMode: { goToBtn: document.getElementById('btnGoToGameMode'), backBtn: document.getElementById('btnBackToScoreboard'), modeButtons: document.querySelectorAll('.gameModeBtn'), raioCheckbox: document.getElementById('raioModeCheckbox'), startBtn: document.getElementById('btnStartGame'), activeButtons: document.getElementById('activeGameButtons'), launchScoreBtn: document.getElementById('btnLaunchScore'), undoBtn: document.getElementById('btnUndoRound'), endBtn: document.getElementById('btnEndGame'), newGameBtn: document.getElementById('btnNewGame'), shareBtn: document.getElementById('btnShareWhatsapp'),backToScoreboard_GameOverBtn: document.getElementById('btnBackToScoreboard_GameOver'), statusText: document.getElementById('gameStatusText'), gameOver: { winnerText: document.getElementById('gameOverWinnerText'), scoreText: document.getElementById('gameOverScoreText')}}
             };
+
+
+            async function startGame() {
+                ui.gameMode.startBtn.disabled = true;
+                const { gameMode, isRaioMatch, selectedSlots } = appState.gameState;
+                const playerIds = Object.values(selectedSlots).filter(Boolean);
+
+                let gameData = {
+                    gameMode,
+                    isRaioMatch,
+                    playerIds,
+                    status: 'active',
+                    history: [],
+                    createdAt: serverTimestamp(),
+                    // Inicializa os contadores de pontos E de raios da partida como zero para todos.
+                    scores: playerIds.reduce((acc, id) => ({ ...acc, [id]: 0 }), {}),
+                    raios: playerIds.reduce((acc, id) => ({ ...acc, [id]: 0 }), {}),
+                };
+
+                if (gameMode === 'duplas') {
+                    // A lógica de duplas pode ser refinada aqui no futuro, se necessário
+                    gameData.teams = {
+                        A: { players: [selectedSlots[2], selectedSlots[4]].filter(Boolean), score: 0, raios: 0 },
+                        B: { players: [selectedSlots[1], selectedSlots[3]].filter(Boolean), score: 0, raios: 0 }
+                    };
+                    gameData.turn = selectedSlots[1];
+                } else {
+                    gameData.turn = playerIds[0];
+                }
+
+                try {
+                    const gameDocRef = await addDoc(matchesCollectionRef(), gameData);
+                    appState.gameState.activeGameId = gameDocRef.id;
+
+                    const unsub = onSnapshot(gameDocRef, (doc) => {
+                        if (doc.exists()) {
+                            renderActiveGame(doc.data());
+                        }
+                    });
+                    appState.gameState.activeGameListener = unsub;
+                    appState.unsubscribers.push(unsub);
+
+                    ui.gameMode.startBtn.style.display = 'none';
+                    ui.gameMode.activeButtons.style.display = 'flex';
+                    document.getElementById('game-type-selector').style.display = 'none';
+                    document.getElementById('raio-mode-selector').style.display = 'none';
+                } catch (error) {
+                    console.error("Erro ao iniciar o jogo:", error);
+                    showMessage("Não foi possível iniciar o jogo. Tente novamente.", "error");
+                    ui.gameMode.startBtn.disabled = false;
+                }
+            }
+
+            function generateScoreHTML(raiosDaPartida, pontosAtuais, isRaioMatch) {
+                // Mostra os raios Ganhos APENAS nesta partida.
+                const raiosHTML = Array.from({ length: raiosDaPartida }, () => `<span class="text-2xl" title="Raio da Partida">⚡️</span>`).join('');
+
+                let pontosHTML = '';
+                if (isRaioMatch) {
+                    pontosHTML = Array.from({ length: pontosAtuais }, () => `<span class="text-xl" title="Ponto de Raio">⚡️</span>`).join('');
+                } else {
+                    pontosHTML = Array.from({ length: pontosAtuais }, () => `<div class="point-dot bg-yellow-400" title="Ponto"></div>`).join('');
+                }
+                return raiosHTML + pontosHTML;
+            }
+
+            function renderActiveGame(gameData) {
+                if (gameData.status === 'finished' || gameData.status === 'aborted') {
+                    return;
+                }
+
+                appState.gameState.activeGame = gameData;
+                // Pega os raios e pontos da sessão atual, vindos do gameData
+                const { gameMode, scores, raios, turn, isRaioMatch } = gameData;
+                const turnPlayerName = appState.players[turn]?.name || '';
+                ui.gameMode.statusText.textContent = `Vez de ${turnPlayerName}`;
+
+                gameData.playerIds.forEach(playerId => {
+                    const slotId = Object.keys(appState.gameState.selectedSlots).find(key => appState.gameState.selectedSlots[key] === playerId);
+                    if (slotId) {
+                        const scoreDiv = document.getElementById(`score-${slotId}`);
+                        if (scoreDiv) {
+                            // Passa para a função de renderização apenas os dados da partida atual.
+                            scoreDiv.innerHTML = generateScoreHTML(raios[playerId] || 0, scores[playerId] || 0, isRaioMatch);
+                        }
+                    }
+                    const slotDiv = document.getElementById(`slot-${slotId}`)?.firstElementChild;
+                    if (slotDiv) {
+                        slotDiv.style.boxShadow = turn === playerId ? '0 0 15px 3px rgba(59, 130, 246, 0.7)' : '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1)';
+                    }
+                });
+                ui.gameMode.undoBtn.disabled = gameData.history.length === 0;
+            }
+
+            async function launchScore() {
+                const { gameMode, isRaioMatch } = appState.gameState.activeGame;
+                const WINNING_SCORE = isRaioMatch ? 1 : 4;
+
+                // A criação do modal continua a mesma, esta parte está correta.
+                let modalHTML = `<h3 class="text-2xl font-bold mb-4">Quem venceu a rodada?</h3><div class="space-y-2 max-h-64 overflow-y-auto">`;
+                if (gameMode === 'duplas') {
+                    const { teams } = appState.gameState.activeGame;
+                    modalHTML += `<button class="w-full text-left p-3 bg-gray-100 rounded-lg hover:bg-blue-100 transition winner-select-btn" data-team="A">Time A (${teams.A.players.map(id => appState.players[id].name).join(' & ')})</button>`;
+                    modalHTML += `<button class="w-full text-left p-3 bg-gray-100 rounded-lg hover:bg-blue-100 transition winner-select-btn" data-team="B">Time B (${teams.B.players.map(id => appState.players[id].name).join(' & ')})</button>`;
+                } else {
+                    const { playerIds } = appState.gameState.activeGame;
+                    const players = playerIds.map(id => appState.players[id]);
+                    modalHTML += players.map(p => `<button class="w-full text-left p-3 bg-gray-100 rounded-lg hover:bg-blue-100 transition winner-select-btn" data-player-id="${p.id}">${p.name}</button>`).join('');
+                }
+                modalHTML += `</div><button id="modal-cancel-btn" class="mt-6 bg-gray-200 text-gray-800 font-semibold py-2 px-4 rounded-lg w-full">Cancelar</button>`;
+                openModal(modalHTML);
+
+                ui.modal.content.onclick = async (e) => {
+                    const target = e.target.closest('.winner-select-btn');
+                    if (!target) return;
+
+                    closeModal();
+                    const batch = writeBatch(db);
+                    const gameDocRef = doc(matchesCollectionRef(), appState.gameState.activeGameId);
+                    const currentGame = appState.gameState.activeGame;
+
+                    let updates = { history: [...currentGame.history] };
+                    let roundEvent = { timestamp: new Date() };
+
+                    if (gameMode === 'duplas') {
+                        // Lógica para duplas
+                    } else { // MODO INDIVIDUAL
+                        const winnerId = target.dataset.playerId;
+                        const playerDocRef = doc(playersCollectionRef(), winnerId);
+                        const newScore = (currentGame.scores[winnerId] || 0) + 1;
+                        roundEvent.winner = winnerId;
+
+                        // --- INÍCIO DA CORREÇÃO ---
+                        // 1. Prepara um objeto único para todas as atualizações do PERFIL do jogador.
+                        const playerUpdates = {
+                            vitorias: (appState.players[winnerId].vitorias || 0) + 1
+                        };
+
+                        if (newScore >= WINNING_SCORE) {
+                            // 2. Se ganhou um raio, adiciona a atualização de 'raios' AO MESMO objeto.
+                            playerUpdates.raios = (appState.players[winnerId].raios || 0) + 1;
+
+                            // Adiciona uma "pista" no histórico de que esta jogada completou um raio.
+                            roundEvent.completedRaio = true;
+
+                            // Prepara as atualizações para o documento da PARTIDA
+                            updates[`raios.${winnerId}`] = (currentGame.raios[winnerId] || 0) + 1;
+                            updates.scores = currentGame.playerIds.reduce((acc, id) => ({ ...acc, [id]: 0 }), {});
+                            updates.turn = winnerId;
+
+                            showMessage(`${appState.players[winnerId].name} ganhou um Raio! ⚡️`, 'success');
+                        } else {
+                            // Atualiza os pontos da partida se não ganhou um raio
+                            updates.scores = { ...currentGame.scores, [winnerId]: newScore };
+                            updates.turn = winnerId;
+                        }
+
+                        // 3. Adiciona a instrução de atualização do jogador ao batch UMA ÚNICA VEZ.
+                        batch.update(playerDocRef, playerUpdates);
+                        // --- FIM DA CORREÇÃO ---
+                    }
+
+                    updates.history.push(roundEvent);
+                    batch.update(gameDocRef, updates);
+
+                    await batch.commit();
+                };
+            }
+
+            async function undoRound() {
+                const currentGame = { ...appState.gameState.activeGame };
+
+                if (currentGame.history.length === 0) {
+                    showMessage("Nenhuma jogada para desfazer.", "info");
+                    return;
+                }
+
+                // --- INÍCIO DA LÓGICA CORRIGIDA ---
+                const batch = writeBatch(db);
+                const gameDocRef = doc(matchesCollectionRef(), appState.gameState.activeGameId);
+
+                // 1. Pega a última jogada que será desfeita
+                const lastRound = currentGame.history.pop();
+                const winnerId = lastRound.winner;
+
+                if (!winnerId) {
+                    showMessage("Erro ao desfazer: jogada inválida.", "error");
+                    return;
+                }
+
+                // 2. Prepara a reversão das estatísticas PERMANENTES do jogador
+                const playerDocRef = doc(playersCollectionRef(), winnerId);
+                const playerUpdates = {
+                    // Sempre desfaz uma 'vitória' de rodada
+                    vitorias: (appState.players[winnerId].vitorias || 1) - 1
+                };
+
+                // Se a jogada desfeita completou um raio, desfaz o raio também
+                if (lastRound.completedRaio) {
+                    playerUpdates.raios = (appState.players[winnerId].raios || 1) - 1;
+                }
+                batch.update(playerDocRef, playerUpdates);
+
+                // 3. Prepara a reversão dos dados da PARTIDA (recalcula tudo)
+                const matchUpdates = { history: currentGame.history };
+
+                // Recalcula os pontos e raios da partida com base no histórico restante
+                let newScores = currentGame.playerIds.reduce((acc, id) => ({ ...acc, [id]: 0 }), {});
+                let newRaios = currentGame.playerIds.reduce((acc, id) => ({ ...acc, [id]: 0 }), {});
+
+                matchUpdates.history.forEach(round => {
+                    if (round.winner) {
+                        newScores[round.winner]++;
+                        if (round.completedRaio) {
+                            newRaios[round.winner]++;
+                            // Zera os pontos pois um raio foi refeito
+                            newScores = currentGame.playerIds.reduce((acc, id) => ({ ...acc, [id]: 0 }), {});
+                        }
+                    }
+                });
+
+                matchUpdates.scores = newScores;
+                matchUpdates.raios = newRaios;
+                matchUpdates.turn = matchUpdates.history.length > 0 ? matchUpdates.history.slice(-1)[0].winner : currentGame.playerIds[0];
+
+                batch.update(gameDocRef, matchUpdates);
+
+                // 4. Executa todas as reversões (jogador e partida) de uma vez
+                await batch.commit();
+                showMessage("Última jogada desfeita.", "info");
+                // --- FIM DA LÓGICA CORRIGIDA ---
+            }
+
+            async function endGame() {
+                const currentGame = appState.gameState.activeGame;
+
+                if (!currentGame || currentGame.history.length === 0) {
+                    resetGameState();
+                    switchView('view-scoreboard');
+                    return;
+                }
+
+                const modalHTML = `
+                    <h3 class="text-xl font-bold text-red-600">Encerrar Partida</h3>
+                    <p class="my-4">Tem certeza que deseja encerrar a partida? O jogador com mais raios (e pontos como desempate) será declarado o vencedor.</p>
+                    <div class="flex justify-end gap-3 mt-6">
+                        <button id="confirmEndNo" class="bg-gray-200 text-gray-800 font-semibold py-2 px-4 rounded-lg">Não, continuar</button>
+                        <button id="confirmEndYes" class="bg-red-600 text-white font-semibold py-2 px-4 rounded-lg">Sim, encerrar</button>
+                    </div>`;
+                openModal(modalHTML);
+
+                document.getElementById('confirmEndYes').onclick = async () => {
+                    closeModal();
+
+                    let leaderId = null, leaderTeam = null;
+                    let maxRaios = -1, maxPoints = -1, isTie = false;
+
+                    if (currentGame.gameMode === 'duplas') {
+                        // Lógica de duplas (dando prioridade aos raios)
+                        const raiosA = currentGame.teams.A.raios || 0;
+                        const raiosB = currentGame.teams.B.raios || 0;
+
+                        if (raiosA > raiosB) { leaderTeam = 'A'; }
+                        else if (raiosB > raiosA) { leaderTeam = 'B'; }
+                        else { // Raios empatados, usa pontos como desempate
+                            const scoreA = currentGame.teams.A.score;
+                            const scoreB = currentGame.teams.B.score;
+                            if (scoreA > scoreB) { leaderTeam = 'A'; }
+                            else if (scoreB > scoreA) { leaderTeam = 'B'; }
+                            else { isTie = true; }
+                        }
+                        maxRaios = Math.max(raiosA, raiosB);
+                        maxPoints = Math.max(currentGame.teams.A.score, currentGame.teams.B.score);
+
+                    } else { // MODO INDIVIDUAL
+                        // --- INÍCIO DA LÓGICA CORRIGIDA ---
+                        // Percorre todos os jogadores para encontrar o líder baseado em Raios > Pontos
+                        for (const playerId of currentGame.playerIds) {
+                            const playerRaios = currentGame.raios[playerId] || 0;
+                            const playerPoints = currentGame.scores[playerId] || 0;
+
+                            if (playerRaios > maxRaios) {
+                                // Novo líder por ter mais raios
+                                maxRaios = playerRaios;
+                                maxPoints = playerPoints;
+                                leaderId = playerId;
+                                isTie = false;
+                            } else if (playerRaios === maxRaios) {
+                                // Raios empatados, verifica os pontos
+                                if (playerPoints > maxPoints) {
+                                    // Novo líder pelo desempate de pontos
+                                    maxPoints = playerPoints;
+                                    leaderId = playerId;
+                                    isTie = false;
+                                } else if (playerPoints === maxPoints) {
+                                    // Empate total
+                                    isTie = true;
+                                }
+                            }
+                        }
+                    }
+                    // --- FIM DA LÓGICA CORRIGIDA ---
+
+                    // Agora, a condição de vitória verifica se houve um vencedor (sem empate)
+                    // e se ele tem ao menos um raio ou um ponto.
+                    if (!isTie && (maxRaios > 0 || maxPoints > 0)) {
+                        const winnerInfo = currentGame.gameMode === 'duplas' ? { winnerTeam: leaderTeam } : { winnerId: leaderId };
+                        const finalGameData = { ...currentGame, status: 'finished', winnerInfo, maxRaios };
+                        await processAndShowGameOver(finalGameData);
+                    } else {
+                        // Se houver empate ou ninguém pontuou, a partida é abortada.
+                        const gameDocRef = doc(matchesCollectionRef(), appState.gameState.activeGameId);
+                        await updateDoc(gameDocRef, { status: 'aborted', endedAt: serverTimestamp() });
+                        resetGameState();
+                        switchView('view-scoreboard');
+                        showMessage("Partida encerrada sem vencedor.", "info");
+                    }
+                };
+
+                document.getElementById('confirmEndNo').onclick = () => closeModal();
+            }
+
+            async function processAndShowGameOver(gameData) {
+                // Previne execuções múltiplas
+                if (document.getElementById('view-game-over').classList.contains('active')) return;
+
+                const { gameMode, winnerInfo, teams, scores, playerIds, isRaioMatch } = gameData;
+                const batch = writeBatch(db);
+                let winnerText = '';
+
+                if (gameMode === 'duplas') {
+                    const winnerTeamName = winnerInfo.winnerTeam === 'A' ? 'Time A' : 'Time B';
+                    const winnerPlayers = teams[winnerInfo.winnerTeam].players.map(id => appState.players[id].name);
+                    winnerText = `${winnerTeamName} venceu! (${winnerPlayers.join(' & ')})`;
+                } else {
+                    winnerText = `${appState.players[winnerInfo.winnerId].name} venceu!`;
+                }
+
+                const gameDocRef = doc(matchesCollectionRef(), appState.gameState.activeGameId);
+                batch.update(gameDocRef, { status: 'finished', endedAt: serverTimestamp(), winnerInfo: winnerInfo });
+
+                for (const playerId of playerIds) {
+                    const playerDocRef = doc(playersCollectionRef(), playerId);
+                    const player = appState.players[playerId];
+                    const updates = { partidasJogadas: (player.partidasJogadas || 0) + 1 };
+                    const isWinner = winnerInfo.winnerId === playerId || (teams && teams[winnerInfo.winnerTeam]?.players.includes(playerId));
+
+                    if (!isWinner) {
+                        const playerScore = scores ? (scores[playerId] || 0) : 0;
+                        if (playerScore === 0 && !isRaioMatch) {
+                            updates.lambreta = (player.lambreta || 0) + 1;
+                        }
+                    }
+                    batch.update(playerDocRef, updates);
+                }
+
+                await batch.commit();
+
+                // Exibe a tela de Fim de Jogo
+                ui.gameMode.gameOver.winnerText.textContent = winnerText;
+                const finalScoreText = gameMode === 'duplas' ? `Placar final dos pontos: ${teams.A.score} a ${teams.B.score}` : `Placar final dos pontos: ${Object.values(scores).join(' - ')}`;
+                ui.gameMode.gameOver.scoreText.textContent = finalScoreText;
+
+                resetGameState();
+                switchView('view-game-over');
+            }
 
             function switchView(viewId) { ui.views.forEach(v => v.classList.toggle('active', v.id === viewId)); }
 
@@ -133,11 +503,11 @@
                     if ((b.vitorias || 0) !== (a.vitorias || 0)) return (b.vitorias || 0) - (a.vitorias || 0);
                     return (a.lambretas || 0) - (b.lambretas || 0);
                 });
-
+                // Configuração dos dados do playes da tabela
                 ui.playersListDiv.innerHTML = players.map(player => `
                     <div class="bg-white p-4 rounded-xl shadow-sm flex items-center justify-between">
                         <div><span class="font-bold text-lg player-name-clickable" data-player-id="${player.id}">${player.name}</span><span class="text-sm text-gray-500 ml-2">(Série ${player.series})</span></div>
-                        <div class="text-right"><div class="font-semibold text-blue-600">Vitórias: ${player.vitorias || 0}</div><div class="font-semibold text-yellow-600">Raios: ${player.raios || 0}</div></div>
+                        <div class="text-right"><div class="font-semibold text-blue-600">Raios: ${player.raios || 0}</div><div class="font-semibold text-yellow-600">Lambretas: ${player.lambreta || 0}</div></div>
                     </div>`).join('');
             }
 
@@ -147,6 +517,7 @@
                         let icon = '💬';
                         if (item.type === 'promotion') icon = '▲';
                         else if (item.type === 'demotion') icon = '▼';
+                        else if (item.type === 'stagnant') icon = '📍';
                         else if (item.type === 'achievement') icon = '⭐';
                         const color = item.type === 'promotion' ? 'green' : (item.type === 'demotion' ? 'red' : 'yellow');
                         const timestamp = item.timestamp?.seconds ? new Date(item.timestamp.seconds * 1000).toLocaleString('pt-BR') : 'agora';
@@ -157,22 +528,115 @@
             function openModal(contentHTML) { ui.modal.content.innerHTML = contentHTML; ui.modal.container.style.display = 'flex'; }
             function closeModal() { ui.modal.container.style.display = 'none'; }
 
+            async function updatePlayerStat(playerId, stat, amount) {
+                if (!appState.isAdminMode) return; // Segurança extra
+
+                const player = appState.players[playerId];
+                if (!player) return;
+
+                const currentValue = player[stat] || 0;
+                // Impede que o valor se torne negativo
+                if (currentValue + amount < 0) {
+                    showMessage(`Não é possível ter valor negativo para ${stat}.`, 'error');
+                    return;
+                }
+
+                const playerDocRef = doc(playersCollectionRef(), playerId);
+                try {
+                    // Usa a função 'increment' do Firestore para uma atualização segura
+                    await updateDoc(playerDocRef, {
+                        [stat]: increment(amount)
+                    });
+                    // Não é necessário mostrar mensagem de sucesso para não poluir a tela.
+                } catch (error) {
+                    console.error(`Erro ao atualizar ${stat}:`, error);
+                    showMessage(`Erro ao atualizar ${stat}.`, 'error');
+                }
+            }
+
+            // Função da caixa de estatistica dos jogadores (CORRIGIDA)
             function openPlayerDetailsModal(playerId) {
                 const player = appState.players[playerId];
                 if (!player) return;
+
+                const generateStatControlHTML = (stat, label) => {
+                    const value = player[stat] || 0;
+                    if (!appState.isAdminMode) {
+                        return `<div class="bg-gray-100 p-3 rounded-lg"><p class="text-2xl font-bold">${value}</p><p class="text-sm text-gray-500">${label}</p></div>`;
+                    }
+                    return `
+                        <div class="bg-gray-100 p-3 rounded-lg">
+                            <p class="text-sm text-gray-500 mb-2 font-semibold">${label}</p>
+                            <div class="flex items-center justify-center gap-3">
+                                <button data-action="decrement" data-stat="${stat}" class="stat-button h-8 w-8 rounded-full bg-red-200 text-red-700 font-bold text-xl hover:bg-red-300 transition flex items-center justify-center">-</button>
+                                <p id="${stat}-value" class="text-2xl font-bold w-10 text-center">${value}</p>
+                                <button data-action="increment" data-stat="${stat}" class="stat-button h-8 w-8 rounded-full bg-green-200 text-green-700 font-bold text-xl hover:bg-green-300 transition flex items-center justify-center">+</button>
+                            </div>
+                        </div>`;
+                };
+
+                const statsHTML = `
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-center">
+                        ${generateStatControlHTML('raios', 'Raios')}
+                        <div class="bg-gray-100 p-3 rounded-lg"><p class="text-sm text-gray-500 mb-2 font-semibold">Vitórias</p><p class="text-2xl font-bold">${player.vitorias || 0}</p></div>
+                        ${generateStatControlHTML('lambreta', 'Lambretas')}
+                    </div>
+                `;
+
                 const achievements = {
                     primeiro_rei: { icon: '👑', name: 'Primeiro Rei', description: 'Chegou ao topo da Série A.' },
                     imbativel: { icon: '🔥', name: 'Imbatível', description: 'Venceu 3 partidas consecutivas.' },
-                    azarao: { icon: '🚑', name: 'Azarão', description: 'Acumulou 3 lambretas numa partida.' },
+                    azarao: { icon: '🚑', name: 'Azarão', description: 'Acumulou 3 lambretas seguidas.' },
                 };
                 let achievementsHTML = Object.keys(achievements).map(key => {
                     const ach = achievements[key];
                     const unlocked = player.conquistas?.includes(key);
                     return `<div class="text-center p-2 rounded-lg ${unlocked ? 'bg-yellow-100' : 'bg-gray-100'}"><span class="achievement-icon ${unlocked ? 'unlocked' : ''}" title="${ach.name}: ${ach.description}">${ach.icon}</span><p class="text-xs font-semibold mt-1 ${unlocked ? 'text-yellow-800' : 'text-gray-500'}">${ach.name}</p></div>`;
                 }).join('');
-                let adminControlsHTML = appState.isAdminMode ? `<hr class="my-6"><div class="space-y-3"><button class="w-full bg-blue-500 text-white font-semibold py-2 rounded-md">Renomear</button><button class="w-full bg-red-600 text-white font-semibold py-2 rounded-md">Deletar</button></div>` : '';
-                const modalHTML = `<div class="flex justify-between items-start"><div><h3 class="text-2xl font-bold">${player.name}</h3><p class="text-gray-600">Série ${player.series}</p></div><button id="modal-close-btn" class="text-gray-400 hover:text-gray-700 text-2xl">&times;</button></div><div class="mt-6"><h4 class="font-semibold mb-2">Estatísticas</h4><div class="grid grid-cols-2 gap-4 text-center"><div class="bg-gray-50 p-3 rounded-lg"><p class="text-2xl font-bold">${player.vitorias || 0}</p><p class="text-sm text-gray-500">Vitórias</p></div><div class="bg-gray-50 p-3 rounded-lg"><p class="text-2xl font-bold">${player.derrotas || 0}</p><p class="text-sm text-gray-500">Derrotas</p></div></div></div><div class="mt-6"><h4 class="font-semibold mb-2">Conquistas</h4><div class="grid grid-cols-3 gap-2">${achievementsHTML}</div></div>${adminControlsHTML}`;
+
+                // --- LINHA CORRIGIDA COM AS CLASSES DE ESTILO RESTAURADAS ---
+                let adminControlsHTML = appState.isAdminMode ? `
+                    <hr class="my-6">
+                    <div class="flex justify-around gap-4">
+                        <button id="btnRenamePlayer" class="flex-grow bg-gray-200 text-gray-800 font-semibold py-3 px-3 rounded-lg hover:bg-gray-300 transition">Renomear</button>
+                        <button id="btnDeletePlayer" class="flex-grow bg-red-600 text-white font-semibold py-3 px-3 rounded-lg hover:bg-red-700 transition">Deletar</button>
+                    </div>` : '';
+
+                // Monta o HTML final do modal
+                const modalHTML = `
+                    <div class="flex justify-between items-start">
+                        <div><h3 class="text-2xl font-bold">${player.name}</h3><p class="text-gray-600">Série ${player.series}</p></div>
+                        <button id="modal-close-btn" class="text-gray-400 hover:text-gray-700 text-2xl">&times;</button>
+                    </div>
+                    <div class="mt-6"><h4 class="font-semibold mb-2">Estatísticas</h4>${statsHTML}</div>
+                    <div class="mt-6"><h4 class="font-semibold mb-2">Conquistas</h4><div class="grid grid-cols-3 gap-2">${achievementsHTML}</div></div>
+                    ${adminControlsHTML}`;
+
                 openModal(modalHTML);
+
+                if (appState.isAdminMode) {
+                    const statsContainer = document.querySelector('#modalContent');
+                    statsContainer.addEventListener('click', (e) => {
+                        const button = e.target.closest('.stat-button');
+                        if (!button) return;
+                        const { action, stat } = button.dataset;
+                        const amount = action === 'increment' ? 1 : -1;
+                        const valueElement = document.getElementById(`${stat}-value`);
+                        const currentValue = parseInt(valueElement.textContent, 10);
+                        const newValue = currentValue + amount;
+                        if (newValue >= 0) {
+                            valueElement.textContent = newValue;
+                            updatePlayerStat(playerId, stat, amount);
+                        } else {
+                            showMessage(`Não é possível ter valor negativo.`, 'error');
+                        }
+                    });
+
+                    const renameBtn = document.getElementById('btnRenamePlayer');
+                    const deleteBtn = document.getElementById('btnDeletePlayer');
+                    if (renameBtn) renameBtn.addEventListener('click', () => renomearJogador(playerId));
+                    if (deleteBtn) deleteBtn.addEventListener('click', () => deletarJogador(playerId));
+                }
             }
 
             function createInitialGameState() { return { gameMode: 'individual', isRaioMatch: false, selectedSlots: { 1: null, 2: null, 3: null, 4: null }, activeGame: null, activeGameId: null, activeGameListener: null }; }
@@ -254,6 +718,237 @@
                 ui.gameMode.startBtn.className = canStart ? 'bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-6 rounded-lg shadow-md transition' : 'bg-gray-400 text-white font-bold py-3 px-6 rounded-lg shadow-md cursor-not-allowed';
             }
 
+            // Versão Aprimorada da função showMessage
+            function showMessage(message, type = 'info', contentElement = null) {
+                const messageBox = ui.messageBox;
+
+                // Limpa qualquer notificação anterior para evitar sobreposição
+                if (messageBox.closeTimer) {
+                    clearTimeout(messageBox.closeTimer);
+                }
+                closeMessageBox(true); // 'true' para um fechamento instantâneo
+
+                // Mantém a funcionalidade de MODAL que existia antes, para não quebrar nada
+                if (contentElement) {
+                    messageBox.innerHTML = ''; // Limpa o conteúdo
+                    messageBox.className = 'message-box modal-active'; // Usa uma classe para identificar o modo modal
+                    messageBox.appendChild(contentElement);
+                    Object.assign(messageBox.style, {
+                        position: 'fixed', top: '0', left: '0', transform: 'none',
+                        width: '100%', height: '100%', backgroundColor: 'rgba(0, 0, 0, 0.6)',
+                        display: 'flex', justifyContent: 'center', alignItems: 'center',
+                        zIndex: '1000', padding: '20px', borderRadius: '0', boxShadow: 'none'
+                    });
+                    messageBox.style.display = 'flex';
+                    return; // Encerra a função aqui para o modo modal
+                }
+
+                // Lógica para as NOTIFICAÇÕES (banner no topo)
+                let baseClasses = 'fixed left-1/2 -translate-x-1/2 w-auto min-w-[320px] max-w-[90%] py-3 px-5 rounded-lg shadow-2xl text-white font-semibold z-[1002] transition-all duration-500 ease-in-out';
+                let typeClasses = '';
+
+                // Define a cor de fundo com base no tipo da mensagem
+                switch (type) {
+                    case 'success':
+                        typeClasses = 'bg-green-600'; // Verde para sucesso
+                        break;
+                    case 'error':
+                        typeClasses = 'bg-red-600'; // Vermelho para erro
+                        break;
+                    default: // 'info'
+                        typeClasses = 'bg-blue-600'; // Azul para informações gerais
+                        break;
+                }
+
+                messageBox.className = `${baseClasses} ${typeClasses} -top-24`; // Começa fora da tela
+                messageBox.textContent = message;
+                messageBox.style.display = 'block';
+
+                // Animação de entrada: desliza para dentro da tela
+                setTimeout(() => {
+                    messageBox.classList.remove('-top-24');
+                    messageBox.classList.add('top-5');
+                }, 50); // Pequeno delay para garantir que a transição CSS seja acionada
+
+                // Agenda o fechamento automático da notificação
+                messageBox.closeTimer = setTimeout(() => {
+                    closeMessageBox();
+                }, 4000); // A mensagem ficará visível por 4 segundos
+            }
+            // Versão Aprimorada da função closeMessageBox
+            function closeMessageBox(instant = false) {
+                const messageBox = ui.messageBox;
+
+                // Se for um modal, apenas esconde
+                if (messageBox.classList.contains('modal-active')) {
+                    messageBox.style.display = 'none';
+                    messageBox.innerHTML = '';
+                    messageBox.className = 'message-box';
+                    return;
+                }
+
+                // Se for para fechar instantaneamente (sem animação)
+                if (instant) {
+                    messageBox.style.display = 'none';
+                    messageBox.className = 'message-box';
+                    return;
+                }
+
+                // Animação de saída para notificações: desliza para fora da tela
+                messageBox.classList.remove('top-5');
+                messageBox.classList.add('-top-24');
+
+                // Após a animação, oculta o elemento e reseta suas classes
+                setTimeout(() => {
+                    // Verificação para garantir que não estamos alterando uma notificação que já foi fechada
+                    if (!messageBox.classList.contains('top-5')) {
+                       messageBox.style.display = 'none';
+                       messageBox.className = 'message-box';
+                    }
+                }, 500); // Duração da transição CSS
+            }
+
+            async function addNovoJogador() {
+                if (!appState.isAdminMode) {
+                    showMessage("Você precisa estar no Modo Administrador para adicionar jogadores.", 'error');
+                    return;
+                }
+
+                // 1. Construir o HTML do modal usando as classes TailwindCSS do seu projeto.
+                const modalHTML = `
+                    <div class="flex justify-between items-start">
+                        <h3 class="text-2xl font-bold">Adicionar Novo Jogador</h3>
+                        <button id="modal-close-btn" class="text-gray-400 hover:text-gray-700 text-2xl">&times;</button>
+                    </div>
+                    <div class="mt-4">
+                        <label for="newPlayerNameInput" class="block text-sm font-medium text-gray-700 mb-1">Nome do Jogador</label>
+                        <input type="text" id="newPlayerNameInput" placeholder="Digite o nome aqui" class="w-full border-gray-300 rounded-md shadow-sm p-2 focus:ring-blue-500 focus:border-blue-500">
+                    </div>
+                    <div class="mt-6 flex justify-end gap-3">
+                        <button id="cancelAddPlayerBtn" class="bg-gray-200 text-gray-800 font-semibold py-2 px-4 rounded-lg hover:bg-gray-300 transition">Cancelar</button>
+                        <button id="saveAddPlayerBtn" class="bg-blue-600 text-white font-semibold py-2 px-4 rounded-lg hover:bg-blue-700 transition">Adicionar Jogador</button>
+                    </div>
+                `;
+
+                // 2. Abrir o modal padrão da aplicação com o conteúdo criado.
+                openModal(modalHTML);
+
+                const newPlayerNameInput = document.getElementById('newPlayerNameInput');
+                newPlayerNameInput.focus(); // Foco automático no campo de input.
+
+                // 3. Adicionar os event listeners para os novos botões dentro do modal.
+                document.getElementById('saveAddPlayerBtn').onclick = async () => {
+                    const newName = newPlayerNameInput.value.trim();
+                    if (newName) {
+                        try {
+                            await addDoc(playersCollectionRef(), {
+                                name: newName,
+                                raios: 0,
+                                vitorias: 0,
+                                lambreta: 0,
+                                series: 'Amador',
+                                conquistas: [] // Adicionado para consistência
+                            });
+                            // A função showMessage continua sendo usada para feedback rápido no topo da tela.
+                            showMessage(`Jogador "${newName}" adicionado com sucesso!`, 'success');
+                            closeModal(); // Fecha o modal após o sucesso.
+                        } catch (error) {
+                            console.error("Erro ao adicionar jogador:", error);
+                            showMessage("Erro ao adicionar jogador. Tente novamente.", 'error');
+                        }
+                    } else {
+                        showMessage("O nome do jogador não pode ser vazio.", 'error');
+                    }
+                };
+
+                // O botão de cancelar agora também usa a função padrão de fechar.
+                document.getElementById('cancelAddPlayerBtn').onclick = () => {
+                    closeModal();
+                };
+            }
+
+            async function renomearJogador(playerId) {
+                if (!appState.isAdminMode) {
+                    showMessage("Ação não permitida.", 'error');
+                    return;
+                }
+                const player = appState.players[playerId];
+                const playerDocRef = doc(playersCollectionRef(), playerId);
+
+                // Usa o sistema de modal padrão
+                const modalHTML = `
+                    <div class="flex justify-between items-start">
+                        <h3 class="text-2xl font-bold">Renomear Jogador</h3>
+                        <button id="modal-close-btn" class="text-gray-400 hover:text-gray-700 text-2xl">&times;</button>
+                    </div>
+                    <div class="mt-4">
+                        <label for="reNamePlayerInput" class="block text-sm font-medium text-gray-700 mb-1">Novo nome para ${player.name}</label>
+                        <input type="text" id="reNamePlayerInput" value="${player.name}" class="w-full border-gray-300 rounded-md shadow-sm p-2 focus:ring-blue-500 focus:border-blue-500">
+                    </div>
+                    <div class="mt-6 flex justify-end gap-3">
+                        <button id="cancelRenamePlayerBtn" class="bg-gray-200 text-gray-800 font-semibold py-2 px-4 rounded-lg hover:bg-gray-300 transition">Cancelar</button>
+                        <button id="saveRenamePlayerBtn" class="bg-blue-600 text-white font-semibold py-2 px-4 rounded-lg hover:bg-blue-700 transition">Salvar Alterações</button>
+                    </div>`;
+                openModal(modalHTML);
+
+                const reNamePlayerInput = document.getElementById('reNamePlayerInput');
+                reNamePlayerInput.focus();
+                reNamePlayerInput.select();
+
+                document.getElementById('saveRenamePlayerBtn').onclick = async () => {
+                    const newName = reNamePlayerInput.value.trim();
+                    if (newName && newName !== player.name) {
+                        try {
+                            await updateDoc(playerDocRef, { name: newName });
+                            showMessage(`Jogador renomeado para "${newName}".`, 'success');
+                            closeModal();
+                        } catch (error) {
+                            console.error("Erro ao renomear jogador:", error);
+                            showMessage("Erro ao renomear jogador. Tente novamente.", 'error');
+                        }
+                    } else if (newName === player.name) {
+                        closeModal(); // Apenas fecha se o nome for o mesmo
+                    } else {
+                        showMessage("O nome não pode ser vazio.", 'error');
+                    }
+                };
+                document.getElementById('cancelRenamePlayerBtn').onclick = () => closeModal();
+            }
+
+            async function deletarJogador(playerId) {
+                if (!appState.isAdminMode) {
+                    showMessage("Ação não permitida.", 'error');
+                    return;
+                }
+                const player = appState.players[playerId];
+                const playerDocRef = doc(playersCollectionRef(), playerId);
+
+                // Modal de confirmação usando o sistema padrão
+                const modalHTML = `
+                    <h3 class="text-xl font-bold text-red-600">Confirmar Exclusão</h3>
+                    <p class="my-4">Tem certeza que deseja remover permanentemente o jogador <strong>${player.name}</strong>? Esta ação não pode ser desfeita.</p>
+                    <div class="flex justify-end gap-3 mt-6">
+                        <button id="confirmDeleteNo" class="bg-gray-200 text-gray-800 font-semibold py-2 px-4 rounded-lg hover:bg-gray-300 transition">Não, cancelar</button>
+                        <button id="confirmDeleteYes" class="bg-red-600 text-white font-semibold py-2 px-4 rounded-lg hover:bg-red-700 transition">Sim, deletar</button>
+                    </div>`;
+                openModal(modalHTML);
+
+                document.getElementById('confirmDeleteYes').onclick = async () => {
+                    try {
+                        await deleteDoc(playerDocRef);
+                        closeModal();
+                        showMessage(`Jogador "${player.name}" removido com sucesso!`, 'success');
+                        // Opcional: registrar evento de remoção no feed de atividades
+                        // await addDoc(activityFeedCollectionRef(), { type: 'removal', player: player.name, text: 'foi removido do placar.', timestamp: serverTimestamp() });
+                    } catch (error) {
+                        showMessage("Erro ao remover jogador.", 'error');
+                        console.error("Erro ao deletar: ", error);
+                    }
+                };
+                document.getElementById('confirmDeleteNo').onclick = () => closeModal();
+            }
+
+            // Ativação do modo admin
             function toggleAdminPanel() { ui.adminFab.button.classList.toggle('active'); ui.adminFab.defaultIcon.classList.toggle('hidden'); ui.adminFab.closeIcon.classList.toggle('hidden'); ui.adminFab.panel.classList.toggle('active'); if (!ui.adminFab.panel.classList.contains('active') && !appState.isAdminMode) { ui.adminFab.loginView.style.display = 'block'; ui.adminFab.controlsView.style.display = 'none'; ui.adminFab.keyInput.value = ''; }}
             function activateAdminMode() { if(ui.adminFab.keyInput.value === ADMIN_KEY) { appState.isAdminMode = true; ui.adminFab.loginView.style.display = 'none'; ui.adminFab.controlsView.style.display = 'block'; } else { alert('Senha incorreta!'); }}
 
@@ -288,11 +983,32 @@
             });
 
             // EVENT LISTENERS
+            ui.adminFab.addPlayerBtn.addEventListener('click', addNovoJogador);
+
+            // Listener para o modo partida que estava comentado
+            ui.gameMode.startBtn.addEventListener('click', startGame);
+
+            // Adicione estes novos listeners:
+            ui.gameMode.launchScoreBtn.addEventListener('click', launchScore);
+            ui.gameMode.undoBtn.addEventListener('click', undoRound);
+            ui.gameMode.endBtn.addEventListener('click', () => endGame(false)); // a confirmação é interna
+            ui.gameMode.backToScoreboard_GameOverBtn.addEventListener('click', () => {
+                switchView('view-scoreboard');
+            });
+            ui.gameMode.newGameBtn.addEventListener('click', () => { resetGameState(); switchView('view-game-table'); });
+
             ui.adminFab.button.addEventListener('click', toggleAdminPanel);
             ui.adminFab.activateBtn.addEventListener('click', activateAdminMode);
+            ui.adminFab.keyInput.addEventListener('keydown', function(event) {
+                if (event.key === 'Enter') {
+                    event.preventDefault();
+                    activateAdminMode();
+                }
+            });
+            ui.adminFab.addPlayerBtn.addEventListener('click', addNovoJogador);
 
             ui.gameMode.goToBtn.addEventListener('click', () => { resetGameState(); switchView('view-game-table'); });
-            ui.gameMode.backBtn.addEventListener('click', () => switchView('view-scoreboard'));
+            ui.gameMode.backBtn.addEventListener('click', () => endGame(false));
             ui.gameMode.modeButtons.forEach(btn => btn.addEventListener('click', () => { if (!appState.gameState.activeGame) { appState.gameState.gameMode = btn.dataset.mode; updateGameModeUI(); }}));
             ui.gameMode.raioCheckbox.addEventListener('change', (e) => { if (!appState.gameState.activeGame) appState.gameState.isRaioMatch = e.target.checked; });
              // ui.gameMode.startBtn.addEventListener('click', startGame); // startGame precisa ser definida
@@ -304,9 +1020,17 @@
 
             ui.modal.container.addEventListener('click', e => {
                 if (e.target.id === 'modalContainer' || e.target.closest('#modal-close-btn') || e.target.id === 'modal-cancel-btn') closeModal();
+                // const playerBtn = e.target.closest('.player-select-btn');
+                // if (playerBtn) selectPlayer(playerBtn.dataset.playerId);
+                // Lógica de seleção de jogador para os slots (AGORA MAIS SEGURA)
                 const playerBtn = e.target.closest('.player-select-btn');
-                if (playerBtn) selectPlayer(playerBtn.dataset.playerId);
+                // SÓ CHAMA O selectPlayer SE UM JOGO NÃO ESTIVER EM ANDAMENTO
+                if (playerBtn && !appState.gameState.activeGame) {
+                    selectPlayer(playerBtn.dataset.playerId);
+                }
             });
+
+
 
         </script>
     </body>
