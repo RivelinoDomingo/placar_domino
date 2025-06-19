@@ -448,21 +448,46 @@
                 // Previne execuções múltiplas
                 if (document.getElementById('view-game-over').classList.contains('active')) return;
 
-                const { gameMode, winnerInfo, teams, scores, playerIds, isRaioMatch } = gameData;
+                const { gameMode, winnerInfo, teams, scores, playerIds, isRaioMatch, raios } = gameData;
                 const batch = writeBatch(db);
                 let winnerText = '';
+                let finalScoreText = ''; // Usaremos esta variável para o novo texto
 
+                // --- INÍCIO DA LÓGICA DE TEXTO CORRIGIDA ---
                 if (gameMode === 'duplas') {
-                    const winnerTeamName = winnerInfo.winnerTeam === 'A' ? 'Time A' : 'Time B';
-                    const winnerPlayers = teams[winnerInfo.winnerTeam].players.map(id => appState.players[id].name);
+                    const winnerTeamKey = winnerInfo.winnerTeam;
+                    const winnerTeamName = winnerTeamKey === 'A' ? 'Time A' : 'Time B';
+                    const winnerPlayers = teams[winnerTeamKey].players.map(id => appState.players[id].name);
                     winnerText = `${winnerTeamName} venceu! (${winnerPlayers.join(' & ')})`;
-                } else {
-                    winnerText = `${appState.players[winnerInfo.winnerId].name} venceu!`;
+
+                    const raiosDaPartida = teams[winnerTeamKey].raios || 0;
+                    if (raiosDaPartida > 0) {
+                        finalScoreText = `Conquistaram ${raiosDaPartida} ${raiosDaPartida > 1 ? 'Raios' : 'Raio'} ⚡️ nesta partida.`;
+                    } else {
+                        // Fallback caso a partida termine por pontos sem completar um raio
+                        const pontosFinais = teams[winnerTeamKey].score || 0;
+                        finalScoreText = `Venceram com ${pontosFinais} ${pontosFinais !== 1 ? 'pontos' : 'ponto'}.`;
+                    }
+
+                } else { // Modo Individual
+                    const winnerId = winnerInfo.winnerId;
+                    winnerText = `${appState.players[winnerId].name} venceu!`;
+
+                    const raiosDaPartida = raios[winnerId] || 0;
+                    if (raiosDaPartida > 0) {
+                        finalScoreText = `Conquistou ${raiosDaPartida} ${raiosDaPartida > 1 ? 'Raios' : 'Raio'} ⚡️ nesta partida.`;
+                    } else {
+                        // Fallback caso a partida termine por pontos sem completar um raio
+                        const pontosFinais = scores[winnerId] || 0;
+                        finalScoreText = `Venceu com ${pontosFinais} ${pontosFinais !== 1 ? 'pontos' : 'ponto'}.`;
+                    }
                 }
+                // --- FIM DA LÓGICA DE TEXTO CORRIGIDA ---
 
                 const gameDocRef = doc(matchesCollectionRef(), appState.gameState.activeGameId);
                 batch.update(gameDocRef, { status: 'finished', endedAt: serverTimestamp(), winnerInfo: winnerInfo });
 
+                // Lógica de atualização de stats dos jogadores (continua a mesma)
                 for (const playerId of playerIds) {
                     const playerDocRef = doc(playersCollectionRef(), playerId);
                     const player = appState.players[playerId];
@@ -480,9 +505,8 @@
 
                 await batch.commit();
 
-                // Exibe a tela de Fim de Jogo
+                // Exibe a tela de Fim de Jogo com o texto corrigido
                 ui.gameMode.gameOver.winnerText.textContent = winnerText;
-                const finalScoreText = gameMode === 'duplas' ? `Placar final dos pontos: ${teams.A.score} a ${teams.B.score}` : `Placar final dos pontos: ${Object.values(scores).join(' - ')}`;
                 ui.gameMode.gameOver.scoreText.textContent = finalScoreText;
 
                 resetGameState();
@@ -578,7 +602,7 @@
                 const statsHTML = `
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-center">
                         ${generateStatControlHTML('raios', 'Raios')}
-                        <div class="bg-gray-100 p-3 rounded-lg"><p class="text-sm text-gray-500 mb-2 font-semibold">Vitórias</p><p class="text-2xl font-bold">${player.vitorias || 0}</p></div>
+                        <div class="bg-gray-100 p-3 rounded-lg"><p class="text-sm text-gray-500 mb-2 font-semibold">Pontos</p><p class="text-2xl font-bold">${player.vitorias || 0}</p></div>
                         ${generateStatControlHTML('lambreta', 'Lambretas')}
                     </div>
                 `;
@@ -594,7 +618,6 @@
                     return `<div class="text-center p-2 rounded-lg ${unlocked ? 'bg-yellow-100' : 'bg-gray-100'}"><span class="achievement-icon ${unlocked ? 'unlocked' : ''}" title="${ach.name}: ${ach.description}">${ach.icon}</span><p class="text-xs font-semibold mt-1 ${unlocked ? 'text-yellow-800' : 'text-gray-500'}">${ach.name}</p></div>`;
                 }).join('');
 
-                // --- LINHA CORRIGIDA COM AS CLASSES DE ESTILO RESTAURADAS ---
                 let adminControlsHTML = appState.isAdminMode ? `
                     <hr class="my-6">
                     <div class="flex justify-around gap-4">
@@ -602,7 +625,6 @@
                         <button id="btnDeletePlayer" class="flex-grow bg-red-600 text-white font-semibold py-3 px-3 rounded-lg hover:bg-red-700 transition">Deletar</button>
                     </div>` : '';
 
-                // Monta o HTML final do modal
                 const modalHTML = `
                     <div class="flex justify-between items-start">
                         <div><h3 class="text-2xl font-bold">${player.name}</h3><p class="text-gray-600">Série ${player.series}</p></div>
@@ -616,26 +638,37 @@
 
                 if (appState.isAdminMode) {
                     const statsContainer = document.querySelector('#modalContent');
-                    statsContainer.addEventListener('click', (e) => {
-                        const button = e.target.closest('.stat-button');
-                        if (!button) return;
-                        const { action, stat } = button.dataset;
-                        const amount = action === 'increment' ? 1 : -1;
-                        const valueElement = document.getElementById(`${stat}-value`);
-                        const currentValue = parseInt(valueElement.textContent, 10);
-                        const newValue = currentValue + amount;
-                        if (newValue >= 0) {
-                            valueElement.textContent = newValue;
-                            updatePlayerStat(playerId, stat, amount);
-                        } else {
-                            showMessage(`Não é possível ter valor negativo.`, 'error');
-                        }
-                    });
 
-                    const renameBtn = document.getElementById('btnRenamePlayer');
-                    const deleteBtn = document.getElementById('btnDeletePlayer');
-                    if (renameBtn) renameBtn.addEventListener('click', () => renomearJogador(playerId));
-                    if (deleteBtn) deleteBtn.addEventListener('click', () => deletarJogador(playerId));
+                    // --- INÍCIO DA CORREÇÃO ---
+                    // Trocamos addEventListener por .onclick para evitar duplicatas.
+                    statsContainer.onclick = (e) => {
+                    // --- FIM DA CORREÇÃO ---
+                        const statButton = e.target.closest('.stat-button');
+                        const renameButton = e.target.closest('#btnRenamePlayer');
+                        const deleteButton = e.target.closest('#btnDeletePlayer');
+
+                        if (statButton) {
+                            const { action, stat } = statButton.dataset;
+                            const amount = action === 'increment' ? 1 : -1;
+                            const valueElement = document.getElementById(`${stat}-value`);
+                            const currentValue = parseInt(valueElement.textContent, 10);
+                            const newValue = currentValue + amount;
+
+                            if (newValue >= 0) {
+                                valueElement.textContent = newValue;
+                                updatePlayerStat(playerId, stat, amount);
+                            } else {
+                                showMessage(`Não é possível ter valor negativo.`, 'error');
+                            }
+                        } else if (renameButton) {
+                            renomearJogador(playerId);
+                        } else if (deleteButton) {
+                            deletarJogador(playerId);
+                        }
+                    };
+
+                    // Os listeners individuais para Renomear e Deletar não são mais necessários aqui,
+                    // pois foram incluídos na lógica do .onclick acima para simplificar.
                 }
             }
 
