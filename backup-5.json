@@ -1,0 +1,450 @@
+{
+  "players": [
+    {
+      "id": "2uTKIpn00eUFJM0wXC5G",
+      "name": "Renata",
+      "series": "Amador",
+      "raios": 5,
+      "lambreta": 5,
+      "pontos": 15,
+      "partidasJogadas": 5
+    },
+    {
+      "id": "4lAtcPIEKcu6pYOpTbUf",
+      "name": "Alexandre",
+      "series": "Amador",
+      "raios": 1,
+      "pontos": 9,
+      "partidasJogadas": 4,
+      "lambreta": 2
+    },
+    {
+      "id": "9vWTrLOM6TGu1Sir8Y98",
+      "name": "teste_3",
+      "series": "Amador",
+      "raios": 0,
+      "pontos": 33,
+      "conquistas": {
+        "azarao": 1
+      },
+      "partidasJogadas": 20,
+      "lambreta": 2
+    },
+    {
+      "id": "AYPmYnX34qqGae7HcIYU",
+      "name": "Kauê",
+      "series": "Amador",
+      "pontos": 8,
+      "raios": 5,
+      "partidasJogadas": 2,
+      "lambreta": 4
+    },
+    {
+      "id": "HRTiUQaInmsi8SGbDyuh",
+      "name": "teste_1",
+      "series": "Amador",
+      "raios": 3,
+      "pontos": 40,
+      "conquistas": {
+        "azarao": 5
+      },
+      "partidasJogadas": 37,
+      "lambreta": 10
+    },
+    {
+      "id": "KUk2C2TEJlRyIm02hmDk",
+      "name": "Cassio",
+      "series": "Amador",
+      "raios": 2,
+      "partidasJogadas": 2,
+      "lambreta": 2,
+      "pontos": 1
+    },
+    {
+      "id": "M30KhNvKs2K2a8IESxt4",
+      "raios": 0,
+      "series": "Amador",
+      "name": "Hugo",
+      "partidasJogadas": 1,
+      "lambreta": 0,
+      "pontos": 3
+    },
+    {
+      "id": "YOYDoV9WhNmAcbFws9Hl",
+      "name": "Rivelino",
+      "series": "Amador",
+      "lambreta": 5,
+      "partidasJogadas": 5,
+      "pontos": 18,
+      "raios": 5
+    },
+    {
+      "id": "ZjmfoTZLOqmxdptTGaGA",
+      "name": "teste_4",
+      "series": "Amador",
+      "raios": 0,
+      "lambreta": 0,
+      "pontos": 48,
+      "conquistas": {
+        "azarao": 4
+      },
+      "partidasJogadas": 34
+    },
+    {
+      "id": "g1E2xTexonFuuhcgzhIB",
+      "name": "visitante",
+      "series": "Amador",
+      "lambreta": 5,
+      "conquistas": {
+        "imbativel": 5
+      },
+      "partidasJogadas": 32,
+      "pontos": 81,
+      "raios": 19
+    },
+    {
+      "id": "jbhADYHEOrT5lc8wxrQI",
+      "name": "Enzo",
+      "lambreta": 0,
+      "series": "Amador",
+      "conquistas": [],
+      "pontos": 7,
+      "raios": 3
+    },
+    {
+      "id": "oNHz4O2q4wzN2l5KETcT",
+      "name": "teste_2",
+      "series": "Amador",
+      "raios": 0,
+      "lambreta": 0,
+      "pontos": 42,
+      "conquistas": {
+        "azarao": 5
+      },
+      "partidasJogadas": 30
+    },
+    {
+      "id": "u1423EoitFbGmcZOvytT",
+      "series": "Amador",
+      "name": "Ari",
+      "raios": 6,
+      "partidasJogadas": 4,
+      "lambreta": 9
+    },
+    {
+      "id": "zNO2Zp7dZlyGMcL1xBS8",
+      "name": "Jorginho",
+      "lambreta": 0,
+      "raios": 0,
+      "series": "Amador"
+    }
+  ],
+  "events": [
+    {
+      "id": "CEiSVA4Gl7gvYcBQOnCM",
+      "type": "achievement",
+      "player": "visitante",
+      "text": "alcançou 3 vitórias de raio seguidas e se tornou Imbatível! 🔥",
+      "timestamp": {
+        "_seconds": 1750389252,
+        "_nanoseconds": 923000000
+      }
+    },
+    {
+      "id": "D0EaHMeI0VN0cAtlgCGc",
+      "type": "achievement",
+      "player": "teste_4",
+      "text": "sofreu 3 lambretas de raio seguidas e se tornou um Azarão! 🚑",
+      "timestamp": {
+        "_seconds": 1750389253,
+        "_nanoseconds": 69000000
+      }
+    },
+    {
+      "id": "EcjoThajW3KLNSWhxifm",
+      "type": "achievement",
+      "player": "teste_2",
+      "text": "sofreu 3 lambretas de raio seguidas e se tornou um Azarão! 🚑",
+      "timestamp": {
+        "_seconds": 1750389498,
+        "_nanoseconds": 748000000
+      }
+    },
+    {
+      "id": "KMov3ryA7TXi1fV6MrTv",
+      "type": "achievement",
+      "player": "visitante",
+      "text": "alcançou 3 vitórias de raio seguidas e se tornou Imbatível! 🔥",
+      "timestamp": {
+        "_seconds": 1750389498,
+        "_nanoseconds": 595000000
+      }
+    },
+    {
+      "id": "NjYONn5ua8pzqKgvRZ4U",
+      "type": "achievement",
+      "player": "teste_2",
+      "text": "sofreu 3 lambretas de raio seguidas e se tornou um Azarão! 🚑",
+      "timestamp": {
+        "_seconds": 1750389141,
+        "_nanoseconds": 89000000
+      }
+    },
+    {
+      "id": "P0o9rrjJ7S30Br3GEIXk",
+      "type": "achievement",
+      "player": "teste_3",
+      "text": "sofreu 3 lambretas de raio seguidas e se tornou um Azarão! 🚑",
+      "timestamp": {
+        "_seconds": 1750389141,
+        "_nanoseconds": 227000000
+      }
+    },
+    {
+      "id": "RkplBCDpuEhFmnhChg3L",
+      "type": "achievement",
+      "player": "teste_2",
+      "text": "sofreu 3 lambretas de raio seguidas e se tornou um Azarão! 🚑",
+      "timestamp": {
+        "_seconds": 1750389479,
+        "_nanoseconds": 222000000
+      }
+    },
+    {
+      "id": "S7xkdkUWgSkQW6GqBQAU",
+      "type": "achievement",
+      "player": "visitante",
+      "text": "alcançou 3 vitórias de raio seguidas e se tornou Imbatível! 🔥",
+      "timestamp": {
+        "_seconds": 1750389479,
+        "_nanoseconds": 6000000
+      }
+    },
+    {
+      "id": "VsOBnNGNW3Ax3ACb3UvH",
+      "type": "achievement",
+      "player": "visitante",
+      "text": "alcançou 3 vitórias de raio seguidas e se tornou Imbatível! 🔥",
+      "timestamp": {
+        "_seconds": 1750389367,
+        "_nanoseconds": 664000000
+      }
+    },
+    {
+      "id": "WxVS5coowJKaLrfPRRbd",
+      "type": "achievement",
+      "player": "teste_1",
+      "text": "sofreu 3 lambretas de raio seguidas e se tornou um Azarão! 🚑",
+      "timestamp": {
+        "_seconds": 1750389253,
+        "_nanoseconds": 400000000
+      }
+    },
+    {
+      "id": "aS9lo19DYgahToQee8gq",
+      "type": "achievement",
+      "player": "teste_2",
+      "text": "sofreu 3 lambretas de raio seguidas e se tornou um Azarão! 🚑",
+      "timestamp": {
+        "_seconds": 1750389253,
+        "_nanoseconds": 214000000
+      }
+    },
+    {
+      "id": "b5CM1jf9Nvr38GtG87eC",
+      "type": "achievement",
+      "player": "teste_4",
+      "text": "sofreu 3 lambretas de raio seguidas e se tornou um Azarão! 🚑",
+      "timestamp": {
+        "_seconds": 1750389367,
+        "_nanoseconds": 801000000
+      }
+    },
+    {
+      "id": "cXmmTGjs7iIhjuuC23yg",
+      "type": "achievement",
+      "player": "teste_4",
+      "text": "sofreu 3 lambretas de raio seguidas e se tornou um Azarão! 🚑",
+      "timestamp": {
+        "_seconds": 1750389498,
+        "_nanoseconds": 882000000
+      }
+    },
+    {
+      "id": "fPckEolG7kpxYSMlDyf7",
+      "type": "achievement",
+      "player": "teste_1",
+      "text": "sofreu 3 lambretas de raio seguidas e se tornou um Azarão! 🚑",
+      "timestamp": {
+        "_seconds": 1750389368,
+        "_nanoseconds": 147000000
+      }
+    },
+    {
+      "id": "gSqQL1Ie3WKY9m6TEbYU",
+      "type": "achievement",
+      "player": "teste_1",
+      "text": "sofreu 3 lambretas de raio seguidas e se tornou um Azarão! 🚑",
+      "timestamp": {
+        "_seconds": 1750389140,
+        "_nanoseconds": 938000000
+      }
+    },
+    {
+      "id": "iMRhwth4vN6XuaVGwze4",
+      "type": "achievement",
+      "player": "teste_1",
+      "text": "sofreu 3 lambretas de raio seguidas e se tornou um Azarão! 🚑",
+      "timestamp": {
+        "_seconds": 1750389479,
+        "_nanoseconds": 526000000
+      }
+    },
+    {
+      "id": "k3EwW684cCwVGQzWMRsp",
+      "type": "achievement",
+      "player": "teste_4",
+      "text": "sofreu 3 lambretas de raio seguidas e se tornou um Azarão! 🚑",
+      "timestamp": {
+        "_seconds": 1750389479,
+        "_nanoseconds": 390000000
+      }
+    },
+    {
+      "id": "ooCYXA0GepCKYdKhgoNL",
+      "type": "achievement",
+      "player": "teste_2",
+      "text": "sofreu 3 lambretas de raio seguidas e se tornou um Azarão! 🚑",
+      "timestamp": {
+        "_seconds": 1750389367,
+        "_nanoseconds": 960000000
+      }
+    },
+    {
+      "id": "uWnK0a3i7to1dxlVyGt4",
+      "type": "achievement",
+      "player": "visitante",
+      "text": "alcançou 3 vitórias de raio seguidas e se tornou Imbatível! 🔥",
+      "timestamp": {
+        "_seconds": 1750389140,
+        "_nanoseconds": 716000000
+      }
+    },
+    {
+      "id": "x7cWsUcaaraaSQLUVgfx",
+      "type": "achievement",
+      "player": "teste_1",
+      "text": "sofreu 3 lambretas de raio seguidas e se tornou um Azarão! 🚑",
+      "timestamp": {
+        "_seconds": 1750389499,
+        "_nanoseconds": 23000000
+      }
+    }
+  ],
+  "subscriptions": [
+    {
+      "id": "dN-nCKn0POQKkQweDGrIKi:APA91bErUnLxXqNee3ZgBn8nAnzCOMjc5N0gaP-jxV9gp5OkSf7RqbvPZEuztuQpSW0afEhUMKIe2Ek62pZ_VYIQ4WAWoOgxi_de4EMlfNPUbNzLj14pxvE",
+      "userId": "0SwKE99Br4MPVcSdPQ5pkEuKvkl1",
+      "createdAt": {
+        "_seconds": 1750056817,
+        "_nanoseconds": 484000000
+      }
+    },
+    {
+      "id": "dNnc3qIm9qsjjkHq9EsKd1:APA91bHpZMddj55RHhDcNUGVoCW1W7Vc1DxCD53ueSkoIAQBN83itLZZjVw-bDpaydakuiyrAu236nTZ7oxqwOmklQcZmwsNlq71oxnw9HO4TdqcdWANwtI",
+      "userId": "OwQDzt3T39XsYxiCBQKahstjJwm2",
+      "createdAt": {
+        "_seconds": 1750120106,
+        "_nanoseconds": 910000000
+      }
+    },
+    {
+      "id": "diHm7BeT0Mv2Me6SV0J7kz:APA91bFVgf_pxyv_xh8RY80m44LRbldamy64npB6K77FlOpn69oFNBWjFKdNJsC8nVZnWZ9L4FPsOcQ6v_PU5D7ijCj1Wp3nCOgTTjPe2DEvuKwPRbw-jXw",
+      "userId": "bwpBDNwgFCPq3t3NsROyURSEdxl2",
+      "createdAt": {
+        "_seconds": 1750062897,
+        "_nanoseconds": 196000000
+      }
+    },
+    {
+      "id": "dsDeMj3fVytnezho6fHDmQ:APA91bG32U_FVJtH8cbW_ga-vs9DFGOeGwwnZQRUQVhIuP0ac8W3gmsHhHCg6lBJgvFMAltsdY5qukmVEGyZ_Kzg0733R3cooa3-zhRFCjFMuAaFiN5XqzA",
+      "userId": "zwTTMOuvskN4SoqPXlgiNmMEhx72",
+      "createdAt": {
+        "_seconds": 1750131221,
+        "_nanoseconds": 124000000
+      }
+    },
+    {
+      "id": "e6K5pkxVqJwFs47qtOOmWE:APA91bH2a7zeuN_ClwkRp3irtebrhMxhKz5texPqB5aKonhAmSUAXMJJ3KvUzI9QdciV5koFXeprSBEOvlin7cwNSARbxfJnKy4VQzlOvjzwCEPAH2NLekw",
+      "userId": "4ea9HPNGhiZyxGzJPHlO77c7Gkn1",
+      "createdAt": {
+        "_seconds": 1750118854,
+        "_nanoseconds": 986000000
+      }
+    },
+    {
+      "id": "eo1B68W8K8xNSyKPwft1xi:APA91bFkesDvbX4B911ycBQqAYIhx7mI66tT6uUVuZan3lkNCPrUpnSy0181QK5XHkyORTcoVZ1prhDG7XHLGiEylrTx5wlWTE-TnPLJWfGZnazylSeyfiI",
+      "userId": "qGPjjOHSnqdyVCQzuPfpVfzlS4J2",
+      "createdAt": {
+        "_seconds": 1750096435,
+        "_nanoseconds": 103000000
+      }
+    },
+    {
+      "id": "ey421oo8TPyeid7dxvMN6X:APA91bFmBHRhzFR3OgVEAVXvH7FX2EQRpme5iRF9z4urZ8MARUELyfEGGUoLK84s6ctY7W6Y1uYaCYsqMoiSPKorWfF6YHHe3ORl7e6m5PquCUQ_Ncmh_gU",
+      "userId": "boCRb2SOotXGwbNS7iX6OpO2Gic2",
+      "createdAt": {
+        "_seconds": 1750140727,
+        "_nanoseconds": 960000000
+      }
+    },
+    {
+      "id": "f5P2IF85z0FY6gLgLNVUUD:APA91bFrOZ2d4mAtBH4Ftt5-kMM0WT1eJ7wmx5hnbrKOoHFhgIYYFZGnpfRpujEQsB2FNBAHx15kzcziFcFQNruZtB-nOs7lw23ebo4NSflikgWNnV0uhWQ",
+      "userId": "wLso6uMZw8WGeqBV352HHGRoaPk2",
+      "createdAt": {
+        "_seconds": 1750141945,
+        "_nanoseconds": 990000000
+      }
+    },
+    {
+      "id": "fPUwtg9QUfXQZNlXfHHnQM:APA91bFfePR4K5ufawWb3jXaivf7Ku80kjczkPEGij7modXn74eNP3KuQ0WRGFkXc8vdkjAmsZxMDK_UVV0bKtzgADn2WkFv9QZMa4J1kFpzWL48u5BrqPo",
+      "userId": "dApDSbRv2qaqnDolWBNmxYhMxE32",
+      "createdAt": {
+        "_seconds": 1750118428,
+        "_nanoseconds": 644000000
+      }
+    },
+    {
+      "id": "fPZkhM4esrnzaLkT_B0NRk:APA91bGZlVzu14qSj2JqKPTWJp_XQRFrRbC0qoMPwzOKhWZBbVMPTpqbtStZxPIKlPWCSbVX9PtCIsppCPkXoWCSNOZpBFlvo7tOzntvFOcguEFiRR3dnEk",
+      "userId": "qfX9uZOHG7V8CcGDButswFj8EW22",
+      "createdAt": {
+        "_seconds": 1750091630,
+        "_nanoseconds": 135000000
+      }
+    },
+    {
+      "id": "fgRE1BUBdc6ISHn5llQUcO:APA91bGsFeQQvDN_b3TWs3tlOs9M0723tiAD2XTeH8aQIdigxCyiARQV3qwSwJA1PZO_OqbQIydS42AfqO_XfuZt6jdtYcQWAF7SlPjb4RSHjyQqfTTy6sI",
+      "userId": "WDxSHaztO6Mor0OszWJb75ByscD3",
+      "createdAt": {
+        "_seconds": 1750096367,
+        "_nanoseconds": 834000000
+      }
+    },
+    {
+      "id": "fjpjLkm070yw03kgcTsCCX:APA91bHAhag5U6VJoO5tJvO7qOue1xoEkGigEDQp-avQIQiZTlgueomZZdemwqW6CZLk36j07KMB6yGrcvL_jP32CzETmaPR-oxTP7uPht2qHy6aZDbzqmE",
+      "userId": "rWIUp79b60ZE49EPCoo2x8GttO82",
+      "createdAt": {
+        "_seconds": 1750118193,
+        "_nanoseconds": 720000000
+      }
+    },
+    {
+      "id": "fs9LlBTmL_2IMABhij12uW:APA91bHz7UP-UZkczCeUdxbMCPFWrL1ur_W79_SdyEqKOpfWRFc5mxrAuxWiSR_mxaNs6CRRrroyFs6VrmYtSn8vKYlGroSMqJJ-ueASIfnGoQUjQDE2XwA",
+      "userId": "2BgaVdBUG6cdHZexzT0XVemn7jc2",
+      "createdAt": {
+        "_seconds": 1750163984,
+        "_nanoseconds": 166000000
+      }
+    }
+  ]
+}
