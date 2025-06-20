@@ -32,20 +32,65 @@
             @keyframes fadeIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
             .point-dot { width: 10px; height: 10px; border-radius: 50%; transition: all 0.3s ease; }
             .team-legend { transition: opacity 0.3s ease-in-out; }
+            /* Estilos para a animação do accordion */
+            #liveMatchFeed {
+                transition: max-height 0.5s ease-in-out, padding 0.5s ease-in-out;
+                max-height: 0;
+                padding-top: 0;
+                padding-bottom: 0;
+            }
+            #liveMatchFeed.open {
+                max-height: 500px; /* Um valor alto o suficiente para conter o feed */
+                padding: 1rem; /* Adiciona o espaçamento interno quando aberto */
+            }
+            #liveMatchChevron.open {
+                transform: rotate(180deg);
+            }
         </style>
     </head>
     <body class="text-gray-800">
 
-        <div id="app-container" class="container mx-auto max-w-2xl p-4 sm:p-6 lg:p-8">
+    <div id="app-container" class="container mx-auto max-w-2xl p-4 sm:p-6 lg:p-8" bis_skin_checked="1">
+        <div id="view-scoreboard" class="view active fade-in">
 
-            <div id="view-scoreboard" class="view active fade-in">
-                <div class="text-center mb-8"><h1 class="text-4xl font-bold font-condensed tracking-wider">PLACAR DO DOMINÓ</h1></div>
-                <div class="flex justify-center mb-12"><button id="btnGoToGameMode" class="bg-blue-600 text-white font-bold py-4 px-8 rounded-lg shadow-lg hover:bg-blue-700 transition-all duration-300 transform hover:scale-105"><span class="text-2xl mr-3">🀄</span> Iniciar Modo Partida</button></div>
-                <div id="playersList" class="space-y-3"><div class="text-center text-gray-500 p-8">Carregando placar...</div></div>
-                <div class="mt-10"><h2 class="text-xl font-bold text-gray-700 mb-3">Últimas Atividades</h2><div id="activityFeed" class="space-y-2 bg-white p-4 rounded-xl shadow-sm"><p class="text-gray-500 text-center">Carregando atividades...</p></div></div>
+            <div class="text-center mb-8">
+                <h1 class="text-4xl font-bold font-condensed tracking-wider">PLACAR DO DOMINÓ</h1>
             </div>
 
-            <!-- This is the message box for success/error/info. It is now fixed at the top. -->
+            <div class="flex justify-center mb-8 hidden" id="goToGameModeContainer">
+                <button id="btnGoToGameMode" class="bg-blue-600 text-white font-bold py-4 px-8 rounded-lg shadow-lg hover:bg-blue-700 transition-all duration-300 transform hover:scale-105">
+                    <span class="mr-2">🀄</span> Iniciar Modo Partida
+                </button>
+            </div>
+
+            <div id="liveMatchContainer" class="mb-6 transition-all duration-500">
+
+                    <div class="bg-white rounded-xl shadow-sm overflow-hidden">
+
+                        <div id="liveMatchHeader" class="flex justify-between items-center p-4 bg-gray-200 text-gray-500 cursor-default transition">
+                            <h2 class="text-lg font-bold tracking-wider">○ NENHUMA PARTIDA ATIVA</h2>
+                            <span id="liveMatchChevron" class="transform transition-transform duration-300 hidden">▼</span>
+                        </div>
+
+                        <div id="liveMatchFeed" class="overflow-hidden">
+                            </div>
+
+                    </div>
+                </div>
+
+            <div id="playersList" class="space-y-3">
+                <div class="text-center text-gray-500 p-8">Carregando placar...</div>
+            </div>
+
+            <div class="mt-10">
+                <h2 class="text-xl font-bold text-gray-700 mb-3">Últimas Atividades</h2>
+                <div id="activityFeed" class="space-y-2 bg-white p-4 rounded-xl shadow-sm">
+                    <p class="text-gray-500 text-center">Carregando atividades...</p>
+                </div>
+            </div>
+
+        </div>
+
             <div id="messageBox" class="message-box"></div>
             <!-- Mesa de jogo -->
             <div id="view-game-table" class="view fade-in">
@@ -57,24 +102,21 @@
                 <div id="game-type-selector" class="flex justify-center gap-4 mb-4"><button data-mode="individual" class="gameModeBtn font-semibold py-2 px-4 rounded-lg shadow">Individual</button><button data-mode="duplas" class="gameModeBtn font-semibold py-2 px-4 rounded-lg">Duplas</button></div>
                 <div id="raio-mode-selector" class="flex justify-center items-center gap-2 mb-6"><input type="checkbox" id="raioModeCheckbox" class="h-5 w-5 rounded border-gray-300 text-blue-600 focus:ring-blue-500 cursor-pointer"><label for="raioModeCheckbox" class="font-semibold text-gray-700 cursor-pointer select-none">Partida de Raio ⚡️</label></div>
                 <div class="bg-green-800 border-8 border-yellow-800/50 rounded-2xl shadow-2xl p-4 sm:p-8 mesa-grid mx-auto">
-                    <div class="flex items-center justify-center player-slot-top"><div id="slot-1" class="player-slot flex flex-col items-center"></div></div>
-                    <div class="flex items-center justify-center player-slot-left"><div id="slot-4" class="player-slot flex flex-col items-center"></div></div>
-<!--                     <div class="bg-green-700/80 rounded-full flex items-center justify-center"><span class="text-5xl text-white/50 font-condensed">🀄</span></div> -->
-                    <div class="flex items-center justify-center player-slot-right"><div id="slot-2" class="player-slot flex flex-col items-center"></div></div>
-                    <div class="flex items-center justify-center player-slot-bottom"><div id="slot-3" class="player-slot flex flex-col items-center"></div></div>
+                    <div class="flex items-center justify-center player-slot-top"><div id="slot-1" class="player-slot flex flex-col items-center"></div></div><div class="flex items-center justify-center player-slot-left"><div id="slot-4" class="player-slot flex flex-col items-center"></div></div><div class="flex items-center justify-center player-slot-right"><div id="slot-2" class="player-slot flex flex-col items-center"></div></div><div class="flex items-center justify-center player-slot-bottom"><div id="slot-3" class="player-slot flex flex-col items-center"></div></div>
                 </div>
                 <div class="mt-8 text-center space-y-4">
                     <button id="btnStartGame" class="bg-gray-400 text-white font-bold py-3 px-6 rounded-lg shadow-md cursor-not-allowed" disabled>Iniciar Jogo</button>
                     <div id="activeGameButtons" class="hidden flex-wrap justify-center gap-4"><button id="btnLaunchScore" class="bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-6 rounded-lg shadow-md transition">Lançar Ponto</button><button id="btnUndoRound" class="bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-3 px-6 rounded-lg shadow-md transition">Desfazer</button><button id="btnEndGame" class="bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-6 rounded-lg shadow-md transition">Encerrar Partida</button></div>
                 </div>
             </div>
+    </div>
 
             <div id="view-game-over" class="view fade-in text-center">
                 <h2 class="text-2xl text-gray-600">Fim de Jogo</h2>
                 <p id="gameOverWinnerText" class="text-5xl font-bold font-condensed my-4 text-blue-600"></p>
                 <p id="gameOverScoreText" class="text-xl text-gray-500 mb-8"></p>
                 <div class="flex justify-center gap-4 flex-wrap">
-                    <button id="btnShareWhatsapp" class="bg-green-500 text-white font-bold py-3 px-6 rounded-lg shadow-lg hover:bg-green-600 transition flex items-center gap-2"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg> Compartilhar</button><button id="btnGameSummary" class="bg-gray-500 text-white font-bold py-3 px-6 rounded-lg shadow-lg hover:bg-gray-600 transition">Ver Resumo</button><button id="btnNewGame" class="bg-blue-600 text-white font-bold py-3 px-6 rounded-lg shadow-lg hover:bg-blue-700 transition">🀄 Nova Partida</button><button id="btnBackToScoreboard_GameOver" class="bg-gray-500 text-white font-bold py-3 px-6 rounded-lg shadow-lg hover:bg-gray-600 transition">← Voltar ao Placar</button>
+                    <button id="btnShareWhatsapp" class="bg-green-500 text-white font-bold py-3 px-6 rounded-lg shadow-lg hover:bg-green-600 transition flex items-center gap-2"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg> Compartilhar</button><button id="btnGameSummary" class="bg-gray-500 text-white font-bold py-3 px-6 rounded-lg shadow-lg hover:bg-gray-600 transition">Ver Resumo</button><button id="btnNewGame" class="bg-blue-600 text-white hidden font-bold py-3 px-6 rounded-lg shadow-lg hover:bg-blue-700 transition">🀄 Nova Partida</button><button id="btnBackToScoreboard_GameOver" class="bg-gray-500 text-white font-bold py-3 px-6 rounded-lg shadow-lg hover:bg-gray-600 transition">← Voltar ao Placar</button>
                 </div>
             </div>
         </div>
@@ -86,7 +128,7 @@
         <script type="module">
             import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
             import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-            import { getFirestore, doc, getDoc, addDoc, setDoc, updateDoc, deleteDoc, onSnapshot, collection, query, getDocs, orderBy, limit, serverTimestamp, writeBatch, increment } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+            import { getFirestore, doc, getDoc, addDoc, setDoc, updateDoc, deleteDoc, onSnapshot, collection, query, getDocs, orderBy, limit, serverTimestamp, writeBatch, increment, where } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
             const firebaseConfig = {
                 apiKey: "AIzaSyBqpkxcl0GkBBHVO8Nxk7UpYd00H4Frklc",
@@ -106,14 +148,26 @@
             const POINTS_TO_COMPLETE_RAIO = 4;
             const appIdentifier = firebaseConfig.appId;
 
+            // --- ESTRUTURA DAS SÉRIES ---
+            const SERIES_CONFIG = [
+                { name: 'Amador', requiredRaios: 0 },
+                { name: 'D', requiredRaios: 15 },
+                { name: 'C', requiredRaios: 33 },
+                { name: 'B', requiredRaios: 50 },
+                { name: 'A', requiredRaios: 80 }
+                // Você pode adicionar mais séries aqui no futuro! Ex: { name: 'Lendário', requiredRaios: 100 }
+            ];
+
+
             const achievements = {
                 primeiro_rei: { icon: '👑', name: 'Primeiro Rei', description: 'Chegou ao topo da Série A.' },
-                imbativel: { icon: '🔥', name: 'Imbatível', description: 'Venceu 3 rodadas de raio seguidas.' },
-                desbravador: { icon: '🧗‍♂️', name: 'Desbravador', description: 'Primeiro a chegar em uma nova série superior.'},
-                azarao: { icon: '🚑', name: 'Azarão', description: 'Sofreu 3 lambretas de raio seguidas.' },
+                imbativel: { icon: '🔥', name: 'Imbatível', description: 'Venceu 3 raios seguidos.' },
+                desbravador: { icon: '🧗‍♂️', name: 'Desbravador', description: 'Primeiro a chegar a uma nova série.'},
+                azarao: { icon: '🚑', name: 'Azarão', description: 'Sofreu 3 lambretas seguidas.' },
             };
 
-            let appState = { players: {}, finalGameData: {}, activityFeed: [], isAdminMode: false, userId: null, gameState: {}, unsubscribers: [] };
+            // let appState = { players: {}, finalGameData: {}, activityFeed: [], isAdminMode: false, userId: null, gameState: {}, unsubscribers: [] };
+            let appState = { players: {}, finalGameData: {}, activityFeed: [], isAdminMode: false, userId: null, gameState: {}, unsubscribers: [], messageQueue: [], isMessageShowing: false };
 
             const playersCollectionRef = () => collection(db, `artifacts/${appIdentifier}/public/data/players`);
             const activityFeedCollectionRef = () => collection(db, `artifacts/${appIdentifier}/public/data/events`);
@@ -124,6 +178,10 @@
                 messageBox: document.getElementById('messageBox'),
                 playersListDiv: document.getElementById('playersList'),
                 activityFeedDiv: document.getElementById('activityFeed'),
+                liveMatchContainer: document.getElementById('liveMatchContainer'),
+                liveMatchHeader: document.getElementById('liveMatchHeader'),
+                liveMatchFeed: document.getElementById('liveMatchFeed'),
+                liveMatchChevron: document.getElementById('liveMatchChevron'),
                 adminFab: { button: document.getElementById('adminFabButton'), panel: document.getElementById('adminActionsPanel'), defaultIcon: document.getElementById('fabIconDefault'), closeIcon: document.getElementById('fabIconClose'), loginView: document.getElementById('adminLoginView'), controlsView: document.getElementById('adminControlsView'), keyInput: document.getElementById('adminKeyInput'), activateBtn: document.getElementById('activateAdminBtn'), addPlayerBtn: document.getElementById('addPlayerBtn_fab'), resetBtn: document.getElementById('resetScoresBtn_fab')},
                 modal: { container: document.getElementById('modalContainer'), content: document.getElementById('modalContent')},
                 gameMode: { goToBtn: document.getElementById('btnGoToGameMode'), backBtn: document.getElementById('btnBackToScoreboard'), modeButtons: document.querySelectorAll('.gameModeBtn'), raioCheckbox: document.getElementById('raioModeCheckbox'), startBtn: document.getElementById('btnStartGame'), activeButtons: document.getElementById('activeGameButtons'), launchScoreBtn: document.getElementById('btnLaunchScore'), undoBtn: document.getElementById('btnUndoRound'), endBtn: document.getElementById('btnEndGame'), newGameBtn: document.getElementById('btnNewGame'), shareBtn: document.getElementById('btnShareWhatsapp'), backToScoreboard_GameOverBtn: document.getElementById('btnBackToScoreboard_GameOver'), statusText: document.getElementById('gameStatusText'), gameOver: { winnerText: document.getElementById('gameOverWinnerText'), gameSummaryBtn: document.getElementById('btnGameSummary'), scoreText: document.getElementById('gameOverScoreText')}}
@@ -131,40 +189,61 @@
 
 
             async function startGame() {
-                ui.gameMode.startBtn.disabled = true;
-                const { gameMode, isRaioMatch, selectedSlots } = appState.gameState;
-                const playerIds = Object.values(selectedSlots).filter(Boolean);
-
-                let gameData = {
-                    gameMode,
-                    isRaioMatch,
-                    playerIds,
-                    status: 'active',
-                    history: [],
-                    createdAt: serverTimestamp(),
-                    // Inicializa os contadores de pontos E de raios da partida como zero para todos.
-                    scores: playerIds.reduce((acc, id) => ({ ...acc, [id]: 0 }), {}),
-                    raios: playerIds.reduce((acc, id) => ({ ...acc, [id]: 0 }), {}),
-                };
-
-                if (gameMode === 'duplas') {
-                    // A lógica de duplas pode ser refinada aqui no futuro, se necessário
-                    gameData.teams = {
-                        A: { players: [selectedSlots[2], selectedSlots[4]].filter(Boolean), score: 0, raios: 0 },
-                        B: { players: [selectedSlots[1], selectedSlots[3]].filter(Boolean), score: 0, raios: 0 }
-                    };
-                    gameData.turn = selectedSlots[1];
-                } else {
-                    gameData.turn = playerIds[0];
+                // --- INÍCIO DA CORREÇÃO E MELHORIA ---
+                if (!appState.isAdminMode) {
+                    showMessage("Apenas administradores podem iniciar uma partida.", "error");
+                    return;
                 }
+                ui.gameMode.startBtn.disabled = true;
 
                 try {
+                    // 1. LIMPEZA: Procura por jogos "zumbis" que ficaram com status 'active'.
+                    const q = query(matchesCollectionRef(), where("status", "==", "active"));
+                    const oldActiveGamesSnapshot = await getDocs(q);
+
+                    if (!oldActiveGamesSnapshot.empty) {
+                        console.log(`Encontrados ${oldActiveGamesSnapshot.size} jogos ativos antigos. Abortando...`);
+                        const cleanupBatch = writeBatch(db);
+                        oldActiveGamesSnapshot.forEach(doc => {
+                            cleanupBatch.update(doc.ref, { status: 'aborted', endedAt: serverTimestamp() });
+                        });
+                        await cleanupBatch.commit();
+                        console.log("Limpeza de jogos antigos concluída.");
+                    }
+                    // --- FIM DA LIMPEZA ---
+
+                    // 2. CRIAÇÃO DO NOVO JOGO (lógica que você já tinha)
+                    const { gameMode, isRaioMatch, selectedSlots } = appState.gameState;
+                    const playerIds = Object.values(selectedSlots).filter(Boolean);
+
+                    let gameData = {
+                        gameMode,
+                        isRaioMatch,
+                        playerIds,
+                        status: 'active',
+                        history: [],
+                        createdAt: serverTimestamp(),
+                        scores: playerIds.reduce((acc, id) => ({ ...acc, [id]: 0 }), {}),
+                        raios: playerIds.reduce((acc, id) => ({ ...acc, [id]: 0 }), {}),
+                        lambretasConsecutivas: {} // Este campo pode ser removido se não estiver usando
+                    };
+
+                    if (gameMode === 'duplas') {
+                        gameData.teams = { A: { players: [selectedSlots[2], selectedSlots[4]].filter(Boolean), score: 0, raios: 0 }, B: { players: [selectedSlots[1], selectedSlots[3]].filter(Boolean), score: 0, raios: 0 }};
+                        gameData.turn = selectedSlots[1];
+                    } else {
+                        gameData.turn = playerIds[0];
+                    }
+
                     const gameDocRef = await addDoc(matchesCollectionRef(), gameData);
                     appState.gameState.activeGameId = gameDocRef.id;
 
                     const unsub = onSnapshot(gameDocRef, (doc) => {
                         if (doc.exists()) {
                             renderActiveGame(doc.data());
+                        } else {
+                            resetGameState();
+                            switchView('view-scoreboard');
                         }
                     });
                     appState.gameState.activeGameListener = unsub;
@@ -174,6 +253,7 @@
                     ui.gameMode.activeButtons.style.display = 'flex';
                     document.getElementById('game-type-selector').style.display = 'none';
                     document.getElementById('raio-mode-selector').style.display = 'none';
+
                 } catch (error) {
                     console.error("Erro ao iniciar o jogo:", error);
                     showMessage("Não foi possível iniciar o jogo. Tente novamente.", "error");
@@ -222,19 +302,71 @@
                 ui.gameMode.undoBtn.disabled = gameData.history.length === 0;
             }
 
+            async function promptLambretaManual(loserIds, winnerName) {
+                // Esta função usa uma 'Promise' para esperar a seleção do usuário
+                return new Promise((resolve) => {
+                    // Monta o HTML do modal com checkboxes para cada perdedor
+                    let modalHTML = `
+                        <div class="flex justify-between items-start">
+                            <h3 class="text-xl font-bold">Registrar Lambretas</h3>
+                            <button id="modal-close-btn" class="text-gray-400 hover:text-gray-700 text-2xl">&times;</button>
+                        </div>
+                        <p class="text-sm text-gray-600 my-2">Rodada vencida por <span class="font-semibold">${winnerName}</span>. Selecione os perdedores que não marcaram pontos:</p>
+                        <div class="space-y-2 mt-4">
+                    `;
+
+                    loserIds.forEach(id => {
+                        const player = appState.players[id];
+                        if (player) {
+                            modalHTML += `
+                                <label for="lambreta-${id}" class="flex items-center p-3 bg-gray-50 rounded-lg cursor-pointer hover:bg-gray-100 transition-all duration-200 border-2 border-transparent has-[:checked]:border-blue-500 has-[:checked]:bg-blue-50">
+                                    <input type="checkbox" id="lambreta-${id}" value="${id}" class="h-5 w-5 rounded border-gray-300 text-blue-600 focus:ring-blue-500">
+                                    <span class="ml-3 font-medium">${player.name}</span>
+                                </label>
+                            `;
+                        }
+                    });
+
+                    modalHTML += `</div><button id="confirmLambretas" class="mt-6 w-full bg-blue-600 text-white font-semibold py-2 rounded-lg hover:bg-blue-700 transition">Confirmar Lambretas</button>`;
+
+                    openModal(modalHTML);
+
+                    // Função para resolver e fechar
+                    const resolverSelecao = () => {
+                        const playersComLambreta = [];
+                        loserIds.forEach(id => {
+                            const checkbox = document.getElementById(`lambreta-${id}`);
+                            if (checkbox && checkbox.checked) {
+                                playersComLambreta.push(id);
+                            }
+                        });
+                        closeModal();
+                        resolve(playersComLambreta); // Retorna a lista de IDs selecionados
+                    };
+
+                    // Adiciona os listeners para os botões do modal
+                    document.getElementById('confirmLambretas').onclick = resolverSelecao;
+
+                    // Se o usuário fechar no 'X', retorna uma lista vazia
+                    const closeBtn = document.getElementById('modal-close-btn');
+                    if(closeBtn) {
+                        closeBtn.onclick = () => {
+                            closeModal();
+                            resolve([]);
+                        };
+                    }
+                });
+            }
+
             async function launchScore() {
-                // Adiciona uma "guarda" para garantir que o estado do jogo está pronto.
                 if (!appState.gameState.activeGame) {
                     showMessage("Aguarde, o jogo está sincronizando...", "error");
-                    console.error("Tentativa de lançar ponto sem um jogo ativo no appState.");
                     return;
                 }
-
                 const { gameMode, isRaioMatch, playerIds, teams } = appState.gameState.activeGame;
                 const WINNING_SCORE = isRaioMatch ? 1 : 4;
 
-                // --- INÍCIO DA PARTE QUE ESTAVA FALTANDO ---
-                // Criação completa do HTML do modal
+                // 1. Criação completa do HTML do modal
                 let modalHTML = `<h3 class="text-2xl font-bold mb-4">Quem venceu a rodada?</h3><div class="space-y-2 max-h-64 overflow-y-auto">`;
                 if (gameMode === 'duplas') {
                     modalHTML += `<button class="w-full text-left p-3 bg-gray-100 rounded-lg hover:bg-blue-100 transition winner-select-btn" data-team="A">Time A (${teams.A.players.map(id => appState.players[id]?.name || '?').join(' & ')})</button>`;
@@ -245,8 +377,8 @@
                 }
                 modalHTML += `</div><button id="modal-cancel-btn" class="mt-6 bg-gray-200 text-gray-800 font-semibold py-2 px-4 rounded-lg w-full">Cancelar</button>`;
                 openModal(modalHTML);
-                // --- FIM DA PARTE QUE ESTAVA FALTANDO ---
 
+                // 2. Lógica de clique completa
                 ui.modal.content.onclick = async (e) => {
                     const target = e.target.closest('.winner-select-btn');
                     if (!target) return;
@@ -262,8 +394,10 @@
                         const newScore = (currentGame.scores[winnerId] || 0) + 1;
 
                         const playerUpdates = { pontos: increment(1) };
-                        const matchUpdates = {};
+                        let matchUpdates = {};
                         let completedRaio = false;
+                        let lambretaLosersThisRound = [];
+                        let scoresBeforeReset = {};
 
                         if (newScore >= WINNING_SCORE) {
                             completedRaio = true;
@@ -272,25 +406,32 @@
 
                             const loserIds = currentGame.playerIds.filter(id => id !== winnerId);
                             for (const loserId of loserIds) {
-                                const pDocRef = doc(playersCollectionRef(), loserId);
-                                batch.update(pDocRef, { partidasJogadas: increment(1) });
+                                batch.update(doc(playersCollectionRef(), loserId), { partidasJogadas: increment(1) });
                             }
-                            // --- INÍCIO DA NOVA LÓGICA DA LAMBRETA ---
-                            // Aplica a lambreta apenas em partidas normais (não de raio)
+
+                            scoresBeforeReset = { ...currentGame.scores, [winnerId]: newScore };
+
                             if (!isRaioMatch) {
                                 for (const loserId of loserIds) {
-                                    // Se o perdedor tinha 0 pontos nesta disputa, ele toma uma lambreta.
-                                    if ((currentGame.scores[loserId] || 0) === 0) {
-                                        const loserDocRef = doc(playersCollectionRef(), loserId);
-                                        batch.update(loserDocRef, { lambreta: increment(1) });
+                                    if ((scoresBeforeReset[loserId] || 0) === 0) {
+                                        batch.update(doc(playersCollectionRef(), loserId), { lambreta: increment(1) });
+                                        lambretaLosersThisRound.push(loserId);
                                         showMessage(`${appState.players[loserId].name} tomou uma lambreta! 🚑`, 'info');
                                     }
                                 }
+                            } else {
+                                lambretaLosersThisRound = await promptLambretaManual(loserIds, appState.players[winnerId].name);
+                                // Atualiza a estatística de lambreta para os jogadores selecionados manualmente
+                                for(const loserId of lambretaLosersThisRound) {
+                                    batch.update(doc(playersCollectionRef(), loserId), { lambreta: increment(1) });
+                                }
                             }
+
                             matchUpdates.raios = { ...currentGame.raios, [winnerId]: (currentGame.raios[winnerId] || 0) + 1 };
                             matchUpdates.scores = currentGame.playerIds.reduce((acc, id) => ({ ...acc, [id]: 0 }), {});
                             matchUpdates.turn = winnerId;
                             showMessage(`${appState.players[winnerId].name} ganhou um Raio! ⚡️`, 'success');
+
                         } else {
                             matchUpdates.scores = { ...currentGame.scores, [winnerId]: newScore };
                             matchUpdates.raios = currentGame.raios;
@@ -301,18 +442,52 @@
                             roundNumber: currentGame.history.length + 1,
                             winnerId: winnerId,
                             completedRaio: completedRaio,
+                            lambretaPlayerIds: lambretaLosersThisRound,
+                            stateBeforeReset: { scores: scoresBeforeReset },
                             stateAfterRound: {
-                                scores: matchUpdates.scores,
-                                raios: matchUpdates.raios
+                                scores: matchUpdates.scores || currentGame.scores,
+                                raios: matchUpdates.raios || currentGame.raios
                             },
                             timestamp: new Date()
                         };
                         const newHistory = [...currentGame.history, roundEvent];
 
+                        // --- LÓGICA DE CONQUISTAS COMPLETA E RESTAURADA ---
+                        if (completedRaio) {
+                            const historicoDeRaios = newHistory.filter(r => r.completedRaio);
+
+                            if (historicoDeRaios.length >= 3) {
+                                // "Imbatível"
+                                let vitoriasConsecutivas = 0;
+                                for (let i = historicoDeRaios.length - 1; i >= 0; i--) {
+                                    if (historicoDeRaios[i].winnerId === winnerId) vitoriasConsecutivas++;
+                                    else break;
+                                }
+                                if (vitoriasConsecutivas > 0 && vitoriasConsecutivas % 3 === 0) {
+                                    await concederConquista(winnerId, 'imbativel', `alcançou uma sequência de ${vitoriasConsecutivas} raio! 🔥🚀🚀`);
+                                }
+
+                                // "Azarão"
+                                for (const jogadorId of playerIds) {
+                                    let derrotasConsecutivas = 0;
+                                    for (let i = historicoDeRaios.length - 1; i >= 0; i--) {
+                                        const round = historicoDeRaios[i];
+                                        if (round.winnerId !== jogadorId && (round.lambretaPlayerIds.includes(jogadorId))) {
+                                            derrotasConsecutivas++;
+                                        } else {
+                                            break;
+                                        }
+                                    }
+                                    if (derrotasConsecutivas > 0 && derrotasConsecutivas % 3 === 0) {
+                                        await concederConquista(jogadorId, 'azarao', `sofreu uma sequência de ${derrotasConsecutivas} lambretas! 🚑🤕🤕`);
+                                    }
+                                }
+                            }
+                        }
+
                         batch.update(winnerPlayerDocRef, playerUpdates);
                         batch.update(gameDocRef, { ...matchUpdates, history: newHistory });
                     }
-                    // Adicionar lógica para 'duplas' aqui se necessário no futuro
 
                     await batch.commit();
                 };
@@ -541,20 +716,28 @@
 
             async function concederConquista(playerId, conquistaId, textoDoEvento) {
                 const player = appState.players[playerId];
-                // Verifica se o jogador já possui a conquista para não duplicar
-                if (player.conquistas && player.conquistas.includes(conquistaId)) {
-                    return; // Já tem, não faz nada
-                }
-
-                // Adiciona a conquista ao perfil do jogador
                 const playerDocRef = doc(playersCollectionRef(), playerId);
-                const novasConquistas = [...(player.conquistas || []), conquistaId];
-                await updateDoc(playerDocRef, { conquistas: novasConquistas });
 
-                // Registra o feito no feed de atividades
-                await registrarEvento('achievement', playerId, textoDoEvento);
+                // Para conquistas de uma só vez, como 'primeiro_rei', a verificação
+                // deve ser feita ANTES de chamar esta função.
+                // Esta função agora SEMPRE incrementa o contador.
 
-                showMessage(`${player.name} ${textoDoEvento}`, 'success');
+                try {
+                    // Usa a notação de ponto para atualizar um campo dentro de um objeto (mapa)
+                    // e a função increment() para adicionar +1 de forma segura.
+                    await updateDoc(playerDocRef, {
+                        [`conquistas.${conquistaId}`]: increment(1)
+                    });
+
+                    // Registra o feito no feed de atividades
+                    await registrarEvento('achievement', playerId, textoDoEvento);
+
+                    showMessage(`${player.name} ${textoDoEvento}`, 'success');
+
+                } catch (error) {
+                    console.error("Erro ao conceder conquista:", error);
+                    showMessage("Erro ao processar conquista.", "error");
+                }
             }
 
             function showGameSummary() {
@@ -571,7 +754,7 @@
                             ${round.completedRaio ? '<p class="text-sm font-semibold text-yellow-600">⚡️ RAIO COMPLETO! ⚡️</p>' : ''}
                             <div class="text-xs text-gray-600 mt-2">
                                 <p>Placar de Raios: ${Object.entries(round.stateAfterRound.raios).map(([pid, r]) => `${appState.players[pid].name}: ${r}`).join(', ')}</p>
-                                <p>Placar de Pontos: ${Object.entries(round.stateAfterRound.scores).map(([pid, s]) => `${appState.players[pid].name}: ${s}`).join(', ')}</p>
+                                <p>Placar de Pontos: ${Object.entries(round.stateAfterRound.scores).map(([pid, s]) => `${appState.players[pid].name}: ${s}`).join(', ')}</p>}
                             </div>
                         </div>
                     `;
@@ -615,6 +798,42 @@
                     }).join('');
             }
 
+            function renderLiveMatchFeed(gameData) {
+                const feedDiv = document.getElementById('liveMatchFeed');
+                if (!feedDiv) return;
+
+                const history = gameData.history || [];
+
+                if (history.length === 0) {
+                    feedDiv.innerHTML = '<div class="p-4 text-center text-gray-500">Aguardando a primeira rodada...</div>';
+                    return;
+                }
+
+                // Pega as últimas 5 rodadas e as inverte para mostrar a mais recente primeiro.
+                const recentHistory = history.slice(-5).reverse();
+
+                feedDiv.innerHTML = recentHistory.map(round => {
+                    const winnerName = appState.players[round.winnerId]?.name || 'Desconhecido';
+
+                    // --- LÓGICA DE TEXTO APRIMORADA ---
+                    let roundText = '';
+                    if (round.completedRaio) {
+                        roundText = `<span class="font-bold text-blue-600">${winnerName}</span> ganhou um <strong>Raio! ⚡️</strong>`;
+                    } else {
+                        roundText = `<span class="font-bold">${winnerName}</span> marcou um ponto.`;
+                    }
+                    // --- FIM DA LÓGICA ---
+
+                    return `
+                        <div class="p-3 border-b border-gray-100 last:border-b-0">
+                            <p class="text-gray-800">
+                                <span class="font-semibold text-gray-500">Rodada ${round.roundNumber}:</span> ${roundText}
+                            </p>
+                        </div>
+                    `;
+                }).join('');
+            }
+
             function openModal(contentHTML) { ui.modal.content.innerHTML = contentHTML; ui.modal.container.style.display = 'flex'; }
             function closeModal() { ui.modal.container.style.display = 'none'; }
 
@@ -655,7 +874,7 @@
                 const generateStatControlHTML = (stat, label) => {
                     const value = player[stat] || 0;
                     if (!appState.isAdminMode) {
-                        return `<div class="bg-gray-100 p-3 rounded-lg"><p class="text-2xl font-bold">${value}</p><p class="text-sm text-gray-500">${label}</p></div>`;
+                        return `<div class="bg-gray-100 p-3 rounded-lg"><p class="text-sm text-gray-500 mb-2 font-semibold">${label}</p><p class="text-2xl font-bold">${value}</p></div>`;
                     }
                     return `
                         <div class="bg-gray-100 p-3 rounded-lg">
@@ -687,40 +906,34 @@
                 // Monta o HTML para as conquistas
                 let achievementsHTML = Object.keys(achievements).map(key => {
                     const ach = achievements[key];
-                    const unlocked = player.conquistas?.includes(key);
-                    return `<div class="text-center p-2 rounded-lg ${unlocked ? 'bg-yellow-100' : 'bg-gray-100'}"><span class="achievement-icon ${unlocked ? 'unlocked' : ''}" title="${ach.name}: ${ach.description}">${ach.icon}</span><p class="text-xs font-semibold mt-1 ${unlocked ? 'text-yellow-800' : 'text-gray-500'}">${ach.name}</p></div>`;
+                    const count = player.conquistas?.[key] || 0;
+                    const unlocked = count > 0;
+                    const counterHTML = count > 1 ? `<span class="absolute -top-1 -right-1 bg-red-500 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center border-2 border-white">${count}</span>` : '';
+                    return `<div class="relative text-center p-2 rounded-lg ${unlocked ? 'bg-yellow-100' : 'bg-gray-100'}"><span class="achievement-icon ${unlocked ? 'unlocked' : ''}" title="${ach.name}: ${ach.description}">${ach.icon}</span>${counterHTML}<p class="text-xs font-semibold mt-1 ${unlocked ? 'text-yellow-800' : 'text-gray-500'}">${ach.name}</p></div>`;
                 }).join('');
 
-                // Monta o HTML para os botões de admin
+                // --- INÍCIO DA CORREÇÃO ---
+                // Esta linha estava faltando. Ela define os botões de Renomear e Deletar para o admin.
                 let adminControlsHTML = appState.isAdminMode ? `
                     <hr class="my-6">
                     <div class="flex justify-around gap-4">
-                        <button id="btnRenamePlayer" class="flex-grow bg-gray-200 text-gray-800 font-semibold py-3 px-3 rounded-lg hover:bg-gray-300 transition">Renomear</button>
-                        <button id="btnDeletePlayer" class="flex-grow bg-red-600 text-white font-semibold py-3 px-3 rounded-lg hover:bg-red-700 transition">Deletar</button>
+                        <button id="btnRenamePlayer" class="w-48 flex-grow bg-gray-200 text-gray-800 font-semibold py-3 px-3 rounded-lg hover:bg-gray-300 transition">Renomear</button>
+                        <button id="btnDeletePlayer" class="w-8 flex-grow bg-red-600 text-white font-semibold py-3 px-3 rounded-lg hover:bg-red-700 transition">Deletar</button>
                     </div>` : '';
+                // --- FIM DA CORREÇÃO ---
 
-                // --- INÍCIO DA CORREÇÃO ---
-                // Monta o HTML final do modal, agora incluindo TODAS as seções.
+                // Monta o HTML final do modal
                 const modalHTML = `
                     <div class="flex justify-between items-start">
                         <div><h3 class="text-2xl font-bold">${player.name}</h3><p class="text-gray-600">Série ${player.series}</p></div>
                         <button id="modal-close-btn" class="text-gray-400 hover:text-gray-700 text-2xl">&times;</button>
                     </div>
-                    <div class="mt-6">
-                        <h4 class="font-semibold mb-2">Estatísticas</h4>
-                        ${statsHTML}
-                    </div>
-                    <div class="mt-6">
-                        <h4 class="font-semibold mb-2">Conquistas</h4>
-                        <div class="grid grid-cols-4 gap-2">${achievementsHTML}</div>
-                    </div>
-                    ${adminControlsHTML}
-                `;
-                // --- FIM DA CORREÇÃO ---
+                    <div class="mt-6"><h4 class="font-semibold mb-2">Estatísticas</h4>${statsHTML}</div>
+                    <div class="mt-6"><h4 class="font-semibold mb-2">Conquistas</h4><div class="grid grid-cols-4 gap-2">${achievementsHTML}</div></div>
+                    ${adminControlsHTML}`;
 
                 openModal(modalHTML);
-                // A lógica de cliques agora é gerenciada pelo "super escutador" de eventos,
-                // então não precisamos mais de .onclick aqui.
+                // A lógica de cliques agora é gerenciada pelo "super escutador" de eventos.
             }
 
             function createInitialGameState() { return { gameMode: 'individual', isRaioMatch: false, selectedSlots: { 1: null, 2: null, 3: null, 4: null }, activeGame: null, activeGameId: null, activeGameListener: null }; }
@@ -816,94 +1029,63 @@
                 ui.gameMode.startBtn.className = canStart ? 'bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-6 rounded-lg shadow-md transition' : 'bg-gray-400 text-white font-bold py-3 px-6 rounded-lg shadow-md cursor-not-allowed';
             }
 
-            // Versão Aprimorada da função showMessage
-            function showMessage(message, type = 'info', contentElement = null) {
+            function processMessageQueue() {
+                // Se uma mensagem já estiver na tela, ou se a fila estiver vazia, não faz nada.
+                if (appState.isMessageShowing || appState.messageQueue.length === 0) {
+                    return;
+                }
+
+                // Marca que a tela está "ocupada" mostrando uma mensagem.
+                appState.isMessageShowing = true;
+
+                // Pega a primeira mensagem da fila.
+                const messageData = appState.messageQueue.shift();
                 const messageBox = ui.messageBox;
 
-                // Limpa qualquer notificação anterior para evitar sobreposição
-                if (messageBox.closeTimer) {
-                    clearTimeout(messageBox.closeTimer);
-                }
-                closeMessageBox(true); // 'true' para um fechamento instantâneo
-
-                // Mantém a funcionalidade de MODAL que existia antes, para não quebrar nada
-                if (contentElement) {
-                    messageBox.innerHTML = ''; // Limpa o conteúdo
-                    messageBox.className = 'message-box modal-active'; // Usa uma classe para identificar o modo modal
-                    messageBox.appendChild(contentElement);
-                    Object.assign(messageBox.style, {
-                        position: 'fixed', top: '0', left: '0', transform: 'none',
-                        width: '100%', height: '100%', backgroundColor: 'rgba(0, 0, 0, 0.6)',
-                        display: 'flex', justifyContent: 'center', alignItems: 'center',
-                        zIndex: '1000', padding: '20px', borderRadius: '0', boxShadow: 'none'
-                    });
-                    messageBox.style.display = 'flex';
-                    return; // Encerra a função aqui para o modo modal
-                }
-
-                // Lógica para as NOTIFICAÇÕES (banner no topo)
                 let baseClasses = 'fixed left-1/2 -translate-x-1/2 w-auto min-w-[320px] max-w-[90%] py-3 px-5 rounded-lg shadow-2xl text-white font-semibold z-[1002] transition-all duration-500 ease-in-out';
                 let typeClasses = '';
 
-                // Define a cor de fundo com base no tipo da mensagem
-                switch (type) {
-                    case 'success':
-                        typeClasses = 'bg-green-600'; // Verde para sucesso
-                        break;
-                    case 'error':
-                        typeClasses = 'bg-red-600'; // Vermelho para erro
-                        break;
-                    default: // 'info'
-                        typeClasses = 'bg-blue-600'; // Azul para informações gerais
-                        break;
+                switch (messageData.type) {
+                    case 'success': typeClasses = 'bg-green-600'; break;
+                    case 'error': typeClasses = 'bg-red-600'; break;
+                    default: typeClasses = 'bg-blue-600'; break;
                 }
 
-                messageBox.className = `${baseClasses} ${typeClasses} -top-24`; // Começa fora da tela
-                messageBox.textContent = message;
+                // Mostra a mensagem
+                messageBox.className = `${baseClasses} ${typeClasses} -top-24`;
+                messageBox.textContent = messageData.text;
                 messageBox.style.display = 'block';
 
-                // Animação de entrada: desliza para dentro da tela
+                // Animação de entrada
                 setTimeout(() => {
                     messageBox.classList.remove('-top-24');
                     messageBox.classList.add('top-5');
-                }, 50); // Pequeno delay para garantir que a transição CSS seja acionada
+                }, 50);
 
-                // Agenda o fechamento automático da notificação
-                messageBox.closeTimer = setTimeout(() => {
-                    closeMessageBox();
-                }, 4000); // A mensagem ficará visível por 4 segundos
-            }
-            // Versão Aprimorada da função closeMessageBox
-            function closeMessageBox(instant = false) {
-                const messageBox = ui.messageBox;
-
-                // Se for um modal, apenas esconde
-                if (messageBox.classList.contains('modal-active')) {
-                    messageBox.style.display = 'none';
-                    messageBox.innerHTML = '';
-                    messageBox.className = 'message-box';
-                    return;
-                }
-
-                // Se for para fechar instantaneamente (sem animação)
-                if (instant) {
-                    messageBox.style.display = 'none';
-                    messageBox.className = 'message-box';
-                    return;
-                }
-
-                // Animação de saída para notificações: desliza para fora da tela
-                messageBox.classList.remove('top-5');
-                messageBox.classList.add('-top-24');
-
-                // Após a animação, oculta o elemento e reseta suas classes
+                // Agenda a animação de saída e a limpeza
                 setTimeout(() => {
-                    // Verificação para garantir que não estamos alterando uma notificação que já foi fechada
-                    if (!messageBox.classList.contains('top-5')) {
-                       messageBox.style.display = 'none';
-                       messageBox.className = 'message-box';
-                    }
-                }, 500); // Duração da transição CSS
+                    messageBox.classList.remove('top-5');
+                    messageBox.classList.add('-top-24');
+
+                    // Espera a animação de saída terminar
+                    setTimeout(() => {
+                        messageBox.style.display = 'none';
+                        // Libera a tela para a próxima mensagem
+                        appState.isMessageShowing = false;
+                        // Chama a si mesma para verificar se há mais mensagens na fila
+                        processMessageQueue();
+                    }, 500); // Deve ser igual à duração da transição CSS
+
+                }, 4000); // Tempo que a mensagem fica visível
+            }
+
+            // Nova função showMessage - agora ela apenas adiciona mensagens à fila.
+            function showMessage(message, type = 'info') {
+                // Adiciona o objeto da mensagem na nossa fila de espera.
+                appState.messageQueue.push({ text: message, type: type });
+                // Tenta processar a fila. Se a tela estiver livre, a mensagem será exibida.
+                // Se não, ela esperará sua vez.
+                processMessageQueue();
             }
 
             async function addNovoJogador() {
@@ -946,7 +1128,7 @@
                                 lambreta: 0,
                                 pontos: 0,
                                 series: 'Amador',
-                                conquistas: [] // Adicionado para consistência
+                                conquistas: {} // Adicionado para consistência
                             });
                             // A função showMessage continua sendo usada para feedback rápido no topo da tela.
                             showMessage(`Jogador "${newName}" adicionado com sucesso!`, 'success');
@@ -1047,39 +1229,161 @@
                 document.getElementById('confirmDeleteNo').onclick = () => closeModal();
             }
 
-            // Ativação do modo admin
-            function toggleAdminPanel() { ui.adminFab.button.classList.toggle('active'); ui.adminFab.defaultIcon.classList.toggle('hidden'); ui.adminFab.closeIcon.classList.toggle('hidden'); ui.adminFab.panel.classList.toggle('active'); if (!ui.adminFab.panel.classList.contains('active') && !appState.isAdminMode) { ui.adminFab.loginView.style.display = 'block'; ui.adminFab.controlsView.style.display = 'none'; ui.adminFab.keyInput.value = ''; }}
-            function activateAdminMode() { if(ui.adminFab.keyInput.value === ADMIN_KEY) { appState.isAdminMode = true; ui.adminFab.loginView.style.display = 'none'; ui.adminFab.controlsView.style.display = 'block'; } else { alert('Senha incorreta!'); }}
-
             function setupFirestoreListeners() {
+                // Limpa listeners antigos para evitar duplicação
                 appState.unsubscribers.forEach(unsub => unsub());
                 appState.unsubscribers = [];
 
+                // Listener para a lista de jogadores (não muda)
                 const unsubPlayers = onSnapshot(query(playersCollectionRef()), (snapshot) => {
-                    const playersData = {};
+                    const newPlayersData = {};
                     snapshot.forEach(doc => {
-                        playersData[doc.id] = { id: doc.id, ...doc.data() };
+                        const newPlayer = { id: doc.id, ...doc.data() };
+                        const oldPlayer = appState.players[doc.id];
+                        if (oldPlayer) {
+                            verificarPromocao(newPlayer, oldPlayer);
+                        }
+                        newPlayersData[doc.id] = newPlayer;
                     });
-                    appState.players = playersData;
+                    appState.players = newPlayersData;
                     renderScoreboard();
+
+                    if (appState.gameState.activeGame) {
+                        renderLiveMatchFeed(appState.gameState.activeGame);
+                    }
                 });
 
+                // Listener para o feed de atividades gerais (não muda)
                 const unsubFeed = onSnapshot(query(activityFeedCollectionRef(), orderBy("timestamp", "desc"), limit(5)), (snapshot) => {
                     appState.activityFeed = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
                     renderActivityFeed();
                 });
 
-                appState.unsubscribers.push(unsubPlayers, unsubFeed);
+                // Listener para partidas ao vivo (com verificação de idade)
+                const q = query(matchesCollectionRef(), where("status", "==", "active"), limit(1));
+                const unsubLiveMatch = onSnapshot(q, (snapshot) => {
+                    const header = ui.liveMatchHeader;
+                    const chevron = ui.liveMatchChevron;
+                    const headerText = header.querySelector('h2');
+
+                    const setInactiveState = () => {
+                        header.classList.remove('bg-green-600', 'hover:bg-green-700', 'cursor-pointer', 'animate-pulse');
+                        header.classList.add('bg-gray-200', 'text-gray-500', 'cursor-default');
+                        headerText.textContent = '○ NENHUMA PARTIDA ATIVA';
+                        chevron.classList.add('hidden');
+                        ui.liveMatchFeed.classList.remove('open');
+                        ui.liveMatchFeed.innerHTML = '';
+                        appState.gameState.activeGame = null;
+                    };
+
+                    if (snapshot.empty) {
+                        setInactiveState();
+                    } else {
+                        const gameData = snapshot.docs[0].data();
+                        const gameTimestamp = gameData.createdAt?.toDate();
+                        const maxAgeHours = 4; // Define que jogos com mais de 4 horas são "zumbis"
+
+                        // --- INÍCIO DA NOVA VERIFICAÇÃO ---
+                        // Se o jogo for muito antigo, trata como inativo
+                        if (gameTimestamp && (new Date() - gameTimestamp) / 1000 / 3600 > maxAgeHours) {
+                            console.log("Jogo ativo encontrado, mas é muito antigo e será ignorado:", gameData.id);
+                            setInactiveState();
+                        } else {
+                        // --- FIM DA NOVA VERIFICAÇÃO ---
+
+                            // Se o jogo é recente, mostra o estado ativo
+                            appState.gameState.activeGame = gameData;
+
+                            header.classList.add('bg-green-600', 'hover:bg-green-700', 'cursor-pointer', 'animate-pulse');
+                            header.classList.remove('bg-gray-200', 'text-gray-500', 'cursor-default');
+                            headerText.textContent = '● PARTIDA EM ANDAMENTO';
+                            chevron.classList.remove('hidden');
+
+                            if (Object.keys(appState.players).length > 0) {
+                                renderLiveMatchFeed(gameData);
+                            }
+                        }
+                    }
+                });
+
+                appState.unsubscribers.push(unsubPlayers, unsubFeed, unsubLiveMatch);
             }
+
+            // Ativação do modo admin
+            function toggleAdminPanel() { ui.adminFab.button.classList.toggle('active'); ui.adminFab.defaultIcon.classList.toggle('hidden'); ui.adminFab.closeIcon.classList.toggle('hidden'); ui.adminFab.panel.classList.toggle('active'); if (!ui.adminFab.panel.classList.contains('active') && !appState.isAdminMode) { ui.adminFab.loginView.style.display = 'block'; ui.adminFab.controlsView.style.display = 'none'; ui.adminFab.keyInput.value = ''; }}
+            function activateAdminMode() { if(ui.adminFab.keyInput.value === ADMIN_KEY) { appState.isAdminMode = true; ui.adminFab.loginView.style.display = 'none'; ui.adminFab.controlsView.style.display = 'block'; updateAdminUI(); } else { alert('Senha incorreta!'); }}
+
+            async function verificarPromocao(newPlayerData, oldPlayerData) {
+                // Roda apenas se o jogador já existia e o número de raios mudou
+                if (!oldPlayerData || newPlayerData.raios === oldPlayerData.raios) {
+                    return;
+                }
+
+                const oldSeries = oldPlayerData.series || 'Amador';
+                let newSeries = oldSeries;
+
+                // Encontra a série mais alta para a qual o jogador se qualifica com base no total de raios
+                for (const serie of SERIES_CONFIG) {
+                    if (newPlayerData.raios >= serie.requiredRaios) {
+                        newSeries = serie.name;
+                    }
+                }
+
+                // Se a série calculada for de fato diferente da antiga, houve uma mudança.
+                if (newSeries !== oldSeries) {
+                    const playerDocRef = doc(playersCollectionRef(), newPlayerData.id);
+                    await updateDoc(playerDocRef, { series: newSeries });
+
+                    // --- INÍCIO DA LÓGICA DE NOTIFICAÇÃO ---
+                    const seriesOrder = SERIES_CONFIG.map(s => s.name);
+                    const oldIndex = seriesOrder.indexOf(oldSeries);
+                    const newIndex = seriesOrder.indexOf(newSeries);
+
+                    // Se o novo índice é maior, significa que a série é melhor (ex: de 'B' (índice 3) para 'A' (índice 4)).
+                    if (newIndex > oldIndex) {
+                        await registrarEvento('promotion', newPlayerData.id, `foi promovido para a Série ${newSeries}! 🎉`);
+
+                        // Verifica se a conquista "Primeiro Rei" deve ser concedida
+                        if (newSeries === 'A' && !oldPlayerData.conquistas?.primeiro_rei) {
+                            await concederConquista(newPlayerData.id, 'primeiro_rei', 'se tornou o Primeiro Rei do Placar! 👑');
+                        }
+                    }
+                    // Se o novo índice é menor, é um rebaixamento.
+                    else if (newIndex < oldIndex) {
+                        await registrarEvento('demotion', newPlayerData.id, `foi rebaixado para a Série ${newSeries}.`);
+                    }
+                    // --- FIM DA LÓGICA DE NOTIFICAÇÃO ---
+                }
+            }
+
+
 
             onAuthStateChanged(auth, async (user) => {
                 if (user) {
                     appState.userId = user.uid;
                     setupFirestoreListeners();
+                    updateAdminUI(); // <--- ADICIONAR AQUI
                 } else {
                     try { await signInAnonymously(auth); } catch(e) { console.error("Erro no login anônimo:", e); }
                 }
             });
+
+            function updateAdminUI() {
+                const isAdmin = appState.isAdminMode;
+
+                // Mostra/esconde o container do botão "Iniciar Modo Partida"
+                const goToGameContainer = document.getElementById('goToGameModeContainer');
+                if (goToGameContainer) {
+                    goToGameContainer.classList.toggle('hidden', !isAdmin);
+                }
+
+                // Mostra/esconde o botão "Nova Partida" na tela de fim de jogo
+                if (ui.gameMode.newGameBtn) {
+                    ui.gameMode.newGameBtn.classList.toggle('hidden', !isAdmin);
+                }
+
+                // Adicione aqui qualquer outro controle de admin que precise ser mostrado/escondido no futuro.
+            }
 
             // EVENT LISTENERS
             ui.adminFab.addPlayerBtn.addEventListener('click', addNovoJogador);
@@ -1094,6 +1398,17 @@
             ui.gameMode.backToScoreboard_GameOverBtn.addEventListener('click', () => {
                 switchView('view-scoreboard');
             });
+
+            // Listener para expandir/recolher o feed da partida ao vivo
+            ui.liveMatchHeader.addEventListener('click', () => {
+                // SÓ EXECUTA A AÇÃO SE HOUVER UM JOGO ATIVO NO ESTADO
+                if (!appState.gameState.activeGame) {
+                    return;
+                }
+                ui.liveMatchFeed.classList.toggle('open');
+                ui.liveMatchChevron.classList.toggle('open');
+            });
+
             ui.gameMode.newGameBtn.addEventListener('click', () => { resetGameState(); switchView('view-game-table'); });
             ui.gameMode.gameOver.gameSummaryBtn.addEventListener('click', () => showGameSummary());
 
@@ -1110,7 +1425,16 @@
             ui.gameMode.goToBtn.addEventListener('click', () => { resetGameState(); switchView('view-game-table'); });
             ui.gameMode.backBtn.addEventListener('click', () => endGame(false));
             ui.gameMode.modeButtons.forEach(btn => btn.addEventListener('click', () => { if (!appState.gameState.activeGame) { appState.gameState.gameMode = btn.dataset.mode; updateGameModeUI(); }}));
-            ui.gameMode.raioCheckbox.addEventListener('change', (e) => { if (!appState.gameState.activeGame) appState.gameState.isRaioMatch = e.target.checked; });
+            // ui.gameMode.raioCheckbox.addEventListener('change', (e) => { if (!appState.gameState.activeGame) appState.gameState.isRaioMatch = e.target.checked; });
+            ui.gameMode.raioCheckbox.addEventListener('change', (e) => {
+                if (!appState.gameState.activeGame) {
+                    appState.gameState.isRaioMatch = e.target.checked;
+                    // Se o modo raio for ATIVADO, mostra a mensagem.
+                    if (e.target.checked) {
+                        showMessage("Modo Raio Ativado: Lambretas serão registradas manualmente a cada raio.", 'info');
+                    }
+                }
+            });
              // ui.gameMode.startBtn.addEventListener('click', startGame); // startGame precisa ser definida
 
             ui.playersListDiv.addEventListener('click', e => {
@@ -1118,26 +1442,35 @@
                 if (target) openPlayerDetailsModal(target.dataset.playerId);
             });
 
+            // SUBSTITUA O LISTENER ANTIGO DO MODAL POR ESTE
             ui.modal.container.addEventListener('click', (e) => {
                 const target = e.target;
 
-                // 1. Lógica para fechar o modal
+                // 1. Lógica para fechar o modal (executada primeiro)
                 if (target.id === 'modalContainer' || target.closest('#modal-close-btn') || target.closest('#modal-cancel-btn')) {
                     closeModal();
-                    return;
+                    return; // Para a execução aqui
                 }
 
-                // --- Lógica do Admin (dentro do modal de detalhes) ---
+                // 2. Lógica de Seleção de Jogador (para a mesa)
+                // Esta verificação agora acontece ANTES das de admin.
+                const playerSelectBtn = target.closest('.player-select-btn');
+                if (playerSelectBtn && !appState.gameState.activeGame) {
+                    selectPlayer(playerSelectBtn.dataset.playerId);
+                    return; // Para a execução aqui após selecionar
+                }
+
+                // 3. Lógica do Admin (só é checada se as anteriores falharem)
                 if (appState.isAdminMode) {
+                    // Pega o ID do jogador que está sendo visualizado no modal de detalhes
+                    const playerId = appState.modalContext?.currentViewedPlayerId;
+
+                    // Ações que dependem de um jogador específico no modal
                     const statButton = target.closest('.stat-button');
                     const renameButton = target.closest('#btnRenamePlayer');
                     const deleteButton = target.closest('#btnDeletePlayer');
 
-                    // Pega o ID do jogador que está sendo visualizado
-                    const playerId = appState.modalContext?.currentViewedPlayerId;
-                    if (!playerId) return;
-
-                    if (statButton) {
+                    if (statButton && playerId) {
                         const { action, stat } = statButton.dataset;
                         const amount = action === 'increment' ? 1 : -1;
                         const valueElement = document.getElementById(`${stat}-value`);
@@ -1150,27 +1483,20 @@
                         } else {
                             showMessage(`Não é possível ter valor negativo.`, 'error');
                         }
-                        return; // Encerra após a ação
+                        return;
                     }
 
-                    if (renameButton) {
+                    if (renameButton && playerId) {
                         renomearJogador(playerId);
                         return;
                     }
 
-                    if (deleteButton) {
+                    if (deleteButton && playerId) {
                         deletarJogador(playerId);
                         return;
                     }
                 }
-
-                // --- Lógica de Seleção de Jogador (para a mesa) ---
-                const playerSelectBtn = target.closest('.player-select-btn');
-                if (playerSelectBtn && !appState.gameState.activeGame) {
-                    selectPlayer(playerSelectBtn.dataset.playerId);
-                }
             });
-
 
 
         </script>
