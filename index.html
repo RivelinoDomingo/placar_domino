@@ -681,47 +681,29 @@
                 showMessage("Processando troca...", "info");
 
                 const gameId = appState.gameState.activeGameId;
-                if (!gameId) {
-                    showMessage("Erro: ID da partida não encontrado.", "error");
-                    return;
-                }
+                if (!gameId) { /* ... */ return; }
 
                 const gameDocRef = doc(matchesCollectionRef(), gameId);
 
                 try {
-                    // 1. Busca a versão mais recente da partida do banco de dados
                     const gameDocSnapshot = await getDoc(gameDocRef);
-                    if (!gameDocSnapshot.exists()) {
-                        showMessage("Erro: Partida não encontrada no banco de dados.", "error");
-                        return;
-                    }
+                    if (!gameDocSnapshot.exists()) { /* ... */ return; }
                     const currentGame = gameDocSnapshot.data();
 
-                    // 2. Encontra o slot do jogador a ser trocado
                     const slotToUpdate = Object.keys(currentGame.selectedSlots).find(key => currentGame.selectedSlots[key] === oldPlayerId);
-                    if (!slotToUpdate) {
-                        showMessage("Erro interno ao encontrar o jogador a ser trocado.", "error");
-                        return;
-                    }
+                    if (!slotToUpdate) { /* ... */ return; }
 
                     const newSelectedSlots = { ...currentGame.selectedSlots, [slotToUpdate]: newPlayerId };
                     const newPlayerIds = Object.values(newSelectedSlots);
 
-                    // --- INÍCIO DA LÓGICA CORRIGIDA ---
-
-                    // 3. Atualiza o placar de pontos
                     const newScores = { ...(currentGame.scores || {}) };
-                    delete newScores[oldPlayerId];    // Remove a pontuação do jogador antigo
-                    newScores[newPlayerId] = 0;      // Adiciona o novo jogador com 0 pontos
+                    delete newScores[oldPlayerId];
+                    newScores[newPlayerId] = 0;
 
-                    // 4. Atualiza o placar de raios da partida
                     const newRaios = { ...(currentGame.raios || {}) };
-                    delete newRaios[oldPlayerId];    // Remove os raios do jogador antigo
-                    newRaios[newPlayerId] = 0;      // Adiciona o novo jogador com 0 raios
+                    delete newRaios[oldPlayerId];
+                    newRaios[newPlayerId] = 0;
 
-                    // --- FIM DA LÓGICA CORRIGIDA ---
-
-                    // 5. Atualiza o histórico de jogadas (atribui o histórico da cadeira ao novo jogador)
                     const newHistory = (currentGame.history || []).map(round => {
                         let newRound = { ...round };
                         if (round.winnerId === oldPlayerId) newRound.winnerId = newPlayerId;
@@ -731,12 +713,22 @@
                         return newRound;
                     });
 
+                    // --- INÍCIO DA NOVA LÓGICA ---
+                    // Cria um evento de troca para adicionar ao histórico
+                    const swapEvent = {
+                        type: 'swap', // Um novo tipo de evento
+                        oldPlayerName: appState.players[oldPlayerId]?.name || 'Jogador Anterior',
+                        newPlayerName: appState.players[newPlayerId]?.name || 'Novo Jogador',
+                        timestamp: new Date()
+                    };
+                    newHistory.push(swapEvent);
+                    // --- FIM DA NOVA LÓGICA ---
+
                     let newTurn = currentGame.turn;
                     if (newTurn === oldPlayerId) newTurn = newPlayerId;
 
                     const updates = { selectedSlots: newSelectedSlots, playerIds: newPlayerIds, scores: newScores, raios: newRaios, history: newHistory, turn: newTurn };
 
-                    // 6. Salva as atualizações
                     await updateDoc(gameDocRef, updates);
                     showMessage("Troca de jogador realizada com sucesso!", "success");
 
@@ -1040,19 +1032,32 @@
 
                 const recentHistory = history.slice(-5).reverse();
                 historyDiv.innerHTML = recentHistory.map(round => {
-                    const winnerName = appState.players[round.winnerId]?.name || 'Desconhecido';
-                    let roundText = round.completedRaio ?
-                        `ganhou um <strong>Raio! ⚡️</strong>` :
-                        `marcou um ponto.`;
+                    let eventHTML = '';
 
-                    return `
-                        <div class="p-2 border-t border-gray-100 first:border-t-0">
+                    // --- INÍCIO DA LÓGICA DE EXIBIÇÃO ---
+                    // Verifica o tipo de evento no histórico
+                    if (round.type === 'swap') {
+                        // Se for uma troca, formata a mensagem de substituição
+                        eventHTML = `
+                            <p class="text-gray-800 text-sm italic">
+                                Troca de jogadores 🔄 Saiu <span class="font-semibold">${round.oldPlayerName}</span> e entrou <span class="font-semibold">${round.newPlayerName}</span>.
+                            </p>`;
+                    } else {
+                        // Se for uma rodada normal, usa a formatação antiga
+                        const winnerName = appState.players[round.winnerId]?.name || 'Desconhecido';
+                        let roundText = round.completedRaio ?
+                            `ganhou um <strong>Raio! ⚡️</strong>` :
+                            `marcou um ponto.`;
+
+                        eventHTML = `
                             <p class="text-sm text-gray-800">
                                 <span class="font-semibold text-gray-500">Rodada ${round.roundNumber}:</span>
                                 <span class="font-bold">${winnerName}</span> ${roundText}
-                            </p>
-                        </div>
-                    `;
+                            </p>`;
+                    }
+                    // --- FIM DA LÓGICA DE EXIBIÇÃO ---
+
+                    return `<div class="p-2 border-t border-gray-100 first:border-t-0">${eventHTML}</div>`;
                 }).join('');
             }
 
