@@ -132,7 +132,32 @@
             </div>
         </div>
 
-        <div class="admin-fab-container"><div id="adminActionsPanel" class="admin-actions"><h3 class="font-bold text-lg mb-4 text-gray-800">Painel do Administrador</h3><div id="adminLoginView"><p class="text-sm text-gray-600 mb-2">Insira a senha para gerenciar.</p><input type="password" id="adminKeyInput" placeholder="Senha de Admin" class="w-full border-gray-300 rounded-md shadow-sm p-2"><button id="activateAdminBtn" class="w-full mt-3 bg-blue-600 text-white font-semibold py-2 rounded-md hover:bg-blue-700 transition">Ativar</button></div><div id="adminControlsView" class="hidden space-y-3"><button id="addPlayerBtn_fab" class="w-full bg-green-500 text-white font-semibold py-2 rounded-md hover:bg-green-600 transition">Adicionar Novo Jogador</button><button id="resetScoresBtn_fab" class="w-full bg-red-600 text-white font-semibold py-2 rounded-md hover:bg-red-700 transition">Redefinir Placar Geral</button><p id="adminStatus" class="text-center text-sm text-green-600 font-semibold pt-2">Modo Admin Ativado</p></div></div><div id="adminFabButton" class="admin-fab"><svg id="fabIconDefault" xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg><svg id="fabIconClose" xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="hidden"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></div></div>
+        <div class="admin-fab-container flex flex-col items-end gap-3">
+
+            <button id="btnRequestNotifications" title="Ativar Notificações" class="w-12 h-12 rounded-full bg-yellow-400 text-2xl flex items-center justify-center shadow-lg hover:bg-yellow-500 transition transform hover:scale-110">
+                <span>🔔</span>
+            </button>
+
+            <div class="relative">
+                <div id="adminActionsPanel" class="admin-actions">
+                    <h3 class="font-bold text-lg mb-4 text-gray-800">Painel do Administrador</h3>
+                    <div id="adminLoginView">
+                        <p class="text-sm text-gray-600 mb-2">Insira a senha para gerenciar.</p>
+                        <input type="password" id="adminKeyInput" placeholder="Senha de Admin" class="w-full border-gray-300 rounded-md shadow-sm p-2">
+                        <button id="activateAdminBtn" class="w-full mt-3 bg-blue-600 text-white font-semibold py-2 rounded-md hover:bg-blue-700 transition">Ativar</button>
+                    </div>
+                    <div id="adminControlsView" class="hidden space-y-3">
+                        <button id="addPlayerBtn_fab" class="w-full bg-green-500 text-white font-semibold py-2 rounded-md hover:bg-green-600 transition">Adicionar Novo Jogador</button>
+                        <button id="resetScoresBtn_fab" class="w-full bg-red-600 text-white font-semibold py-2 rounded-md hover:bg-red-700 transition">Redefinir Placar Geral</button>
+                        <p id="adminStatus" class="text-center text-sm text-green-600 font-semibold pt-2">Modo Admin Ativado</p>
+                    </div>
+                </div>
+                <div id="adminFabButton" class="admin-fab">
+                <svg id="fabIconDefault" xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>
+                <svg id="fabIconClose" xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="hidden"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                </div>
+            </div>
+        </div>
 
         <div id="modalContainer" class="fixed inset-0 bg-black/60 hidden items-center justify-center p-4 z-50"><div id="modalContent" class="bg-white rounded-xl shadow-2xl p-6 w-full max-w-md m-auto"></div></div>
 
@@ -140,6 +165,7 @@
             import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
             import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
             import { getFirestore, doc, getDoc, addDoc, setDoc, updateDoc, deleteDoc, onSnapshot, collection, query, getDocs, orderBy, limit, serverTimestamp, writeBatch, increment, where } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+            import { getMessaging, getToken, onMessage } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-messaging.js";
 
             const firebaseConfig = {
                 apiKey: "AIzaSyBqpkxcl0GkBBHVO8Nxk7UpYd00H4Frklc",
@@ -187,6 +213,7 @@
             const ui = {
                 views: document.querySelectorAll('.view'),
                 messageBox: document.getElementById('messageBox'),
+                notificationsBtn: document.getElementById('btnRequestNotifications'),
                 playersListDiv: document.getElementById('playersList'),
                 activityFeedDiv: document.getElementById('activityFeed'),
                 liveMatchContainer: document.getElementById('liveMatchContainer'),
@@ -197,6 +224,30 @@
                 modal: { container: document.getElementById('modalContainer'), content: document.getElementById('modalContent')},
                 gameMode: { goToBtn: document.getElementById('btnGoToGameMode'), backBtn: document.getElementById('btnBackToScoreboard'), modeButtons: document.querySelectorAll('.gameModeBtn'), raioCheckbox: document.getElementById('raioModeCheckbox'), startBtn: document.getElementById('btnStartGame'), activeButtons: document.getElementById('activeGameButtons'), launchScoreBtn: document.getElementById('btnLaunchScore'), undoBtn: document.getElementById('btnUndoRound'), swapPlayerBtn: document.getElementById('btnSwapPlayer'), endBtn: document.getElementById('btnEndGame'), newGameBtn: document.getElementById('btnNewGame'), shareBtn: document.getElementById('btnShareWhatsapp'), backToScoreboard_GameOverBtn: document.getElementById('btnBackToScoreboard_GameOver'), statusText: document.getElementById('gameStatusText'), gameOver: { winnerText: document.getElementById('gameOverWinnerText'), gameSummaryBtn: document.getElementById('btnGameSummary'), scoreText: document.getElementById('gameOverScoreText')}}
             };
+
+            async function requestNotificationPermission() {
+                try {
+                    const messaging = getMessaging(app);
+                    const permission = await Notification.requestPermission();
+
+                    if (permission === "granted") {
+                        const currentToken = await getToken(messaging, { vapidKey: "BJdf45m2Tewt6PAawR7dbwpIwhP_iEsA4wirxSSOxd6dqhj1tGAJe_zTo3CznlFeTeHLdvOTYi6XjOdnbaYcqQw" });
+                        if (currentToken) {
+                            console.log("Token do dispositivo obtido:", currentToken);
+                            // O ideal é se inscrever em um tópico.
+                            // O backend já está configurado para enviar para o tópico "all".
+                            // A inscrição real geralmente é feita via backend, mas o simples fato de
+                            // obter o token já registra o dispositivo para receber mensagens de tópicos.
+                            showMessage("Notificações ativadas com sucesso!", "success");
+                        }
+                    } else {
+                        showMessage("Permissão para notificações não concedida.", "info");
+                    }
+                } catch (error) {
+                    console.error("Erro ao obter token de notificação:", error);
+                    showMessage("Não foi possível ativar as notificações neste dispositivo.", "error");
+                }
+            }
 
             // --- BLOCO DE FUNÇÕES DE INÍCIO DE JOGO (VERSÃO CORRIGIDA) ---
 
@@ -464,6 +515,7 @@
                         if (newScore >= WINNING_SCORE) {
                             completedRaio = true;
                             playerUpdates.raios = increment(1);
+                            playerUpdates.raiosNaSerie = increment(1); // Incrementa o contador da série
                             playerUpdates.partidasJogadas = increment(1);
 
                             const loserIds = currentGame.playerIds.filter(id => id !== winnerId);
@@ -476,7 +528,7 @@
                             if (!isRaioMatch) {
                                 for (const loserId of loserIds) {
                                     if ((scoresBeforeReset[loserId] || 0) === 0) {
-                                        batch.update(doc(playersCollectionRef(), loserId), { lambreta: increment(1) });
+                                        batch.update(doc(playersCollectionRef(), loserId), { lambreta: increment(1), lambretasNaSerie: increment(1) });
                                         lambretaLosersThisRound.push(loserId);
                                         showMessage(`${appState.players[loserId].name} tomou uma lambreta! 🚑`, 'info');
                                     }
@@ -546,7 +598,15 @@
                                 }
                             }
                         }
-
+                        // --- CHAMA A VERIFICAÇÃO DE SÉRIE APÓS A ATUALIZAÇÃO ---
+                        // Se um raio foi completo, verifica a série do vencedor e dos perdedores
+                        if (completedRaio) {
+                            await checarStatusDaSerie(winnerId);
+                            const loserIds = currentGame.playerIds.filter(id => id !== winnerId);
+                            for (const loserId of loserIds) {
+                                await checarStatusDaSerie(loserId);
+                            }
+                        }
                         batch.update(winnerPlayerDocRef, playerUpdates);
                         batch.update(gameDocRef, { ...matchUpdates, history: newHistory });
                     }
@@ -885,7 +945,7 @@
                 ui.playersListDiv.innerHTML = players.map(player => `
                     <div class="bg-white p-4 rounded-xl shadow-sm flex items-center justify-between">
                         <div><span class="font-bold text-lg player-name-clickable" data-player-id="${player.id}">${player.name}</span><span class="text-sm text-gray-500 ml-2">(Série ${player.series})</span></div>
-                        <div class="text-right"><div class="font-semibold text-blue-600">Raios: ${player.raios || 0}</div><div class="font-semibold text-yellow-600">Lambretas: ${player.lambreta || 0}</div></div>
+                        <div class="text-right"><div class="font-semibold text-blue-600">Raios: ${player.raiosNaSerie || 0}</div><div class="font-semibold text-yellow-600">Lambretas: ${player.lambretasNaSerie || 0}</div></div>
                     </div>`).join('');
             }
 
@@ -1082,25 +1142,43 @@
             function closeModal() { ui.modal.container.style.display = 'none'; }
 
             async function updatePlayerStat(playerId, stat, amount) {
-                if (!appState.isAdminMode) return; // Segurança extra
+                if (!appState.isAdminMode) return;
 
                 const player = appState.players[playerId];
                 if (!player) return;
 
-                const currentValue = player[stat] || 0;
-                // Impede que o valor se torne negativo
-                if (currentValue + amount < 0) {
-                    showMessage(`Não é possível ter valor negativo para ${stat}.`, 'error');
-                    return;
+                // --- INÍCIO DA LÓGICA CORRIGIDA ---
+
+                // Prepara o objeto de atualização
+                const updates = {};
+
+                // Adiciona a atualização para a estatística principal (ex: 'raios')
+                updates[stat] = increment(amount);
+
+                // Constrói o nome da estatística da série correspondente (ex: 'raiosNaSerie')
+                const seriesStat = `${stat}NaSerie`;
+
+                // Garante que o valor da série não fique negativo
+                const currentSeriesValue = player[seriesStat] || 0;
+                if (currentSeriesValue + amount < 0) {
+                    showMessage(`Não é possível ter valor de série negativo.`, 'error');
+                    return; // Interrompe se a operação resultar em negativo
                 }
+
+                // Adiciona a atualização para a estatística da série (ex: 'raiosNaSerie')
+                updates[seriesStat] = increment(amount);
+
+                // --- FIM DA LÓGICA CORRIGIDA ---
 
                 const playerDocRef = doc(playersCollectionRef(), playerId);
                 try {
-                    // Usa a função 'increment' do Firestore para uma atualização segura
-                    await updateDoc(playerDocRef, {
-                        [stat]: increment(amount)
-                    });
-                    // Não é necessário mostrar mensagem de sucesso para não poluir a tela.
+                    // Executa a atualização no banco de dados com AMBOS os campos
+                    await updateDoc(playerDocRef, updates);
+
+                    // Após a atualização, chama a verificação de série para o jogador.
+                    // Isso é importante para que o sistema reaja a promoções/rebaixamentos manuais.
+                    await checarStatusDaSerie(playerId);
+
                 } catch (error) {
                     console.error(`Erro ao atualizar ${stat}:`, error);
                     showMessage(`Erro ao atualizar ${stat}.`, 'error');
@@ -1396,7 +1474,9 @@
                                 lambreta: 0,
                                 pontos: 0,
                                 series: 'Amador',
-                                conquistas: {} // Adicionado para consistência
+                                conquistas: {}, // Adicionado para consistência
+                                raiosNaSerie: 0,
+                                lambretasNaSerie: 0
                             });
                             // A função showMessage continua sendo usada para feedback rápido no topo da tela.
                             showMessage(`Jogador "${newName}" adicionado com sucesso!`, 'success');
@@ -1508,9 +1588,6 @@
                     snapshot.forEach(doc => {
                         const newPlayer = { id: doc.id, ...doc.data() };
                         const oldPlayer = appState.players[doc.id];
-                        if (oldPlayer) {
-                            verificarPromocao(newPlayer, oldPlayer);
-                        }
                         newPlayersData[doc.id] = newPlayer;
                     });
                     appState.players = newPlayersData;
@@ -1581,46 +1658,51 @@
             function toggleAdminPanel() { ui.adminFab.button.classList.toggle('active'); ui.adminFab.defaultIcon.classList.toggle('hidden'); ui.adminFab.closeIcon.classList.toggle('hidden'); ui.adminFab.panel.classList.toggle('active'); if (!ui.adminFab.panel.classList.contains('active') && !appState.isAdminMode) { ui.adminFab.loginView.style.display = 'block'; ui.adminFab.controlsView.style.display = 'none'; ui.adminFab.keyInput.value = ''; }}
             function activateAdminMode() { if(ui.adminFab.keyInput.value === ADMIN_KEY) { appState.isAdminMode = true; ui.adminFab.loginView.style.display = 'none'; ui.adminFab.controlsView.style.display = 'block'; updateAdminUI(); } else { alert('Senha incorreta!'); }}
 
-            async function verificarPromocao(newPlayerData, oldPlayerData) {
-                // Roda apenas se o jogador já existia e o número de raios mudou
-                if (!oldPlayerData || newPlayerData.raios === oldPlayerData.raios) {
-                    return;
+            async function checarStatusDaSerie(playerId) {
+                const player = appState.players[playerId];
+                if (!player) return;
+
+                const seriesOrder = SERIES_CONFIG.map(s => s.name);
+                const currentIndex = seriesOrder.indexOf(player.series || 'Amador');
+
+                let newSeries = player.series;
+                let promotion = false;
+                let demotion = false;
+
+                // 1. Verifica se houve promoção
+                if ((player.raiosNaSerie || 0) >= 15) {
+                    if (currentIndex < seriesOrder.length - 1) { // Garante que não está na série máxima
+                        newSeries = seriesOrder[currentIndex + 1];
+                        promotion = true;
+                    }
                 }
-
-                const oldSeries = oldPlayerData.series || 'Amador';
-                let newSeries = oldSeries;
-
-                // Encontra a série mais alta para a qual o jogador se qualifica com base no total de raios
-                for (const serie of SERIES_CONFIG) {
-                    if (newPlayerData.raios >= serie.requiredRaios) {
-                        newSeries = serie.name;
+                // 2. Verifica se houve rebaixamento
+                else if ((player.lambretasNaSerie || 0) >= 15) {
+                    if (currentIndex > 0) { // Garante que não está na série mínima
+                        newSeries = seriesOrder[currentIndex - 1];
+                        demotion = true;
                     }
                 }
 
-                // Se a série calculada for de fato diferente da antiga, houve uma mudança.
-                if (newSeries !== oldSeries) {
-                    const playerDocRef = doc(playersCollectionRef(), newPlayerData.id);
-                    await updateDoc(playerDocRef, { series: newSeries });
+                // 3. Se houve alguma mudança, atualiza o perfil do jogador
+                if (promotion || demotion) {
+                    const playerDocRef = doc(playersCollectionRef(), playerId);
+                    // Zera os contadores para a nova série e atualiza a série
+                    await updateDoc(playerDocRef, {
+                        series: newSeries,
+                        raiosNaSerie: 0,
+                        lambretasNaSerie: 0
+                    });
 
-                    // --- INÍCIO DA LÓGICA DE NOTIFICAÇÃO ---
-                    const seriesOrder = SERIES_CONFIG.map(s => s.name);
-                    const oldIndex = seriesOrder.indexOf(oldSeries);
-                    const newIndex = seriesOrder.indexOf(newSeries);
-
-                    // Se o novo índice é maior, significa que a série é melhor (ex: de 'B' (índice 3) para 'A' (índice 4)).
-                    if (newIndex > oldIndex) {
-                        await registrarEvento('promotion', newPlayerData.id, `foi promovido para a Série ${newSeries}! 🎉`);
-
-                        // Verifica se a conquista "Primeiro Rei" deve ser concedida
-                        if (newSeries === 'A' && !oldPlayerData.conquistas?.primeiro_rei) {
-                            await concederConquista(newPlayerData.id, 'primeiro_rei', 'se tornou o Primeiro Rei do Placar! 👑');
+                    // Registra o evento no feed de atividades
+                    if (promotion) {
+                        await registrarEvento('promotion', playerId, `foi promovido para a Série ${newSeries}! 🎉`);
+                        if (newSeries === 'A' && !player.conquistas?.primeiro_rei) {
+                            await concederConquista(playerId, 'primeiro_rei', 'se tornou o Primeiro Rei do Placar! 👑');
                         }
+                    } else if (demotion) {
+                        await registrarEvento('demotion', playerId, `foi rebaixado para a Série ${newSeries}.`);
                     }
-                    // Se o novo índice é menor, é um rebaixamento.
-                    else if (newIndex < oldIndex) {
-                        await registrarEvento('demotion', newPlayerData.id, `foi rebaixado para a Série ${newSeries}.`);
-                    }
-                    // --- FIM DA LÓGICA DE NOTIFICAÇÃO ---
                 }
             }
 
@@ -1689,7 +1771,9 @@
                     activateAdminMode();
                 }
             });
+
             ui.adminFab.addPlayerBtn.addEventListener('click', addNovoJogador);
+            ui.notificationsBtn.addEventListener('click', requestNotificationPermission);
 
             ui.gameMode.goToBtn.addEventListener('click', handleStartGameClick);
             ui.gameMode.backBtn.addEventListener('click', () => endGame(false));
