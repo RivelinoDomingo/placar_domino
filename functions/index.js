@@ -28,7 +28,7 @@ exports.playerUpdateNotifications =
                 title: "🎉 Promoção no Placar!",
                 body: `${playerName} foi promovido para a Série ` +
                       `${afterData.series}!`,
-                icon: "/favicon.ico",
+                icon: "/placar_domino/favicon.ico",
               },
             };
           } else if (newIndex < oldIndex) {
@@ -37,7 +37,7 @@ exports.playerUpdateNotifications =
                 title: "😬 Rebaixamento no Placar",
                 body: `${playerName} foi rebaixado para a Série ` +
                       `${afterData.series}.`,
-                icon: "/favicon.ico",
+                icon: "/placar_domino/favicon.ico",
               },
             };
           }
@@ -61,7 +61,7 @@ exports.playerUpdateNotifications =
               notification: {
                 title: "⭐ Nova Conquista!",
                 body: `${playerName} desbloqueou: ${achievementName}!`,
-                icon: "/favicon.ico",
+                icon: "/placar_domino/favicon.ico",
               },
             };
             break;

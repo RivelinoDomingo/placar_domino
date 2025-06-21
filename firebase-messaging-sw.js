@@ -30,7 +30,7 @@ messaging.onBackgroundMessage((payload) => {
   const notificationTitle = payload.notification.title;
   const notificationOptions = {
     body: payload.notification.body,
-    icon: payload.notification.icon || '/favicon.ico', // Um ícone padrão
+    icon: payload.notification.icon || '/placar_domino/favicon.ico', // Um ícone padrão
   };
 
   self.registration.showNotification(notificationTitle, notificationOptions);
