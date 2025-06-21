@@ -231,21 +231,39 @@
                     const permission = await Notification.requestPermission();
 
                     if (permission === "granted") {
-                        const currentToken = await getToken(messaging, { vapidKey: "BJdf45m2Tewt6PAawR7dbwpIwhP_iEsA4wirxSSOxd6dqhj1tGAJe_zTo3CznlFeTeHLdvOTYi6XjOdnbaYcqQw" });
+                        console.log("Permissão para notificação concedida.");
+
+                        // --- INÍCIO DA CORREÇÃO PARA GITHUB PAGES ---
+
+                        // 1. Registra manualmente o Service Worker com o caminho completo do repositório.
+                        //    Isso garante que o navegador encontre o arquivo no lugar certo.
+                        const swRegistration = await navigator.serviceWorker.register('/placar_domino/firebase-messaging-sw.js');
+                        console.log("Service Worker registrado com sucesso, escopo:", swRegistration.scope);
+
+                        // 2. Passa o registro que acabamos de criar e a chave VAPID para a função getToken.
+                        const currentToken = await getToken(messaging, {
+                            vapidKey: "SUA_VAPID_KEY_PUBLIC_AQUI", // Lembre-se de usar sua chave VAPID real
+                            serviceWorkerRegistration: swRegistration
+                        });
+
+                        // --- FIM DA CORREÇÃO ---
+
                         if (currentToken) {
                             console.log("Token do dispositivo obtido:", currentToken);
-                            // O ideal é se inscrever em um tópico.
-                            // O backend já está configurado para enviar para o tópico "all".
-                            // A inscrição real geralmente é feita via backend, mas o simples fato de
-                            // obter o token já registra o dispositivo para receber mensagens de tópicos.
+                            const tokensRef = collection(db, "fcmTokens");
+                            await setDoc(doc(tokensRef, currentToken), { timestamp: serverTimestamp() });
                             showMessage("Notificações ativadas com sucesso!", "success");
+                        } else {
+                            console.log("Não foi possível obter o token de registro.");
+                            showMessage("Não foi possível obter o token. Tente novamente.", "error");
                         }
                     } else {
+                        console.log("Permissão para notificação não concedida.");
                         showMessage("Permissão para notificações não concedida.", "info");
                     }
                 } catch (error) {
-                    console.error("Erro ao obter token de notificação:", error);
-                    showMessage("Não foi possível ativar as notificações neste dispositivo.", "error");
+                    console.error("Erro ao solicitar permissão de notificação:", error);
+                    showMessage("Falha ao registrar o serviço de notificação.", "error");
                 }
             }
 
