@@ -187,75 +187,129 @@
                 gameMode: { goToBtn: document.getElementById('btnGoToGameMode'), backBtn: document.getElementById('btnBackToScoreboard'), modeButtons: document.querySelectorAll('.gameModeBtn'), raioCheckbox: document.getElementById('raioModeCheckbox'), startBtn: document.getElementById('btnStartGame'), activeButtons: document.getElementById('activeGameButtons'), launchScoreBtn: document.getElementById('btnLaunchScore'), undoBtn: document.getElementById('btnUndoRound'), swapPlayerBtn: document.getElementById('btnSwapPlayer'), endBtn: document.getElementById('btnEndGame'), newGameBtn: document.getElementById('btnNewGame'), shareBtn: document.getElementById('btnShareWhatsapp'), backToScoreboard_GameOverBtn: document.getElementById('btnBackToScoreboard_GameOver'), statusText: document.getElementById('gameStatusText'), gameOver: { winnerText: document.getElementById('gameOverWinnerText'), gameSummaryBtn: document.getElementById('btnGameSummary'), scoreText: document.getElementById('gameOverScoreText')}}
             };
 
+            // --- BLOCO DE FUNÇÕES DE INÍCIO DE JOGO (VERSÃO CORRIGIDA) ---
 
-            async function startGame() {
+            // FUNÇÃO 1: Chamada pelo botão "Iniciar Modo Partida" no placar.
+            // Ela é a "telefonista" que decide o que fazer.
+            async function handleStartGameClick() {
                 if (!appState.isAdminMode) {
                     showMessage("Apenas administradores podem iniciar uma partida.", "error");
                     return;
                 }
-                ui.gameMode.startBtn.disabled = true;
 
+                const q = query(matchesCollectionRef(), where("status", "==", "active"));
+                const activeGameSnapshot = await getDocs(q);
+
+                if (activeGameSnapshot.empty) {
+                    // Se não há jogo ativo, apenas limpa o estado e vai para a tela de preparação.
+                    resetGameState();
+                    switchView('view-game-table');
+                } else {
+                    // Se encontrou um jogo ativo, pergunta ao usuário o que fazer.
+                    const gameDoc = activeGameSnapshot.docs[0];
+                    promptResumeGame(gameDoc.id, gameDoc.data());
+                }
+            }
+
+            function setupActiveGameUI() {
+                // Esconde os controles de pré-jogo
+                ui.gameMode.startBtn.style.display = 'none';
+                document.getElementById('game-type-selector').style.display = 'none';
+                document.getElementById('raio-mode-selector').style.display = 'none';
+
+                // Mostra os botões de ação da partida
+                ui.gameMode.activeButtons.style.display = 'flex';
+            }
+
+            // FUNÇÃO 2: Chamada pelo botão "Iniciar Jogo" na mesa, após selecionar os jogadores.
+            // Ela efetivamente cria a partida no Firestore.
+            async function createGameInFirestore() {
+                ui.gameMode.startBtn.disabled = true;
                 try {
-                    // Limpa jogos antigos "zumbis"
+                    // Limpeza de jogos "zumbis" continua aqui, como uma segurança extra.
                     const q = query(matchesCollectionRef(), where("status", "==", "active"));
-                    const oldActiveGamesSnapshot = await getDocs(q);
-                    if (!oldActiveGamesSnapshot.empty) {
-                        const cleanupBatch = writeBatch(db);
-                        oldActiveGamesSnapshot.forEach(doc => {
-                            cleanupBatch.update(doc.ref, { status: 'aborted', endedAt: serverTimestamp() });
-                        });
-                        await cleanupBatch.commit();
+                    const oldGames = await getDocs(q);
+                    if (!oldGames.empty) {
+                        const batch = writeBatch(db);
+                        oldGames.forEach(doc => batch.update(doc.ref, { status: 'aborted', endedAt: serverTimestamp() }));
+                        await batch.commit();
                     }
 
                     const { gameMode, isRaioMatch, selectedSlots } = appState.gameState;
                     const playerIds = Object.values(selectedSlots).filter(Boolean);
 
+                    const requiredPlayers = gameMode === 'duplas' ? 4 : 2;
+                    if(playerIds.length < requiredPlayers) {
+                        showMessage(`São necessários pelo menos ${requiredPlayers} jogadores para este modo.`, "error");
+                        ui.gameMode.startBtn.disabled = false;
+                        return;
+                    }
+
                     let gameData = {
-                        gameMode,
-                        isRaioMatch,
-                        // --- A LINHA QUE FALTAVA! ---
-                        // Agora salvamos o mapa de quem está em qual slot.
-                        selectedSlots: selectedSlots,
-                        // -----------------------------
-                        playerIds,
-                        status: 'active',
-                        history: [],
-                        createdAt: serverTimestamp(),
+                        gameMode, isRaioMatch, selectedSlots, playerIds, status: 'active',
+                        history: [], createdAt: serverTimestamp(),
                         scores: playerIds.reduce((acc, id) => ({ ...acc, [id]: 0 }), {}),
                         raios: playerIds.reduce((acc, id) => ({ ...acc, [id]: 0 }), {})
                     };
-
-                    if (gameMode === 'duplas') {
-                        gameData.teams = { A: { players: [selectedSlots[2], selectedSlots[4]].filter(Boolean), score: 0, raios: 0 }, B: { players: [selectedSlots[1], selectedSlots[3]].filter(Boolean), score: 0, raios: 0 }};
-                        gameData.turn = selectedSlots[1];
-                    } else {
-                        gameData.turn = playerIds[0];
-                    }
 
                     const gameDocRef = await addDoc(matchesCollectionRef(), gameData);
                     appState.gameState.activeGameId = gameDocRef.id;
 
                     const unsub = onSnapshot(gameDocRef, (doc) => {
-                        if (doc.exists()) {
-                            renderActiveGame(doc.data());
-                        } else {
-                            resetGameState();
-                            switchView('view-scoreboard');
-                        }
+                        if (doc.exists()) renderActiveGame(doc.data());
                     });
                     appState.gameState.activeGameListener = unsub;
                     appState.unsubscribers.push(unsub);
 
-                    ui.gameMode.startBtn.style.display = 'none';
-                    ui.gameMode.activeButtons.style.display = 'flex';
-                    document.getElementById('game-type-selector').style.display = 'none';
-                    document.getElementById('raio-mode-selector').style.display = 'none';
-
+                    setupActiveGameUI();
+                    showMessage("Nova partida iniciada!", "success");
                 } catch (error) {
-                    console.error("Erro ao iniciar o jogo:", error);
-                    showMessage("Não foi possível iniciar o jogo. Tente novamente.", "error");
+                    console.error("Erro ao criar partida:", error);
+                    showMessage("Não foi possível criar a partida.", "error");
                     ui.gameMode.startBtn.disabled = false;
                 }
+            }
+
+            // FUNÇÃO 3: Abre o modal de decisão (não muda)
+            function promptResumeGame(gameId, gameData) {
+                const playerNames = gameData.playerIds.map(id => appState.players[id]?.name || '?').join(', ');
+                const modalHTML = `
+                    <h3 class="text-xl font-bold">Partida Ativa Encontrada</h3>
+                    <p class="my-4 text-gray-700">Já existe uma partida em andamento com: <strong class="font-semibold">${playerNames}</strong>.</p>
+                    <p class="text-gray-700">O que você deseja fazer?</p>
+                    <div class="flex flex-col sm:flex-row justify-end gap-3 mt-6">
+                        <button id="btnDiscardAndNew" class="bg-red-600 text-white font-semibold py-2 px-4 rounded-lg hover:bg-red-700 transition">Descartar e Iniciar Nova</button>
+                        <button id="btnResume" class="bg-blue-600 text-white font-semibold py-2 px-4 rounded-lg hover:bg-blue-700 transition">Continuar Partida</button>
+                    </div>`;
+                openModal(modalHTML);
+                document.getElementById('btnResume').onclick = () => resumeGame(gameId, gameData);
+                document.getElementById('btnDiscardAndNew').onclick = async () => {
+                    closeModal();
+                    await updateDoc(doc(matchesCollectionRef(), gameId), { status: 'aborted', endedAt: serverTimestamp() });
+                    resetGameState();
+                    switchView('view-game-table');
+                    showMessage("Partida anterior descartada.", "info");
+                };
+            }
+
+            // FUNÇÃO 4: Lógica para continuar um jogo existente (não muda)
+            function resumeGame(gameId, gameData) {
+                closeModal();
+                if (appState.gameState.activeGameListener) appState.gameState.activeGameListener();
+
+                appState.gameState.activeGameId = gameId;
+                appState.gameState.activeGame = gameData;
+                appState.gameState.selectedSlots = gameData.selectedSlots;
+
+                const gameDocRef = doc(matchesCollectionRef(), gameId);
+                const unsub = onSnapshot(gameDocRef, (doc) => { if (doc.exists()) renderActiveGame(doc.data()); });
+                appState.gameState.activeGameListener = unsub;
+                appState.unsubscribers.push(unsub);
+
+                switchView('view-game-table');
+                renderAllSlots();
+                setupActiveGameUI();
+                showMessage("Partida recuperada com sucesso!", "success");
             }
 
             function generateScoreHTML(raiosDaPartida, pontosAtuais, isRaioMatch) {
@@ -1528,7 +1582,7 @@
             ui.adminFab.addPlayerBtn.addEventListener('click', addNovoJogador);
 
             // Listener para o modo partida que estava comentado
-            ui.gameMode.startBtn.addEventListener('click', startGame);
+            ui.gameMode.startBtn.addEventListener('click', createGameInFirestore);
 
             // Adicione estes novos listeners:
             ui.gameMode.launchScoreBtn.addEventListener('click', launchScore);
@@ -1562,7 +1616,7 @@
             });
             ui.adminFab.addPlayerBtn.addEventListener('click', addNovoJogador);
 
-            ui.gameMode.goToBtn.addEventListener('click', () => { resetGameState(); switchView('view-game-table'); });
+            ui.gameMode.goToBtn.addEventListener('click', handleStartGameClick);
             ui.gameMode.backBtn.addEventListener('click', () => endGame(false));
             ui.gameMode.modeButtons.forEach(btn => btn.addEventListener('click', () => { if (!appState.gameState.activeGame) { appState.gameState.gameMode = btn.dataset.mode; updateGameModeUI(); }}));
             // ui.gameMode.raioCheckbox.addEventListener('change', (e) => { if (!appState.gameState.activeGame) appState.gameState.isRaioMatch = e.target.checked; });
