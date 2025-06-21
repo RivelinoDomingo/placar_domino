@@ -1,0 +1,949 @@
+{
+  "players": [
+    {
+      "id": "2uTKIpn00eUFJM0wXC5G",
+      "name": "Renata",
+      "series": "Amador",
+      "lambreta": 7,
+      "raios": 8,
+      "pontos": 35,
+      "partidasJogadas": 14
+    },
+    {
+      "id": "3RcvST1Uxz0WS6kErtAS",
+      "name": "teste_4",
+      "raios": 0,
+      "series": "Amador",
+      "conquistas": {
+        "azarao": 2
+      },
+      "pontos": 10,
+      "partidasJogadas": 15,
+      "lambreta": 11
+    },
+    {
+      "id": "4lAtcPIEKcu6pYOpTbUf",
+      "name": "Alexandre",
+      "series": "Amador",
+      "lambreta": 2,
+      "raios": 5,
+      "pontos": 33,
+      "partidasJogadas": 13
+    },
+    {
+      "id": "AYPmYnX34qqGae7HcIYU",
+      "name": "Kauê",
+      "series": "Amador",
+      "pontos": 8,
+      "raios": 5,
+      "partidasJogadas": 2,
+      "lambreta": 4
+    },
+    {
+      "id": "BlzG7W5Rt43bOsPiGi7R",
+      "name": "teste_3",
+      "series": "Amador",
+      "conquistas": {},
+      "pontos": 18,
+      "raios": 1,
+      "partidasJogadas": 15,
+      "lambreta": 7
+    },
+    {
+      "id": "KUk2C2TEJlRyIm02hmDk",
+      "name": "Cassio",
+      "series": "Amador",
+      "raios": 2,
+      "partidasJogadas": 2,
+      "lambreta": 2,
+      "pontos": 1
+    },
+    {
+      "id": "M30KhNvKs2K2a8IESxt4",
+      "raios": 0,
+      "series": "Amador",
+      "name": "Hugo",
+      "partidasJogadas": 1,
+      "lambreta": 0,
+      "pontos": 3
+    },
+    {
+      "id": "YOYDoV9WhNmAcbFws9Hl",
+      "name": "Rivelino",
+      "series": "Amador",
+      "lambreta": 5,
+      "partidasJogadas": 5,
+      "pontos": 18,
+      "raios": 5,
+      "conquistas": {
+        "imbativel": 1
+      }
+    },
+    {
+      "id": "fak2ZaDR0iHCrvvSj8jb",
+      "name": "teste_1",
+      "series": "Amador",
+      "conquistas": {
+        "imbativel": 1,
+        "azarao": 1
+      },
+      "raios": 2,
+      "lambreta": 5,
+      "pontos": 54,
+      "partidasJogadas": 21
+    },
+    {
+      "id": "jbhADYHEOrT5lc8wxrQI",
+      "name": "Enzo",
+      "lambreta": 0,
+      "series": "Amador",
+      "conquistas": [],
+      "raios": 3,
+      "pontos": 8,
+      "partidasJogadas": 1
+    },
+    {
+      "id": "jlIEtRMAWIQdaAySxIdB",
+      "name": "Eduardo",
+      "raios": 0,
+      "partidasJogadas": 0,
+      "lambreta": 0,
+      "pontos": 0,
+      "series": "Amador",
+      "conquistas": {}
+    },
+    {
+      "id": "qtv4B040yWnufrZSJjcF",
+      "name": "teste_2",
+      "series": "Amador",
+      "conquistas": {},
+      "lambreta": 1,
+      "partidasJogadas": 15,
+      "pontos": 42,
+      "raios": 1
+    },
+    {
+      "id": "u1423EoitFbGmcZOvytT",
+      "series": "Amador",
+      "name": "Ari",
+      "raios": 6,
+      "conquistas": {
+        "azarao": 2
+      },
+      "pontos": 10,
+      "partidasJogadas": 13,
+      "lambreta": 12
+    },
+    {
+      "id": "zNO2Zp7dZlyGMcL1xBS8",
+      "name": "Jorginho",
+      "series": "Amador",
+      "pontos": 3,
+      "raios": 0,
+      "partidasJogadas": 2,
+      "lambreta": 1
+    }
+  ],
+  "events": [
+    {
+      "id": "0HS6AtF0CCrYhNUPVM3I",
+      "type": "achievement",
+      "player": "teste_3",
+      "text": "sofreu uma sequência de 3 lambretas! 🚑🤕🤕",
+      "timestamp": {
+        "_seconds": 1750421612,
+        "_nanoseconds": 530000000
+      }
+    },
+    {
+      "id": "0SDnJtzQPsLTvbKX5VXN",
+      "type": "demotion",
+      "player": "teste_1",
+      "text": "foi rebaixado para a Série D.",
+      "timestamp": {
+        "_seconds": 1750446433,
+        "_nanoseconds": 254000000
+      }
+    },
+    {
+      "id": "0qCD3gHG72Bi5aNjm4Jf",
+      "type": "achievement",
+      "player": "visitante",
+      "text": "alcançou uma sequência de 3 vitórias de raio! 🔥",
+      "timestamp": {
+        "_seconds": 1750441664,
+        "_nanoseconds": 402000000
+      }
+    },
+    {
+      "id": "1VZDpVkCJWBBViZwEpQf",
+      "type": "achievement",
+      "player": "visitante",
+      "text": "alcançou uma sequência de 3 raios! 🔥🚀🚀",
+      "timestamp": {
+        "_seconds": 1750441395,
+        "_nanoseconds": 713000000
+      }
+    },
+    {
+      "id": "1jEaINlOaTGiZS9Azt2f",
+      "type": "achievement",
+      "player": "teste_2",
+      "text": "sofreu uma sequência de 3 lambretas! 🚑",
+      "timestamp": {
+        "_seconds": 1750441664,
+        "_nanoseconds": 604000000
+      }
+    },
+    {
+      "id": "2DI0XWrSPHO4E0dBml9N",
+      "type": "achievement",
+      "player": "visitante",
+      "text": "alcançou uma sequência de 3 raios seguidos! 🔥🚀🚀",
+      "timestamp": {
+        "_seconds": 1750422442,
+        "_nanoseconds": 176000000
+      }
+    },
+    {
+      "id": "393SclX2aU2HkP4DoFeu",
+      "type": "achievement",
+      "player": "visitante",
+      "text": "alcançou uma sequência de 3 raios seguidos! 🔥🚀🚀",
+      "timestamp": {
+        "_seconds": 1750433927,
+        "_nanoseconds": 239000000
+      }
+    },
+    {
+      "id": "4nBonN3h9Jm67fcYq898",
+      "type": "achievement",
+      "player": "teste_2",
+      "text": "alcançou uma sequência de 3 raio! 🔥🚀🚀",
+      "timestamp": {
+        "_seconds": 1750442956,
+        "_nanoseconds": 444000000
+      }
+    },
+    {
+      "id": "59auHJHoCHMVVGziqO4v",
+      "type": "achievement",
+      "player": "visitante",
+      "text": "alcançou uma sequência de 3 raios seguidos! 🔥🚀🚀",
+      "timestamp": {
+        "_seconds": 1750430298,
+        "_nanoseconds": 645000000
+      }
+    },
+    {
+      "id": "5A0O61SEegpIKB18fQRd",
+      "type": "achievement",
+      "player": "visitante",
+      "text": "alcançou uma sequência de 3 raios seguidos! 🔥🚀🚀",
+      "timestamp": {
+        "_seconds": 1750426416,
+        "_nanoseconds": 210000000
+      }
+    },
+    {
+      "id": "5t90souHZExuSi65XC3D",
+      "type": "achievement",
+      "player": "teste_1",
+      "text": "sofreu uma sequência de 3 lambretas Seguidas! 🚑🤕🤕",
+      "timestamp": {
+        "_seconds": 1750425053,
+        "_nanoseconds": 751000000
+      }
+    },
+    {
+      "id": "7dcvoTIEMEunwBO29lcA",
+      "type": "achievement",
+      "player": "teste_1",
+      "text": "sofreu uma sequência de 16 lambretas Seguidas! 🚑🤕🤕",
+      "timestamp": {
+        "_seconds": 1750429125,
+        "_nanoseconds": 520000000
+      }
+    },
+    {
+      "id": "8F0cLOEhRExyu3NqSCjH",
+      "type": "achievement",
+      "player": "teste_1",
+      "text": "sofreu uma sequência de 3 lambretas! 🚑🤕🤕",
+      "timestamp": {
+        "_seconds": 1750441410,
+        "_nanoseconds": 217000000
+      }
+    },
+    {
+      "id": "97yYm9T92pWPIt76bHXL",
+      "type": "achievement",
+      "player": "teste_1",
+      "text": "sofreu uma sequência de 16 lambretas Seguidas! 🚑🤕🤕",
+      "timestamp": {
+        "_seconds": 1750428260,
+        "_nanoseconds": 788000000
+      }
+    },
+    {
+      "id": "9yKOugrfGTQhbqfb8SkJ",
+      "type": "achievement",
+      "player": "visitante",
+      "text": "alcançou uma sequência de 3 raios seguidos! 🔥🚀🚀",
+      "timestamp": {
+        "_seconds": 1750439129,
+        "_nanoseconds": 304000000
+      }
+    },
+    {
+      "id": "ANb0OBGk4nykvMXyCoSC",
+      "type": "achievement",
+      "player": "visitante",
+      "text": "alcançou uma sequência de 3 raios seguidos! 🔥🚀🚀",
+      "timestamp": {
+        "_seconds": 1750427146,
+        "_nanoseconds": 137000000
+      }
+    },
+    {
+      "id": "Acm18Vd9y1BbH9MtaBWm",
+      "type": "achievement",
+      "player": "teste_4",
+      "text": "sofreu uma sequência de 3 lambretas! 🚑🤕🤕",
+      "timestamp": {
+        "_seconds": 1750454197,
+        "_nanoseconds": 262000000
+      }
+    },
+    {
+      "id": "BfElQI9F8givvI4pG7Kb",
+      "type": "achievement",
+      "player": "teste_2",
+      "text": "sofreu uma sequência de 3 lambretas! 🚑🤕🤕",
+      "timestamp": {
+        "_seconds": 1750421612,
+        "_nanoseconds": 239000000
+      }
+    },
+    {
+      "id": "BgSCisKa6MV1UxQUsXBF",
+      "type": "achievement",
+      "player": "visitante",
+      "text": "alcançou uma sequência de 3 raios seguidos! 🔥🚀🚀",
+      "timestamp": {
+        "_seconds": 1750431688,
+        "_nanoseconds": 858000000
+      }
+    },
+    {
+      "id": "Du03PcaUoMir1FCIihyq",
+      "type": "achievement",
+      "player": "teste_1",
+      "text": "sofreu uma sequência de 16 lambretas Seguidas! 🚑🤕🤕",
+      "timestamp": {
+        "_seconds": 1750431713,
+        "_nanoseconds": 523000000
+      }
+    },
+    {
+      "id": "ERIDgFa8tHRkpiINcOt7",
+      "type": "achievement",
+      "player": "teste_4",
+      "text": "sofreu uma sequência de 3 lambretas! 🚑🤕🤕",
+      "timestamp": {
+        "_seconds": 1750421482,
+        "_nanoseconds": 757000000
+      }
+    },
+    {
+      "id": "FJuJbuJIhlZij6UHt75O",
+      "type": "achievement",
+      "player": "visitante",
+      "text": "alcançou uma sequência de 3 raios seguidos! 🔥🚀🚀",
+      "timestamp": {
+        "_seconds": 1750430429,
+        "_nanoseconds": 516000000
+      }
+    },
+    {
+      "id": "GuGl2Hvii57mGIQOvIVI",
+      "type": "achievement",
+      "player": "teste_1",
+      "text": "sofreu uma sequência de 16 lambretas Seguidas! 🚑🤕🤕",
+      "timestamp": {
+        "_seconds": 1750428297,
+        "_nanoseconds": 731000000
+      }
+    },
+    {
+      "id": "GzVufZpMR3xN5zP1RDYQ",
+      "type": "achievement",
+      "player": "visitante",
+      "text": "alcançou uma sequência de 3 raios seguidos! 🔥🚀🚀",
+      "timestamp": {
+        "_seconds": 1750427235,
+        "_nanoseconds": 984000000
+      }
+    },
+    {
+      "id": "HSjL1NljiOJI9qOsi3FB",
+      "type": "achievement",
+      "player": "teste_4",
+      "text": "sofreu uma sequência de 3 lambretas! 🚑🤕🤕",
+      "timestamp": {
+        "_seconds": 1750421612,
+        "_nanoseconds": 396000000
+      }
+    },
+    {
+      "id": "HZRtyGk7Zyh4YwONg34H",
+      "type": "demotion",
+      "player": "teste_1",
+      "text": "foi rebaixado para a Série Amador.",
+      "timestamp": {
+        "_seconds": 1750458389,
+        "_nanoseconds": 975000000
+      }
+    },
+    {
+      "id": "MrDhyNLLpy5RSDoXRvnD",
+      "type": "achievement",
+      "player": "teste_1",
+      "text": "sofreu uma sequência de 16 lambretas Seguidas! 🚑🤕🤕",
+      "timestamp": {
+        "_seconds": 1750429923,
+        "_nanoseconds": 577000000
+      }
+    },
+    {
+      "id": "MwgVUSIZIpK12sZWI8wS",
+      "type": "achievement",
+      "player": "teste_1",
+      "text": "sofreu uma sequência de 16 lambretas Seguidas! 🚑🤕🤕",
+      "timestamp": {
+        "_seconds": 1750427253,
+        "_nanoseconds": 963000000
+      }
+    },
+    {
+      "id": "NmJkhTyCmXYlbMTx7GTZ",
+      "type": "achievement",
+      "player": "teste_1",
+      "text": "sofreu uma sequência de 16 lambretas Seguidas! 🚑🤕🤕",
+      "timestamp": {
+        "_seconds": 1750427236,
+        "_nanoseconds": 113000000
+      }
+    },
+    {
+      "id": "S3FD5lMgj4GCd4ePe0nq",
+      "type": "achievement",
+      "player": "teste_1",
+      "text": "sofreu uma sequência de 16 lambretas Seguidas! 🚑🤕🤕",
+      "timestamp": {
+        "_seconds": 1750429164,
+        "_nanoseconds": 668000000
+      }
+    },
+    {
+      "id": "T6Qgtuy6HQaFk0YQL3p6",
+      "type": "achievement",
+      "player": "teste_1",
+      "text": "sofreu uma sequência de 16 lambretas Seguidas! 🚑🤕🤕",
+      "timestamp": {
+        "_seconds": 1750431689,
+        "_nanoseconds": 55000000
+      }
+    },
+    {
+      "id": "TWQIUjheWHD6DSdkgMwX",
+      "type": "achievement",
+      "player": "visitante",
+      "text": "alcançou uma sequência de 3 raios seguidos! 🔥🚀🚀",
+      "timestamp": {
+        "_seconds": 1750430306,
+        "_nanoseconds": 316000000
+      }
+    },
+    {
+      "id": "TpWzhEpVikWvKm9bAaAd",
+      "type": "achievement",
+      "player": "teste_1",
+      "text": "sofreu uma sequência de 3 lambretas Seguidas! 🚑🤕🤕",
+      "timestamp": {
+        "_seconds": 1750425066,
+        "_nanoseconds": 48000000
+      }
+    },
+    {
+      "id": "UXvK8NuSc4DXeZjW4Pky",
+      "type": "achievement",
+      "player": "visitante",
+      "text": "alcançou uma sequência de 3 raios seguidos! 🔥🚀🚀",
+      "timestamp": {
+        "_seconds": 1750425053,
+        "_nanoseconds": 610000000
+      }
+    },
+    {
+      "id": "VEPxmZrNFP13poP56t8r",
+      "type": "achievement",
+      "player": "teste_1",
+      "text": "sofreu uma sequência de 3 lambretas! 🚑🤕🤕",
+      "timestamp": {
+        "_seconds": 1750469926,
+        "_nanoseconds": 717000000
+      }
+    },
+    {
+      "id": "XSqSVfPiQzIP18CmItH6",
+      "type": "achievement",
+      "player": "teste_2",
+      "text": "alcançou uma sequência de 3 raio! 🔥🚀🚀",
+      "timestamp": {
+        "_seconds": 1750443523,
+        "_nanoseconds": 633000000
+      }
+    },
+    {
+      "id": "Y3n3n5RhzDRBAbnPXyJr",
+      "type": "achievement",
+      "player": "visitante",
+      "text": "alcançou uma sequência de 3 raios seguidos! 🔥🚀🚀",
+      "timestamp": {
+        "_seconds": 1750430265,
+        "_nanoseconds": 155000000
+      }
+    },
+    {
+      "id": "YOBkwjSJk17A3vAIzjMi",
+      "type": "promotion",
+      "player": "teste_1",
+      "text": "foi promovido para a Série C! 🎉",
+      "timestamp": {
+        "_seconds": 1750446393,
+        "_nanoseconds": 849000000
+      }
+    },
+    {
+      "id": "ZUkoPOhQybunGZQGiNTx",
+      "type": "achievement",
+      "player": "visitante",
+      "text": "alcançou uma sequência de 3 raios seguidos! 🔥🚀🚀",
+      "timestamp": {
+        "_seconds": 1750421482,
+        "_nanoseconds": 607000000
+      }
+    },
+    {
+      "id": "ZlXhZxhfpjYXdTjLJGx6",
+      "type": "achievement",
+      "player": "teste_2",
+      "text": "sofreu uma sequência de 6 lambretas! 🚑",
+      "timestamp": {
+        "_seconds": 1750441710,
+        "_nanoseconds": 98000000
+      }
+    },
+    {
+      "id": "a6pTXns55TvrmHh4cOsS",
+      "type": "achievement",
+      "player": "teste_1",
+      "text": "sofreu uma sequência de 3 lambretas Seguidas! 🚑🤕🤕",
+      "timestamp": {
+        "_seconds": 1750425880,
+        "_nanoseconds": 6000000
+      }
+    },
+    {
+      "id": "ahkTm1MF1DqwHx8uXdWz",
+      "type": "achievement",
+      "player": "teste_4",
+      "text": "sofreu uma sequência de 3 lambretas! 🚑🤕🤕",
+      "timestamp": {
+        "_seconds": 1750443523,
+        "_nanoseconds": 820000000
+      }
+    },
+    {
+      "id": "cV0bju5VEVoYLcqflo5m",
+      "type": "achievement",
+      "player": "teste_1",
+      "text": "sofreu uma sequência de 4 lambretas Seguidas! 🚑🤕🤕",
+      "timestamp": {
+        "_seconds": 1750426416,
+        "_nanoseconds": 401000000
+      }
+    },
+    {
+      "id": "ccFnp6ELgmdBVqbKOxxb",
+      "type": "achievement",
+      "player": "teste_1",
+      "text": "sofreu uma sequência de 16 lambretas Seguidas! 🚑🤕🤕",
+      "timestamp": {
+        "_seconds": 1750428530,
+        "_nanoseconds": 365000000
+      }
+    },
+    {
+      "id": "dHvIo5FBAo1j8kgYXl5n",
+      "type": "promotion",
+      "player": "teste_1",
+      "text": "foi promovido para a Série D! 🎉",
+      "timestamp": {
+        "_seconds": 1750457830,
+        "_nanoseconds": 78000000
+      }
+    },
+    {
+      "id": "e6YVjTjtyuWaEYNhA8bi",
+      "type": "achievement",
+      "player": "teste_4",
+      "text": "sofreu uma sequência de 6 lambretas! 🚑🤕🤕",
+      "timestamp": {
+        "_seconds": 1750454343,
+        "_nanoseconds": 209000000
+      }
+    },
+    {
+      "id": "ehvdPhOFUZjnvfBuZC4t",
+      "type": "achievement",
+      "player": "visitante",
+      "text": "alcançou uma sequência de 3 raios! 🔥🚀🚀",
+      "timestamp": {
+        "_seconds": 1750441410,
+        "_nanoseconds": 43000000
+      }
+    },
+    {
+      "id": "g3LsI8dIpi0D4OpH7CI3",
+      "type": "achievement",
+      "player": "teste_1",
+      "text": "alcançou uma sequência de 3 raio! 🔥🚀🚀",
+      "timestamp": {
+        "_seconds": 1750454197,
+        "_nanoseconds": 116000000
+      }
+    },
+    {
+      "id": "hzzlqr1w97qQfiNd3TQI",
+      "type": "achievement",
+      "player": "teste_1",
+      "text": "sofreu uma sequência de 3 lambretas Seguidas! 🚑🤕🤕",
+      "timestamp": {
+        "_seconds": 1750433688,
+        "_nanoseconds": 118000000
+      }
+    },
+    {
+      "id": "jDlqVnXBp1dKq4VtP0MH",
+      "type": "achievement",
+      "player": "teste_1",
+      "text": "sofreu uma sequência de 3 lambretas! 🚑🤕🤕",
+      "timestamp": {
+        "_seconds": 1750442956,
+        "_nanoseconds": 667000000
+      }
+    },
+    {
+      "id": "kdJdgHlbNQJ9ctqqfzza",
+      "type": "achievement",
+      "player": "visitante",
+      "text": "alcançou uma sequência de 3 raios seguidos! 🔥🚀🚀",
+      "timestamp": {
+        "_seconds": 1750439441,
+        "_nanoseconds": 93000000
+      }
+    },
+    {
+      "id": "lokncEimJuse9OCtNG6D",
+      "type": "achievement",
+      "player": "visitante",
+      "text": "alcançou uma sequência de 3 raios seguidos! 🔥🚀🚀",
+      "timestamp": {
+        "_seconds": 1750421612,
+        "_nanoseconds": 71000000
+      }
+    },
+    {
+      "id": "mV1C4VRpnpcxUsNMroAg",
+      "type": "achievement",
+      "player": "visitante",
+      "text": "alcançou uma sequência de 3 raios seguidos! 🔥🚀🚀",
+      "timestamp": {
+        "_seconds": 1750433687,
+        "_nanoseconds": 959000000
+      }
+    },
+    {
+      "id": "nqxIzfV0irQEvdENmnyj",
+      "type": "achievement",
+      "player": "teste_1",
+      "text": "sofreu uma sequência de 16 lambretas Seguidas! 🚑🤕🤕",
+      "timestamp": {
+        "_seconds": 1750428490,
+        "_nanoseconds": 138000000
+      }
+    },
+    {
+      "id": "o63sA9pXKqOtmrp0qBcN",
+      "type": "achievement",
+      "player": "visitante",
+      "text": "alcançou uma sequência de 3 raios seguidos! 🔥🚀🚀",
+      "timestamp": {
+        "_seconds": 1750438823,
+        "_nanoseconds": 211000000
+      }
+    },
+    {
+      "id": "orIZ6zFaTSsLDI8v5I4S",
+      "type": "achievement",
+      "player": "teste_1",
+      "text": "sofreu uma sequência de 4 lambretas Seguidas! 🚑🤕🤕",
+      "timestamp": {
+        "_seconds": 1750426435,
+        "_nanoseconds": 180000000
+      }
+    },
+    {
+      "id": "pxWKcmjtn4cs014mUKwN",
+      "type": "promotion",
+      "player": "teste_1",
+      "text": "foi promovido para a Série D! 🎉",
+      "timestamp": {
+        "_seconds": 1750457829,
+        "_nanoseconds": 883000000
+      }
+    },
+    {
+      "id": "q9tWtc42WaluyCko9lMo",
+      "type": "achievement",
+      "player": "teste_3",
+      "text": "sofreu uma sequência de 3 lambretas! 🚑🤕🤕",
+      "timestamp": {
+        "_seconds": 1750421482,
+        "_nanoseconds": 892000000
+      }
+    },
+    {
+      "id": "sRTOt7IxA3OWrfePWi7V",
+      "type": "achievement",
+      "player": "teste_1",
+      "text": "sofreu uma sequência de 3 lambretas Seguidas! 🚑🤕🤕",
+      "timestamp": {
+        "_seconds": 1750433705,
+        "_nanoseconds": 646000000
+      }
+    },
+    {
+      "id": "skjxjo2FJGWUcLXA1EWG",
+      "type": "achievement",
+      "player": "teste_1",
+      "text": "sofreu uma sequência de 3 lambretas Seguidas! 🚑🤕🤕",
+      "timestamp": {
+        "_seconds": 1750425956,
+        "_nanoseconds": 680000000
+      }
+    },
+    {
+      "id": "tY8pj2kTbAVIV5Rt5GgS",
+      "type": "achievement",
+      "player": "visitante",
+      "text": "alcançou uma sequência de 6 raios seguidos! 🔥🚀🚀",
+      "timestamp": {
+        "_seconds": 1750434007,
+        "_nanoseconds": 291000000
+      }
+    },
+    {
+      "id": "wfNKcpeVZTbBzyyHO8UJ",
+      "type": "achievement",
+      "player": "teste_1",
+      "text": "sofreu uma sequência de 3 lambretas! 🚑🤕🤕",
+      "timestamp": {
+        "_seconds": 1750441395,
+        "_nanoseconds": 864000000
+      }
+    },
+    {
+      "id": "x9x7SHAh1IQJtmnTzgpf",
+      "type": "achievement",
+      "player": "visitante",
+      "text": "alcançou uma sequência de 3 raios seguidos! 🔥🚀🚀",
+      "timestamp": {
+        "_seconds": 1750429125,
+        "_nanoseconds": 328000000
+      }
+    },
+    {
+      "id": "xmjDSYpa5toVh0ZszG6u",
+      "type": "achievement",
+      "player": "teste_1",
+      "text": "sofreu uma sequência de 16 lambretas Seguidas! 🚑🤕🤕",
+      "timestamp": {
+        "_seconds": 1750429966,
+        "_nanoseconds": 972000000
+      }
+    },
+    {
+      "id": "yP725y7mfwYBLjgJJuWi",
+      "type": "achievement",
+      "player": "teste_1",
+      "text": "sofreu uma sequência de 3 lambretas! 🚑🤕🤕",
+      "timestamp": {
+        "_seconds": 1750421483,
+        "_nanoseconds": 20000000
+      }
+    },
+    {
+      "id": "yeC7Wbwgr5PdWfmvAwIe",
+      "type": "achievement",
+      "player": "visitante",
+      "text": "alcançou uma sequência de 3 raios seguidos! 🔥🚀🚀",
+      "timestamp": {
+        "_seconds": 1750433571,
+        "_nanoseconds": 499000000
+      }
+    },
+    {
+      "id": "ykhgKggTYKkaJCkEfenA",
+      "type": "achievement",
+      "player": "visitante",
+      "text": "alcançou uma sequência de 3 raios seguidos! 🔥🚀🚀",
+      "timestamp": {
+        "_seconds": 1750429923,
+        "_nanoseconds": 347000000
+      }
+    },
+    {
+      "id": "ywLJW5eAbs4b5BZBrlGH",
+      "type": "achievement",
+      "player": "teste_1",
+      "text": "alcançou uma sequência de 3 vitórias de raio! 🔥",
+      "timestamp": {
+        "_seconds": 1750441709,
+        "_nanoseconds": 948000000
+      }
+    },
+    {
+      "id": "zCla6eO3KthqnHk71ZCd",
+      "type": "achievement",
+      "player": "visitante",
+      "text": "alcançou uma sequência de 3 raios seguidos! 🔥🚀🚀",
+      "timestamp": {
+        "_seconds": 1750438280,
+        "_nanoseconds": 839000000
+      }
+    },
+    {
+      "id": "zLMhsRDCaWxrSaDvLyvG",
+      "type": "achievement",
+      "player": "visitante",
+      "text": "alcançou uma sequência de 3 raios seguidos! 🔥🚀🚀",
+      "timestamp": {
+        "_seconds": 1750425879,
+        "_nanoseconds": 824000000
+      }
+    },
+    {
+      "id": "zMchZNT0AIv6lKuHO32y",
+      "type": "achievement",
+      "player": "visitante",
+      "text": "alcançou uma sequência de 3 raios seguidos! 🔥🚀🚀",
+      "timestamp": {
+        "_seconds": 1750440079,
+        "_nanoseconds": 540000000
+      }
+    }
+  ],
+  "subscriptions": [
+    {
+      "id": "dN-nCKn0POQKkQweDGrIKi:APA91bErUnLxXqNee3ZgBn8nAnzCOMjc5N0gaP-jxV9gp5OkSf7RqbvPZEuztuQpSW0afEhUMKIe2Ek62pZ_VYIQ4WAWoOgxi_de4EMlfNPUbNzLj14pxvE",
+      "userId": "0SwKE99Br4MPVcSdPQ5pkEuKvkl1",
+      "createdAt": {
+        "_seconds": 1750056817,
+        "_nanoseconds": 484000000
+      }
+    },
+    {
+      "id": "dNnc3qIm9qsjjkHq9EsKd1:APA91bHpZMddj55RHhDcNUGVoCW1W7Vc1DxCD53ueSkoIAQBN83itLZZjVw-bDpaydakuiyrAu236nTZ7oxqwOmklQcZmwsNlq71oxnw9HO4TdqcdWANwtI",
+      "userId": "OwQDzt3T39XsYxiCBQKahstjJwm2",
+      "createdAt": {
+        "_seconds": 1750120106,
+        "_nanoseconds": 910000000
+      }
+    },
+    {
+      "id": "diHm7BeT0Mv2Me6SV0J7kz:APA91bFVgf_pxyv_xh8RY80m44LRbldamy64npB6K77FlOpn69oFNBWjFKdNJsC8nVZnWZ9L4FPsOcQ6v_PU5D7ijCj1Wp3nCOgTTjPe2DEvuKwPRbw-jXw",
+      "userId": "bwpBDNwgFCPq3t3NsROyURSEdxl2",
+      "createdAt": {
+        "_seconds": 1750062897,
+        "_nanoseconds": 196000000
+      }
+    },
+    {
+      "id": "dsDeMj3fVytnezho6fHDmQ:APA91bG32U_FVJtH8cbW_ga-vs9DFGOeGwwnZQRUQVhIuP0ac8W3gmsHhHCg6lBJgvFMAltsdY5qukmVEGyZ_Kzg0733R3cooa3-zhRFCjFMuAaFiN5XqzA",
+      "userId": "zwTTMOuvskN4SoqPXlgiNmMEhx72",
+      "createdAt": {
+        "_seconds": 1750131221,
+        "_nanoseconds": 124000000
+      }
+    },
+    {
+      "id": "e6K5pkxVqJwFs47qtOOmWE:APA91bH2a7zeuN_ClwkRp3irtebrhMxhKz5texPqB5aKonhAmSUAXMJJ3KvUzI9QdciV5koFXeprSBEOvlin7cwNSARbxfJnKy4VQzlOvjzwCEPAH2NLekw",
+      "userId": "4ea9HPNGhiZyxGzJPHlO77c7Gkn1",
+      "createdAt": {
+        "_seconds": 1750118854,
+        "_nanoseconds": 986000000
+      }
+    },
+    {
+      "id": "eo1B68W8K8xNSyKPwft1xi:APA91bFkesDvbX4B911ycBQqAYIhx7mI66tT6uUVuZan3lkNCPrUpnSy0181QK5XHkyORTcoVZ1prhDG7XHLGiEylrTx5wlWTE-TnPLJWfGZnazylSeyfiI",
+      "userId": "qGPjjOHSnqdyVCQzuPfpVfzlS4J2",
+      "createdAt": {
+        "_seconds": 1750096435,
+        "_nanoseconds": 103000000
+      }
+    },
+    {
+      "id": "ey421oo8TPyeid7dxvMN6X:APA91bFmBHRhzFR3OgVEAVXvH7FX2EQRpme5iRF9z4urZ8MARUELyfEGGUoLK84s6ctY7W6Y1uYaCYsqMoiSPKorWfF6YHHe3ORl7e6m5PquCUQ_Ncmh_gU",
+      "userId": "boCRb2SOotXGwbNS7iX6OpO2Gic2",
+      "createdAt": {
+        "_seconds": 1750140727,
+        "_nanoseconds": 960000000
+      }
+    },
+    {
+      "id": "fPUwtg9QUfXQZNlXfHHnQM:APA91bFfePR4K5ufawWb3jXaivf7Ku80kjczkPEGij7modXn74eNP3KuQ0WRGFkXc8vdkjAmsZxMDK_UVV0bKtzgADn2WkFv9QZMa4J1kFpzWL48u5BrqPo",
+      "userId": "dApDSbRv2qaqnDolWBNmxYhMxE32",
+      "createdAt": {
+        "_seconds": 1750118428,
+        "_nanoseconds": 644000000
+      }
+    },
+    {
+      "id": "fPZkhM4esrnzaLkT_B0NRk:APA91bGZlVzu14qSj2JqKPTWJp_XQRFrRbC0qoMPwzOKhWZBbVMPTpqbtStZxPIKlPWCSbVX9PtCIsppCPkXoWCSNOZpBFlvo7tOzntvFOcguEFiRR3dnEk",
+      "userId": "qfX9uZOHG7V8CcGDButswFj8EW22",
+      "createdAt": {
+        "_seconds": 1750091630,
+        "_nanoseconds": 135000000
+      }
+    },
+    {
+      "id": "fgRE1BUBdc6ISHn5llQUcO:APA91bGsFeQQvDN_b3TWs3tlOs9M0723tiAD2XTeH8aQIdigxCyiARQV3qwSwJA1PZO_OqbQIydS42AfqO_XfuZt6jdtYcQWAF7SlPjb4RSHjyQqfTTy6sI",
+      "userId": "WDxSHaztO6Mor0OszWJb75ByscD3",
+      "createdAt": {
+        "_seconds": 1750096367,
+        "_nanoseconds": 834000000
+      }
+    },
+    {
+      "id": "fjpjLkm070yw03kgcTsCCX:APA91bHAhag5U6VJoO5tJvO7qOue1xoEkGigEDQp-avQIQiZTlgueomZZdemwqW6CZLk36j07KMB6yGrcvL_jP32CzETmaPR-oxTP7uPht2qHy6aZDbzqmE",
+      "userId": "rWIUp79b60ZE49EPCoo2x8GttO82",
+      "createdAt": {
+        "_seconds": 1750118193,
+        "_nanoseconds": 720000000
+      }
+    }
+  ]
+}
