@@ -7,8 +7,8 @@ const {logger} = require("firebase-functions");
 initializeApp();
 const db = getFirestore();
 
-// Define a região para a função, garantindo que
-// ela rode perto do seu banco de dados.
+// Define a região para a função,
+// garantindo que ela rode perto do seu banco de dados.
 const region = "southamerica-east1";
 
 exports.playerUpdateNotifications = onDocumentUpdated({
@@ -18,20 +18,33 @@ exports.playerUpdateNotifications = onDocumentUpdated({
   try {
     const beforeData = event.data.before.data();
     const afterData = event.data.after.data();
-    // const playerName = afterData.name || "Um jogador";
-    const title = "";
-    const body = "";
+    const playerName = afterData.name || "Um jogador";
+    let title = "";
+    let body = "";
 
-    // 1. Lógica para determinar o que mudou
-    // (promoção, rebaixamento ou conquista)
+    // 1. Lógica para determinar o que mudou (promoção, rebaixamento, etc.)
     if (beforeData.series !== afterData.series) {
-      // ... (sua lógica de promoção/rebaixamento aqui) ...
+      const seriesOrder = ["Amador", "D", "C", "B", "A"];
+      const oldIndex = seriesOrder.indexOf(beforeData.series || "Amador");
+      const newIndex = seriesOrder.indexOf(afterData.series || "Amador");
+      if (newIndex > oldIndex) {
+        title = "🎉 Promoção no Placar!";
+        body = `${playerName} foi promovido para a Série ${afterData.series}!`;
+      } else if (newIndex < oldIndex) {
+        title = "😬 Rebaixamento no Placar";
+        body = `${playerName} foi rebaixado para a Série ${afterData.series}.`;
+      }
     } else {
       const beforeAchievements = beforeData.conquistas || {};
       const afterAchievements = afterData.conquistas || {};
       for (const key in afterAchievements) {
         if (afterAchievements[key] > (beforeAchievements[key] || 0)) {
-          // ... (sua lógica de conquistas aqui) ...
+          const achievementNames = {primeiro_rei: "Primeiro Rei",
+            imbativel: "Imbatível", desbravador: "Desbravador",
+            azarao: "Azarão"};
+          title = "⭐ Nova Conquista!";
+          body = `${playerName} desbloqueou: ` +
+            `${achievementNames[key] || "uma nova conquista"}!`;
           break;
         }
       }
@@ -66,7 +79,7 @@ exports.playerUpdateNotifications = onDocumentUpdated({
       // 3. Envia a notificação para todos os tokens individualmente
       const response = await getMessaging().sendToDevice(tokens, payload);
 
-      // 4. Lógica de auto-limpeza de tokens inválidos (inspirada na sua v1.0)
+      // 4. Lógica de auto-limpeza de tokens inválidos (da sua v1.0)
       const tokensToDelete = [];
       response.results.forEach((result, index) => {
         const error = result.error;
@@ -81,12 +94,13 @@ exports.playerUpdateNotifications = onDocumentUpdated({
       });
 
       await Promise.all(tokensToDelete);
-      logger.info("Envio concluído e limpeza de tokens inválidos realizada.");
+      logger.info("Envio concluído e limpeza de tokens" +
+              " inválidos realizada.");
     }
     return null;
   } catch (error) {
     logger.error("Ocorreu um erro crítico na função" +
-      "playerUpdateNotifications:", error);
+          " playerUpdateNotifications:", error);
     return null;
   }
 });
