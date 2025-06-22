@@ -1163,40 +1163,48 @@
             async function updatePlayerStat(playerId, stat, amount) {
                 if (!appState.isAdminMode) return;
 
-                const player = appState.players[playerId];
-                if (!player) return;
-
-                const updates = {};
-                const seriesStatName = `${stat}NaSerie`; // ex: 'raiosNaSerie'
-
-                const currentStatValue = player[stat] || 0;
-                const currentSeriesValue = player[seriesStatName] || 0;
-
-                // 1. Verifica se a operação é válida para a estatística principal
-                if (currentStatValue + amount < 0) {
-                    showMessage(`Não é possível ter valor negativo para ${stat}.`, 'error');
-                    return; // Interrompe se o valor principal ficaria negativo
-                }
-                updates[stat] = increment(amount);
-
-                // 2. Verifica se a operação é válida para a estatística da série
-                // Se for válida, adiciona ao objeto de atualização.
-                // Se não for (ex: tentar subtrair de 0), ela simplesmente não é adicionada,
-                // permitindo que a estatística principal seja atualizada mesmo assim.
-                if (currentSeriesValue + amount >= 0) {
-                    updates[seriesStatName] = increment(amount);
-                } else {
-                    console.warn(`A estatística de série para "${stat}" não foi decrementada pois já é 0.`);
-                }
-
                 const playerDocRef = doc(playersCollectionRef(), playerId);
+
                 try {
-                    // Apenas executa a atualização se houver algo para mudar
+                    const playerDoc = await getDoc(playerDocRef);
+                    if (!playerDoc.exists()) {
+                        showMessage("Erro: Jogador não encontrado.", "error");
+                        return;
+                    }
+                    const player = playerDoc.data();
+
+                    const updates = {};
+
+                    // --- INÍCIO DA CORREÇÃO ---
+                    // Lógica corrigida para lidar com o plural de "lambreta"
+                    let seriesStatName = '';
+                    if (stat === 'lambreta') {
+                        seriesStatName = 'lambretasNaSerie';
+                    } else {
+                        seriesStatName = `${stat}NaSerie`;
+                    }
+                    // --- FIM DA CORREÇÃO ---
+
+                    const currentStatValue = player[stat] || 0;
+                    const currentSeriesValue = player[seriesStatName] || 0;
+
+                    if (currentStatValue + amount < 0) {
+                        showMessage(`Não é possível ter valor negativo para ${stat}.`, 'error');
+                        return;
+                    }
+
+                    updates[stat] = increment(amount);
+
+                    if (currentSeriesValue + amount >= 0) {
+                        updates[seriesStatName] = increment(amount);
+                    } else {
+                        console.warn(`Contador de série para "${stat}" já está em 0.`);
+                    }
+
                     if (Object.keys(updates).length > 0) {
                         await updateDoc(playerDocRef, updates);
                     }
 
-                    // Após a atualização, chama a verificação de série para o jogador.
                     await checarStatusDaSerie(playerId);
 
                 } catch (error) {
