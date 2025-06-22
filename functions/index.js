@@ -7,14 +7,12 @@ const {logger} = require("firebase-functions");
 initializeApp();
 const db = getFirestore();
 
-// Define a região para a função,
-// garantindo que ela rode perto do seu banco de dados.
+// Define a região para a função, garantindo que
+// ela rode perto do seu banco de dados.
 const region = "southamerica-east1";
 
-const appIdentifier = "1:187178310074:web:5f56292dea8dc776532583";
-
 exports.playerUpdateNotifications = onDocumentUpdated({
-  document: `artifacts/${appIdentifier}/public/data/players/{playerId}`,
+  document: "artifacts/{appId}/public/data/players/{playerId}",
   region: region,
 }, async (event) => {
   try {
@@ -24,7 +22,8 @@ exports.playerUpdateNotifications = onDocumentUpdated({
     let title = "";
     let body = "";
 
-    // 1. Lógica para determinar o que mudou (promoção, rebaixamento, etc.)
+    // 1. Lógica para determinar se uma notificação deve ser enviada
+    // (Verificação de mudança de série)
     if (beforeData.series !== afterData.series) {
       const seriesOrder = ["Amador", "D", "C", "B", "A"];
       const oldIndex = seriesOrder.indexOf(beforeData.series || "Amador");
@@ -36,7 +35,7 @@ exports.playerUpdateNotifications = onDocumentUpdated({
         title = "😬 Rebaixamento no Placar";
         body = `${playerName} foi rebaixado para a Série ${afterData.series}.`;
       }
-    } else {
+    } else { // (Verificação de conquistas)
       const beforeAchievements = beforeData.conquistas || {};
       const afterAchievements = afterData.conquistas || {};
       for (const key in afterAchievements) {
@@ -45,8 +44,8 @@ exports.playerUpdateNotifications = onDocumentUpdated({
             imbativel: "Imbatível", desbravador: "Desbravador",
             azarao: "Azarão"};
           title = "⭐ Nova Conquista!";
-          body = `${playerName} desbloqueou: ` +
-            `${achievementNames[key] || "uma nova conquista"}!`;
+          body = `${playerName} desbloqueou:
+            ${achievementNames[key] || "uma nova conquista"}!`;
           break;
         }
       }
@@ -54,7 +53,8 @@ exports.playerUpdateNotifications = onDocumentUpdated({
 
     // 2. Se um evento relevante aconteceu, busca todos os tokens e envia
     if (title && body) {
-      // const appIdentifier = event.params.appId;
+      const appIdentifier = event.params.appId;
+      // Caminho correto para a sua coleção de inscrições
       const subscriptionsPath =
         `artifacts/${appIdentifier}/public/data/subscriptions`;
       const subscriptionsSnapshot =
@@ -78,7 +78,8 @@ exports.playerUpdateNotifications = onDocumentUpdated({
         },
       };
 
-      // 3. Envia a notificação para todos os tokens individualmente
+      // 3. Envia a notificação para todos os tokens
+      // individualmente (lógica da v1.0)
       const response = await getMessaging().sendToDevice(tokens, payload);
 
       // 4. Lógica de auto-limpeza de tokens inválidos (da sua v1.0)
@@ -86,23 +87,25 @@ exports.playerUpdateNotifications = onDocumentUpdated({
       response.results.forEach((result, index) => {
         const error = result.error;
         if (error) {
-          logger.error("Falha ao enviar para o token", tokens[index], error);
+          logger.error("Falha ao enviar para o token",
+              tokens[index], error);
           // Se o token não é mais válido, o removemos do banco de dados.
-          if (error.code === "messaging/registration-token-not-registered") {
-            tokensToDelete.push(db.collection(subscriptionsPath).
-                doc(tokens[index]).delete());
+          if (error.code ===
+                        "messaging/registration-token-not-registered") {
+            tokensToDelete.push(db.collection(subscriptionsPath)
+                .doc(tokens[index]).delete());
           }
         }
       });
 
       await Promise.all(tokensToDelete);
-      logger.info("Envio concluído e limpeza de tokens" +
-              " inválidos realizada.");
+      logger.info("Envio concluído e limpeza de tokens " +
+              "inválidos realizada.");
     }
     return null;
   } catch (error) {
     logger.error("Ocorreu um erro crítico na função" +
-          " playerUpdateNotifications:", error);
+          "playerUpdateNotifications:", error);
     return null;
   }
 });
