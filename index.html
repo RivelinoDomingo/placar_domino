@@ -226,21 +226,21 @@
             };
 
             async function requestNotificationPermission() {
-                console.log("1. Iniciando a solicitação de permissão...");
+                //  console.log("1. Iniciando a solicitação de permissão...");
                 try {
                     const messaging = getMessaging(app);
-                    console.log("2. Objeto de Messaging criado.");
+                    //  console.log("2. Objeto de Messaging criado.");
 
                     const swRegistration = await navigator.serviceWorker.register('/placar_domino/firebase-messaging-sw.js', {
                         scope: '/placar_domino/'
                     });
-                    console.log("3. Service Worker registrado com sucesso. Escopo:", swRegistration.scope);
+                    //  console.log("3. Service Worker registrado com sucesso. Escopo:", swRegistration.scope);
 
                     const permission = await Notification.requestPermission();
-                    console.log("4. Permissão do navegador solicitada. Status:", permission);
+                    //  console.log("4. Permissão do navegador solicitada. Status:", permission);
 
                     if (permission === "granted") {
-                        console.log("5. Permissão CONCEDIDA pelo usuário. Tentando obter o token...");
+                        //  console.log("5. Permissão CONCEDIDA pelo usuário. Tentando obter o token...");
 
                         // O getToken é o ponto onde a comunicação com os servidores do Google acontece.
                         const currentToken = await getToken(messaging, {
@@ -249,7 +249,7 @@
                         });
 
                         if (currentToken) {
-                            console.log("7. SUCESSO! Token do dispositivo obtido:", currentToken);
+                            //  console.log("7. SUCESSO! Token do dispositivo obtido:", currentToken);
                             const tokensRef = collection(db, `artifacts/${appIdentifier}/public/data/subscriptions`);
                             await setDoc(doc(tokensRef, currentToken), { timestamp: serverTimestamp() });
                             showMessage("Notificações ativadas!", "success");
@@ -258,7 +258,7 @@
                             showMessage("Não foi possível obter o token. Tente limpar os dados do site no navegador.", "error");
                         }
                     } else {
-                        console.log("5. Permissão NEGADA pelo usuário.");
+                        //  console.log("5. Permissão NEGADA pelo usuário.");
                         showMessage("Permissão para notificações não concedida.", "info");
                     }
                 } catch (error) {
@@ -1166,26 +1166,23 @@
                 const player = appState.players[playerId];
                 if (!player) return;
 
-                // --- INÍCIO DA LÓGICA CORRIGIDA ---
+                // --- INÍCIO DA LÓGICA CORRIGIDA E FINAL ---
 
                 // Prepara o objeto de atualização
                 const updates = {};
 
-                // Adiciona a atualização para a estatística principal (ex: 'raios')
-                updates[stat] = increment(amount);
-
-                // Constrói o nome da estatística da série correspondente (ex: 'raiosNaSerie')
-                const seriesStat = `${stat}NaSerie`;
-
                 // Garante que o valor da série não fique negativo
-                const currentSeriesValue = player[seriesStat] || 0;
+                const seriesStatName = `${stat}NaSerie`; // ex: 'raiosNaSerie'
+                const currentSeriesValue = player[seriesStatName] || 0;
                 if (currentSeriesValue + amount < 0) {
                     showMessage(`Não é possível ter valor de série negativo.`, 'error');
                     return; // Interrompe se a operação resultar em negativo
                 }
 
-                // Adiciona a atualização para a estatística da série (ex: 'raiosNaSerie')
-                updates[seriesStat] = increment(amount);
+                // Adiciona AMBAS as atualizações ao mesmo objeto 'updates'
+                // usando a sintaxe de colchetes para nomes de propriedade dinâmicos.
+                updates[stat] = increment(amount);         // Ex: updates['raios'] = increment(1)
+                updates[seriesStatName] = increment(amount); // Ex: updates['raiosNaSerie'] = increment(1)
 
                 // --- FIM DA LÓGICA CORRIGIDA ---
 
@@ -1195,7 +1192,6 @@
                     await updateDoc(playerDocRef, updates);
 
                     // Após a atualização, chama a verificação de série para o jogador.
-                    // Isso é importante para que o sistema reaja a promoções/rebaixamentos manuais.
                     await checarStatusDaSerie(playerId);
 
                 } catch (error) {
@@ -1650,7 +1646,7 @@
                         // --- INÍCIO DA NOVA VERIFICAÇÃO ---
                         // Se o jogo for muito antigo, trata como inativo
                         if (gameTimestamp && (new Date() - gameTimestamp) / 1000 / 3600 > maxAgeHours) {
-                            console.log("Jogo ativo encontrado, mas é muito antigo e será ignorado:", gameData.id);
+                            //  console.log("Jogo ativo encontrado, mas é muito antigo e será ignorado:", gameData.id);
                             setInactiveState();
                         } else {
                         // --- FIM DA NOVA VERIFICAÇÃO ---
