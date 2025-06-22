@@ -231,7 +231,7 @@
                     const messaging = getMessaging(app);
                     //  console.log("2. Objeto de Messaging criado.");
 
-                    const swRegistration = await navigator.serviceWorker.register('/placar_domino/firebase-messaging-sw.js', {
+                    const swRegistration = await navigator.serviceWorker.register('/placar_domino/service-worker.js', {
                         scope: '/placar_domino/'
                     });
                     //  console.log("3. Service Worker registrado com sucesso. Escopo:", swRegistration.scope);
