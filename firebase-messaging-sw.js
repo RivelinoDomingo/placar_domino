@@ -10,6 +10,7 @@ const firebaseConfig = {
     storageBucket: "placar-domino.firebasestorage.app",
     messagingSenderId: "187178310074",
     appId: "1:187178310074:web:5f56292dea8dc776532583",
+    measurementId: "G-BL3W42DJ3M"
 };
 
 // Inicializa o Firebase
