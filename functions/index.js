@@ -11,8 +11,10 @@ const db = getFirestore();
 // garantindo que ela rode perto do seu banco de dados.
 const region = "southamerica-east1";
 
+const appIdentifier = "1:187178310074:web:5f56292dea8dc776532583";
+
 exports.playerUpdateNotifications = onDocumentUpdated({
-  document: "artifacts/{appId}/public/data/players/{playerId}",
+  document: `artifacts/${appIdentifier}/public/data/players/{playerId}`,
   region: region,
 }, async (event) => {
   try {
@@ -52,7 +54,7 @@ exports.playerUpdateNotifications = onDocumentUpdated({
 
     // 2. Se um evento relevante aconteceu, busca todos os tokens e envia
     if (title && body) {
-      const appIdentifier = event.params.appId;
+      // const appIdentifier = event.params.appId;
       const subscriptionsPath =
         `artifacts/${appIdentifier}/public/data/subscriptions`;
       const subscriptionsSnapshot =
