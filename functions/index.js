@@ -71,8 +71,11 @@ exports.playerUpdateNotifications =
         // 3. ENVIA A NOTIFICAÇÃO
         if (notificationPayload) {
           try {
+            notificationPayload.notification.icon =
+              "/placar_domino/favicon.ico";
             const response =
-      await getMessaging().sendToTopic("all", notificationPayload);
+              await getMessaging().sendToTopic("all", notificationPayload);
+
             console.log("Notificação enviada com sucesso:", response);
             return response;
           } catch (error) {
