@@ -226,30 +226,44 @@
             };
 
             async function requestNotificationPermission() {
+                console.log("1. Iniciando a solicitação de permissão...");
                 try {
                     const messaging = getMessaging(app);
+                    console.log("2. Objeto de Messaging criado.");
 
                     const swRegistration = await navigator.serviceWorker.register('/placar_domino/firebase-messaging-sw.js', {
                         scope: '/placar_domino/'
                     });
+                    console.log("3. Service Worker registrado com sucesso. Escopo:", swRegistration.scope);
 
                     const permission = await Notification.requestPermission();
+                    console.log("4. Permissão do navegador solicitada. Status:", permission);
+
                     if (permission === "granted") {
+                        console.log("5. Permissão CONCEDIDA pelo usuário. Tentando obter o token...");
+
+                        // O getToken é o ponto onde a comunicação com os servidores do Google acontece.
                         const currentToken = await getToken(messaging, {
-                            vapidKey: "BJdf45m2Tewt6PAawR7dbwpIwhP_iEsA4wirxSSOxd6dqhj1tGAJe_zTo3CznlFeTeHLdvOTYi6XjOdnbaYcqQw", // Sua chave VAPID
+                            vapidKey: "BJdf45m2Tewt6PAawR7dbwpIwhP_iEsA4wirxSSOxd6dqhj1tGAJe_zTo3CznlFeTeHLdvOTYi6XjOdnbaYcqQw",
                             serviceWorkerRegistration: swRegistration
                         });
 
                         if (currentToken) {
+                            console.log("7. SUCESSO! Token do dispositivo obtido:", currentToken);
                             const tokensRef = collection(db, "fcmTokens");
                             await setDoc(doc(tokensRef, currentToken), { timestamp: serverTimestamp() });
                             showMessage("Notificações ativadas!", "success");
+                        } else {
+                            console.error("6. FALHA: A permissão foi dada, mas getToken() falhou e não retornou um token.");
+                            showMessage("Não foi possível obter o token. Tente limpar os dados do site no navegador.", "error");
                         }
                     } else {
+                        console.log("5. Permissão NEGADA pelo usuário.");
                         showMessage("Permissão para notificações não concedida.", "info");
                     }
                 } catch (error) {
-                    console.error("Erro ao solicitar permissão de notificação:", error);
+                    // Este bloco 'catch' é onde o seu erro está caindo.
+                    console.error("ERRO CRÍTICO na função requestNotificationPermission:", error);
                     showMessage("Falha ao registrar o serviço de notificação.", "error");
                 }
             }
