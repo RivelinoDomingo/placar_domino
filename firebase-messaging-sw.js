@@ -1,4 +1,4 @@
-// Importa os scripts do Firebase (versão compatível para Service Workers)
+// ATENÇÃO: Use a sintaxe -compat para Service Workers
 importScripts("https://www.gstatic.com/firebasejs/11.6.1/firebase-app-compat.js");
 importScripts("https://www.gstatic.com/firebasejs/11.6.1/firebase-messaging-compat.js");
 
@@ -13,20 +13,22 @@ const firebaseConfig = {
 };
 
 firebase.initializeApp(firebaseConfig);
+
 const messaging = firebase.messaging();
 
 // CÓDIGO NOVO E CORRIGIDO para lidar com o payload 'data'
 messaging.onBackgroundMessage((payload) => {
-    console.log("[service-worker.js] Mensagem em segundo plano recebida: ", payload);
+  console.log("[firebase-messaging-sw.js] Mensagem em segundo plano recebida: ", payload);
 
-    // Extrai o título e o corpo do objeto 'data'
-    const notificationTitle = payload.data.title;
-    const notificationOptions = {
-        body: payload.data.body,
-        icon: payload.data.icon,
-        badge: payload.data.badge, // Importante para ícones na barra de status do Android
-    };
+  // Extrai o título e o corpo do objeto 'data'
+  const notificationTitle = payload.data.title;
+  const notificationOptions = {
+    body: payload.data.body,
+    icon: payload.data.icon,
+    badge: payload.data.badge, // Importante para ícones na barra de status do Android
+    vibrate: [100, 50, 100], // Adiciona uma vibração
+  };
 
-    // Exibe a notificação
-    self.registration.showNotification(notificationTitle, notificationOptions);
+  // Exibe a notificação
+  self.registration.showNotification(notificationTitle, notificationOptions);
 });
