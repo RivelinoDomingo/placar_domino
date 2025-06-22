@@ -250,7 +250,7 @@
 
                         if (currentToken) {
                             console.log("7. SUCESSO! Token do dispositivo obtido:", currentToken);
-                            const tokensRef = collection(db, "fcmTokens");
+                            const tokensRef = collection(db, `artifacts/${appIdentifier}/public/data/subscriptions`);
                             await setDoc(doc(tokensRef, currentToken), { timestamp: serverTimestamp() });
                             showMessage("Notificações ativadas!", "success");
                         } else {
