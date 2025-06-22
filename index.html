@@ -1166,30 +1166,35 @@
                 const player = appState.players[playerId];
                 if (!player) return;
 
-                // --- INÍCIO DA LÓGICA CORRIGIDA E FINAL ---
-
-                // Prepara o objeto de atualização
                 const updates = {};
-
-                // Garante que o valor da série não fique negativo
                 const seriesStatName = `${stat}NaSerie`; // ex: 'raiosNaSerie'
+
+                const currentStatValue = player[stat] || 0;
                 const currentSeriesValue = player[seriesStatName] || 0;
-                if (currentSeriesValue + amount < 0) {
-                    showMessage(`Não é possível ter valor de série negativo.`, 'error');
-                    return; // Interrompe se a operação resultar em negativo
+
+                // 1. Verifica se a operação é válida para a estatística principal
+                if (currentStatValue + amount < 0) {
+                    showMessage(`Não é possível ter valor negativo para ${stat}.`, 'error');
+                    return; // Interrompe se o valor principal ficaria negativo
                 }
+                updates[stat] = increment(amount);
 
-                // Adiciona AMBAS as atualizações ao mesmo objeto 'updates'
-                // usando a sintaxe de colchetes para nomes de propriedade dinâmicos.
-                updates[stat] = increment(amount);         // Ex: updates['raios'] = increment(1)
-                updates[seriesStatName] = increment(amount); // Ex: updates['raiosNaSerie'] = increment(1)
-
-                // --- FIM DA LÓGICA CORRIGIDA ---
+                // 2. Verifica se a operação é válida para a estatística da série
+                // Se for válida, adiciona ao objeto de atualização.
+                // Se não for (ex: tentar subtrair de 0), ela simplesmente não é adicionada,
+                // permitindo que a estatística principal seja atualizada mesmo assim.
+                if (currentSeriesValue + amount >= 0) {
+                    updates[seriesStatName] = increment(amount);
+                } else {
+                    console.warn(`A estatística de série para "${stat}" não foi decrementada pois já é 0.`);
+                }
 
                 const playerDocRef = doc(playersCollectionRef(), playerId);
                 try {
-                    // Executa a atualização no banco de dados com AMBOS os campos
-                    await updateDoc(playerDocRef, updates);
+                    // Apenas executa a atualização se houver algo para mudar
+                    if (Object.keys(updates).length > 0) {
+                        await updateDoc(playerDocRef, updates);
+                    }
 
                     // Após a atualização, chama a verificação de série para o jogador.
                     await checarStatusDaSerie(playerId);
