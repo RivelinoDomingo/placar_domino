@@ -1,106 +1,106 @@
-// Arquivo: functions/index.js - Versão final com auto-limpeza de tokens
+const {onDocumentCreated} = require("firebase-functions/v2/firestore");
+const {initializeApp} = require("firebase-admin/app");
+const {getFirestore} = require("firebase-admin/firestore");
+const {getMessaging} = require("firebase-admin/messaging");
+const logger = require("firebase-functions/logger");
 
-const {onDocumentUpdated} = require("firebase-functions/v2/firestore");
-const {logger} = require("firebase-functions");
-const admin = require("firebase-admin");
+initializeApp();
+const db = getFirestore();
 
-admin.initializeApp();
+// Define a região da função para rodar perto do seu banco de dados.
+const region = "southamerica-east1";
 
-const db = admin.firestore();
-const appIdentifier = "1:187178310074:web:5f56292dea8dc776532583";
+// Função que é acionada sempre que um NOVO DOCUMENTO é criado em 'events'.
+exports.eventNotifications = onDocumentCreated({
+  document: "artifacts/{appId}/public/data/events/{eventId}",
+  region: region,
+}, async (event) => {
+  try {
+    const eventData = event.data.data();
+    if (!eventData) {
+      logger.info("Nenhum dado no evento, encerrando.");
+      return null;
+    }
 
-exports.sendPromotionDemotionNotification = onDocumentUpdated(
-    `artifacts/${appIdentifier}/public/data/players/{playerId}`,
-    async (event) => {
-      const beforeData = event.data.before.data();
-      const afterData = event.data.after.data();
+    logger.info("Novo evento detectado:", eventData);
 
-      if (beforeData.series === afterData.series) {
-        return;
-      }
+    let title = "Novidade no Placar!";
+    let body = `${eventData.player} ${eventData.text}`;
 
-      let notificationTitle = "Atualização no Placar!";
-      let notificationBody = "";
+    switch (eventData.type) {
+      case "promotion":
+        title = "🎉 Promoção no Placar!";
+        body = `${eventData.player} ${eventData.text}`;
+        break;
+      case "demotion":
+        title = "😬 Rebaixamento no Placar";
+        body = `${eventData.player} ${eventData.text}`;
+        break;
+      case "achievement":
+        title = "⭐ Nova Conquista!";
+        body = `${eventData.player} ${eventData.text}`;
+        break;
+      case "stagnantico":
+        title = "🤺 Nova Conquista!";
+        body = `${eventData.player} ${eventData.text}`;
+        break;
+    }
 
-      const seriesOrder = ["A", "B", "C", "D", "Amador"];
-      const beforeIndex = seriesOrder.indexOf(beforeData.series);
-      const afterIndex = seriesOrder.indexOf(afterData.series);
-
-      if (afterIndex < beforeIndex) {
-        notificationTitle = "🎉 Promoção no Placar! 🎉";
-        notificationBody = `${afterData.name} subiu da Série ` +
-                           `${beforeData.series} para a Série ` +
-                           `${afterData.series}!`;
-      } else {
-        notificationTitle = "⬇️ Rebaixamento no Placar ⬇️";
-        notificationBody = `${afterData.name} caiu da Série ` +
-                           `${beforeData.series} para a Série ` +
-                           `${afterData.series}.`;
-      }
-
-      logger.info(`Preparando notificação: ${notificationBody}`);
-
-      const subscriptionsPath =
+    const appIdentifier = event.params.appId;
+    // Caminho correto para a coleção 'subscriptions'
+    const subscriptionsPath =
           `artifacts/${appIdentifier}/public/data/subscriptions`;
-      const subscriptionsSnapshot =
-        await db.collection(subscriptionsPath).get();
+    const subscriptionsSnapshot =
+          await db.collection(subscriptionsPath).get();
 
-      if (subscriptionsSnapshot.empty) {
-        logger.warn("Nenhuma inscrição encontrada.");
-        return;
+    if (subscriptionsSnapshot.empty) {
+      logger.warn("Nenhuma inscrição de notificação encontrada.");
+      return null;
+    }
+
+    const tokens = subscriptionsSnapshot.docs.map((doc) => doc.id);
+    if (tokens.length === 0) return null;
+
+    const payload = {
+      notification: {
+        title: title,
+        body: body,
+        icon: `https://rivelinodomingo.github.io/placar_domino/icone192.png`,
+      },
+      data: {
+        title: title,
+        body: body,
+        icon: `https://rivelinodomingo.github.io/placar_domino/icone192.png`,
+      },
+    };
+
+    // Envia a notificação para todos os tokens individualmente
+    const response = await getMessaging().sendToDevice(tokens, payload);
+
+    // --- INÍCIO DA LÓGICA DE AUTO-LIMPEZA (DA SUA v1.0) ---
+    const tokensToDelete = [];
+    response.results.forEach((result, index) => {
+      const error = result.error;
+      if (error) {
+        logger.error("Falha ao enviar para o token:", tokens[index], error);
+        // Se o token não é mais válido, o agendamos para remoção.
+        if (error.code === "messaging/registration-token-not-registered") {
+          logger.info(`Token [${tokens[index]}] ` +
+            `está obsoleto. Removendo do Firestore.`);
+          tokensToDelete.push(db.collection(subscriptionsPath).
+              doc(tokens[index]).delete());
+        }
       }
+    });
 
-      const tokens = subscriptionsSnapshot.docs.map((doc) => doc.id);
-      logger.info(`Encontrados ${tokens.length} tokens para enviar.`);
+    // Executa todas as exclusões de uma só vez.
+    await Promise.all(tokensToDelete);
+    logger.info("Envio concluído e limpeza de tokens inválidos realizada.");
+    // --- FIM DA LÓGICA DE AUTO-LIMPEZA ---
 
-      const payload = {
-        data: {
-          title: notificationTitle,
-          body: notificationBody,
-        },
-      };
-
-      const sendPromises = tokens.map((token) => {
-        return admin.messaging().send({
-          token: token,
-          data: payload.data,
-        });
-      });
-
-      try {
-        const results = await Promise.allSettled(sendPromises);
-        let successCount = 0;
-        let failureCount = 0;
-
-        results.forEach((result, index) => {
-          if (result.status === "fulfilled") {
-            successCount++;
-          } else {
-            failureCount++;
-            const error = result.reason;
-            const failedToken = tokens[index];
-
-            logger.error(`Falha ao enviar para o token ` +
-            `[${failedToken}]:`, error);
-
-            // =======================================================
-            // ADIÇÃO: LÓGICA DE AUTO-LIMPEZA
-            // Se o erro for de token não registrado, apague-o do banco!
-            // =======================================================
-            if (error.code === "messaging/registration-token-not-registered") {
-              logger.info(`Token [${failedToken}] ` +
-              `está obsoleto. Removendo do Firestore.`);
-              db.collection(subscriptionsPath).doc(failedToken).delete();
-            }
-          }
-        });
-
-        logger.info("Relatório de envio final:", {
-          successCount: successCount,
-          failureCount: failureCount,
-        });
-      } catch (error) {
-        logger.error("Erro CRÍTICO durante o processamento dos envios:", error);
-      }
-    },
-);
+    return null;
+  } catch (error) {
+    logger.error("Erro crítico na função eventNotifications:", error);
+    return null;
+  }
+});
