@@ -105,10 +105,13 @@
             <div id="messageBox" class="message-box"></div>
             <!-- Mesa de jogo -->
             <div id="view-game-table" class="view fade-in">
-                <div class="flex justify-between items-center mb-6">
-                    <button id="btnBackToScoreboard" class="text-gray-500 hover:text-gray-800 transition">← Voltar ao Placar</button>
-                    <div class="text-center"><h2 class="text-3xl font-bold font-condensed">MODO PARTIDA</h2><p id="gameStatusText" class="text-gray-500">Selecione os jogadores para começar</p></div>
-                    <div class="w-24"></div>
+                <div class="flex justify-between mb-6" bis_skin_checked="1">
+                    <div calss="items-start" bis_skin_checked="1">
+                        <button" id="btnBackToScoreboard" bis_skin_checked="1" class="text-gray-500 hover:text-gray-800 transition">←Voltar</button"></div>
+                         <div class="flex items-center" bis_skin_checked="1">
+                             <div class="text-center" bis_skin_checked="1"><h2 class="text-3xl font-bold font-condensed">MODO PARTIDA</h2><p id="gameStatusText" class="text-gray-500">Vez de teste1</p></div>
+                             <div class="w-24 sm:w-56" bis_skin_checked="1"></div>
+                        </div>
                 </div>
                 <div id="game-type-selector" class="flex justify-center gap-4 mb-4"><button data-mode="individual" class="gameModeBtn font-semibold py-2 px-4 rounded-lg shadow">Individual</button><button data-mode="duplas" class="gameModeBtn font-semibold py-2 px-4 rounded-lg">Duplas</button></div>
                 <div id="raio-mode-selector" class="flex justify-center items-center gap-2 mb-6"><input type="checkbox" id="raioModeCheckbox" class="h-5 w-5 rounded border-gray-300 text-blue-600 focus:ring-blue-500 cursor-pointer"><label for="raioModeCheckbox" class="font-semibold text-gray-700 cursor-pointer select-none">Partida de Raio ⚡️</label></div>
@@ -395,7 +398,18 @@
 
             function generateScoreHTML(raiosDaPartida, pontosAtuais, isRaioMatch) {
                 // Mostra os raios Ganhos APENAS nesta partida.
-                const raiosHTML = Array.from({ length: raiosDaPartida }, () => `<span class="text-2xl" title="Raio da Partida">⚡️</span>`).join('');
+                // Gera o contador de raios
+                const raioCounterHTML = raiosDaPartida > 1 ? `
+                    <span class="ml-1 text-sm font-bold text-yellow-700">(x${raiosDaPartida})</span>
+                ` : '';
+
+                const raiosHTML = raiosDaPartida > 0 ? `
+                    <div class="flex items-center justify-center text-2xl mt-2">
+                        <span>⚡️</span>
+                        ${raioCounterHTML}
+                    </div>
+                ` : '<div class="h-9"></div>'; // Espaço reservado para manter a altura
+                // const raiosHTML = Array.from({ length: raiosDaPartida }, () => `<span class="text-2xl" title="Raio da Partida">⚡️</span>`).join('');
 
                 let pontosHTML = '';
                 if (isRaioMatch) {
@@ -403,7 +417,17 @@
                 } else {
                     pontosHTML = Array.from({ length: pontosAtuais }, () => `<div class="point-dot bg-yellow-400" title="Ponto"></div>`).join('');
                 }
-                return raiosHTML + pontosHTML;
+
+                let renderRaiosAndPoints = `
+                <div class="flex flex-col items-center my-2">  <!-- flex-col para empilhar verticalmente -->
+                    ${raiosHTML}
+                    <div class="flex justify-center gap-1.5 mt-1"> <!-- Container para os pontos -->
+                        ${pontosHTML}
+                    </div>
+                </div>
+                `;
+
+                return renderRaiosAndPoints;
             }
 
             function renderActiveGame(gameData) {
@@ -1360,7 +1384,7 @@
 
                     // Constrói o HTML completo do card do jogador, incluindo o scoreHTML
                     slotDiv.innerHTML = `
-                        <div class="bg-white p-3 rounded-lg shadow-md text-center w-32 sm:w-40 transition-all transform hover:scale-105" data-player-id-on-table="${playerId}">
+                        <div class="bg-white p-3 rounded-lg shadow-md text-center w-15 sm:w-40 transition-all transform hover:scale-105" data-player-id-on-table="${playerId}">
                             <div class="font-bold text-lg truncate">${player.name}</div>
                             <div class="text-sm text-gray-500 mb-2">Série ${player.series}</div>
                             ${teamIndicator}
@@ -1696,6 +1720,7 @@
                 let newSeries = player.series;
                 let promotion = false;
                 let demotion = false;
+                let stagnant = false;
 
                 // 1. Verifica se houve promoção
                 if ((player.raiosNaSerie || 0) >= 15) {
@@ -1703,6 +1728,7 @@
                         newSeries = seriesOrder[currentIndex + 1];
                         promotion = true;
                     }
+                    else stagnant = true;
                 }
                 // 2. Verifica se houve rebaixamento
                 else if ((player.lambretasNaSerie || 0) >= 15) {
@@ -1710,10 +1736,11 @@
                         newSeries = seriesOrder[currentIndex - 1];
                         demotion = true;
                     }
+                    else stagnant = true;   // Player que estava em amador permanece com raios e lambretas zerados
                 }
 
                 // 3. Se houve alguma mudança, atualiza o perfil do jogador
-                if (promotion || demotion) {
+                if (promotion || demotion || stagnant) {
                     const playerDocRef = doc(playersCollectionRef(), playerId);
                     // Zera os contadores para a nova série e atualiza a série
                     await updateDoc(playerDocRef, {
