@@ -1,10 +1,10 @@
 const {onDocumentCreated} = require("firebase-functions/v2/firestore");
 const {getFirestore} = require("firebase-admin/firestore");
-const {initializeApp, applicationDefault} = require("firebase-admin/app");
+const {initializeApp} = require("firebase-admin/app");
 const {getMessaging} = require("firebase-admin/messaging");
 const {logger} = require("firebase-functions");
 
-initializeApp({credential: applicationDefault()});
+initializeApp();
 
 const appIdentifier = "1:187178310074:web:5f56292dea8dc776532583";
 // Define a região da função para rodar perto do seu banco de dados.
@@ -48,11 +48,11 @@ exports.sendNotification = onDocumentCreated(
       const message = {
         notification: {title, body},
         tokens,
-        // webpush: {
-          // fcmOptions: {
-            // link: "https://rivelinodomingo.github.io/placar_domino/index.html",
-          // },
-        // },
+        webpush: {
+          fcmOptions: {
+            link: "https://rivelinodomingo.github.io/placar_domino/",
+          },
+        },
       };
 
       try {
