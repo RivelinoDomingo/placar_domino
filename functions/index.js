@@ -11,10 +11,10 @@ const appIdentifier = "1:187178310074:web:5f56292dea8dc776532583";
 
 // Define a região para a função, garantindo
 // que ela rode perto do seu banco de dados.
-const region = "southamerica-east1";
+// const region = "southamerica-east1";
 
 exports.sendPromotionDemotionNotification = onDocumentUpdated(`artifacts/` +
-  `${appIdentifier}/public/data/events/{eventId}`, region, async (event) => {
+  `${appIdentifier}/public/data/events/{eventId}`, async (event) => {
   const eventData = event.data.data();
   if (!eventData || !eventData.player || !eventData.text) {
     logger.warn("Evento mal formatado ou incompleto, " +

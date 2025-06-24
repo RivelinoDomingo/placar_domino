@@ -46,7 +46,7 @@ messaging.onBackgroundMessage((payload) => {
 
 
 // SEU CÓDIGO ANTIGO DE CACHE CONTINUA AQUI
-const CACHE_NAME = 'domino-score-v5';
+const CACHE_NAME = 'domino-score-v6';
 const urlsToCache = [
     '/placar_domino/',
     '/placar_domino/index.html',
