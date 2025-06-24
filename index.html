@@ -237,9 +237,9 @@
                     const messaging = getMessaging(app);
                     //  console.log("2. Objeto de Messaging criado.");
 
-                    const swRegistration = await navigator.serviceWorker.register('/placar_domino/service-worker.js', {
-                        scope: '/placar_domino/'
-                    });
+                    await navigator.serviceWorker.register('/placar_domino/service-worker.js', { scope: '/placar_domino/' });
+                    const swRegistration = await navigator.serviceWorker.ready;
+
                     //  console.log("3. Service Worker registrado com sucesso. Escopo:", swRegistration.scope);
 
                     const permission = await Notification.requestPermission();
@@ -618,6 +618,7 @@
                             for (const jogadorID of playerIds) {
                                 await checarStatusDaSerie(jogadorID);
                             }
+
                             const historicoDeRaios = newHistory.filter(r => r.completedRaio);
 
                             if (historicoDeRaios.length >= 3) {
@@ -1906,16 +1907,6 @@
 
 
         </script>
-        <script>
-            if ("serviceWorker" in navigator) {
-                window.addEventListener("load", () => {
-                navigator.serviceWorker.register("service-worker.js")
-                    .then((reg) => console.log("SW registrado", reg))
-                    .catch((err) => console.error("SW erro", err));
-                });
-            }
-        </script>
-
     </body>
     </html>
 

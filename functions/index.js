@@ -42,25 +42,23 @@ exports.sendNotification = onDocumentCreated({
 
   const tokens = snapshot.docs.map((doc) => doc.id);
   const payload = {
-    notification: {
-      title,
-      body,
-      icon: "https://rivelinodomingo.github.io/placar_domino/" +
-        "icons/icone192.png",
-      actions: [
-        {
-          action: "abrir-app",
-          title: "Abrir Placar",
-        },
-      ],
-    },
+    notification: {title, body}, // simples
     webpush: {
+      notification: {
+        icon: "https://rivelinodomingo.github.io/placar_domino/icons/icon-192.png",
+        actions: [
+          {
+            action: "abrir-app",
+            title: "Abrir Placar",
+          },
+        ],
+      },
       fcmOptions: {
         link: "https://rivelinodomingo.github.io/placar_domino/index.html",
       },
     },
-  };
 
+  };
 
   const sendResults = await Promise.allSettled(
       tokens.map((token) =>
