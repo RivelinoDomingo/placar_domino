@@ -49,10 +49,9 @@ messaging.onBackgroundMessage((payload) => {
 const CACHE_NAME = 'domino-score-v6';
 const urlsToCache = [
     '/placar_domino/',
+    '/placar_domino/icons/',
     '/placar_domino/index.html',
     '/placar_domino/manifest.json',
-    '/placar_domino/icone192.png',
-    '/placar_domino/icone512.png',
     '/placar_domino/favicon.ico',
 ];
 
@@ -92,3 +91,13 @@ self.addEventListener('fetch', (event) => {
         })
     );
 });
+
+self.addEventListener('notificationclick', function(event) {
+    event.notification.close();
+    if (event.action === 'abrir-app') {
+      clients.openWindow("https://rivelinodomingo.github.io/placar_domino/");
+    } else {
+      clients.openWindow("https://rivelinodomingo.github.io/placar_domino/");
+    }
+});
+
