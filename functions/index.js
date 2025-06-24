@@ -48,11 +48,11 @@ exports.sendNotification = onDocumentCreated(
       const message = {
         notification: {title, body},
         tokens,
-        webpush: {
-          fcmOptions: {
-            link: "https://rivelinodomingo.github.io/placar_domino/index.html",
-          },
-        },
+        // webpush: {
+          // fcmOptions: {
+            // link: "https://rivelinodomingo.github.io/placar_domino/index.html",
+          // },
+        // },
       };
 
       try {
