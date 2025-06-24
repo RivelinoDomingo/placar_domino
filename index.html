@@ -231,45 +231,30 @@
                 gameMode: { goToBtn: document.getElementById('btnGoToGameMode'), backBtn: document.getElementById('btnBackToScoreboard'), modeButtons: document.querySelectorAll('.gameModeBtn'), raioCheckbox: document.getElementById('raioModeCheckbox'), startBtn: document.getElementById('btnStartGame'), activeButtons: document.getElementById('activeGameButtons'), launchScoreBtn: document.getElementById('btnLaunchScore'), undoBtn: document.getElementById('btnUndoRound'), swapPlayerBtn: document.getElementById('btnSwapPlayer'), endBtn: document.getElementById('btnEndGame'), newGameBtn: document.getElementById('btnNewGame'), shareBtn: document.getElementById('btnShareWhatsapp'), backToScoreboard_GameOverBtn: document.getElementById('btnBackToScoreboard_GameOver'), statusText: document.getElementById('gameStatusText'), gameOver: { winnerText: document.getElementById('gameOverWinnerText'), gameSummaryBtn: document.getElementById('btnGameSummary'), scoreText: document.getElementById('gameOverScoreText')}}
             };
 
-            async function requestNotificationPermission() {
-                //  console.log("1. Iniciando a solicitação de permissão...");
+            async function requestPermissionAndGetToken(swRegistration) {
                 try {
-                    const messaging = getMessaging(app);
-                    //  console.log("2. Objeto de Messaging criado.");
-
-                    const swRegistration = await navigator.serviceWorker.register('/placar_domino/service-worker.js', { scope: '/placar_domino/'});
-
-                    //  console.log("3. Service Worker registrado com sucesso. Escopo:", swRegistration.scope);
-
                     const permission = await Notification.requestPermission();
-                    //  console.log("4. Permissão do navegador solicitada. Status:", permission);
+                    if (permission !== "granted") {
+                    showMessage("Permissão negada para notificações.", "info");
+                    return;
+                    }
 
-                    if (permission === "granted") {
-                        //  console.log("5. Permissão CONCEDIDA pelo usuário. Tentando obter o token...");
+                    const messaging = getMessaging(app);
+                    const currentToken = await getToken(messaging, {
+                    vapidKey: "SUA_VAPID_KEY",
+                    serviceWorkerRegistration: swRegistration
+                    });
 
-                        // O getToken é o ponto onde a comunicação com os servidores do Google acontece.
-                        const currentToken = await getToken(messaging, {
-                            vapidKey: "BJdf45m2Tewt6PAawR7dbwpIwhP_iEsA4wirxSSOxd6dqhj1tGAJe_zTo3CznlFeTeHLdvOTYi6XjOdnbaYcqQw",
-                            serviceWorkerRegistration: swRegistration
-                        });
-
-                        if (currentToken) {
-                            //  console.log("7. SUCESSO! Token do dispositivo obtido:", currentToken);
-                            const tokensRef = collection(db, `artifacts/${appIdentifier}/public/data/subscriptions`);
-                            await setDoc(doc(tokensRef, currentToken), { timestamp: serverTimestamp() });
-                            showMessage("Notificações ativadas!", "success");
-                        } else {
-                            console.error("6. FALHA: A permissão foi dada, mas getToken() falhou e não retornou um token.");
-                            showMessage("Não foi possível obter o token. Tente limpar os dados do site no navegador.", "error");
-                        }
+                    if (currentToken) {
+                    const tokensRef = collection(db, `artifacts/${appIdentifier}/public/data/subscriptions`);
+                    await setDoc(doc(tokensRef, currentToken), { timestamp: serverTimestamp() });
+                    showMessage("Notificações ativadas!", "success");
                     } else {
-                        //  console.log("5. Permissão NEGADA pelo usuário.");
-                        showMessage("Permissão para notificações não concedida.", "info");
+                    showMessage("Token não pôde ser obtido.", "error");
                     }
                 } catch (error) {
-                    // Este bloco 'catch' é onde o seu erro está caindo.
-                    console.error("ERRO CRÍTICO na função requestNotificationPermission:", error);
-                    showMessage("Falha ao registrar o serviço de notificação.", "error");
+                    console.error("Erro ao obter permissão ou token:", error);
+                    showMessage("Erro ao ativar notificações.", "error");
                 }
             }
 
@@ -1826,7 +1811,21 @@
             });
 
             ui.adminFab.addPlayerBtn.addEventListener('click', addNovoJogador);
-            ui.notificationsBtn.addEventListener('click', requestNotificationPermission);
+            ui.notificationsBtn.addEventListener('click',async () => {
+                if ('serviceWorker' in navigator && 'Notification' in window) {
+                try {
+                    const registration = await navigator.serviceWorker.register('/placar_domino/service-worker.js', {
+                    scope: '/placar_domino/'
+                    });
+                    console.log('SW registrado:', registration.scope);
+                    requestPermissionAndGetToken(registration);
+                } catch (error) {
+                    console.error('Erro ao registrar Service Worker:', error);
+                }
+                } else {
+                console.warn("SW ou Notification API não suportado");
+                }
+            });
 
             ui.gameMode.goToBtn.addEventListener('click', handleStartGameClick);
             ui.gameMode.backBtn.addEventListener('click', () => endGame(false));
