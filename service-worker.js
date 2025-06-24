@@ -49,7 +49,8 @@ messaging.onBackgroundMessage((payload) => {
 const CACHE_NAME = 'domino-score-v8';
 const urlsToCache = [
     '/placar_domino/',
-    '/placar_domino/icons/',
+    '/placar_domino/icons/icone192.png',
+    '/placar_domino/icons/icone512.png',
     '/placar_domino/index.html',
     '/placar_domino/manifest.json',
     '/placar_domino/favicon.ico',
