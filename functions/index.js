@@ -7,9 +7,11 @@ const {logger} = require("firebase-functions");
 initializeApp({credential: applicationDefault()});
 
 const appIdentifier = "1:187178310074:web:5f56292dea8dc776532583";
+// Define a região da função para rodar perto do seu banco de dados.
+const region = "southamerica-east1";
 
 exports.sendNotification = onDocumentCreated(
-    `artifacts/${appIdentifier}/public/data/events/{eventId}`,
+    `artifacts/${appIdentifier}/public/data/events/{eventId}`, region,
     async (event) => {
       const db = getFirestore();
       const eventData = event.data.data();
