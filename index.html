@@ -231,13 +231,6 @@
                 gameMode: { goToBtn: document.getElementById('btnGoToGameMode'), backBtn: document.getElementById('btnBackToScoreboard'), modeButtons: document.querySelectorAll('.gameModeBtn'), raioCheckbox: document.getElementById('raioModeCheckbox'), startBtn: document.getElementById('btnStartGame'), activeButtons: document.getElementById('activeGameButtons'), launchScoreBtn: document.getElementById('btnLaunchScore'), undoBtn: document.getElementById('btnUndoRound'), swapPlayerBtn: document.getElementById('btnSwapPlayer'), endBtn: document.getElementById('btnEndGame'), newGameBtn: document.getElementById('btnNewGame'), shareBtn: document.getElementById('btnShareWhatsapp'), backToScoreboard_GameOverBtn: document.getElementById('btnBackToScoreboard_GameOver'), statusText: document.getElementById('gameStatusText'), gameOver: { winnerText: document.getElementById('gameOverWinnerText'), gameSummaryBtn: document.getElementById('btnGameSummary'), scoreText: document.getElementById('gameOverScoreText')}}
             };
 
-            if ("serviceWorker" in navigator) {
-                window.addEventListener("load", () => {
-                navigator.serviceWorker.register("service-worker.js")
-                    .then((reg) => console.log("SW registrado", reg))
-                    .catch((err) => console.error("SW erro", err));
-                });
-            }
             async function requestNotificationPermission() {
                 //  console.log("1. Iniciando a solicitação de permissão...");
                 try {
@@ -621,6 +614,10 @@
 
                         // --- LÓGICA DE CONQUISTAS COMPLETA E RESTAURADA ---
                         if (completedRaio) {
+                            // Atualiza as séries dos jogadores da partida a cada raio ganho
+                            for (const jogadorID of playerIds) {
+                                await checarStatusDaSerie(jogadorID);
+                            }
                             const historicoDeRaios = newHistory.filter(r => r.completedRaio);
 
                             if (historicoDeRaios.length >= 3) {
@@ -649,15 +646,6 @@
                                         await concederConquista(jogadorId, 'azarao', `sofreu uma sequência de ${derrotasConsecutivas} lambretas! 🚑🤕🤕`);
                                     }
                                 }
-                            }
-                        }
-                        // --- CHAMA A VERIFICAÇÃO DE SÉRIE APÓS A ATUALIZAÇÃO ---
-                        // Se um raio foi completo, verifica a série do vencedor e dos perdedores
-                        if (completedRaio) {
-                            await checarStatusDaSerie(winnerId);
-                            const loserIds = currentGame.playerIds.filter(id => id !== winnerId);
-                            for (const loserId of loserIds) {
-                                await checarStatusDaSerie(loserId);
                             }
                         }
                         batch.update(winnerPlayerDocRef, playerUpdates);
@@ -1767,6 +1755,8 @@
                         }
                     } else if (demotion) {
                         await registrarEvento('demotion', playerId, `foi rebaixado para a Série ${newSeries}.`);
+                    }else if (stagnant) {
+                        await registrarEvento('stagnant', playerId, `permanece na Série ${newSeries}.`);
                     }
                 }
             }
@@ -1916,6 +1906,16 @@
 
 
         </script>
+        <script>
+            if ("serviceWorker" in navigator) {
+                window.addEventListener("load", () => {
+                navigator.serviceWorker.register("service-worker.js")
+                    .then((reg) => console.log("SW registrado", reg))
+                    .catch((err) => console.error("SW erro", err));
+                });
+            }
+        </script>
+
     </body>
     </html>
 
