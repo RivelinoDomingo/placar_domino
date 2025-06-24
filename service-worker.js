@@ -32,10 +32,10 @@ messaging.onBackgroundMessage((payload) => {
         body: payload.data.body,
 
         // MELHORIA 1: Usando a URL completa e absoluta dos ícones
-        icon: "https://rivelinodomingo.github.io/placar_domino/icone192.png",
+        icon: "https://rivelinodomingo.github.io/placar_domino/icons/icone192.png",
 
         // MELHORIA 2: Adicionando a propriedade 'badge', crucial para o Android
-        badge: "https://rivelinodomingo.github.io/placar_domino/icone192.png",
+        badge: "https://rivelinodomingo.github.io/placar_domino/icons/icone192.png",
 
         // Opcional: Adicionar uma vibração para a notificação no celular
         vibrate: [100, 50, 100],

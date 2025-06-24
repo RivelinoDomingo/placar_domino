@@ -45,7 +45,7 @@ exports.sendNotification = onDocumentCreated({
     notification: {
       title,
       body,
-      icon: "https://rivelinodomingo.github.io/placar_domino/icons/icon-192.png",
+      icon: "https://rivelinodomingo.github.io/placar_domino/icons/icone192.png",
       actions: [
         {
           action: "abrir-app",
