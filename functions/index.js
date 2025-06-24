@@ -50,7 +50,7 @@ exports.sendNotification = onDocumentCreated(
         tokens,
         webpush: {
           fcmOptions: {
-            link: "https://rivelinodomingo.github.io/placar_domino/",
+            link: "https://rivelinodomingo.github.io/placar_domino/index.html",
           },
         },
       };
