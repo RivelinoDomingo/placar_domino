@@ -11,8 +11,8 @@ const appIdentifier = "1:187178310074:web:5f56292dea8dc776532583";
 const region = "southamerica-east1";
 
 exports.sendNotification = onDocumentCreated(
-    `artifacts/${appIdentifier}/public/data/events/{eventId}`, region,
-    async (event) => {
+    {document: `artifacts/${appIdentifier}/public/data/events/{eventId}`,
+      region: region}, async (event) => {
       const db = getFirestore();
       const eventData = event.data.data();
 
