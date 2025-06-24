@@ -541,6 +541,23 @@
                         let completedRaio = false;
                         let lambretaLosersThisRound = [];
                         let scoresBeforeReset = {};
+                        let ladraoDeRaio = {};
+
+                        let jogadorComTres = '';
+                        if (newScore >= 3 && jogadorComTres === '') {
+                            // Logica de ladãro de raio
+                            for (jogadorId of playerIds){
+                                if (currentGame.scores[jogadorId] === 3) {
+                                    jogadorComTres = jogadorId;
+                                    ladraoDeRaio.push({vitma: jogadorComTres});
+                                    for (jogador of playerIds) {
+                                        if (currentGame.scores[jogador] === 0) {
+                                            ladraoDeRaio.push({ladrao: jogador})
+                                        }
+                                    }
+                                }
+                            }
+                        }
 
                         if (newScore >= WINNING_SCORE) {
                             completedRaio = true;
@@ -587,6 +604,7 @@
                             winnerId: winnerId,
                             completedRaio: completedRaio,
                             lambretaPlayerIds: lambretaLosersThisRound,
+                            ladraoDeRaio: {vitma: ladraoDeRaio.vitma, ladrao: ladraoDeRaio.ladrao},
                             stateBeforeReset: { scores: scoresBeforeReset },
                             stateAfterRound: {
                                 scores: matchUpdates.scores || currentGame.scores,
@@ -598,6 +616,16 @@
 
                         // --- LÓGICA DE CONQUISTAS COMPLETA E RESTAURADA ---
                         if (completedRaio) {
+                            // Lógica de ladrão de raios
+                            if (winnerId != ladraoDeRaio.vitma) {
+                                for (jogador of ladraoDeRaio.ladrao){
+                                    if (winnerId === jogador) {
+                                        showMessage(`${appState.players[jogador].name} Roubou o raio de ${appState.players[ladraoDeRaio.vitma].name} 🕵️‍♂️🕵️‍♂️`, 'info');
+                                        showMessage(`${appState.players[loserId].name} tomou uma lambreta! 🚑`, 'info');
+                                    }
+                                }
+                            }
+
                             // Atualiza as séries dos jogadores da partida a cada raio ganho
                             for (const jogadorID of playerIds) {
                                 await checarStatusDaSerie(jogadorID);

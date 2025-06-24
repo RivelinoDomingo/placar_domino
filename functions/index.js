@@ -29,6 +29,7 @@ exports.sendNotification = onDocumentCreated({
   if (type === "promotion") title = "📈 Promoção!";
   else if (type === "demotion") title = "📉 Rebaixamento!";
   else if (type === "achievement") title = "🏆 Conquista!";
+  else if (type === "stagnant") title = "🛑 Conquista!";
 
   const subscriptionsRef = db.collection(
       `artifacts/${appIdentifier}/public/data/subscriptions`,
