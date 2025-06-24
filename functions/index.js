@@ -1,112 +1,83 @@
-// Arquivo: functions/index.js - Versão final com auto-limpeza de tokens
-
-const {onDocumentUpdated} = require("firebase-functions/v2/firestore");
+const {onDocumentCreated} = require("firebase-functions/v2/firestore");
+const {getFirestore} = require("firebase-admin/firestore");
+const {initializeApp, applicationDefault} = require("firebase-admin/app");
+const {getMessaging} = require("firebase-admin/messaging");
 const {logger} = require("firebase-functions");
-const admin = require("firebase-admin");
 
-admin.initializeApp();
+initializeApp({credential: applicationDefault()});
 
-const db = admin.firestore();
 const appIdentifier = "1:187178310074:web:5f56292dea8dc776532583";
 
-// Define a região para a função, garantindo
-// que ela rode perto do seu banco de dados.
-// const region = "southamerica-east1";
+exports.sendNotification = onDocumentCreated(
+    `artifacts/${appIdentifier}/public/data/events/{eventId}`,
+    async (event) => {
+      const db = getFirestore();
+      const eventData = event.data.data();
 
-exports.sendPromotionDemotionNotification = onDocumentUpdated(`artifacts/` +
-  `${appIdentifier}/public/data/events/{eventId}`, async (event) => {
-  const eventData = event.data.data();
-  if (!eventData || !eventData.player || !eventData.text) {
-    logger.warn("Evento mal formatado ou incompleto, " +
-              "encerrando.", event.data.id);
-    return null;
-  }
-
-  logger.info("Novo evento detectado:", eventData);
-
-  let title = "Novidade no Placar!";
-  const body = `${eventData.player} ${eventData.text}`;
-
-  switch (eventData.type) {
-    case "promotion":
-      title = "🎉 Promoção no Placar!";
-      break;
-    case "demotion":
-      title = "😬 Rebaixamento no Placar";
-      break;
-    case "achievement":
-      title = "⭐ Nova Conquista!";
-      break;
-    case "stagnant":
-      title = "🤺 Nova Conquista!";
-      break;
-  }
-
-  logger.info(`Preparando notificação: ${eventData}`);
-
-  const subscriptionsPath =
-          `artifacts/${appIdentifier}/public/data/subscriptions`;
-  const subscriptionsSnapshot =
-        await db.collection(subscriptionsPath).get();
-
-  if (subscriptionsSnapshot.empty) {
-    logger.warn("Nenhuma inscrição encontrada.");
-    return;
-  }
-
-  const tokens = subscriptionsSnapshot.docs.map((doc) => doc.id);
-  logger.info(`Encontrados ${tokens.length} tokens para enviar.`);
-
-  const payload = {
-    data: {
-      title: title,
-      body: body,
-    },
-  };
-
-  const sendPromises = tokens.map((token) => {
-    return admin.messaging().send({
-      token: token,
-      data: payload.data,
-    });
-  });
-
-  try {
-    const results = await Promise.allSettled(sendPromises);
-    let successCount = 0;
-    let failureCount = 0;
-
-    results.forEach((result, index) => {
-      if (result.status === "fulfilled") {
-        successCount++;
-      } else {
-        failureCount++;
-        const error = result.reason;
-        const failedToken = tokens[index];
-
-        logger.error(`Falha ao enviar para o token ` +
-            `[${failedToken}]:`, error);
-
-        // =======================================================
-        // ADIÇÃO: LÓGICA DE AUTO-LIMPEZA
-        // Se o erro for de token não registrado, apague-o do banco!
-        // =======================================================
-        if (error.code ===
-                "messaging/registration-token-not-registered") {
-          logger.info(`Token [${failedToken}] ` +
-                `está obsoleto. Removendo do Firestore.`);
-          db.collection(subscriptionsPath).doc(failedToken).delete();
-        }
+      if (!eventData || !eventData.player || !eventData.text) {
+        logger.warn("Evento mal formatado ou incompleto:", eventData);
+        return null;
       }
-    });
 
-    logger.info("Relatório de envio final:", {
-      successCount: successCount,
-      failureCount: failureCount,
-    });
-  } catch (error) {
-    logger.error("Erro CRÍTICO durante o processamento" +
-            "dos envios:", error);
-  }
-},
+      const {player, text, type} = eventData;
+
+      let title = "Nova Atualização no Placar!";
+      const body = `${player} ${text}`;
+
+      if (type === "promotion") {
+        title = "📈 Promoção!";
+      } else if (type === "demotion") {
+        title = "📉 Rebaixamento!";
+      } else if (type === "achievement") {
+        title = "🏆 Conquista!";
+      }
+
+      const tokensSnapshot = await db
+          .collection(`artifacts/${appIdentifier}/public/data/subscriptions`)
+          .get();
+
+      if (tokensSnapshot.empty) {
+        logger.info("Nenhuma inscrição encontrada.");
+        return null;
+      }
+
+      const tokens = tokensSnapshot.docs.map((doc) => doc.id);
+
+      const message = {
+        notification: {title, body},
+        tokens,
+        webpush: {
+          fcmOptions: {
+            link: "https://rivelinodomingo.github.io/placar_domino/",
+          },
+        },
+      };
+
+      try {
+        const response = await getMessaging().sendMulticast(message);
+
+        const failedTokens = [];
+        response.responses.forEach((resp, idx) => {
+          if (!resp.success) failedTokens.push(tokens[idx]);
+        });
+
+        if (failedTokens.length > 0) {
+          logger.warn("Removendo tokens inválidos:", failedTokens);
+          const batch = db.batch();
+          failedTokens.forEach((token) => {
+            const ref = db.doc(`artifacts/${appIdentifier}/public/data` +
+            `/subscriptions/${token}`);
+            batch.delete(ref);
+          });
+          await batch.commit();
+        }
+
+        logger.info("Notificações enviadas com sucesso:",
+            response.successCount);
+        return null;
+      } catch (error) {
+        logger.error("Erro ao enviar notificações:", error);
+        return null;
+      }
+    },
 );
