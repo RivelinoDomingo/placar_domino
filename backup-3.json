@@ -5,42 +5,37 @@
       "name": "Renata",
       "series": "Amador",
       "conquistas": {
-        "azarao": 4
+        "azarao": 3
       },
-      "raiosNaSerie": 8,
-      "raios": 17,
-      "pontos": 103,
-      "partidasJogadas": 58,
-      "lambretasNaSerie": 10,
-      "lambreta": 25
+      "lambretasNaSerie": 4,
+      "lambreta": 19,
+      "partidasJogadas": 44,
+      "raiosNaSerie": 4,
+      "raios": 13,
+      "pontos": 80
     },
     {
       "id": "4lAtcPIEKcu6pYOpTbUf",
       "name": "Alexandre",
       "series": "D",
-      "conquistas": {
-        "imbativel": 1
-      },
-      "pontos": 132,
-      "raiosNaSerie": 9,
-      "raios": 22,
-      "partidasJogadas": 55,
-      "lambretasNaSerie": 5,
-      "lambreta": 13
+      "raiosNaSerie": 6,
+      "raios": 19,
+      "partidasJogadas": 47,
+      "lambretasNaSerie": 3,
+      "lambreta": 11,
+      "pontos": 115
     },
     {
       "id": "60Fi861dyBrbbVCErjXq",
       "name": "teste3",
+      "lambreta": 0,
       "series": "Amador",
-      "conquistas": {
-        "azarao": 2
-      },
-      "lambretasNaSerie": 7,
-      "lambreta": 7,
-      "partidasJogadas": 29,
-      "pontos": 52,
-      "raiosNaSerie": 3,
-      "raios": 4
+      "conquistas": {},
+      "raiosNaSerie": 0,
+      "lambretasNaSerie": 0,
+      "raios": 1,
+      "pontos": 17,
+      "partidasJogadas": 6
     },
     {
       "id": "AYPmYnX34qqGae7HcIYU",
@@ -56,14 +51,14 @@
     {
       "id": "EqPTIkcP5QOiFWf2nRFw",
       "name": "CONVIDADO",
+      "raios": 0,
+      "partidasJogadas": 0,
+      "lambreta": 0,
+      "pontos": 0,
       "series": "Amador",
       "conquistas": {},
-      "lambretasNaSerie": 2,
-      "lambreta": 2,
-      "partidasJogadas": 5,
-      "pontos": 11,
-      "raiosNaSerie": 2,
-      "raios": 2
+      "raiosNaSerie": 0,
+      "lambretasNaSerie": 0
     },
     {
       "id": "KUk2C2TEJlRyIm02hmDk",
@@ -81,49 +76,37 @@
       "raios": 0,
       "series": "Amador",
       "name": "Hugo",
-      "pontos": 9,
-      "partidasJogadas": 9,
-      "lambretasNaSerie": 4,
-      "lambreta": 4
+      "pontos": 7,
+      "partidasJogadas": 7,
+      "lambretasNaSerie": 3,
+      "lambreta": 3
     },
     {
       "id": "YOYDoV9WhNmAcbFws9Hl",
       "name": "Rivelino",
       "series": "Amador",
+      "raios": 11,
       "conquistas": {
         "imbativel": 1,
         "azarao": 2
       },
-      "raiosNaSerie": 2,
-      "raios": 13,
-      "lambretasNaSerie": 5,
-      "lambreta": 25,
-      "pontos": 96,
-      "partidasJogadas": 50
+      "lambreta": 20,
+      "lambretasNaSerie": 0,
+      "raiosNaSerie": 0,
+      "partidasJogadas": 38,
+      "pontos": 79
     },
     {
       "id": "d7c2YtzqZgcCahSDD7Kf",
       "name": "teste4",
-      "series": "Amador",
-      "conquistas": {},
-      "lambretasNaSerie": 4,
-      "lambreta": 4,
-      "raiosNaSerie": 5,
-      "raios": 5,
-      "pontos": 49,
-      "partidasJogadas": 29
-    },
-    {
-      "id": "dWVq6CyXLEn9vafbp5Fo",
-      "name": "Caio",
-      "partidasJogadas": 0,
       "lambreta": 0,
-      "pontos": 0,
       "series": "Amador",
       "conquistas": {},
       "lambretasNaSerie": 0,
-      "raiosNaSerie": 2,
-      "raios": 2
+      "raiosNaSerie": 1,
+      "raios": 1,
+      "pontos": 9,
+      "partidasJogadas": 6
     },
     {
       "id": "jbhADYHEOrT5lc8wxrQI",
@@ -134,8 +117,8 @@
       "raios": 4,
       "lambretasNaSerie": 1,
       "lambreta": 1,
-      "pontos": 18,
-      "partidasJogadas": 8
+      "pontos": 17,
+      "partidasJogadas": 7
     },
     {
       "id": "jlIEtRMAWIQdaAySxIdB",
@@ -150,41 +133,40 @@
       "name": "teste2",
       "series": "Amador",
       "conquistas": {},
-      "lambretasNaSerie": 2,
-      "lambreta": 2,
-      "raiosNaSerie": 6,
-      "raios": 6,
-      "pontos": 64,
-      "partidasJogadas": 29
+      "raiosNaSerie": 1,
+      "raios": 1,
+      "lambretasNaSerie": 1,
+      "lambreta": 1,
+      "pontos": 10,
+      "partidasJogadas": 6
     },
     {
       "id": "tKqLDEFZS0uCKLzuNqhs",
       "name": "teste1",
-      "series": "Amador",
+      "partidasJogadas": 14,
+      "pontos": 27,
+      "raios": 287,
+      "raiosNaSerie": 0,
       "conquistas": {
-        "primeiro_rei": 1,
-        "imbativel": 1
+        "primeiro_rei": 1
       },
-      "lambretasNaSerie": 1,
-      "lambreta": 290,
-      "raiosNaSerie": 11,
-      "raios": 298,
-      "pontos": 94,
-      "partidasJogadas": 37
+      "lambreta": 289,
+      "lambretasNaSerie": 0,
+      "series": "Amador"
     },
     {
       "id": "u1423EoitFbGmcZOvytT",
       "series": "Amador",
       "name": "Ari",
+      "raiosNaSerie": 3,
+      "raios": 16,
       "conquistas": {
         "azarao": 3
       },
-      "lambretasNaSerie": 10,
-      "lambreta": 25,
-      "partidasJogadas": 65,
-      "pontos": 113,
-      "raiosNaSerie": 6,
-      "raios": 19
+      "partidasJogadas": 51,
+      "lambretasNaSerie": 7,
+      "lambreta": 22,
+      "pontos": 87
     },
     {
       "id": "zNO2Zp7dZlyGMcL1xBS8",
@@ -427,16 +409,6 @@
       "timestamp": {
         "_seconds": 1750548535,
         "_nanoseconds": 163000000
-      }
-    },
-    {
-      "id": "773Bcd1mnJnrVgh8P5MW",
-      "type": "achievement",
-      "player": "teste1",
-      "text": "alcançou uma sequência de 3 raio! 🔥🚀🚀",
-      "timestamp": {
-        "_seconds": 1750882868,
-        "_nanoseconds": 244000000
       }
     },
     {
@@ -867,16 +839,6 @@
       "timestamp": {
         "_seconds": 1750577383,
         "_nanoseconds": 62000000
-      }
-    },
-    {
-      "id": "PsyuICArXwet6uesSdDO",
-      "type": "achievement",
-      "player": "Alexandre",
-      "text": "alcançou uma sequência de 3 raio! 🔥🚀🚀",
-      "timestamp": {
-        "_seconds": 1750901743,
-        "_nanoseconds": 318000000
       }
     },
     {
@@ -1340,26 +1302,6 @@
       }
     },
     {
-      "id": "dL72NJ73stlLSsTRIazm",
-      "type": "achievement",
-      "player": "teste3",
-      "text": "sofreu uma sequência de 3 lambretas! 🚑🤕🤕",
-      "timestamp": {
-        "_seconds": 1750882868,
-        "_nanoseconds": 419000000
-      }
-    },
-    {
-      "id": "dmVE1AIeHVmGlS1jpZhg",
-      "type": "achievement",
-      "player": "teste3",
-      "text": "sofreu uma sequência de 3 lambretas! 🚑🤕🤕",
-      "timestamp": {
-        "_seconds": 1750878398,
-        "_nanoseconds": 17000000
-      }
-    },
-    {
       "id": "dyZfzGzdsEYhNVuG7uWv",
       "type": "promotion",
       "player": "teste5",
@@ -1407,16 +1349,6 @@
       "timestamp": {
         "_seconds": 1750627260,
         "_nanoseconds": 160000000
-      }
-    },
-    {
-      "id": "fC7NGpJnyK4nmHPxhxH8",
-      "type": "achievement",
-      "player": "Renata",
-      "text": "sofreu uma sequência de 3 lambretas! 🚑🤕🤕",
-      "timestamp": {
-        "_seconds": 1750832485,
-        "_nanoseconds": 766000000
       }
     },
     {
