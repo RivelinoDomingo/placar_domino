@@ -1888,12 +1888,25 @@
                     // Registra o evento no feed de atividades
                     if (promotion) {
                         await registrarEvento('promotion', playerId, `foi promovido para a Série ${newSeries}! 🎉`);
+
+                        // Verifica se é o primeiro a chegar na Série A
                         if (newSeries === 'A' && !player.conquistas?.primeiro_rei) {
                             await concederConquista(playerId, 'primeiro_rei', 'se tornou o Primeiro Rei do Placar! 👑');
                         }
-                    } else if (demotion) {
+
+                        // Verifica se é o primeiro a chegar nesta série
+                        const jogadoresNaSerie = Object.values(appState.players).filter(p =>
+                            p.series === newSeries && p.id !== playerId
+                        );
+
+                        if (jogadoresNaSerie.length === 0) {
+                            await concederConquista(playerId, 'desbravador', `foi o primeiro a alcançar a Série ${newSeries}! 🧗‍♂️`);
+                        }
+                    }
+                    else if (demotion) {
                         await registrarEvento('demotion', playerId, `foi rebaixado para a Série ${newSeries}.`);
-                    }else if (stagnant) {
+                    }
+                    else if (stagnant) {
                         await registrarEvento('stagnant', playerId, `permanece na Série ${newSeries}.`);
                     }
                 }
