@@ -49,16 +49,13 @@
             #liveMatchChevron.open {
                 transform: rotate(180deg);
             }
-            .base {
-                margin: 8px -16px;
+            .top-player {
+                background-color: #f0fdf4; /* Verde muito claro */
+                border-left: 4px solid #22c55e; /* Verde */
             }
-            .coluna {
-                floar: center;
-                width: 25%;
-            }
-            .conteudo {
-                background-color: gray;
-                padding: 15px;
+            .bottom-player {
+                background-color: #fef2f2; /* Vermelho muito claro */
+                border-left: 4px solid #ef4444; /* Vermelho */
             }
         </style>
     </head>
@@ -207,6 +204,7 @@
                 imbativel: { icon: '🔥', name: 'Imbatível', description: 'Venceu 3 raios seguidos.' },
                 desbravador: { icon: '🧗‍♂️', name: 'Desbravador', description: 'Primeiro a chegar a uma nova série.'},
                 azarao: { icon: '🚑', name: 'Azarão', description: 'Sofreu 3 lambretas seguidas.' },
+                roubo: { icon: '👮🏻🚔', name: 'Ladrão', description: 'Ladrão de raio' }
             };
 
             // let appState = { players: {}, finalGameData: {}, activityFeed: [], isAdminMode: false, userId: null, gameState: {}, unsubscribers: [] };
@@ -506,11 +504,13 @@
                     showMessage("Aguarde, o jogo está sincronizando...", "error");
                     return;
                 }
+
                 const { gameMode, isRaioMatch, playerIds, teams } = appState.gameState.activeGame;
                 const WINNING_SCORE = isRaioMatch ? 1 : 4;
 
-                // 1. Criação completa do HTML do modal
+                // 1. Criação do modal de seleção do vencedor
                 let modalHTML = `<h3 class="text-2xl font-bold mb-4">Quem venceu a rodada?</h3><div class="space-y-2 max-h-64 overflow-y-auto">`;
+
                 if (gameMode === 'duplas') {
                     modalHTML += `<button class="w-full text-left p-3 bg-gray-100 rounded-lg hover:bg-blue-100 transition winner-select-btn" data-team="A">Time A (${teams.A.players.map(id => appState.players[id]?.name || '?').join(' & ')})</button>`;
                     modalHTML += `<button class="w-full text-left p-3 bg-gray-100 rounded-lg hover:bg-blue-100 transition winner-select-btn" data-team="B">Time B (${teams.B.players.map(id => appState.players[id]?.name || '?').join(' & ')})</button>`;
@@ -518,10 +518,11 @@
                     const players = playerIds.map(id => appState.players[id]);
                     modalHTML += players.map(p => p ? `<button class="w-full text-left p-3 bg-gray-100 rounded-lg hover:bg-blue-100 transition winner-select-btn" data-player-id="${p.id}">${p.name}</button>` : '').join('');
                 }
+
                 modalHTML += `</div><button id="modal-cancel-btn" class="mt-6 bg-gray-200 text-gray-800 font-semibold py-2 px-4 rounded-lg w-full">Cancelar</button>`;
                 openModal(modalHTML);
 
-                // 2. Lógica de clique completa
+                // 2. Lógica de seleção do vencedor
                 ui.modal.content.onclick = async (e) => {
                     const target = e.target.closest('.winner-select-btn');
                     if (!target) return;
@@ -541,100 +542,148 @@
                         let completedRaio = false;
                         let lambretaLosersThisRound = [];
                         let scoresBeforeReset = {};
-                        let ladraoDeRaio = {};
+                        let ladraoDeRaio = { vitma: [], ladrao: [] };
 
-                        let jogadorComTres = '';
-                        if (newScore >= 3 && jogadorComTres === '') {
-                            // Logica de ladãro de raio
-                            for (jogadorId of playerIds){
-                                if (currentGame.scores[jogadorId] === 3) {
-                                    jogadorComTres = jogadorId;
-                                    ladraoDeRaio.push({vitma: jogadorComTres});
-                                    for (jogador of playerIds) {
-                                        if (currentGame.scores[jogador] === 0) {
-                                            ladraoDeRaio.push({ladrao: jogador})
-                                        }
+                        // Lógica de ladrão de raio (quando um jogador está prestes a ganhar)
+                        if (newScore >= 3) {
+                            const loserIds = currentGame.playerIds.filter(id => id !== winnerId);
+                            let ladraoIsTrue = false;
+
+                            for (const jogador of loserIds) {
+                                if (currentGame.scores[jogador] === 0) {
+                                    ladraoDeRaio.ladrao.push(jogador);
+                                    if (!ladraoIsTrue) {
+                                        ladraoDeRaio.vitma.push(winnerId);
+                                        ladraoIsTrue = true;
                                     }
                                 }
                             }
                         }
+
+                       // Teste Ladrão
+
+                       // Teste Ladrão
 
                         if (newScore >= WINNING_SCORE) {
                             completedRaio = true;
                             playerUpdates.raios = increment(1);
-                            playerUpdates.raiosNaSerie = increment(1); // Incrementa o contador da série
+                            playerUpdates.raiosNaSerie = increment(1);
                             playerUpdates.partidasJogadas = increment(1);
 
                             const loserIds = currentGame.playerIds.filter(id => id !== winnerId);
+
+                            // 1. Prepara todas as atualizações do batch
+                            batch.update(winnerPlayerDocRef, playerUpdates);
+
+                            // Atualiza partidas jogadas dos perdedores
                             for (const loserId of loserIds) {
-                                batch.update(doc(playersCollectionRef(), loserId), { partidasJogadas: increment(1) });
+                                batch.update(doc(playersCollectionRef(), loserId), {
+                                    partidasJogadas: increment(1)
+                                });
                             }
 
+                            // Lógica de lambretas
                             scoresBeforeReset = { ...currentGame.scores, [winnerId]: newScore };
 
                             if (!isRaioMatch) {
+                                // Lambretas automáticas no modo normal
                                 for (const loserId of loserIds) {
                                     if ((scoresBeforeReset[loserId] || 0) === 0) {
-                                        batch.update(doc(playersCollectionRef(), loserId), { lambreta: increment(1), lambretasNaSerie: increment(1) });
+                                        batch.update(doc(playersCollectionRef(), loserId), {
+                                            lambreta: increment(1),
+                                            lambretasNaSerie: increment(1)
+                                        });
                                         lambretaLosersThisRound.push(loserId);
-                                        showMessage(`${appState.players[loserId].name} tomou uma lambreta! 🚑`, 'info');
                                     }
                                 }
+
+                                const ultimoRaio = currentGame.history.findLast(r => r.completedRaio);
+                                if (ultimoRaio) {
+                                    const rodadasDesdeUltimoRaio = currentGame.history.slice(
+                                        currentGame.history.indexOf(ultimoRaio)
+                                    );
+
+                                    const relacoesLadroes = rodadasDesdeUltimoRaio
+                                        .filter(r => r.ladraoDeRaio)
+                                        .flatMap(r =>
+                                            r.ladraoDeRaio.ladrao.map(ladrao => ({
+                                                ladrao,
+                                                vitma: r.ladraoDeRaio.vitma[0]
+                                            }))
+                                        );
+
+                                    const rouboDoVencedor = relacoesLadroes.find(r => r.ladrao === winnerId);
+
+                                    if (rouboDoVencedor) {
+                                        showMessage(
+                                            `${appState.players[winnerId].name} ROUBOU o raio de ${appState.players[rouboDoVencedor.vitma].name}!🕵️‍♂️⚡ `,'warning');
+                                        await concederConquista(winnerId, 'roubo', `Chama a policia 🚓, que roubaram o raio de ${appState.players[rouboDoVencedor.vitma].name} 🕵️‍♂️⚡`);
+                                    }
+                                }
+
                             } else {
+                                // Lambretas manuais no modo raio
                                 lambretaLosersThisRound = await promptLambretaManual(loserIds, appState.players[winnerId].name);
-                                // Atualiza a estatística de lambreta para os jogadores selecionados manualmente
-                                for(const loserId of lambretaLosersThisRound) {
-                                    batch.update(doc(playersCollectionRef(), loserId), { lambreta: increment(1) });
+                                for (const loserId of lambretaLosersThisRound) {
+                                    batch.update(doc(playersCollectionRef(), loserId), {
+                                        lambreta: increment(1)
+                                    });
                                 }
                             }
 
-                            matchUpdates.raios = { ...currentGame.raios, [winnerId]: (currentGame.raios[winnerId] || 0) + 1 };
-                            matchUpdates.scores = currentGame.playerIds.reduce((acc, id) => ({ ...acc, [id]: 0 }), {});
-                            matchUpdates.turn = winnerId;
-                            showMessage(`${appState.players[winnerId].name} ganhou um Raio! ⚡️`, 'success');
-
-                        } else {
-                            matchUpdates.scores = { ...currentGame.scores, [winnerId]: newScore };
-                            matchUpdates.raios = currentGame.raios;
-                            matchUpdates.turn = winnerId;
-                        }
-
-                        const roundEvent = {
-                            roundNumber: currentGame.history.length + 1,
-                            winnerId: winnerId,
-                            completedRaio: completedRaio,
-                            lambretaPlayerIds: lambretaLosersThisRound,
-                            ladraoDeRaio: {vitma: ladraoDeRaio.vitma, ladrao: ladraoDeRaio.ladrao},
-                            stateBeforeReset: { scores: scoresBeforeReset },
-                            stateAfterRound: {
-                                scores: matchUpdates.scores || currentGame.scores,
-                                raios: matchUpdates.raios || currentGame.raios
-                            },
-                            timestamp: new Date()
-                        };
-                        const newHistory = [...currentGame.history, roundEvent];
-
-                        // --- LÓGICA DE CONQUISTAS COMPLETA E RESTAURADA ---
-                        if (completedRaio) {
-                            // Lógica de ladrão de raios
-                            if (winnerId != ladraoDeRaio.vitma) {
-                                for (jogador of ladraoDeRaio.ladrao){
-                                    if (winnerId === jogador) {
-                                        showMessage(`${appState.players[jogador].name} Roubou o raio de ${appState.players[ladraoDeRaio.vitma].name} 🕵️‍♂️🕵️‍♂️`, 'info');
-                                        showMessage(`${appState.players[loserId].name} tomou uma lambreta! 🚑`, 'info');
+                            // Prepara o evento do round
+                            const roundEvent = {
+                                roundNumber: currentGame.history.length + 1,
+                                winnerId: winnerId,
+                                completedRaio: true,
+                                lambretaPlayerIds: lambretaLosersThisRound,
+                                stateBeforeReset: { scores: scoresBeforeReset },
+                                stateAfterRound: {
+                                    scores: currentGame.playerIds.reduce((acc, id) => ({ ...acc, [id]: 0 }), {}),
+                                    raios: {
+                                        ...currentGame.raios,
+                                        [winnerId]: (currentGame.raios[winnerId] || 0) + 1
                                     }
-                                }
+                                },
+                                timestamp: new Date()
+                            };
+
+                            // Adiciona ladraoDeRaio apenas se houver dados relevantes
+                            if (ladraoDeRaio.vitma.length > 0) {
+                                roundEvent.ladraoDeRaio = ladraoDeRaio;
                             }
 
-                            // Atualiza as séries dos jogadores da partida a cada raio ganho
+                            const newHistory = [...currentGame.history, roundEvent];
+
+                            // 2. Executa todas as atualizações de uma vez
+                            await batch.commit();
+
+                            // 3. Atualiza o estado local após confirmação
+                            matchUpdates.raios = roundEvent.stateAfterRound.raios;
+                            matchUpdates.scores = roundEvent.stateAfterRound.scores;
+                            matchUpdates.turn = winnerId;
+
+                            // 4. Atualiza o histórico no banco
+                            await updateDoc(gameDocRef, {
+                                ...matchUpdates,
+                                history: newHistory
+                            });
+
+                            // Feedback visual
+                            showMessage(`${appState.players[winnerId].name} ganhou um Raio! ⚡️`, 'success');
+                            for (const loserId of lambretaLosersThisRound) {
+                                showMessage(`${appState.players[loserId].name} tomou uma lambreta! 🚑`, 'info');
+                            }
+
+                            // Lógica de conquistas
                             for (const jogadorID of playerIds) {
                                 await checarStatusDaSerie(jogadorID);
                             }
 
                             const historicoDeRaios = newHistory.filter(r => r.completedRaio);
 
+                            // Conquista "Imbatível"
                             if (historicoDeRaios.length >= 3) {
-                                // "Imbatível"
                                 let vitoriasConsecutivas = 0;
                                 for (let i = historicoDeRaios.length - 1; i >= 0; i--) {
                                     if (historicoDeRaios[i].winnerId === winnerId) vitoriasConsecutivas++;
@@ -643,29 +692,61 @@
                                 if (vitoriasConsecutivas > 0 && vitoriasConsecutivas % 3 === 0) {
                                     await concederConquista(winnerId, 'imbativel', `alcançou uma sequência de ${vitoriasConsecutivas} raio! 🔥🚀🚀`);
                                 }
+                            }
 
-                                // "Azarão"
-                                for (const jogadorId of playerIds) {
-                                    let derrotasConsecutivas = 0;
-                                    for (let i = historicoDeRaios.length - 1; i >= 0; i--) {
-                                        const round = historicoDeRaios[i];
-                                        if (round.winnerId !== jogadorId && (round.lambretaPlayerIds.includes(jogadorId))) {
-                                            derrotasConsecutivas++;
-                                        } else {
-                                            break;
-                                        }
-                                    }
-                                    if (derrotasConsecutivas > 0 && derrotasConsecutivas % 3 === 0) {
-                                        await concederConquista(jogadorId, 'azarao', `sofreu uma sequência de ${derrotasConsecutivas} lambretas! 🚑🤕🤕`);
+                            // Conquista "Azarão"
+                            for (const jogadorId of playerIds) {
+                                let derrotasConsecutivas = 0;
+                                for (let i = historicoDeRaios.length - 1; i >= 0; i--) {
+                                    const round = historicoDeRaios[i];
+                                    if (round.winnerId !== jogadorId && (round.lambretaPlayerIds.includes(jogadorId))) {
+                                        derrotasConsecutivas++;
+                                    } else {
+                                        break;
                                     }
                                 }
+                                if (derrotasConsecutivas > 0 && derrotasConsecutivas % 3 === 0) {
+                                    await concederConquista(jogadorId, 'azarao', `sofreu uma sequência de ${derrotasConsecutivas} lambretas! 🚑🤕🤕`);
+                                }
                             }
-                        }
-                        batch.update(winnerPlayerDocRef, playerUpdates);
-                        batch.update(gameDocRef, { ...matchUpdates, history: newHistory });
-                    }
 
-                    await batch.commit();
+                        } else {
+                            // Caso não seja um raio completo
+                            matchUpdates.scores = { ...currentGame.scores, [winnerId]: newScore };
+                            matchUpdates.raios = currentGame.raios;
+                            matchUpdates.turn = winnerId;
+
+                            const roundEvent = {
+                                roundNumber: currentGame.history.length + 1,
+                                winnerId: winnerId,
+                                completedRaio: false,
+                                ladraoDeRaio: ladraoDeRaio,
+                                lambretaPlayerIds: [],
+                                stateBeforeReset: { scores: currentGame.scores },
+                                stateAfterRound: {
+                                    scores: matchUpdates.scores,
+                                    raios: matchUpdates.raios
+                                },
+                                timestamp: new Date()
+                            };
+
+                            // Adiciona ladraoDeRaio apenas se houver dados relevantes
+                            if (ladraoDeRaio.vitma.length > 0 || ladraoDeRaio.ladrao.length > 0) {
+                                roundEvent.ladraoDeRaio = ladraoDeRaio;
+                            }
+
+                            const newHistory = [...currentGame.history, roundEvent];
+
+                            // Atualizações para rodada normal
+                            batch.update(winnerPlayerDocRef, playerUpdates);
+                            batch.update(gameDocRef, {
+                                ...matchUpdates,
+                                history: newHistory
+                            });
+
+                            await batch.commit();
+                        }
+                    }
                 };
             }
 
@@ -991,16 +1072,66 @@
                     const seriesIndexA = seriesOrder.indexOf(a.series || 'Amador');
                     const seriesIndexB = seriesOrder.indexOf(b.series || 'Amador');
                     if (seriesIndexA !== seriesIndexB) return seriesIndexA - seriesIndexB;
-                    if ((b.raios || 0) !== (a.raios || 0)) return (b.raios || 0) - (a.raios || 0);
-                    if ((b.pontos || 0) !== (a.pontos || 0)) return (b.pontos || 0) - (a.pontos || 0);
-                    return (a.lambretas || 0) - (b.lambretas || 0);
+                    if ((b.raiosNaSerie || 0) !== (a.raiosNaSerie || 0)) return (b.raiosNaSerie || 0) - (a.raiosNaSerie || 0);
+                    if ((a.lambretasNaSerie || 0) !== (b.lambretasNaSerie || 0)) return (a.lambretasNaSerie || 0) - (b.lambretasNaSerie || 0);
+                    return (b.pontos || 0) - (a.pontos || 0);
                 });
-                // Configuração dos dados do playes da tabela
-                ui.playersListDiv.innerHTML = players.map(player => `
-                    <div class="bg-white p-4 rounded-xl shadow-sm flex items-center justify-between">
-                        <div><span class="font-bold text-lg player-name-clickable" data-player-id="${player.id}">${player.name}</span><span class="text-sm text-gray-500 ml-2">(Série ${player.series})</span></div>
-                        <div class="text-right"><div class="font-semibold text-blue-600">Raios: ${player.raiosNaSerie || 0}</div><div class="font-semibold text-yellow-600">Lambretas: ${player.lambretasNaSerie || 0}</div></div>
-                    </div>`).join('');
+
+                ui.playersListDiv.innerHTML = players.map((player, index) => {
+                    // Classes base + posicionamento
+                    let cardClasses = "p-4 rounded-xl shadow-sm flex items-center justify-between transition-all duration-200 hover:scale-[1.01]";
+                    let positionIcon = "";
+                    let positionText = `${index + 1}º`;
+
+                    // Primeiros colocados (1-4)
+                    if (index < 4) {
+                        cardClasses += " bg-green-50 border-l-4 border-green-500";
+
+                        // Ícones para os 3 primeiros (ponto 3)
+                        if (index < 3) {
+                            positionIcon = ["🥇", "🥈", "🥉"][index];
+                        }
+                    }
+                    // Últimos colocados (últimos 4)
+                    else if (index >= players.length - 4) {
+                        cardClasses += " bg-red-50 border-l-4 border-red-500";
+                    }
+                    // Meio da tabela
+                    else {
+                        cardClasses += " bg-white";
+                    }
+
+                    // Destaque especial para o líder (ponto 4)
+                    if (index === 0) {
+                        cardClasses += " ring-2 ring-yellow-400 animate-pulse";
+                        positionText = "👑 " + positionText;
+                    }
+
+                    return `
+                        <div class="${cardClasses}">
+                            <div class="flex items-center gap-3">
+                                <span class="font-mono text-sm text-gray-400 w-8 text-center">
+                                    ${positionIcon || positionText}
+                                </span>
+                                <div>
+                                    <span class="font-bold text-lg player-name-clickable" data-player-id="${player.id}">
+                                        ${player.name}
+                                    </span>
+                                    <span class="text-sm text-gray-500 ml-2">
+                                        (Série ${player.series})
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="text-right">
+                                <div class="font-semibold text-blue-600">
+                                    Raios: ${player.raiosNaSerie || 0}
+                                </div>
+                                <div class="font-semibold text-yellow-600">
+                                    Lambretas: ${player.lambretasNaSerie || 0}
+                                </div>
+                            </div>
+                        </div>`;
+                }).join('');
             }
 
             async function concederConquista(playerId, conquistaId, textoDoEvento) {
