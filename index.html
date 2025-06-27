@@ -594,24 +594,45 @@
                                 }
 
                                 // Lógica do Ladrão de raio
-                                const ultimoRaio = currentGame.history.findLast(r => r.completedRaio);
-                                const rodadasDesdeUltimoRaio =  ultimoRaio ?  currentGame.history.slice(currentGame.history.indexOf(ultimoRaio)) : currentGame.history;
+                                // Encontra o índice do último raio completado
+                                const ultimoRaioIndex = currentGame.history.findLastIndex(r => r.completedRaio);
+                                console.log("Valor de index de completeRaio: ", ultimoRaioIndex);
 
-                                const relacoesLadroes = rodadasDesdeUltimoRaio
-                                    .filter(r => r.ladraoDeRaio)
-                                    .flatMap(r =>
-                                        r.ladraoDeRaio.ladrao.map(ladrao => ({
-                                            ladrao,
-                                            vitma: r.ladraoDeRaio.vitma[0]
-                                        }))
+
+                                const rodadasRelevantes = ultimoRaioIndex !== -1 ? currentGame.history.slice(ultimoRaioIndex + 1) : currentGame.history.slice();
+
+                                const vitimas = [];
+                                const ladroes = [];
+
+                                rodadasRelevantes.forEach(round => {
+                                    if (round.ladraoDeRaio?.vitma?.length) {
+                                        vitimas.push(...round.ladraoDeRaio.vitma);
+                                        ladroes.push(...round.ladraoDeRaio.ladrao);
+                                    }
+                                });
+
+                                const vitimasUnicas = [...new Set(vitimas)];
+                                const ladroesUnicos = [...new Set(ladroes)];
+
+                                // console.log('Dados relevantes para o último raio:');
+                                // console.log('Vítimas:', vitimasUnicas.map(id => appState.players[id]?.name || id));
+                                // console.log('Ladrões:', ladroesUnicos.map(id => appState.players[id]?.name || id));
+
+                                // Verifica se o vencedor atual foi ladrão
+                                if (ladroesUnicos.includes(winnerId)) {
+                                    const vitimaId = vitimasUnicas.find(vitimaId =>
+                                        rodadasRelevantes.some(r =>
+                                            r.ladraoDeRaio?.ladrao?.includes(winnerId) &&
+                                            r.ladraoDeRaio.vitma?.includes(vitimaId)
+                                        )
                                     );
 
-                                const rouboDoVencedor = relacoesLadroes.find(r => r.ladrao === winnerId);
-
-                                if (rouboDoVencedor) {
-                                    showMessage(
-                                        `${appState.players[winnerId].name} ROUBOU o raio de ${appState.players[rouboDoVencedor.vitma].name}!🕵️‍♂️⚡ `,'warning');
-                                    await concederConquista(winnerId, 'roubo', `Chama a policia 🚓, que roubaram o raio de ${appState.players[rouboDoVencedor.vitma].name} 🕵️‍♂️⚡`);
+                                    if (vitimaId) {
+                                        showMessage(
+                                            `${appState.players[winnerId].name} ROUBOU o raio de ${appState.players[vitimaId].name}! 🕵️‍♂️⚡`,
+                                            'warning'
+                                        );
+                                    }
                                 }
                                 // Fim da Lógica de ladrão
 
