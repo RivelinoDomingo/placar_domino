@@ -686,7 +686,7 @@
                                     else break;
                                 }
                                 if (vitoriasConsecutivas > 0 && vitoriasConsecutivas % 3 === 0) {
-                                    // await concederConquista(winnerId, 'imbativel', `alcançou uma sequência de ${vitoriasConsecutivas} raio! 🔥🚀🚀`);
+                                    await concederConquista(winnerId, 'imbativel', `alcançou uma sequência de ${vitoriasConsecutivas} raio! 🔥🚀🚀`);
                                     if (!unlockedAchievements[winnerId]) unlockedAchievements[winnerId] = [];
                                         unlockedAchievements[winnerId].push('imbativel');
                                 }
@@ -704,7 +704,7 @@
                                     }
                                 }
                                 if (derrotasConsecutivas > 0 && derrotasConsecutivas % 3 === 0) {
-                                    // await concederConquista(jogadorId, 'azarao', `sofreu uma sequência de ${derrotasConsecutivas} lambretas! 🚑🤕🤕`);
+                                    await concederConquista(jogadorId, 'azarao', `sofreu uma sequência de ${derrotasConsecutivas} lambretas! 🚑🤕🤕`);
                                     if (!unlockedAchievements[jogadorId]) unlockedAchievements[jogadorId] = [];
                                         unlockedAchievements[jogadorId].push('azarao');
                                 }
@@ -1877,10 +1877,6 @@
                 appState.unsubscribers.push(unsubPlayers, unsubFeed, unsubLiveMatch);
             }
 
-            // Ativação do modo admin
-            function toggleAdminPanel() { ui.adminFab.button.classList.toggle('active'); ui.adminFab.defaultIcon.classList.toggle('hidden'); ui.adminFab.closeIcon.classList.toggle('hidden'); ui.adminFab.panel.classList.toggle('active'); if (!ui.adminFab.panel.classList.contains('active') && !appState.isAdminMode) { ui.adminFab.loginView.style.display = 'block'; ui.adminFab.controlsView.style.display = 'none'; ui.adminFab.keyInput.value = ''; }}
-            function activateAdminMode() { if(ui.adminFab.keyInput.value === ADMIN_KEY) { appState.isAdminMode = true; ui.adminFab.loginView.style.display = 'none'; ui.adminFab.controlsView.style.display = 'block'; updateAdminUI(); } else { alert('Senha incorreta!'); }}
-
             async function checarStatusDaSerie(playerId) {
                 const player = appState.players[playerId];
                 if (!player) return { changed: false };
@@ -1982,6 +1978,45 @@
                 // Adicione aqui qualquer outro controle de admin que precise ser mostrado/escondido no futuro.
             }
 
+            // Ativação do modo admin
+            function toggleAdminPanel(e) {
+                // Verifica se o clique foi no botão FAB (não no painel)
+                if (e.target.closest('#adminFabButton')) {
+                    ui.adminFab.button.classList.toggle('active');
+                    ui.adminFab.defaultIcon.classList.toggle('hidden');
+                    ui.adminFab.closeIcon.classList.toggle('hidden');
+                    ui.adminFab.panel.classList.toggle('active');
+
+                    if (!ui.adminFab.panel.classList.contains('active') && !appState.isAdminMode) {
+                        ui.adminFab.loginView.style.display = 'block';
+                        ui.adminFab.controlsView.style.display = 'none';
+                        ui.adminFab.keyInput.value = '';
+                    }
+                }
+            }
+            // Adicionar este listener para fechar quando clicar fora
+            document.addEventListener('click', (e) => {
+                const isClickInsidePanel = ui.adminFab.panel.contains(e.target);
+                const isClickOnFabButton = e.target.closest('#adminFabButton');
+
+                if (ui.adminFab.panel.classList.contains('active') && !isClickInsidePanel && !isClickOnFabButton) {
+                    ui.adminFab.button.classList.remove('active');
+                    ui.adminFab.defaultIcon.classList.remove('hidden');
+                    ui.adminFab.closeIcon.classList.add('hidden');
+                    ui.adminFab.panel.classList.remove('active');
+
+                    if (!appState.isAdminMode) {
+                        ui.adminFab.loginView.style.display = 'block';
+                        ui.adminFab.controlsView.style.display = 'none';
+                        ui.adminFab.keyInput.value = '';
+                    }
+                }
+            });
+
+
+
+            function activateAdminMode() { if(ui.adminFab.keyInput.value === ADMIN_KEY) { appState.isAdminMode = true; ui.adminFab.loginView.style.display = 'none'; ui.adminFab.controlsView.style.display = 'block'; updateAdminUI(); } else { alert('Senha incorreta!'); }}
+
             // EVENT LISTENERS
             ui.adminFab.addPlayerBtn.addEventListener('click', addNovoJogador);
 
@@ -2010,7 +2045,8 @@
             ui.gameMode.newGameBtn.addEventListener('click', () => { resetGameState(); switchView('view-game-table'); });
             ui.gameMode.gameOver.gameSummaryBtn.addEventListener('click', () => showGameSummary());
 
-            ui.adminFab.button.addEventListener('click', toggleAdminPanel);
+            // ui.adminFab.button.addEventListener('click', toggleAdminPanel);
+            ui.adminFab.button.addEventListener('click', (e) => toggleAdminPanel(e));
             ui.adminFab.activateBtn.addEventListener('click', activateAdminMode);
             ui.adminFab.keyInput.addEventListener('keydown', function(event) {
                 if (event.key === 'Enter') {
