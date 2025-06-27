@@ -538,10 +538,13 @@
                         const newScore = (currentGame.scores[winnerId] || 0) + 1;
 
                         const playerUpdates = { pontos: increment(1) };
+                        const unlockedAchievements = {}; // Cria um objeto para armazenar as conquistas desbloqueadas neste round
+                        const seriesChanges = {};
                         let matchUpdates = {};
                         let completedRaio = false;
                         let lambretaLosersThisRound = [];
-                        let scoresBeforeReset = {};
+                        // let scoresBeforeReset = {};
+                        let stateScore = {};
                         let ladraoDeRaio = { vitma: [], ladrao: [] };
 
                         // Lógica de ladrão de raio (quando um jogador está prestes a ganhar)
@@ -557,6 +560,22 @@
                                         ladraoIsTrue = true;
                                     }
                                 }
+                            }
+                        }
+                        // Atualiza a series dos jogadores
+                        for (const playerId of currentGame.playerIds) {
+                            const player = appState.players[playerId];
+                            const changes = await checarStatusDaSerie(playerId);
+
+                            if (changes.changed) {
+                                seriesChanges[playerId] = {
+                                    oldSeries: player.series,
+                                    oldRaiosNaSerie: player.raiosNaSerie,
+                                    oldLambretasNaSerie: player.lambretasNaSerie,
+                                    newSeries: changes.newSeries
+                                };
+
+                                await applySeriesChanges(playerId, changes);
                             }
                         }
 
@@ -579,12 +598,14 @@
                             }
 
                             // Lógica de lambretas
-                            scoresBeforeReset = { ...currentGame.scores, [winnerId]: newScore };
+                            // scoresBeforeReset = { ...currentGame.scores, [winnerId]: newScore };
+                            stateScore = { ...currentGame.scores, [winnerId]: newScore };
 
                             if (!isRaioMatch) {
                                 // Lambretas automáticas no modo normal
                                 for (const loserId of loserIds) {
-                                    if ((scoresBeforeReset[loserId] || 0) === 0) {
+                                    // if ((scoresBeforeReset[loserId] || 0) === 0) {
+                                    if ((stateScore[loserId] || 0) === 0) {
                                         batch.update(doc(playersCollectionRef(), loserId), {
                                             lambreta: increment(1),
                                             lambretasNaSerie: increment(1)
@@ -596,8 +617,7 @@
                                 // Lógica do Ladrão de raio
                                 // Encontra o índice do último raio completado
                                 const ultimoRaioIndex = currentGame.history.findLastIndex(r => r.completedRaio);
-                                console.log("Valor de index de completeRaio: ", ultimoRaioIndex);
-
+                                // console.log("Valor de index de completeRaio: ", ultimoRaioIndex);
 
                                 const rodadasRelevantes = ultimoRaioIndex !== -1 ? currentGame.history.slice(ultimoRaioIndex + 1) : currentGame.history.slice();
 
@@ -629,9 +649,12 @@
 
                                     if (vitimaId) {
                                         showMessage(
-                                            `${appState.players[winnerId].name} ROUBOU o raio de ${appState.players[vitimaId].name}! 🕵️‍♂️⚡`,
+                                            `${appState.players[winnerId]?.name} ROUBOU o raio de ${appState.players[vitimaId]?.name}! 🕵️‍♂️⚡`,
                                             'warning'
                                         );
+                                        await concederConquista(winnerId, 'roubo', `🚔👮🏻Chama a policia que ${appState.players[winnerId]?.name} acabou de roubar o raio de ${appState.players[vitimaId]?.name}`);
+                                        if (!unlockedAchievements[winnerId]) unlockedAchievements[winnerId] = [];
+                                        unlockedAchievements[winnerId].push('roubo');
                                     }
                                 }
                                 // Fim da Lógica de ladrão
@@ -646,44 +669,6 @@
                                 }
                             }
 
-                            // Prepara o evento do round
-                            const roundEvent = {
-                                roundNumber: currentGame.history.length + 1,
-                                winnerId: winnerId,
-                                completedRaio: true,
-                                lambretaPlayerIds: lambretaLosersThisRound,
-                                stateBeforeReset: { scores: scoresBeforeReset },
-                                stateAfterRound: {
-                                    scores: currentGame.playerIds.reduce((acc, id) => ({ ...acc, [id]: 0 }), {}),
-                                    raios: {
-                                        ...currentGame.raios,
-                                        [winnerId]: (currentGame.raios[winnerId] || 0) + 1
-                                    }
-                                },
-                                timestamp: new Date()
-                            };
-
-                            // Adiciona ladraoDeRaio apenas se houver dados relevantes
-                            if (ladraoDeRaio.vitma.length > 0) {
-                                roundEvent.ladraoDeRaio = ladraoDeRaio;
-                            }
-
-                            const newHistory = [...currentGame.history, roundEvent];
-
-                            // 2. Executa todas as atualizações de uma vez
-                            await batch.commit();
-
-                            // 3. Atualiza o estado local após confirmação
-                            matchUpdates.raios = roundEvent.stateAfterRound.raios;
-                            matchUpdates.scores = roundEvent.stateAfterRound.scores;
-                            matchUpdates.turn = winnerId;
-
-                            // 4. Atualiza o histórico no banco
-                            await updateDoc(gameDocRef, {
-                                ...matchUpdates,
-                                history: newHistory
-                            });
-
                             // Feedback visual
                             showMessage(`${appState.players[winnerId].name} ganhou um Raio! ⚡️`, 'success');
                             for (const loserId of lambretaLosersThisRound) {
@@ -691,11 +676,7 @@
                             }
 
                             // Lógica de conquistas
-                            for (const jogadorID of playerIds) {
-                                await checarStatusDaSerie(jogadorID);
-                            }
-
-                            const historicoDeRaios = newHistory.filter(r => r.completedRaio);
+                            const historicoDeRaios = currentGame.history.filter(r => r.completedRaio);
 
                             // Conquista "Imbatível"
                             if (historicoDeRaios.length >= 3) {
@@ -705,7 +686,9 @@
                                     else break;
                                 }
                                 if (vitoriasConsecutivas > 0 && vitoriasConsecutivas % 3 === 0) {
-                                    await concederConquista(winnerId, 'imbativel', `alcançou uma sequência de ${vitoriasConsecutivas} raio! 🔥🚀🚀`);
+                                    // await concederConquista(winnerId, 'imbativel', `alcançou uma sequência de ${vitoriasConsecutivas} raio! 🔥🚀🚀`);
+                                    if (!unlockedAchievements[winnerId]) unlockedAchievements[winnerId] = [];
+                                        unlockedAchievements[winnerId].push('imbativel');
                                 }
                             }
 
@@ -714,125 +697,155 @@
                                 let derrotasConsecutivas = 0;
                                 for (let i = historicoDeRaios.length - 1; i >= 0; i--) {
                                     const round = historicoDeRaios[i];
-                                    if (round.winnerId !== jogadorId && (round.lambretaPlayerIds.includes(jogadorId))) {
+                                    if (round.lambretaPlayerIds && round.winnerId !== jogadorId && round.lambretaPlayerIds.includes(jogadorId)) {
                                         derrotasConsecutivas++;
                                     } else {
                                         break;
                                     }
                                 }
                                 if (derrotasConsecutivas > 0 && derrotasConsecutivas % 3 === 0) {
-                                    await concederConquista(jogadorId, 'azarao', `sofreu uma sequência de ${derrotasConsecutivas} lambretas! 🚑🤕🤕`);
+                                    // await concederConquista(jogadorId, 'azarao', `sofreu uma sequência de ${derrotasConsecutivas} lambretas! 🚑🤕🤕`);
+                                    if (!unlockedAchievements[jogadorId]) unlockedAchievements[jogadorId] = [];
+                                        unlockedAchievements[jogadorId].push('azarao');
                                 }
                             }
-
-                        } else {
-                            // Caso não seja um raio completo
-                            matchUpdates.scores = { ...currentGame.scores, [winnerId]: newScore };
-                            matchUpdates.raios = currentGame.raios;
-                            matchUpdates.turn = winnerId;
-
-                            const roundEvent = {
-                                roundNumber: currentGame.history.length + 1,
-                                winnerId: winnerId,
-                                completedRaio: false,
-                                ladraoDeRaio: ladraoDeRaio,
-                                lambretaPlayerIds: [],
-                                stateBeforeReset: { scores: currentGame.scores },
-                                stateAfterRound: {
-                                    scores: matchUpdates.scores,
-                                    raios: matchUpdates.raios
-                                },
-                                timestamp: new Date()
-                            };
-
-                            // Adiciona ladraoDeRaio apenas se houver dados relevantes
-                            if (ladraoDeRaio.vitma.length > 0 || ladraoDeRaio.ladrao.length > 0) {
-                                roundEvent.ladraoDeRaio = ladraoDeRaio;
-                            }
-
-                            const newHistory = [...currentGame.history, roundEvent];
-
-                            // Atualizações para rodada normal
-                            batch.update(winnerPlayerDocRef, playerUpdates);
-                            batch.update(gameDocRef, {
-                                ...matchUpdates,
-                                history: newHistory
-                            });
-
-                            await batch.commit();
                         }
+                        // Construção do do roundEvent
+                        matchUpdates.scores = { ...currentGame.scores, [winnerId]: newScore };
+                        matchUpdates.raios = currentGame.raios;
+                        matchUpdates.turn = winnerId;
+
+                        const roundEvent = {
+                            roundNumber: currentGame.history.length + 1,
+                            winnerId: winnerId,
+                            completedRaio: completedRaio,
+                            unlockedAchievements: unlockedAchievements,
+                            seriesChanges: seriesChanges,
+                            timestamp: new Date()
+                        };
+
+                        // Adiciona campos condicionais apenas se existirem
+                        if (lambretaLosersThisRound.length > 0) {
+                            roundEvent.lambretaPlayerIds = lambretaLosersThisRound;
+                        }
+
+                        if (completedRaio){
+                            roundEvent.stateScore = {
+                                scores: currentGame.playerIds.reduce((acc, id) => ({ ...acc, [id]: 0 }), {}),
+                                raios: {
+                                    ...currentGame.raios,
+                                    [winnerId]: (currentGame.raios[winnerId] || 0) + 1
+                                }
+                            };
+                        } else {
+                            roundEvent.stateScore = {
+                                scores: matchUpdates.scores,
+                                raios: matchUpdates.raios
+                            }
+                        }
+                        // Adiciona ladraoDeRaio apenas se houver dados relevantes
+                        if (ladraoDeRaio.vitma.length > 0) {
+                            roundEvent.ladraoDeRaio = ladraoDeRaio;
+                        }
+
+                        const newHistory = [...currentGame.history, roundEvent];
+
+                        // 2. Executa todas as atualizações de uma vez
+                        await batch.commit();
+
+                        // 3. Atualiza o estado local após confirmação
+                        matchUpdates.raios = roundEvent.stateScore.raios;
+                        matchUpdates.scores = roundEvent.stateScore.scores;
+                        matchUpdates.turn = winnerId;
+
+                        // 4. Atualiza o histórico no banco
+                        await updateDoc(gameDocRef, {...matchUpdates, history: newHistory});
+                        // Final da construção do Round
                     }
                 };
             }
 
             async function undoRound() {
-                const currentGame = { ...appState.gameState.activeGame };
-
-                if (currentGame.history.length === 0) {
-                    showMessage("Nenhuma jogada para desfazer.", "info");
-                    return;
-                }
+                const currentGame = appState.gameState.activeGame;
+                if (!currentGame || currentGame.history.length === 0) return;
 
                 const batch = writeBatch(db);
                 const gameDocRef = doc(matchesCollectionRef(), appState.gameState.activeGameId);
+                const lastRound = currentGame.history[currentGame.history.length - 1];
 
-                // 1. Pega e remove a última jogada do histórico
-                const lastRound = currentGame.history.pop();
-                const winnerId = lastRound.winnerId;
+                // 1. Reverte estatísticas básicas
+                batch.update(doc(playersCollectionRef(), lastRound.winnerId), {
+                    pontos: increment(-1)
+                });
 
-                if (!winnerId) {
-                    showMessage("Erro ao desfazer: jogada inválida no histórico.", "error");
-                    return;
-                }
-
-                // 2. Prepara a reversão das estatísticas PERMANENTES do jogador
-                const playerDocRef = doc(playersCollectionRef(), winnerId);
-                const playerUpdates = { pontos: increment(-1) }; // Sempre desfaz uma vitória de rodada
-                // --- INÍCIO DA CORREÇÃO ---
                 if (lastRound.completedRaio) {
-                    // Se a jogada completou um raio, desfaz o raio do vencedor
-                    playerUpdates.raios = increment(-1);
+                    batch.update(doc(playersCollectionRef(), lastRound.winnerId), {
+                        raios: increment(-1),
+                        raiosNaSerie: increment(-1),
+                        partidasJogadas: increment(-1)
+                    });
 
-                    // E desfaz a 'partidaJogada' de TODOS os jogadores da mesa
-                    for (const pId of currentGame.playerIds) {
-                        const pDocRef = doc(playersCollectionRef(), pId);
-                        // Se for o vencedor, adiciona ao seu update. Se não, cria um novo.
-                        if (pId === winnerId) {
-                            playerUpdates.partidasJogadas = increment(-1);
-                        } else {
-                            batch.update(pDocRef, { partidasJogadas: increment(-1) });
-                        }
+                    // Reverte partidas jogadas dos outros jogadores
+                    currentGame.playerIds.filter(id => id !== lastRound.winnerId).forEach(id => {
+                        batch.update(doc(playersCollectionRef(), id), {
+                            partidasJogadas: increment(-1)
+                        });
+                    });
+
+                    // Reverte lambretas
+                    if (lastRound.lambretaPlayerIds?.length > 0) {
+                        lastRound.lambretaPlayerIds.forEach(id => {
+                            batch.update(doc(playersCollectionRef(), id), {
+                                lambreta: increment(-1),
+                                lambretasNaSerie: increment(-1)
+                            });
+                        });
                     }
                 }
-                // --- FIM DA CORREÇÃO ---
-                batch.update(playerDocRef, playerUpdates);
 
-                // 3. Restaura o estado da PARTIDA para o da rodada ANTERIOR
-                const newHistory = currentGame.history;
-                let matchUpdates = {};
-
-                if (newHistory.length > 0) {
-                    // O estado do jogo agora é o da penúltima rodada
-                    const previousState = newHistory[newHistory.length - 1].stateAfterRound;
-                    matchUpdates = {
-                        ...previousState,
-                        turn: lastRound.winnerId // O turno volta para quem tinha ganhado a rodada desfeita
-                    };
-                } else {
-                    // Se não há mais histórico, volta ao estado inicial
-                    matchUpdates = {
-                        scores: currentGame.playerIds.reduce((acc, id) => ({ ...acc, [id]: 0 }), {}),
-                        raios: currentGame.playerIds.reduce((acc, id) => ({ ...acc, [id]: 0 }), {}),
-                        lambretasConsecutivas: currentGame.playerIds.reduce((acc, id) => ({ ...acc, [id]: 0 }), {}),
-                        turn: currentGame.playerIds[0]
-                    };
+                // 2. Reverte conquistas
+                if (lastRound.unlockedAchievements) {
+                    for (const [playerId, achievements] of Object.entries(lastRound.unlockedAchievements)) {
+                        const playerRef = doc(playersCollectionRef(), playerId);
+                        achievements.forEach(ach => {
+                            batch.update(playerRef, {
+                                [`conquistas.${ach}`]: increment(-1)
+                            });
+                        });
+                    }
                 }
 
-                matchUpdates.history = newHistory;
-                batch.update(gameDocRef, matchUpdates);
+                // 3. Reverte mudanças de série
+                if (lastRound.seriesChanges) {
+                    for (const [playerId, changes] of Object.entries(lastRound.seriesChanges)) {
+                        const playerRef = doc(playersCollectionRef(), playerId);
+                        batch.update(playerRef, {
+                            series: changes.oldSeries,
+                            raiosNaSerie: changes.oldRaiosNaSerie,
+                            lambretasNaSerie: changes.oldLambretasNaSerie
+                        });
+                    }
+                }
+
+                // 4. Restaura estado anterior do jogo
+                const previousState = currentGame.history.length > 1 ?
+                    // currentGame.history[currentGame.history.length - 2].stateAfterRound : {
+                    currentGame.history[currentGame.history.length - 2].stateScore : {
+                        scores: Object.fromEntries(currentGame.playerIds.map(id => [id, 0])),
+                        raios: Object.fromEntries(currentGame.playerIds.map(id => [id, 0]))
+                    };
 
                 await batch.commit();
-                showMessage("Última jogada desfeita.", "info");
+
+                // 5. Atualiza o documento do jogo
+                await updateDoc(gameDocRef, {
+                    scores: previousState.scores,
+                    raios: previousState.raios,
+                    turn: lastRound.winnerId,
+                    history: currentGame.history.slice(0, -1)
+                });
+
+                showMessage("Rodada desfeita com todas as consequências revertidas", "success");
             }
 
             function iniciarTrocaDeJogador() {
@@ -1188,8 +1201,8 @@
                             <p class="font-bold text-lg">Rodada ${round.roundNumber}: <span class="text-blue-600">${winnerName}</span> venceu</p>
                             ${round.completedRaio ? '<p class="text-sm font-semibold text-yellow-600">⚡️ RAIO COMPLETO! ⚡️</p>' : ''}
                             <div class="text-xs text-gray-600 mt-2">
-                                <p>Placar de Raios: ${Object.entries(round.stateAfterRound.raios).map(([pid, r]) => `${appState.players[pid].name}: ${r}`).join(', ')}</p>
-                                <p>Placar de Pontos: ${Object.entries(round.stateAfterRound.scores).map(([pid, s]) => `${appState.players[pid].name}: ${s}`).join(', ')}</p>}
+                                <p>Placar de Raios: ${Object.entries(round.stateScore.raios).map(([pid, r]) => `${appState.players[pid].name}: ${r}`).join(', ')}</p>
+                                <p>Placar de Pontos: ${Object.entries(round.stateScore.scores).map(([pid, s]) => `${appState.players[pid].name}: ${s}`).join(', ')}</p>}
                             </div>
                         </div>
                     `;
@@ -1379,14 +1392,16 @@
                     if (currentSeriesValue + amount >= 0) {
                         updates[seriesStatName] = increment(amount);
                     } else {
-                        console.warn(`Contador de série para "${stat}" já está em 0.`);
+                        updates[seriesStatName] = -1;
+                        // console.warn(`Contador de série para "${stat}" já está em 0.`);
                     }
 
                     if (Object.keys(updates).length > 0) {
                         await updateDoc(playerDocRef, updates);
                     }
 
-                    await checarStatusDaSerie(playerId);
+                    const changes = await checarStatusDaSerie(playerId);
+                    await applySeriesChanges(playerId, changes);
 
                 } catch (error) {
                     console.error(`Erro ao atualizar ${stat}:`, error);
@@ -1634,7 +1649,6 @@
                 }, 4000); // Tempo que a mensagem fica visível
             }
 
-            // Nova função showMessage - agora ela apenas adiciona mensagens à fila.
             function showMessage(message, type = 'info') {
                 // Adiciona o objeto da mensagem na nossa fila de espera.
                 appState.messageQueue.push({ text: message, type: type });
@@ -1869,67 +1883,75 @@
 
             async function checarStatusDaSerie(playerId) {
                 const player = appState.players[playerId];
-                if (!player) return;
+                if (!player) return { changed: false };
 
                 const seriesOrder = SERIES_CONFIG.map(s => s.name);
                 const currentIndex = seriesOrder.indexOf(player.series || 'Amador');
 
-                let newSeries = player.series;
-                let promotion = false;
-                let demotion = false;
-                let stagnant = false;
+                let changes = {
+                    changed: false,
+                    undoSeries: false,
+                    newSeries: null,
+                    oldSeries: player.series,
+                    unlockedAchievements: [],
+                    demotion: false
+                };
 
-                // 1. Verifica se houve promoção
-                if ((player.raiosNaSerie || 0) >= 15) {
-                    if (currentIndex < seriesOrder.length - 1) { // Garante que não está na série máxima
-                        newSeries = seriesOrder[currentIndex + 1];
-                        promotion = true;
-                    }
-                    else stagnant = true;
-                }
-                // 2. Verifica se houve rebaixamento
-                else if ((player.lambretasNaSerie || 0) >= 15) {
-                    if (currentIndex > 0) { // Garante que não está na série mínima
-                        newSeries = seriesOrder[currentIndex - 1];
-                        demotion = true;
-                    }
-                    else stagnant = true;   // Player que estava em amador permanece com raios e lambretas zerados
-                }
+                // Verificação de promoção (15 raios na série atual)
+                if ((player.raiosNaSerie || 0) >= 15 && currentIndex < seriesOrder.length - 1) {
+                    changes.newSeries = seriesOrder[currentIndex + 1];
+                    changes.changed = true;
 
-                // 3. Se houve alguma mudança, atualiza o perfil do jogador
-                if (promotion || demotion || stagnant) {
+                    // Verifica se é o primeiro a chegar nesta série
+                    const jogadoresNaSerie = Object.values(appState.players).filter(p =>
+                        p.series === changes.newSeries && p.id !== playerId
+                    );
+
+                    if (jogadoresNaSerie.length === 0) {
+                        changes.unlockedAchievements.push('desbravador');
+                        await concederConquista(playerId, 'desbravador', `foi o primeiro a alcançar a Série ${newSeries}! 🧗‍♂️`);
+                    }
+
+                    if (changes.newSeries === 'A') {
+                        changes.unlockedAchievements.push('primeiro_rei');
+                    }
+                }
+                else if ((player.raiosNaSerie || 0) === -1 && currentIndex > 0){
                     const playerDocRef = doc(playersCollectionRef(), playerId);
-                    // Zera os contadores para a nova série e atualiza a série
-                    await updateDoc(playerDocRef, {
-                        series: newSeries,
-                        raiosNaSerie: 0,
-                        lambretasNaSerie: 0
-                    });
+                    changes.undoSeries = true;
+                    changes.newSeries = seriesOrder[currentIndex - 1];
+                    changes.changed = true;
+                    changes.demotion = true;
+                }
+                // Verificação de rebaixamento (15 lambretas na série atual)
+                else if ((player.lambretasNaSerie || 0) >= 15 && currentIndex > 0) {
+                    changes.newSeries = seriesOrder[currentIndex - 1];
+                    changes.changed = true;
+                    changes.demotion = true;
+                }
 
-                    // Registra o evento no feed de atividades
-                    if (promotion) {
-                        await registrarEvento('promotion', playerId, `foi promovido para a Série ${newSeries}! 🎉`);
+                return changes;
+            }
 
-                        // Verifica se é o primeiro a chegar na Série A
-                        if (newSeries === 'A' && !player.conquistas?.primeiro_rei) {
-                            await concederConquista(playerId, 'primeiro_rei', 'se tornou o Primeiro Rei do Placar! 👑');
-                        }
+            async function applySeriesChanges(playerId, changes) {
+                if (!changes.changed) return;
 
-                        // Verifica se é o primeiro a chegar nesta série
-                        const jogadoresNaSerie = Object.values(appState.players).filter(p =>
-                            p.series === newSeries && p.id !== playerId
-                        );
+                const playerDocRef = doc(playersCollectionRef(), playerId);
+                const player = appState.players[playerId];
+                const updates = {
+                    series: changes.newSeries,
+                    raiosNaSerie: !changes.undoSeries ? 0 : 15,
+                    lambretasNaSerie:!changes.undoSeries ? 0 : player.lambretasNaSerie
+                };
 
-                        if (jogadoresNaSerie.length === 0) {
-                            await concederConquista(playerId, 'desbravador', `foi o primeiro a alcançar a Série ${newSeries}! 🧗‍♂️`);
-                        }
-                    }
-                    else if (demotion) {
-                        await registrarEvento('demotion', playerId, `foi rebaixado para a Série ${newSeries}.`);
-                    }
-                    else if (stagnant) {
-                        await registrarEvento('stagnant', playerId, `permanece na Série ${newSeries}.`);
-                    }
+                await updateDoc(playerDocRef, updates);
+
+                // Concede conquistas relacionadas a séries
+                for (const achievement of changes.unlockedAchievements) {
+                    await concederConquista(playerId, achievement,
+                        changes.demotion ?
+                        `rebaixado para Série ${changes.newSeries}` :
+                        `promovido para Série ${changes.newSeries}`);
                 }
             }
 
@@ -2004,7 +2026,7 @@
                     const registration = await navigator.serviceWorker.register('/placar_domino/service-worker.js', {
                     scope: '/placar_domino/'
                     });
-                    console.log('SW registrado:', registration.scope);
+                    // console.log('SW registrado:', registration.scope);
                     requestPermissionAndGetToken(registration);
                 } catch (error) {
                     console.error('Erro ao registrar Service Worker:', error);
