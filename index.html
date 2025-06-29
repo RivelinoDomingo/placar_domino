@@ -2159,6 +2159,34 @@
                 }
             });
 
+            // Forçar atualização do Service Worker
+            if ('serviceWorker' in navigator) {
+            window.addEventListener('load', async () => {
+                const registration = await navigator.serviceWorker.register('/placar_domino/service-worker.js');
+
+                // Verifica atualizações a cada acesso
+                registration.update();
+
+                // Ouvinte para novas versões
+                registration.addEventListener('updatefound', () => {
+                const newWorker = registration.installing;
+                newWorker.addEventListener('statechange', () => {
+                    if (newWorker.state === 'activated') {
+                    // Atualização pronta - recarregar para aplicar
+                    if (confirm('Nova versão disponível! Recarregar agora?')) {
+                        window.location.reload();
+                    }
+                    }
+                });
+                });
+            });
+
+            // Checa atualizações periodicamente (a cada 1h)
+            setInterval(() => {
+                navigator.serviceWorker.getRegistration().then(reg => reg?.update());
+            }, 60 * 60 * 1000);
+            }
+
 
         </script>
     </body>
