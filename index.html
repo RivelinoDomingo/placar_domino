@@ -539,11 +539,9 @@
 
                         const playerUpdates = { pontos: increment(1) };
                         const unlockedAchievements = {}; // Cria um objeto para armazenar as conquistas desbloqueadas neste round
-                        const seriesChanges = {};
                         let matchUpdates = {};
                         let completedRaio = false;
                         let lambretaLosersThisRound = [];
-                        // let scoresBeforeReset = {};
                         let stateScore = {};
                         let ladraoDeRaio = { vitma: [], ladrao: [] };
 
@@ -562,22 +560,8 @@
                                 }
                             }
                         }
-                        // Atualiza a series dos jogadores
-                        for (const playerId of currentGame.playerIds) {
-                            const player = appState.players[playerId];
-                            const changes = await checarStatusDaSerie(playerId);
 
-                            if (changes.changed) {
-                                seriesChanges[playerId] = {
-                                    oldSeries: player.series,
-                                    oldRaiosNaSerie: player.raiosNaSerie,
-                                    oldLambretasNaSerie: player.lambretasNaSerie,
-                                    newSeries: changes.newSeries
-                                };
-
-                                await applySeriesChanges(playerId, changes);
-                            }
-                        }
+                        const jogadorRaiosLambretas = {};
 
                         if (newScore >= WINNING_SCORE) {
                             completedRaio = true;
@@ -634,9 +618,6 @@
                                 const vitimasUnicas = [...new Set(vitimas)];
                                 const ladroesUnicos = [...new Set(ladroes)];
 
-                                // console.log('Dados relevantes para o último raio:');
-                                // console.log('Vítimas:', vitimasUnicas.map(id => appState.players[id]?.name || id));
-                                // console.log('Ladrões:', ladroesUnicos.map(id => appState.players[id]?.name || id));
 
                                 // Verifica se o vencedor atual foi ladrão
                                 if (ladroesUnicos.includes(winnerId)) {
@@ -671,8 +652,22 @@
 
                             // Feedback visual
                             showMessage(`${appState.players[winnerId].name} ganhou um Raio! ⚡️`, 'success');
+                            // Pegando os raios, lambretas e serie atuais do ganhador para "desfazer"
+                            jogadorRaiosLambretas[winnerId] = {
+                                raiosNaSerie: appState.players[winnerId].raiosNaSerie || 0,
+                                lambretasNaSerie: appState.players[winnerId].lambretasNaSerie || 0,
+                                series: appState.players[winnerId].series || 0
+                            }
+
                             for (const loserId of lambretaLosersThisRound) {
                                 showMessage(`${appState.players[loserId].name} tomou uma lambreta! 🚑`, 'info');
+                                // Pegando os raios, lambretas e serie atuais de quem tomou lambreta para "desfazer"
+                                jogadorRaiosLambretas[loserId] = {
+                                raiosNaSerie: appState.players[loserId].raiosNaSerie || 0,
+                                lambretasNaSerie: appState.players[loserId].lambretasNaSerie || 0,
+                                series: appState.players[loserId].series || 0
+                                };
+
                             }
 
                             // Lógica de conquistas
@@ -720,7 +715,7 @@
                             winnerId: winnerId,
                             completedRaio: completedRaio,
                             unlockedAchievements: unlockedAchievements,
-                            seriesChanges: seriesChanges,
+                            preUpdateStats: jogadorRaiosLambretas,
                             timestamp: new Date()
                         };
 
@@ -761,6 +756,14 @@
                         // 4. Atualiza o histórico no banco
                         await updateDoc(gameDocRef, {...matchUpdates, history: newHistory});
                         // Final da construção do Round
+
+                        // Atualiza a series dos jogadores
+                        for (const playerId of currentGame.playerIds) {
+                            const player = appState.players[playerId];
+                            const changes = await checarStatusDaSerie(playerId);
+                            await applySeriesChanges(playerId, changes);
+                        }
+
                     }
                 };
             }
@@ -773,6 +776,15 @@
                 const gameDocRef = doc(matchesCollectionRef(), appState.gameState.activeGameId);
                 const lastRound = currentGame.history[currentGame.history.length - 1];
 
+                for (const playerId in lastRound.preUpdateStats){
+                    batch.update(doc(playersCollectionRef(), playerId), {
+                        raiosNaSerie: lastRound.preUpdateStats[playerId].raiosNaSerie,
+                        lambretasNaSerie: lastRound.preUpdateStats[playerId].lambretasNaSerie,
+                        series: lastRound.preUpdateStats[playerId].series
+
+                    });
+                }
+
                 // 1. Reverte estatísticas básicas
                 batch.update(doc(playersCollectionRef(), lastRound.winnerId), {
                     pontos: increment(-1)
@@ -781,7 +793,6 @@
                 if (lastRound.completedRaio) {
                     batch.update(doc(playersCollectionRef(), lastRound.winnerId), {
                         raios: increment(-1),
-                        raiosNaSerie: increment(-1),
                         partidasJogadas: increment(-1)
                     });
 
@@ -797,7 +808,6 @@
                         lastRound.lambretaPlayerIds.forEach(id => {
                             batch.update(doc(playersCollectionRef(), id), {
                                 lambreta: increment(-1),
-                                lambretasNaSerie: increment(-1)
                             });
                         });
                     }
@@ -815,21 +825,8 @@
                     }
                 }
 
-                // 3. Reverte mudanças de série
-                if (lastRound.seriesChanges) {
-                    for (const [playerId, changes] of Object.entries(lastRound.seriesChanges)) {
-                        const playerRef = doc(playersCollectionRef(), playerId);
-                        batch.update(playerRef, {
-                            series: changes.oldSeries,
-                            raiosNaSerie: changes.oldRaiosNaSerie,
-                            lambretasNaSerie: changes.oldLambretasNaSerie
-                        });
-                    }
-                }
-
                 // 4. Restaura estado anterior do jogo
                 const previousState = currentGame.history.length > 1 ?
-                    // currentGame.history[currentGame.history.length - 2].stateAfterRound : {
                     currentGame.history[currentGame.history.length - 2].stateScore : {
                         scores: Object.fromEntries(currentGame.playerIds.map(id => [id, 0])),
                         raios: Object.fromEntries(currentGame.playerIds.map(id => [id, 0]))
@@ -1944,10 +1941,10 @@
 
                 const playerDocRef = doc(playersCollectionRef(), playerId);
                 const player = appState.players[playerId];
-                const updates = {
-                    series: !changes.stagnant ? changes.newSeries : player.series,
-                    raiosNaSerie: !changes.undoSeries ? 0 : 15,
-                    lambretasNaSerie:!changes.undoSeries ? 0 : player.lambretasNaSerie
+                let updates = {
+                series: changes.stagnant ? player.series : changes.newSeries,
+                raiosNaSerie: changes.stagnant ? 0 : (changes.undoSeries ? 15 : 0),
+                lambretasNaSerie: changes.stagnant ? 0 : (changes.undoSeries ? player.lambretasNaSerie : 0)
                 };
 
                 await updateDoc(playerDocRef, updates);
