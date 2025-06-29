@@ -190,11 +190,11 @@
 
             // --- ESTRUTURA DAS SÉRIES ---
             const SERIES_CONFIG = [
-                { name: 'Amador', requiredRaios: 0 },
-                { name: 'D', requiredRaios: 15 },
-                { name: 'C', requiredRaios: 33 },
-                { name: 'B', requiredRaios: 50 },
-                { name: 'A', requiredRaios: 80 }
+                { name: 'Amador'},
+                { name: 'D'},
+                { name: 'C'},
+                { name: 'B'},
+                { name: 'A'}
                 // Você pode adicionar mais séries aqui no futuro! Ex: { name: 'Lendário', requiredRaios: 100 }
             ];
 
@@ -1558,7 +1558,7 @@
                     slotDiv.innerHTML = `
                         <div class="bg-white p-3 rounded-lg shadow-md text-center w-15 sm:w-40 transition-all transform hover:scale-105" data-player-id-on-table="${playerId}">
                             <div class="font-bold text-lg truncate">${player.name}</div>
-                            <div class="text-sm text-gray-500 mb-2">Série ${player.series}</div>
+                            <div class="text-sm text-gray-500 mb-2">${player.series}</div>
                             ${teamIndicator}
                             <div id="score-${slotId}" class="flex flex-wrap justify-center items-center gap-2 mt-2 h-auto min-h-[20px] text-2xl">
                                 ${scoreHTML}
@@ -1890,12 +1890,14 @@
                     newSeries: null,
                     oldSeries: player.series,
                     unlockedAchievements: [],
-                    demotion: false
+                    demotion: false,
+                    stagnant: false
                 };
 
                 // Verificação de promoção (15 raios na série atual)
                 if ((player.raiosNaSerie || 0) >= 15 && currentIndex < seriesOrder.length - 1) {
                     changes.newSeries = seriesOrder[currentIndex + 1];
+                    changes.changed = true;
                     changes.changed = true;
 
                     // Verifica se é o primeiro a chegar nesta série
@@ -1912,6 +1914,10 @@
                         changes.unlockedAchievements.push('primeiro_rei');
                     }
                 }
+                else if ((player.raiosNaSerie || 0) >= 15 && seriesOrder.length - 1){
+                    changes.stagnant = true;
+                    changes.changed = true;
+                }
                 else if ((player.raiosNaSerie || 0) === -1 && currentIndex > 0){
                     const playerDocRef = doc(playersCollectionRef(), playerId);
                     changes.undoSeries = true;
@@ -1925,6 +1931,10 @@
                     changes.changed = true;
                     changes.demotion = true;
                 }
+                else if ((player.lambretasNaSerie || 0) >= 15 && currentIndex === 0){
+                    changes.stagnant = true;
+                    changes.changed = true;
+                }
 
                 return changes;
             }
@@ -1935,7 +1945,7 @@
                 const playerDocRef = doc(playersCollectionRef(), playerId);
                 const player = appState.players[playerId];
                 const updates = {
-                    series: changes.newSeries,
+                    series: !changes.stagnant ? changes.newSeries : player.series,
                     raiosNaSerie: !changes.undoSeries ? 0 : 15,
                     lambretasNaSerie:!changes.undoSeries ? 0 : player.lambretasNaSerie
                 };
@@ -1943,11 +1953,15 @@
                 await updateDoc(playerDocRef, updates);
 
                 // Concede conquistas relacionadas a séries
-                for (const achievement of changes.unlockedAchievements) {
-                    await concederConquista(playerId, achievement,
-                        changes.demotion ?
-                        `rebaixado para Série ${changes.newSeries}` :
-                        `promovido para Série ${changes.newSeries}`);
+
+                if (changes.demotion){
+                    await concederConquista(playerId, "demotion", `foi rebaixado para Série ${player.newSeries}`);
+                }
+                else if (changes.promotion){
+                    await concederConquista(playerId, "promotion", `foi promovido para Série ${player.newSeries}`);
+                }
+                else if (changes.stagnant){
+                    await concederConquista(playerId, "stagnant", player.series === "A" ? `ganhou um raio e contioua na Série  ${player.series}` : `tomou uma lambreta e permanece na Série ${player.series}`);
                 }
             }
 
