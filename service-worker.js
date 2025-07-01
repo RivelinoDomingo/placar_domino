@@ -46,7 +46,7 @@ messaging.onBackgroundMessage((payload) => {
 
 
 // SEU CÓDIGO ANTIGO DE CACHE CONTINUA AQUI
-const CACHE_NAME = 'domino-score-v12';
+const CACHE_NAME = 'domino-score-v13';
 const urlsToCache = [
     '/placar_domino/',
     '/placar_domino/icons/icone192.png',
