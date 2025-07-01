@@ -57,6 +57,12 @@
                 background-color: #fef2f2; /* Vermelho muito claro */
                 border-left: 4px solid #ef4444; /* Vermelho */
             }
+            /* Estilos para o Histórico */
+            .history-fab { width: 60px; height: 60px; border-radius: 50%; background-color: #4f46e5; color: white; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 12px rgba(0,0,0,0.2); cursor: pointer; transition: all 0.3s; }
+            .history-fab:hover { transform: scale(1.1); background-color: #4338ca; }
+            .history-details-tab { cursor: pointer; padding: 0.75rem 1rem; border-bottom: 3px solid transparent; transition: all 0.2s; }
+            .history-details-tab.active { border-bottom-color: #3b82f6; color: #2563eb; font-weight: 600; }
+            .point-circle { width: 28px; height: 28px; }
         </style>
     </head>
     <body class="text-gray-800">
@@ -101,44 +107,68 @@
             </div>
 
         </div>
-
-            <div id="messageBox" class="message-box"></div>
-            <!-- Mesa de jogo -->
-            <div id="view-game-table" class="view fade-in">
-                <div class="flex justify-between mb-6" bis_skin_checked="1">
-                    <div calss="items-start" bis_skin_checked="1">
-                        <button" id="btnBackToScoreboard" bis_skin_checked="1" class="text-gray-500 hover:text-gray-800 transition">←Voltar</button"></div>
-                         <div class="flex items-center" bis_skin_checked="1">
-                             <div class="text-center" bis_skin_checked="1"><h2 class="text-3xl font-bold font-condensed">MODO PARTIDA</h2><p id="gameStatusText" class="text-gray-500">Vez de teste1</p></div>
-                             <div class="w-24 sm:w-56" bis_skin_checked="1"></div>
-                        </div>
-                </div>
-                <div id="game-type-selector" class="flex justify-center gap-4 mb-4"><button data-mode="individual" class="gameModeBtn font-semibold py-2 px-4 rounded-lg shadow">Individual</button><button data-mode="duplas" class="gameModeBtn font-semibold py-2 px-4 rounded-lg">Duplas</button></div>
-                <div id="raio-mode-selector" class="flex justify-center items-center gap-2 mb-6"><input type="checkbox" id="raioModeCheckbox" class="h-5 w-5 rounded border-gray-300 text-blue-600 focus:ring-blue-500 cursor-pointer"><label for="raioModeCheckbox" class="font-semibold text-gray-700 cursor-pointer select-none">Partida de Raio ⚡️</label></div>
-                <div class="bg-green-800 border-8 border-yellow-800/50 rounded-2xl shadow-2xl p-4 sm:p-8 mesa-grid mx-auto">
-                    <div class="flex items-center justify-center player-slot-top"><div id="slot-1" class="player-slot flex flex-col items-center"></div></div><div class="flex items-center justify-center player-slot-left"><div id="slot-4" class="player-slot flex flex-col items-center"></div></div><div class="flex items-center justify-center player-slot-right"><div id="slot-2" class="player-slot flex flex-col items-center"></div></div><div class="flex items-center justify-center player-slot-bottom"><div id="slot-3" class="player-slot flex flex-col items-center"></div></div>
-                </div>
-                <div class="mt-8 text-center space-y-4">
-                    <button id="btnStartGame" class="bg-gray-400 text-white font-bold py-3 px-6 rounded-lg shadow-md cursor-not-allowed" disabled>Iniciar Jogo</button>
-                    <div id="activeGameButtons" class="hidden flex-wrap justify-center gap-4"><button id="btnLaunchScore" class="bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-6 rounded-lg shadow-md transition">Lançar Ponto</button><button id="btnUndoRound" class="bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-3 px-6 rounded-lg shadow-md transition">Desfazer</button><button id="btnSwapPlayer" class="bg-gray-500 hover:bg-gray-600 text-white font-bold py-3 px-6 rounded-lg shadow-md transition">Trocar Jogador</button><button id="btnEndGame" class="bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-6 rounded-lg shadow-md transition">Encerrar Partida</button></div>
-                </div>
+        <div id="messageBox" class="message-box"></div>
+        <!-- Mesa de jogo -->
+        <div id="view-game-table" class="view fade-in">
+            <div class="flex justify-between mb-6" bis_skin_checked="1">
+                <div calss="items-start" bis_skin_checked="1">
+                    <button" id="btnBackToScoreboard" bis_skin_checked="1" class="text-gray-500 hover:text-gray-800 transition">←Voltar</button"></div>
+                        <div class="flex items-center" bis_skin_checked="1">
+                            <div class="text-center" bis_skin_checked="1"><h2 class="text-3xl font-bold font-condensed">MODO PARTIDA</h2><p id="gameStatusText" class="text-gray-500">Vez de teste1</p></div>
+                            <div class="w-24 sm:w-56" bis_skin_checked="1"></div>
+                    </div>
             </div>
-    </div>
-
-            <div id="view-game-over" class="view fade-in text-center">
-                <h2 class="text-2xl text-gray-600">Fim de Jogo</h2>
-                <p id="gameOverWinnerText" class="text-5xl font-bold font-condensed my-4 text-blue-600"></p>
-                <p id="gameOverScoreText" class="text-xl text-gray-500 mb-8"></p>
-                <div class="flex justify-center gap-4 flex-wrap">
-                    <button id="btnShareWhatsapp" class="bg-green-500 text-white font-bold py-3 px-6 rounded-lg shadow-lg hover:bg-green-600 transition flex items-center gap-2"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg> Compartilhar</button><button id="btnGameSummary" class="bg-gray-500 text-white font-bold py-3 px-6 rounded-lg shadow-lg hover:bg-gray-600 transition">Ver Resumo</button><button id="btnNewGame" class="bg-blue-600 text-white hidden font-bold py-3 px-6 rounded-lg shadow-lg hover:bg-blue-700 transition">🀄 Nova Partida</button><button id="btnBackToScoreboard_GameOver" class="bg-gray-500 text-white font-bold py-3 px-6 rounded-lg shadow-lg hover:bg-gray-600 transition">← Voltar ao Placar</button>
+            <div id="game-type-selector" class="flex justify-center gap-4 mb-4"><button data-mode="individual" class="gameModeBtn font-semibold py-2 px-4 rounded-lg shadow">Individual</button><button data-mode="duplas" class="gameModeBtn font-semibold py-2 px-4 rounded-lg">Duplas</button></div>
+            <div id="raio-mode-selector" class="flex justify-center items-center gap-2 mb-6"><input type="checkbox" id="raioModeCheckbox" class="h-5 w-5 rounded border-gray-300 text-blue-600 focus:ring-blue-500 cursor-pointer"><label for="raioModeCheckbox" class="font-semibold text-gray-700 cursor-pointer select-none">Partida de Raio ⚡️</label></div>
+            <div class="bg-green-800 border-8 border-yellow-800/50 rounded-2xl shadow-2xl p-4 sm:p-8 mesa-grid mx-auto">
+                <div class="flex items-center justify-center player-slot-top"><div id="slot-1" class="player-slot flex flex-col items-center"></div></div><div class="flex items-center justify-center player-slot-left"><div id="slot-4" class="player-slot flex flex-col items-center"></div></div><div class="flex items-center justify-center player-slot-right"><div id="slot-2" class="player-slot flex flex-col items-center"></div></div><div class="flex items-center justify-center player-slot-bottom"><div id="slot-3" class="player-slot flex flex-col items-center"></div></div>
+            </div>
+            <div class="mt-8 text-center space-y-4">
+                <button id="btnStartGame" class="bg-gray-400 text-white font-bold py-3 px-6 rounded-lg shadow-md cursor-not-allowed" disabled>Iniciar Jogo</button>
+                <div id="activeGameButtons" class="hidden flex-wrap justify-center gap-4"><button id="btnLaunchScore" class="bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-6 rounded-lg shadow-md transition">Lançar Ponto</button><button id="btnUndoRound" class="bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-3 px-6 rounded-lg shadow-md transition">Desfazer</button><button id="btnSwapPlayer" class="bg-gray-500 hover:bg-gray-600 text-white font-bold py-3 px-6 rounded-lg shadow-md transition">Trocar Jogador</button><button id="btnEndGame" class="bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-6 rounded-lg shadow-md transition">Encerrar Partida</button></div>
+            </div>
+        </div>
+        <div id="view-game-over" class="view fade-in text-center">
+            <h2 class="text-2xl text-gray-600">Fim de Jogo</h2>
+            <p id="gameOverWinnerText" class="text-5xl font-bold font-condensed my-4 text-blue-600"></p>
+            <p id="gameOverScoreText" class="text-xl text-gray-500 mb-8"></p>
+            <div class="flex justify-center gap-4 flex-wrap">
+                <button id="btnShareWhatsapp" class="bg-green-500 text-white font-bold py-3 px-6 rounded-lg shadow-lg hover:bg-green-600 transition flex items-center gap-2"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg> Compartilhar</button><button id="btnGameSummary" class="bg-gray-500 text-white font-bold py-3 px-6 rounded-lg shadow-lg hover:bg-gray-600 transition">Ver Resumo</button><button id="btnNewGame" class="bg-blue-600 text-white hidden font-bold py-3 px-6 rounded-lg shadow-lg hover:bg-blue-700 transition">🀄 Nova Partida</button><button id="btnBackToScoreboard_GameOver" class="bg-gray-500 text-white font-bold py-3 px-6 rounded-lg shadow-lg hover:bg-gray-600 transition">← Voltar ao Placar</button>
+            </div>
+        </div>
+            <!-- NOVA TELA DE HISTÓRICO -->
+        <div id="view-history" class="view fade-in">
+            <div class="flex justify-between items-center mb-6">
+                <button id="btnBackToScoreboardFromHistory" class="text-gray-500 hover:text-gray-800 transition">← Voltar</button>
+                <h1 class="text-3xl font-bold font-condensed">HISTÓRICO DE PARTIDAS</h1>
+                <div class="w-20"></div> <!-- Espaçador -->
+            </div>
+            <div id="history-content-container">
+                <div id="history-list-view">
+                    <div id="history-match-list" class="space-y-3">
+                        <p class="text-center text-gray-500 p-8">Buscando histórico...</p>
+                    </div>
+                </div>
+                <div id="history-details-view" class="hidden">
+                    <div class="bg-white rounded-xl shadow-md p-4 sm:p-6">
+                        <div id="history-details-header" class="text-center mb-4"></div>
+                        <div class="border-b border-gray-200 flex justify-center mb-4">
+                            <button data-tab="stats" class="history-details-tab active">Estatísticas Gerais</button>
+                            <button data-tab="raios" class="history-details-tab">Análise por Raio</button>
+                        </div>
+                        <div id="history-details-content"></div>
+                    </div>
                 </div>
             </div>
         </div>
-
+    </div>
         <div class="admin-fab-container flex flex-col items-end gap-3">
 
             <button id="btnRequestNotifications" title="Ativar Notificações" class="w-12 h-12 rounded-full bg-yellow-400 text-2xl flex items-center justify-center shadow-lg hover:bg-yellow-500 transition transform hover:scale-110">
                 <span>🔔</span>
+            </button>
+            <button id="historyFabButton" title="Ver Histórico de Partidas" class="history-fab">
+             <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M7 14l5-5 4 4 5-5"/></svg>
             </button>
 
             <div class="relative">
@@ -208,7 +238,7 @@
             };
 
             // let appState = { players: {}, finalGameData: {}, activityFeed: [], isAdminMode: false, userId: null, gameState: {}, unsubscribers: [] };
-            let appState = { players: {}, finalGameData: {}, activityFeed: [], isAdminMode: false, userId: null, gameState: {}, unsubscribers: [], messageQueue: [], isMessageShowing: false };
+            let appState = { players: {}, finalGameData: {}, activityFeed: [], isAdminMode: false, userId: null, gameState: {}, unsubscribers: [], messageQueue: [], isMessageShowing: false, matchHistory: [], currentMatchDetails: null };
 
             const playersCollectionRef = () => collection(db, `artifacts/${appIdentifier}/public/data/players`);
             const activityFeedCollectionRef = () => collection(db, `artifacts/${appIdentifier}/public/data/events`);
@@ -224,6 +254,14 @@
                 liveMatchHeader: document.getElementById('liveMatchHeader'),
                 liveMatchFeed: document.getElementById('liveMatchFeed'),
                 liveMatchChevron: document.getElementById('liveMatchChevron'),
+                history: { fabButton: document.getElementById('historyFabButton'),
+                backButton: document.getElementById('btnBackToScoreboardFromHistory'),
+                listView: document.getElementById('history-list-view'),
+                detailsView: document.getElementById('history-details-view'),
+                matchList: document.getElementById('history-match-list'),
+                detailsHeader: document.getElementById('history-details-header'),
+                detailsContent: document.getElementById('history-details-content'),
+                tabs: document.querySelectorAll('.history-details-tab')},
                 adminFab: { button: document.getElementById('adminFabButton'), panel: document.getElementById('adminActionsPanel'), defaultIcon: document.getElementById('fabIconDefault'), closeIcon: document.getElementById('fabIconClose'), loginView: document.getElementById('adminLoginView'), controlsView: document.getElementById('adminControlsView'), keyInput: document.getElementById('adminKeyInput'), activateBtn: document.getElementById('activateAdminBtn'), addPlayerBtn: document.getElementById('addPlayerBtn_fab'), resetBtn: document.getElementById('resetScoresBtn_fab')},
                 modal: { container: document.getElementById('modalContainer'), content: document.getElementById('modalContent')},
                 gameMode: { goToBtn: document.getElementById('btnGoToGameMode'), backBtn: document.getElementById('btnBackToScoreboard'), modeButtons: document.querySelectorAll('.gameModeBtn'), raioCheckbox: document.getElementById('raioModeCheckbox'), startBtn: document.getElementById('btnStartGame'), activeButtons: document.getElementById('activeGameButtons'), launchScoreBtn: document.getElementById('btnLaunchScore'), undoBtn: document.getElementById('btnUndoRound'), swapPlayerBtn: document.getElementById('btnSwapPlayer'), endBtn: document.getElementById('btnEndGame'), newGameBtn: document.getElementById('btnNewGame'), shareBtn: document.getElementById('btnShareWhatsapp'), backToScoreboard_GameOverBtn: document.getElementById('btnBackToScoreboard_GameOver'), statusText: document.getElementById('gameStatusText'), gameOver: { winnerText: document.getElementById('gameOverWinnerText'), gameSummaryBtn: document.getElementById('btnGameSummary'), scoreText: document.getElementById('gameOverScoreText')}}
@@ -1818,6 +1856,14 @@
                     }
                 });
 
+                if(document.getElementById('view-history').classList.contains('active')) {
+                    if(!ui.history.detailsView.classList.contains('hidden')) {
+                         renderActiveHistoryTab();
+                    } else {
+                        renderMatchHistoryList();
+                    }
+                }
+
                 // Listener para o feed de atividades gerais (não muda)
                 const unsubFeed = onSnapshot(query(activityFeedCollectionRef(), orderBy("timestamp", "desc"), limit(5)), (snapshot) => {
                     appState.activityFeed = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
@@ -1989,6 +2035,257 @@
                 // Adicione aqui qualquer outro controle de admin que precise ser mostrado/escondido no futuro.
             }
 
+            // =======================================================================
+            //  INÍCIO: FUNÇÕES DE HISTÓRICO (LÓGICA REFORMULADA)
+            // =======================================================================
+
+            async function fetchMatchHistory() {
+                ui.history.matchList.innerHTML = `<p class="text-center text-gray-500 p-8">Buscando histórico...</p>`;
+                try {
+                    const q = query(matchesCollectionRef(), where("status", "==", "finished"), limit(50));
+                    const querySnapshot = await getDocs(q);
+                    let matches = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                    matches.sort((a, b) => (b.endedAt?.seconds || 0) - (a.endedAt?.seconds || 0));
+                    appState.matchHistory = matches;
+                    renderMatchHistoryList();
+                } catch (error) {
+                    console.error("Erro ao buscar histórico:", error);
+                    ui.history.matchList.innerHTML = `<p class="text-center text-red-500 p-8">Não foi possível carregar o histórico.</p>`;
+                }
+            }
+
+            function renderMatchHistoryList() {
+                if (Object.keys(appState.players).length === 0) {
+                    ui.history.matchList.innerHTML = `<p class="text-center text-gray-500 p-8">Carregando dados dos jogadores...</p>`;
+                    return;
+                }
+                if (appState.matchHistory.length === 0) {
+                    ui.history.matchList.innerHTML = `<p class="text-center text-gray-500 p-8">Nenhuma partida finalizada encontrada.</p>`;
+                    return;
+                }
+
+                ui.history.matchList.innerHTML = appState.matchHistory.map(match => {
+                    const winnerId = match.winnerInfo?.winnerId;
+                    const winnerName = winnerId ? (appState.players[winnerId]?.name || 'Vencedor') : 'Empate';
+                    const date = match.endedAt?.seconds ? new Date(match.endedAt.seconds * 1000).toLocaleDateString('pt-BR') : 'Data indefinida';
+                    return `
+                        <div data-match-id="${match.id}" class="bg-white p-4 rounded-lg shadow-sm flex items-center justify-between cursor-pointer hover:bg-gray-50 transition-colors">
+                            <div>
+                                <p class="font-bold">${winnerName} venceu</p>
+                                <p class="text-sm text-gray-500">Em ${date}</p>
+                            </div>
+                            <span class="text-gray-400">›</span>
+                        </div>`;
+                }).join('');
+            }
+
+            function showMatchDetails(matchId) {
+                const matchData = appState.matchHistory.find(m => m.id === matchId);
+                if (!matchData) return;
+
+                appState.currentMatchDetails = matchData;
+                ui.history.listView.classList.add('hidden');
+                ui.history.detailsView.classList.remove('hidden');
+
+                const winnerId = matchData.winnerInfo?.winnerId;
+                const winnerName = winnerId ? (appState.players[winnerId]?.name || 'Vencedor') : 'Empate';
+                ui.history.detailsHeader.innerHTML = `
+                    <h2 class="text-2xl font-bold">${winnerName}</h2>
+                    <p class="text-gray-500">${new Date(matchData.endedAt.seconds * 1000).toLocaleString('pt-BR', { dateStyle: 'long', timeStyle: 'short' })}</p>`;
+
+                renderActiveHistoryTab();
+            }
+
+            function analyzeMatchHistory(matchData) {
+                const playerIds = matchData.playerIds;
+                const totalStats = { lambretas: 0, conquistas: {} };
+                const playerStats = {};
+                playerIds.forEach(id => {
+                    playerStats[id] = { pontos: 0, raios: 0, lambretas: 0, vitimaDeRoubo: 0, conquistas: {} };
+                });
+
+                const raios = [];
+                let currentRaioRounds = [];
+                let raioNumber = 1;
+
+                for (const round of matchData.history) {
+                    if (round.type === 'swap') continue;
+                    currentRaioRounds.push(round);
+
+                    if (round.completedRaio) {
+                        const raioWinnerId = round.winnerId;
+
+                        if(playerStats[raioWinnerId]) playerStats[raioWinnerId].raios++;
+
+                        const raioAnalysis = {
+                            raioNumber: raioNumber++,
+                            winnerId: raioWinnerId,
+                            completionTime: round.timestamp,
+                            pointSequence: currentRaioRounds.map((r, index) => ({
+                                scorerId: r.winnerId,
+                                pointOrder: index + 1
+                            }))
+                        };
+
+                        if(round.lambretaPlayerIds?.length > 0){
+                            totalStats.lambretas += round.lambretaPlayerIds.length;
+                            round.lambretaPlayerIds.forEach(id => {
+                                if(playerStats[id]) playerStats[id].lambretas++;
+                            });
+                        }
+                        if(round.unlockedAchievements){
+                            for(const [pId, achs] of Object.entries(round.unlockedAchievements)){
+                                achs.forEach(achId => {
+                                    if(playerStats[pId] && achievements[achId]) {
+                                        playerStats[pId].conquistas[achId] = (playerStats[pId].conquistas[achId] || 0) + 1;
+                                        totalStats.conquistas[achId] = (totalStats.conquistas[achId] || 0) + 1;
+                                    }
+                                });
+                            }
+                        }
+                        currentRaioRounds.forEach(r => {
+                            if (r.ladraoDeRaio?.vitma?.length > 0) {
+                                r.ladraoDeRaio.vitma.forEach(id => {
+                                    if(playerStats[id]) playerStats[id].vitimaDeRoubo++;
+                                });
+                            }
+                        });
+
+                        raios.push(raioAnalysis);
+                        currentRaioRounds = [];
+                    }
+                }
+                playerIds.forEach(id => {
+                    if (playerStats[id]) {
+                        playerStats[id].pontos = matchData.history.filter(r => r.winnerId === id && r.type !== 'swap').length;
+                    }
+                });
+
+                return { playerStats, totalStats, raios };
+            }
+
+            function renderMatchStats(matchData) {
+                const { playerStats, totalStats, raios } = analyzeMatchHistory(matchData);
+
+                const totalAchievementsHTML = Object.entries(totalStats.conquistas).map(([achId, count]) => {
+                    const achInfo = achievements[achId];
+                    if (!achInfo) return '';
+                    return `<span class="inline-flex items-center gap-1 bg-yellow-100 text-yellow-800 text-xs font-medium px-2.5 py-0.5 rounded-full">${achInfo.icon} ${achInfo.name} ${count > 1 ? `(x${count})` : ''}</span>`;
+                }).join(' ');
+
+                const summaryBannerHTML = `
+                    <div class="bg-blue-50 border border-blue-200 text-blue-800 p-4 rounded-lg mb-6 text-center">
+                        <p class="font-semibold">Partida finalizada com <span class="font-bold">${raios.length}</span> ${raios.length === 1 ? 'raio' : 'raios'} e <span class="font-bold">${totalStats.lambretas}</span> ${totalStats.lambretas === 1 ? 'lambreta' : 'lambretas'}.</p>
+                        ${totalAchievementsHTML ? `<div class="flex flex-wrap justify-center gap-2 mt-2">${totalAchievementsHTML}</div>` : ''}
+                    </div>
+                `;
+
+                let contentHTML = summaryBannerHTML + '<div class="space-y-4">';
+                matchData.playerIds.forEach(id => {
+                    const player = appState.players[id];
+                    if(!player) return;
+                    const stats = playerStats[id];
+                    const conquistasHTML = Object.entries(stats.conquistas).map(([achId, count]) => {
+                        const achInfo = achievements[achId];
+                        if (!achInfo) return '';
+                        return `<span title="${achInfo.name}" class="text-xl">${achInfo.icon}${count > 1 ? `x${count}`: ''}</span>`;
+                    }).join(' ');
+
+                    contentHTML += `
+                        <div class="bg-gray-50 p-3 rounded-lg border border-gray-200">
+                            <div class="flex justify-between items-center mb-2">
+                                <p class="font-bold text-lg">${player.name}</p>
+                                <div class="flex gap-2 items-center">${conquistasHTML}</div>
+                            </div>
+                            <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 text-center">
+                                <div class="bg-white p-2 rounded shadow-sm"><p class="text-xs font-semibold text-gray-500">PONTOS TOTAIS</p><p class="font-bold text-lg">${stats.pontos}</p></div>
+                                <div class="bg-white p-2 rounded shadow-sm"><p class="text-xs font-semibold text-gray-500">RAIOS ⚡️</p><p class="font-bold text-lg">${stats.raios}</p></div>
+                                <div class="bg-white p-2 rounded shadow-sm"><p class="text-xs font-semibold text-gray-500">LAMBRETAS 🚑</p><p class="font-bold text-lg">${stats.lambretas}</p></div>
+                                <div class="bg-white p-2 rounded shadow-sm"><p class="text-xs font-semibold text-gray-500">MATCH POINT</p><p class="font-bold text-lg">${stats.vitimaDeRoubo}</p></div>
+                            </div>
+                        </div>`;
+                });
+                contentHTML += '</div>';
+                ui.history.detailsContent.innerHTML = contentHTML;
+            }
+
+            function renderMatchRaios(matchData) {
+                const { raios } = analyzeMatchHistory(matchData);
+                if (raios.length === 0) {
+                    ui.history.detailsContent.innerHTML = `<p class="text-center text-gray-500 p-8">Nenhum raio foi completado nesta partida.</p>`;
+                    return;
+                }
+                let contentHTML = '<div class="space-y-4">';
+                raios.forEach((raio) => {
+                    const winnerName = appState.players[raio.winnerId]?.name || 'Indefinido';
+                    const completionDate = new Date(raio.completionTime.seconds * 1000);
+                    const completionTimeStr = completionDate.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+
+                    let playerTracksHTML = '';
+                    matchData.playerIds.forEach(playerId => {
+                        const player = appState.players[playerId];
+                        if (!player) return;
+
+                        let circlesHTML = '';
+                        const playerPointsInRaio = raio.pointSequence.filter(p => p.scorerId === playerId);
+                        for (let i = 0; i < 4; i++) {
+                            const point = playerPointsInRaio[i];
+                            if (point) {
+                                circlesHTML += `<div class="point-circle rounded-full flex items-center justify-center bg-yellow-400 border-2 border-yellow-500 text-yellow-900 font-bold text-sm"><span>${point.pointOrder}</span></div>`;
+                            } else {
+                                circlesHTML += `<div class="point-circle rounded-full bg-gray-200 border-2 border-gray-300"></div>`;
+                            }
+                        }
+                        playerTracksHTML += `
+                            <div class="flex items-center gap-3">
+                                <p class="font-semibold w-24 truncate text-right">${player.name}</p>
+                                <div class="flex items-center gap-2">${circlesHTML}</div>
+                            </div>
+                        `;
+                    });
+
+                    contentHTML += `
+                        <div class="bg-gray-50 rounded-lg border border-gray-200 p-4">
+                            <div class="text-center mb-3">
+                                <p class="font-bold text-lg">Raio Vencido por ${winnerName} - <span class="font-normal text-gray-600">às ${completionTimeStr}</span></p>
+                            </div>
+                            <div class="space-y-2">${playerTracksHTML}</div>
+                        </div>`;
+                });
+                contentHTML += '</div>';
+                ui.history.detailsContent.innerHTML = contentHTML;
+            }
+
+            function setActiveHistoryTab(tabName) {
+                ui.history.tabs.forEach(tab => tab.classList.remove('active'));
+                const activeTab = document.querySelector(`.history-details-tab[data-tab="${tabName}"]`);
+                if (activeTab) activeTab.classList.add('active');
+            }
+
+            function renderActiveHistoryTab() {
+                if (!appState.currentMatchDetails) return;
+                const activeTabName = document.querySelector('.history-details-tab.active')?.dataset.tab || 'stats';
+                if (activeTabName === 'stats') {
+                    renderMatchStats(appState.currentMatchDetails);
+                } else {
+                    renderMatchRaios(appState.currentMatchDetails);
+                }
+            }
+
+            function showScoreboardFromHistory() {
+                if (!ui.history.detailsView.classList.contains('hidden')) {
+                    ui.history.detailsView.classList.add('hidden');
+                    ui.history.listView.classList.remove('hidden');
+                    appState.currentMatchDetails = null;
+                } else {
+                    switchView('view-scoreboard');
+                }
+            }
+
+            // =======================================================================
+            //  FIM: FUNÇÕES DE HISTÓRICO
+            // =======================================================================
+
             // Ativação do modo admin
             function toggleAdminPanel(e) {
                 // Verifica se o clique foi no botão FAB (não no painel)
@@ -2028,7 +2325,35 @@
 
             function activateAdminMode() { if(ui.adminFab.keyInput.value === ADMIN_KEY) { appState.isAdminMode = true; ui.adminFab.loginView.style.display = 'none'; ui.adminFab.controlsView.style.display = 'block'; updateAdminUI(); } else { alert('Senha incorreta!'); }}
 
+            // function switchView(viewId) { ui.views.forEach(v => v.classList.toggle('active', v.id === viewId)); }
+
             // EVENT LISTENERS
+
+            // Listners Do historicoDeRaios
+            document.addEventListener('DOMContentLoaded', () => {
+                ui.history.fabButton.addEventListener('click', () => {
+                    switchView('view-history');
+                    fetchMatchHistory();
+                });
+
+                ui.history.backButton.addEventListener('click', showScoreboardFromHistory);
+
+                ui.history.matchList.addEventListener('click', (e) => {
+                    const matchCard = e.target.closest('[data-match-id]');
+                    if (matchCard) {
+                        showMatchDetails(matchCard.dataset.matchId);
+                    }
+                });
+
+                ui.history.tabs.forEach(tab => {
+                    tab.addEventListener('click', () => {
+                        setActiveHistoryTab(tab.dataset.tab);
+                        renderActiveHistoryTab();
+                    });
+                });
+            });
+            // ----------------------------
+
             ui.adminFab.addPlayerBtn.addEventListener('click', addNovoJogador);
 
             // Listener para o modo partida que estava comentado
