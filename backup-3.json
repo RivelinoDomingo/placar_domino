@@ -3,122 +3,150 @@
     {
       "id": "2uTKIpn00eUFJM0wXC5G",
       "name": "Renata",
-      "series": "Amador",
       "conquistas": {
-        "azarao": 3
+        "azarao": 4,
+        "roubo": 1
       },
+      "series": "Amador",
+      "pontos": 119,
+      "raiosNaSerie": 9,
+      "raios": 29,
+      "partidasJogadas": 96,
       "lambretasNaSerie": 4,
-      "lambreta": 19,
-      "partidasJogadas": 44,
-      "raiosNaSerie": 4,
-      "raios": 13,
-      "pontos": 80
+      "lambreta": 33
     },
     {
-      "id": "4lAtcPIEKcu6pYOpTbUf",
-      "name": "Alexandre",
-      "series": "D",
-      "raiosNaSerie": 6,
-      "raios": 19,
-      "partidasJogadas": 47,
-      "lambretasNaSerie": 3,
-      "lambreta": 11,
-      "pontos": 115
-    },
-    {
-      "id": "60Fi861dyBrbbVCErjXq",
-      "name": "teste3",
-      "lambreta": 0,
-      "series": "Amador",
-      "conquistas": {},
-      "raiosNaSerie": 0,
-      "lambretasNaSerie": 0,
-      "raios": 1,
-      "pontos": 17,
-      "partidasJogadas": 6
-    },
-    {
-      "id": "AYPmYnX34qqGae7HcIYU",
-      "name": "Kauê",
-      "series": "Amador",
-      "pontos": 24,
-      "raiosNaSerie": 8,
-      "raios": 7,
-      "partidasJogadas": 10,
-      "lambretasNaSerie": 6,
-      "lambreta": 6
-    },
-    {
-      "id": "EqPTIkcP5QOiFWf2nRFw",
-      "name": "CONVIDADO",
+      "id": "3Z77VX0LJSmtntPaWH7i",
+      "name": "Lucinha",
       "raios": 0,
-      "partidasJogadas": 0,
       "lambreta": 0,
       "pontos": 0,
       "series": "Amador",
       "conquistas": {},
       "raiosNaSerie": 0,
-      "lambretasNaSerie": 0
+      "lambretasNaSerie": 0,
+      "partidasJogadas": 4
+    },
+    {
+      "id": "4lAtcPIEKcu6pYOpTbUf",
+      "name": "Alexandre",
+      "pontos": 139,
+      "raios": 29,
+      "partidasJogadas": 82,
+      "lambreta": 17,
+      "raiosNaSerie": 1,
+      "lambretasNaSerie": 1,
+      "series": "C",
+      "conquistas": {
+        "imbativel": 1,
+        "desbravador": 2
+      }
+    },
+    {
+      "id": "AYPmYnX34qqGae7HcIYU",
+      "name": "Kauê",
+      "series": "Amador",
+      "pontos": 26,
+      "raiosNaSerie": 10,
+      "raios": 9,
+      "partidasJogadas": 24,
+      "lambretasNaSerie": 11,
+      "lambreta": 11
+    },
+    {
+      "id": "EqPTIkcP5QOiFWf2nRFw",
+      "name": "CONVIDADO",
+      "series": "Amador",
+      "conquistas": {},
+      "raiosNaSerie": 2,
+      "raios": 2,
+      "pontos": 12,
+      "lambretasNaSerie": 4,
+      "lambreta": 4,
+      "partidasJogadas": 12
     },
     {
       "id": "KUk2C2TEJlRyIm02hmDk",
       "name": "Cassio",
       "series": "Amador",
-      "partidasJogadas": 2,
-      "pontos": 1,
-      "raios": 2,
       "lambreta": 2,
-      "raiosNaSerie": 2,
-      "lambretasNaSerie": 2
+      "lambretasNaSerie": 2,
+      "pontos": 3,
+      "raiosNaSerie": 4,
+      "raios": 4,
+      "partidasJogadas": 5
     },
     {
       "id": "M30KhNvKs2K2a8IESxt4",
-      "raios": 0,
       "series": "Amador",
       "name": "Hugo",
-      "pontos": 7,
-      "partidasJogadas": 7,
-      "lambretasNaSerie": 3,
-      "lambreta": 3
+      "raiosNaSerie": 1,
+      "raios": 1,
+      "pontos": 15,
+      "lambretasNaSerie": 5,
+      "lambreta": 5,
+      "partidasJogadas": 16
     },
     {
       "id": "YOYDoV9WhNmAcbFws9Hl",
       "name": "Rivelino",
       "series": "Amador",
-      "raios": 11,
-      "conquistas": {
-        "imbativel": 1,
-        "azarao": 2
-      },
-      "lambreta": 20,
+      "pontos": 105,
+      "raios": 19,
+      "partidasJogadas": 76,
+      "lambreta": 35,
       "lambretasNaSerie": 0,
       "raiosNaSerie": 0,
-      "partidasJogadas": 38,
-      "pontos": 79
+      "conquistas": {
+        "imbativel": 1,
+        "azarao": 3,
+        "roubo": 1,
+        "stagnant": 1
+      }
     },
     {
-      "id": "d7c2YtzqZgcCahSDD7Kf",
-      "name": "teste4",
+      "id": "ZXSIptDOtvs2oTioZvqo",
+      "name": "teste3",
+      "series": "Amador",
+      "conquistas": {
+        "azarao": 1,
+        "imbativel": 1,
+        "demotion": 1,
+        "roubo": 1,
+        "stagnant": 7
+      },
+      "lambretasNaSerie": 1,
+      "lambreta": 63,
+      "pontos": 16,
+      "raiosNaSerie": 1,
+      "raios": 40,
+      "partidasJogadas": 21
+    },
+    {
+      "id": "dWVq6CyXLEn9vafbp5Fo",
+      "name": "Caio",
+      "partidasJogadas": 0,
       "lambreta": 0,
+      "pontos": 0,
       "series": "Amador",
       "conquistas": {},
       "lambretasNaSerie": 0,
-      "raiosNaSerie": 1,
-      "raios": 1,
-      "pontos": 9,
-      "partidasJogadas": 6
+      "raiosNaSerie": 2,
+      "raios": 2
     },
     {
       "id": "jbhADYHEOrT5lc8wxrQI",
       "name": "Enzo",
       "series": "Amador",
-      "conquistas": [],
-      "raiosNaSerie": 4,
-      "raios": 4,
-      "lambretasNaSerie": 1,
-      "lambreta": 1,
-      "pontos": 17,
-      "partidasJogadas": 7
+      "lambretasNaSerie": 3,
+      "lambreta": 3,
+      "conquistas": {
+        "roubo": 1
+      },
+      "partidasJogadas": 21,
+      "pontos": 27,
+      "raiosNaSerie": 8,
+      "raios": 8
     },
     {
       "id": "jlIEtRMAWIQdaAySxIdB",
@@ -129,44 +157,69 @@
       "conquistas": {}
     },
     {
-      "id": "ojmaRfF8y4liH6TsfvNE",
-      "name": "teste2",
+      "id": "sJm8WZG4fGjGg9aaPoPe",
+      "name": "Convidado2",
+      "lambreta": 0,
       "series": "Amador",
       "conquistas": {},
-      "raiosNaSerie": 1,
-      "raios": 1,
-      "lambretasNaSerie": 1,
-      "lambreta": 1,
-      "pontos": 10,
-      "partidasJogadas": 6
-    },
-    {
-      "id": "tKqLDEFZS0uCKLzuNqhs",
-      "name": "teste1",
-      "partidasJogadas": 14,
-      "pontos": 27,
-      "raios": 287,
-      "raiosNaSerie": 0,
-      "conquistas": {
-        "primeiro_rei": 1
-      },
-      "lambreta": 289,
       "lambretasNaSerie": 0,
-      "series": "Amador"
+      "partidasJogadas": 5,
+      "pontos": 2,
+      "raiosNaSerie": 2,
+      "raios": 2
     },
     {
       "id": "u1423EoitFbGmcZOvytT",
       "series": "Amador",
       "name": "Ari",
-      "raiosNaSerie": 3,
-      "raios": 16,
       "conquistas": {
         "azarao": 3
       },
-      "partidasJogadas": 51,
-      "lambretasNaSerie": 7,
-      "lambreta": 22,
-      "pontos": 87
+      "lambretasNaSerie": 8,
+      "lambreta": 38,
+      "partidasJogadas": 102,
+      "pontos": 122,
+      "raiosNaSerie": 4,
+      "raios": 28
+    },
+    {
+      "id": "uF8qXsLv9MElkXPLdRqX",
+      "name": "teste4",
+      "series": "Amador",
+      "conquistas": {},
+      "lambretasNaSerie": 3,
+      "lambreta": 4,
+      "pontos": 5,
+      "raiosNaSerie": 4,
+      "raios": 5,
+      "partidasJogadas": 20
+    },
+    {
+      "id": "ueEvrpfR5jeMZUblyvcb",
+      "name": "teste2",
+      "lambreta": 3,
+      "lambretasNaSerie": 0,
+      "partidasJogadas": 21,
+      "pontos": 4,
+      "raios": 45,
+      "raiosNaSerie": 0,
+      "conquistas": {
+        "desbravador": 1,
+        "promotion": 2
+      },
+      "series": "Amador"
+    },
+    {
+      "id": "vZByaXgGtTkCwfmKLpnL",
+      "name": "teste_1",
+      "series": "Amador",
+      "conquistas": {},
+      "pontos": 2,
+      "raiosNaSerie": 2,
+      "raios": 3,
+      "lambretasNaSerie": 3,
+      "lambreta": 4,
+      "partidasJogadas": 21
     },
     {
       "id": "zNO2Zp7dZlyGMcL1xBS8",
@@ -182,23 +235,13 @@
   ],
   "events": [
     {
-      "id": "0HS6AtF0CCrYhNUPVM3I",
+      "id": "02gnIqQXtO84KnQwK6oC",
       "type": "achievement",
-      "player": "teste_3",
+      "player": "teste3",
       "text": "sofreu uma sequência de 3 lambretas! 🚑🤕🤕",
       "timestamp": {
-        "_seconds": 1750421612,
-        "_nanoseconds": 530000000
-      }
-    },
-    {
-      "id": "0SDnJtzQPsLTvbKX5VXN",
-      "type": "demotion",
-      "player": "teste_1",
-      "text": "foi rebaixado para a Série D.",
-      "timestamp": {
-        "_seconds": 1750446433,
-        "_nanoseconds": 254000000
+        "_seconds": 1751180389,
+        "_nanoseconds": 403000000
       }
     },
     {
@@ -212,223 +255,33 @@
       }
     },
     {
-      "id": "0qCD3gHG72Bi5aNjm4Jf",
+      "id": "3YhI3ktzDLIekvfskRCw",
       "type": "achievement",
-      "player": "visitante",
-      "text": "alcançou uma sequência de 3 vitórias de raio! 🔥",
+      "player": "teste2",
+      "text": "foi promovido para Série B",
       "timestamp": {
-        "_seconds": 1750441664,
-        "_nanoseconds": 402000000
+        "_seconds": 1751424285,
+        "_nanoseconds": 593000000
       }
     },
     {
-      "id": "128RklXsvkIuPUFBpPvF",
-      "type": "demotion",
-      "player": "teste1",
-      "text": "foi rebaixado para a Série D.",
-      "timestamp": {
-        "_seconds": 1750776189,
-        "_nanoseconds": 517000000
-      }
-    },
-    {
-      "id": "1VZDpVkCJWBBViZwEpQf",
+      "id": "44JqaoNpdC4vLz6L3Fqn",
       "type": "achievement",
-      "player": "visitante",
-      "text": "alcançou uma sequência de 3 raios! 🔥🚀🚀",
+      "player": "teste2",
+      "text": "foi promovido para Série undefined",
       "timestamp": {
-        "_seconds": 1750441395,
-        "_nanoseconds": 713000000
+        "_seconds": 1751424069,
+        "_nanoseconds": 494000000
       }
     },
     {
-      "id": "1Z9ZXG1yjZtOCTG6W3zm",
-      "type": "demotion",
-      "player": "teste_3",
-      "text": "foi rebaixado para a Série Amador.",
-      "timestamp": {
-        "_seconds": 1750546446,
-        "_nanoseconds": 418000000
-      }
-    },
-    {
-      "id": "1jEaINlOaTGiZS9Azt2f",
+      "id": "5FanW9GiA1S3JuDicrvo",
       "type": "achievement",
-      "player": "teste_2",
-      "text": "sofreu uma sequência de 3 lambretas! 🚑",
+      "player": "Rivelino",
+      "text": "🚔👮🏻Chama a policia que Rivelino acabou de roubar o raio de Alexandre",
       "timestamp": {
-        "_seconds": 1750441664,
-        "_nanoseconds": 604000000
-      }
-    },
-    {
-      "id": "2DI0XWrSPHO4E0dBml9N",
-      "type": "achievement",
-      "player": "visitante",
-      "text": "alcançou uma sequência de 3 raios seguidos! 🔥🚀🚀",
-      "timestamp": {
-        "_seconds": 1750422442,
-        "_nanoseconds": 176000000
-      }
-    },
-    {
-      "id": "2GqlfyVjKjoykSnCmGiG",
-      "type": "achievement",
-      "player": "teste_3",
-      "text": "alcançou uma sequência de 3 raio! 🔥🚀🚀",
-      "timestamp": {
-        "_seconds": 1750538031,
-        "_nanoseconds": 6000000
-      }
-    },
-    {
-      "id": "393SclX2aU2HkP4DoFeu",
-      "type": "achievement",
-      "player": "visitante",
-      "text": "alcançou uma sequência de 3 raios seguidos! 🔥🚀🚀",
-      "timestamp": {
-        "_seconds": 1750433927,
-        "_nanoseconds": 239000000
-      }
-    },
-    {
-      "id": "3ieIpWFJTIgui3GgQ1zT",
-      "type": "promotion",
-      "player": "teste5",
-      "text": "foi promovido para a Série C! 🎉",
-      "timestamp": {
-        "_seconds": 1750597664,
-        "_nanoseconds": 926000000
-      }
-    },
-    {
-      "id": "4I9Dp0mqIfIDNRsUdYBC",
-      "type": "promotion",
-      "player": "teste1",
-      "text": "foi promovido para a Série D! 🎉",
-      "timestamp": {
-        "_seconds": 1750777069,
-        "_nanoseconds": 186000000
-      }
-    },
-    {
-      "id": "4QWVh8rMhngkrXco5LLW",
-      "type": "promotion",
-      "player": "teste1",
-      "text": "foi promovido para a Série B! 🎉",
-      "timestamp": {
-        "_seconds": 1750799227,
-        "_nanoseconds": 651000000
-      }
-    },
-    {
-      "id": "4g1xebTWBiSOqx9P6ffx",
-      "type": "demotion",
-      "player": "teste1",
-      "text": "foi rebaixado para a Série C.",
-      "timestamp": {
-        "_seconds": 1750647017,
-        "_nanoseconds": 894000000
-      }
-    },
-    {
-      "id": "4nBonN3h9Jm67fcYq898",
-      "type": "achievement",
-      "player": "teste_2",
-      "text": "alcançou uma sequência de 3 raio! 🔥🚀🚀",
-      "timestamp": {
-        "_seconds": 1750442956,
-        "_nanoseconds": 444000000
-      }
-    },
-    {
-      "id": "4tFr1YOWN8uGEZa9gdeu",
-      "type": "achievement",
-      "player": "teste1",
-      "text": "se tornou o Primeiro Rei do Placar! 👑",
-      "timestamp": {
-        "_seconds": 1750808382,
-        "_nanoseconds": 979000000
-      }
-    },
-    {
-      "id": "59auHJHoCHMVVGziqO4v",
-      "type": "achievement",
-      "player": "visitante",
-      "text": "alcançou uma sequência de 3 raios seguidos! 🔥🚀🚀",
-      "timestamp": {
-        "_seconds": 1750430298,
-        "_nanoseconds": 645000000
-      }
-    },
-    {
-      "id": "5A0O61SEegpIKB18fQRd",
-      "type": "achievement",
-      "player": "visitante",
-      "text": "alcançou uma sequência de 3 raios seguidos! 🔥🚀🚀",
-      "timestamp": {
-        "_seconds": 1750426416,
-        "_nanoseconds": 210000000
-      }
-    },
-    {
-      "id": "5RBWAyTeCHAE9kssIO8Q",
-      "type": "demotion",
-      "player": "teste5",
-      "text": "foi rebaixado para a Série D.",
-      "timestamp": {
-        "_seconds": 1750585387,
-        "_nanoseconds": 206000000
-      }
-    },
-    {
-      "id": "5rK7t6Q3pUeXogkqvEPC",
-      "type": "promotion",
-      "player": "teste4",
-      "text": "foi promovido para a Série D! 🎉",
-      "timestamp": {
-        "_seconds": 1750585662,
-        "_nanoseconds": 829000000
-      }
-    },
-    {
-      "id": "5t90souHZExuSi65XC3D",
-      "type": "achievement",
-      "player": "teste_1",
-      "text": "sofreu uma sequência de 3 lambretas Seguidas! 🚑🤕🤕",
-      "timestamp": {
-        "_seconds": 1750425053,
-        "_nanoseconds": 751000000
-      }
-    },
-    {
-      "id": "6aaY0m0xNdFJBrXGbpUR",
-      "type": "promotion",
-      "player": "teste5",
-      "text": "foi promovido para a Série D! 🎉",
-      "timestamp": {
-        "_seconds": 1750548535,
-        "_nanoseconds": 163000000
-      }
-    },
-    {
-      "id": "7WPKsIEprXtsyhDQYHbG",
-      "type": "promotion",
-      "player": "teste5",
-      "text": "foi promovido para a Série B! 🎉",
-      "timestamp": {
-        "_seconds": 1750597755,
-        "_nanoseconds": 285000000
-      }
-    },
-    {
-      "id": "7dcvoTIEMEunwBO29lcA",
-      "type": "achievement",
-      "player": "teste_1",
-      "text": "sofreu uma sequência de 16 lambretas Seguidas! 🚑🤕🤕",
-      "timestamp": {
-        "_seconds": 1750429125,
-        "_nanoseconds": 520000000
+        "_seconds": 1751164667,
+        "_nanoseconds": 505000000
       }
     },
     {
@@ -442,323 +295,43 @@
       }
     },
     {
-      "id": "8F0cLOEhRExyu3NqSCjH",
+      "id": "8jwUbFjHm68pa2csgsM7",
       "type": "achievement",
-      "player": "teste_1",
-      "text": "sofreu uma sequência de 3 lambretas! 🚑🤕🤕",
-      "timestamp": {
-        "_seconds": 1750441410,
-        "_nanoseconds": 217000000
-      }
-    },
-    {
-      "id": "8FKgjNNM8TkcPn7O2Sb0",
-      "type": "promotion",
-      "player": "teste5",
-      "text": "foi promovido para a Série D! 🎉",
-      "timestamp": {
-        "_seconds": 1750548535,
-        "_nanoseconds": 58000000
-      }
-    },
-    {
-      "id": "8nxVcMOliTGjQKdmSO98",
-      "type": "promotion",
-      "player": "teste5",
-      "text": "foi promovido para a Série D! 🎉",
-      "timestamp": {
-        "_seconds": 1750548535,
-        "_nanoseconds": 19000000
-      }
-    },
-    {
-      "id": "97yYm9T92pWPIt76bHXL",
-      "type": "achievement",
-      "player": "teste_1",
-      "text": "sofreu uma sequência de 16 lambretas Seguidas! 🚑🤕🤕",
-      "timestamp": {
-        "_seconds": 1750428260,
-        "_nanoseconds": 788000000
-      }
-    },
-    {
-      "id": "9yKOugrfGTQhbqfb8SkJ",
-      "type": "achievement",
-      "player": "visitante",
-      "text": "alcançou uma sequência de 3 raios seguidos! 🔥🚀🚀",
-      "timestamp": {
-        "_seconds": 1750439129,
-        "_nanoseconds": 304000000
-      }
-    },
-    {
-      "id": "AAAukXsJD64mAgRKVLGt",
-      "type": "promotion",
       "player": "teste3",
-      "text": "foi promovido para a Série C! 🎉",
+      "text": "foi rebaixado para Série undefined",
       "timestamp": {
-        "_seconds": 1750591214,
-        "_nanoseconds": 803000000
+        "_seconds": 1751184028,
+        "_nanoseconds": 192000000
       }
     },
     {
-      "id": "AGBqPi57aM39ZyomhdVa",
-      "type": "demotion",
-      "player": "teste1",
-      "text": "foi rebaixado para a Série C.",
-      "timestamp": {
-        "_seconds": 1750784941,
-        "_nanoseconds": 66000000
-      }
-    },
-    {
-      "id": "ANb0OBGk4nykvMXyCoSC",
+      "id": "G683QNMf4AVAVEeUj9kE",
       "type": "achievement",
-      "player": "visitante",
-      "text": "alcançou uma sequência de 3 raios seguidos! 🔥🚀🚀",
+      "player": "Enzo",
+      "text": "🚔👮🏻Chama a policia que Enzo acabou de roubar o raio de Rivelino",
       "timestamp": {
-        "_seconds": 1750427146,
-        "_nanoseconds": 137000000
+        "_seconds": 1751240889,
+        "_nanoseconds": 405000000
       }
     },
     {
-      "id": "AXSMT2HAYPsC7WlcRtdC",
-      "type": "promotion",
-      "player": "teste5",
-      "text": "foi promovido para a Série D! 🎉",
-      "timestamp": {
-        "_seconds": 1750548535,
-        "_nanoseconds": 223000000
-      }
-    },
-    {
-      "id": "Acm18Vd9y1BbH9MtaBWm",
+      "id": "InuYwPVrPXyq1K46pvZs",
       "type": "achievement",
-      "player": "teste_4",
-      "text": "sofreu uma sequência de 3 lambretas! 🚑🤕🤕",
+      "player": "Rivelino",
+      "text": "tomou uma lambreta e permanece na Série Amador",
       "timestamp": {
-        "_seconds": 1750454197,
-        "_nanoseconds": 262000000
+        "_seconds": 1751420775,
+        "_nanoseconds": 633000000
       }
     },
     {
-      "id": "AjKnAQAM5M4YbfBp6kQJ",
-      "type": "promotion",
-      "player": "teste_3",
-      "text": "foi promovido para a Série D! 🎉",
-      "timestamp": {
-        "_seconds": 1750539213,
-        "_nanoseconds": 66000000
-      }
-    },
-    {
-      "id": "BfElQI9F8givvI4pG7Kb",
+      "id": "KthJQn6yqdKTkNoch1Ay",
       "type": "achievement",
-      "player": "teste_2",
-      "text": "sofreu uma sequência de 3 lambretas! 🚑🤕🤕",
+      "player": "teste3",
+      "text": "🚔👮🏻Chama a policia que teste3 acabou de roubar o raio de teste_1",
       "timestamp": {
-        "_seconds": 1750421612,
-        "_nanoseconds": 239000000
-      }
-    },
-    {
-      "id": "BgSCisKa6MV1UxQUsXBF",
-      "type": "achievement",
-      "player": "visitante",
-      "text": "alcançou uma sequência de 3 raios seguidos! 🔥🚀🚀",
-      "timestamp": {
-        "_seconds": 1750431688,
-        "_nanoseconds": 858000000
-      }
-    },
-    {
-      "id": "BzNh9fcbmTCxtKSKC5Iu",
-      "type": "promotion",
-      "player": "teste1",
-      "text": "foi promovido para a Série C! 🎉",
-      "timestamp": {
-        "_seconds": 1750646009,
-        "_nanoseconds": 984000000
-      }
-    },
-    {
-      "id": "Cks52zoRy7borBrTrAeJ",
-      "type": "promotion",
-      "player": "teste1",
-      "text": "foi promovido para a Série B! 🎉",
-      "timestamp": {
-        "_seconds": 1750778528,
-        "_nanoseconds": 956000000
-      }
-    },
-    {
-      "id": "DUrKrtEExdNS9qX4dKeQ",
-      "type": "achievement",
-      "player": "teste_5",
-      "text": "sofreu uma sequência de 3 lambretas! 🚑🤕🤕",
-      "timestamp": {
-        "_seconds": 1750539239,
-        "_nanoseconds": 554000000
-      }
-    },
-    {
-      "id": "Du03PcaUoMir1FCIihyq",
-      "type": "achievement",
-      "player": "teste_1",
-      "text": "sofreu uma sequência de 16 lambretas Seguidas! 🚑🤕🤕",
-      "timestamp": {
-        "_seconds": 1750431713,
-        "_nanoseconds": 523000000
-      }
-    },
-    {
-      "id": "ERIDgFa8tHRkpiINcOt7",
-      "type": "achievement",
-      "player": "teste_4",
-      "text": "sofreu uma sequência de 3 lambretas! 🚑🤕🤕",
-      "timestamp": {
-        "_seconds": 1750421482,
-        "_nanoseconds": 757000000
-      }
-    },
-    {
-      "id": "FJuJbuJIhlZij6UHt75O",
-      "type": "achievement",
-      "player": "visitante",
-      "text": "alcançou uma sequência de 3 raios seguidos! 🔥🚀🚀",
-      "timestamp": {
-        "_seconds": 1750430429,
-        "_nanoseconds": 516000000
-      }
-    },
-    {
-      "id": "FSRd04kZ6ScKsgnOBH6u",
-      "type": "promotion",
-      "player": "teste1",
-      "text": "foi promovido para a Série C! 🎉",
-      "timestamp": {
-        "_seconds": 1750799105,
-        "_nanoseconds": 628000000
-      }
-    },
-    {
-      "id": "GGaRVajnF3Jv4U8P4Hgb",
-      "type": "demotion",
-      "player": "teste1",
-      "text": "foi rebaixado para a Série D.",
-      "timestamp": {
-        "_seconds": 1750790571,
-        "_nanoseconds": 287000000
-      }
-    },
-    {
-      "id": "GuGl2Hvii57mGIQOvIVI",
-      "type": "achievement",
-      "player": "teste_1",
-      "text": "sofreu uma sequência de 16 lambretas Seguidas! 🚑🤕🤕",
-      "timestamp": {
-        "_seconds": 1750428297,
-        "_nanoseconds": 731000000
-      }
-    },
-    {
-      "id": "GzVufZpMR3xN5zP1RDYQ",
-      "type": "achievement",
-      "player": "visitante",
-      "text": "alcançou uma sequência de 3 raios seguidos! 🔥🚀🚀",
-      "timestamp": {
-        "_seconds": 1750427235,
-        "_nanoseconds": 984000000
-      }
-    },
-    {
-      "id": "H2Kxr8v65rtialE0dh5d",
-      "type": "promotion",
-      "player": "teste1",
-      "text": "foi promovido para a Série C! 🎉",
-      "timestamp": {
-        "_seconds": 1750717348,
-        "_nanoseconds": 758000000
-      }
-    },
-    {
-      "id": "H5EC0h1A4WObwwFGxqU6",
-      "type": "promotion",
-      "player": "teste5",
-      "text": "foi promovido para a Série D! 🎉",
-      "timestamp": {
-        "_seconds": 1750548535,
-        "_nanoseconds": 204000000
-      }
-    },
-    {
-      "id": "HSjL1NljiOJI9qOsi3FB",
-      "type": "achievement",
-      "player": "teste_4",
-      "text": "sofreu uma sequência de 3 lambretas! 🚑🤕🤕",
-      "timestamp": {
-        "_seconds": 1750421612,
-        "_nanoseconds": 396000000
-      }
-    },
-    {
-      "id": "HXQmERPwABtbyb71dQvR",
-      "type": "demotion",
-      "player": "teste5",
-      "text": "foi rebaixado para a Série D.",
-      "timestamp": {
-        "_seconds": 1750580297,
-        "_nanoseconds": 825000000
-      }
-    },
-    {
-      "id": "HZRtyGk7Zyh4YwONg34H",
-      "type": "demotion",
-      "player": "teste_1",
-      "text": "foi rebaixado para a Série Amador.",
-      "timestamp": {
-        "_seconds": 1750458389,
-        "_nanoseconds": 975000000
-      }
-    },
-    {
-      "id": "IBRlVAM7Hijauy3n2pxy",
-      "type": "promotion",
-      "player": "teste5",
-      "text": "foi promovido para a Série D! 🎉",
-      "timestamp": {
-        "_seconds": 1750548535,
-        "_nanoseconds": 214000000
-      }
-    },
-    {
-      "id": "Iy2qJabGuFlhSBwR7HTW",
-      "type": "promotion",
-      "player": "teste5",
-      "text": "foi promovido para a Série D! 🎉",
-      "timestamp": {
-        "_seconds": 1750580977,
-        "_nanoseconds": 150000000
-      }
-    },
-    {
-      "id": "Juj7iqp2kPEzDL3xroSS",
-      "type": "promotion",
-      "player": "teste5",
-      "text": "foi promovido para a Série B! 🎉",
-      "timestamp": {
-        "_seconds": 1750577499,
-        "_nanoseconds": 397000000
-      }
-    },
-    {
-      "id": "LDeZ7EraIkRr8WNUE0qq",
-      "type": "promotion",
-      "player": "teste5",
-      "text": "foi promovido para a Série B! 🎉",
-      "timestamp": {
-        "_seconds": 1750583203,
-        "_nanoseconds": 451000000
+        "_seconds": 1751186679,
+        "_nanoseconds": 173000000
       }
     },
     {
@@ -772,233 +345,53 @@
       }
     },
     {
-      "id": "M0mHLih3THleEUNOcJbK",
-      "type": "demotion",
-      "player": "teste1",
-      "text": "foi rebaixado para a Série D.",
-      "timestamp": {
-        "_seconds": 1750622224,
-        "_nanoseconds": 170000000
-      }
-    },
-    {
-      "id": "MmNvjhQqZppL90TtTXtk",
-      "type": "demotion",
-      "player": "teste5",
-      "text": "foi rebaixado para a Série Amador.",
-      "timestamp": {
-        "_seconds": 1750580891,
-        "_nanoseconds": 925000000
-      }
-    },
-    {
-      "id": "MrDhyNLLpy5RSDoXRvnD",
+      "id": "Mhrz6H7tnALfVW4RaxsB",
       "type": "achievement",
-      "player": "teste_1",
-      "text": "sofreu uma sequência de 16 lambretas Seguidas! 🚑🤕🤕",
+      "player": "Renata",
+      "text": "🚔👮🏻Chama a policia que Renata acabou de roubar o raio de Ari",
       "timestamp": {
-        "_seconds": 1750429923,
-        "_nanoseconds": 577000000
+        "_seconds": 1751159843,
+        "_nanoseconds": 267000000
       }
     },
     {
-      "id": "MwgVUSIZIpK12sZWI8wS",
+      "id": "NKKnZH54UqmAjTTEL9Xx",
       "type": "achievement",
-      "player": "teste_1",
-      "text": "sofreu uma sequência de 16 lambretas Seguidas! 🚑🤕🤕",
+      "player": "teste3",
+      "text": "sofreu uma sequência de 3 lambretas! 🚑🤕🤕",
       "timestamp": {
-        "_seconds": 1750427253,
-        "_nanoseconds": 963000000
+        "_seconds": 1751178348,
+        "_nanoseconds": 313000000
       }
     },
     {
-      "id": "N8ToTjXqFtY5e3G8dUgT",
-      "type": "promotion",
-      "player": "teste5",
-      "text": "foi promovido para a Série D! 🎉",
-      "timestamp": {
-        "_seconds": 1750548535,
-        "_nanoseconds": 28000000
-      }
-    },
-    {
-      "id": "NmJkhTyCmXYlbMTx7GTZ",
+      "id": "OGVYQYTcYVwJvH7qUoRb",
       "type": "achievement",
-      "player": "teste_1",
-      "text": "sofreu uma sequência de 16 lambretas Seguidas! 🚑🤕🤕",
+      "player": "teste3",
+      "text": "🚔👮🏻Chama a policia que teste3 acabou de roubar o raio de teste_1",
       "timestamp": {
-        "_seconds": 1750427236,
-        "_nanoseconds": 113000000
+        "_seconds": 1751182990,
+        "_nanoseconds": 26000000
       }
     },
     {
-      "id": "PfpPR3RwtHOSavuEtgcx",
-      "type": "demotion",
-      "player": "teste5",
-      "text": "foi rebaixado para a Série C.",
-      "timestamp": {
-        "_seconds": 1750577383,
-        "_nanoseconds": 62000000
-      }
-    },
-    {
-      "id": "QQUlQq1zLT1blZ9FMjxV",
-      "type": "promotion",
-      "player": "teste5",
-      "text": "foi promovido para a Série D! 🎉",
-      "timestamp": {
-        "_seconds": 1750548534,
-        "_nanoseconds": 947000000
-      }
-    },
-    {
-      "id": "QXgfjLnDPl6SAh28VCd2",
-      "type": "promotion",
-      "player": "teste2",
-      "text": "foi promovido para a Série C! 🎉",
-      "timestamp": {
-        "_seconds": 1750586847,
-        "_nanoseconds": 71000000
-      }
-    },
-    {
-      "id": "RAJoXPTBAiKcFUCxEkE2",
-      "type": "promotion",
-      "player": "teste5",
-      "text": "foi promovido para a Série D! 🎉",
-      "timestamp": {
-        "_seconds": 1750548535,
-        "_nanoseconds": 8000000
-      }
-    },
-    {
-      "id": "RGquOQuml9Jxj9wKAZSq",
-      "type": "promotion",
-      "player": "teste1",
-      "text": "foi promovido para a Série B! 🎉",
-      "timestamp": {
-        "_seconds": 1750784524,
-        "_nanoseconds": 594000000
-      }
-    },
-    {
-      "id": "RWkMKDzJJacmHUYWz4Em",
+      "id": "PsyuICArXwet6uesSdDO",
       "type": "achievement",
-      "player": "teste2",
+      "player": "Alexandre",
       "text": "alcançou uma sequência de 3 raio! 🔥🚀🚀",
       "timestamp": {
-        "_seconds": 1750558477,
-        "_nanoseconds": 975000000
+        "_seconds": 1750901743,
+        "_nanoseconds": 318000000
       }
     },
     {
-      "id": "RwOqPbtU5FMtMVMf9Djq",
-      "type": "demotion",
-      "player": "teste1",
-      "text": "foi rebaixado para a Série D.",
-      "timestamp": {
-        "_seconds": 1750647298,
-        "_nanoseconds": 903000000
-      }
-    },
-    {
-      "id": "Rx0e3bMj03m3hrGIU8br",
-      "type": "promotion",
-      "player": "teste5",
-      "text": "foi promovido para a Série D! 🎉",
-      "timestamp": {
-        "_seconds": 1750548535,
-        "_nanoseconds": 176000000
-      }
-    },
-    {
-      "id": "S3FD5lMgj4GCd4ePe0nq",
+      "id": "UlHn0J5wDJwMWghETU0C",
       "type": "achievement",
-      "player": "teste_1",
-      "text": "sofreu uma sequência de 16 lambretas Seguidas! 🚑🤕🤕",
+      "player": "teste3",
+      "text": "alcançou uma sequência de 3 raio! 🔥🚀🚀",
       "timestamp": {
-        "_seconds": 1750429164,
-        "_nanoseconds": 668000000
-      }
-    },
-    {
-      "id": "SNTR9hXAmoPRm2fc5fsL",
-      "type": "promotion",
-      "player": "teste5",
-      "text": "foi promovido para a Série D! 🎉",
-      "timestamp": {
-        "_seconds": 1750548535,
-        "_nanoseconds": 49000000
-      }
-    },
-    {
-      "id": "SpNPPMBrITLRMWBvD6Ms",
-      "type": "promotion",
-      "player": "teste1",
-      "text": "foi promovido para a Série B! 🎉",
-      "timestamp": {
-        "_seconds": 1750718169,
-        "_nanoseconds": 659000000
-      }
-    },
-    {
-      "id": "T6Qgtuy6HQaFk0YQL3p6",
-      "type": "achievement",
-      "player": "teste_1",
-      "text": "sofreu uma sequência de 16 lambretas Seguidas! 🚑🤕🤕",
-      "timestamp": {
-        "_seconds": 1750431689,
-        "_nanoseconds": 55000000
-      }
-    },
-    {
-      "id": "TWQIUjheWHD6DSdkgMwX",
-      "type": "achievement",
-      "player": "visitante",
-      "text": "alcançou uma sequência de 3 raios seguidos! 🔥🚀🚀",
-      "timestamp": {
-        "_seconds": 1750430306,
-        "_nanoseconds": 316000000
-      }
-    },
-    {
-      "id": "TpWzhEpVikWvKm9bAaAd",
-      "type": "achievement",
-      "player": "teste_1",
-      "text": "sofreu uma sequência de 3 lambretas Seguidas! 🚑🤕🤕",
-      "timestamp": {
-        "_seconds": 1750425066,
-        "_nanoseconds": 48000000
-      }
-    },
-    {
-      "id": "U3m7VdP3dKsxg2xj5rP6",
-      "type": "promotion",
-      "player": "teste5",
-      "text": "foi promovido para a Série D! 🎉",
-      "timestamp": {
-        "_seconds": 1750548535,
-        "_nanoseconds": 98000000
-      }
-    },
-    {
-      "id": "U5dujdJMTR6Jh2Dpn3lt",
-      "type": "promotion",
-      "player": "teste5",
-      "text": "foi promovido para a Série D! 🎉",
-      "timestamp": {
-        "_seconds": 1750548534,
-        "_nanoseconds": 955000000
-      }
-    },
-    {
-      "id": "UXvK8NuSc4DXeZjW4Pky",
-      "type": "achievement",
-      "player": "visitante",
-      "text": "alcançou uma sequência de 3 raios seguidos! 🔥🚀🚀",
-      "timestamp": {
-        "_seconds": 1750425053,
-        "_nanoseconds": 610000000
+        "_seconds": 1751183556,
+        "_nanoseconds": 135000000
       }
     },
     {
@@ -1012,143 +405,23 @@
       }
     },
     {
-      "id": "VEPxmZrNFP13poP56t8r",
+      "id": "VHYEMj3DwUjRqJyQHUJR",
       "type": "achievement",
-      "player": "teste_1",
-      "text": "sofreu uma sequência de 3 lambretas! 🚑🤕🤕",
-      "timestamp": {
-        "_seconds": 1750469926,
-        "_nanoseconds": 717000000
-      }
-    },
-    {
-      "id": "WApSjVQNBRjaeATtSEsh",
-      "type": "promotion",
-      "player": "teste5",
-      "text": "foi promovido para a Série D! 🎉",
-      "timestamp": {
-        "_seconds": 1750548534,
-        "_nanoseconds": 900000000
-      }
-    },
-    {
-      "id": "WVN8D6QzPnp2PJCC5eF9",
-      "type": "demotion",
-      "player": "teste1",
-      "text": "foi rebaixado para a Série Amador.",
-      "timestamp": {
-        "_seconds": 1750776532,
-        "_nanoseconds": 497000000
-      }
-    },
-    {
-      "id": "Wr6BcsGCj00LDtua9DHh",
-      "type": "promotion",
-      "player": "teste1",
-      "text": "foi promovido para a Série C! 🎉",
-      "timestamp": {
-        "_seconds": 1750622890,
-        "_nanoseconds": 654000000
-      }
-    },
-    {
-      "id": "X4PZBXSgb7VntO6xh46J",
-      "type": "demotion",
-      "player": "teste1",
-      "text": "foi rebaixado para a Série C.",
-      "timestamp": {
-        "_seconds": 1750808714,
-        "_nanoseconds": 467000000
-      }
-    },
-    {
-      "id": "XSqSVfPiQzIP18CmItH6",
-      "type": "achievement",
-      "player": "teste_2",
-      "text": "alcançou uma sequência de 3 raio! 🔥🚀🚀",
-      "timestamp": {
-        "_seconds": 1750443523,
-        "_nanoseconds": 633000000
-      }
-    },
-    {
-      "id": "Xn0sJin4x2zMFhMw7UPo",
-      "type": "demotion",
-      "player": "teste1",
-      "text": "foi rebaixado para a Série C.",
-      "timestamp": {
-        "_seconds": 1750790293,
-        "_nanoseconds": 212000000
-      }
-    },
-    {
-      "id": "Y3n3n5RhzDRBAbnPXyJr",
-      "type": "achievement",
-      "player": "visitante",
-      "text": "alcançou uma sequência de 3 raios seguidos! 🔥🚀🚀",
-      "timestamp": {
-        "_seconds": 1750430265,
-        "_nanoseconds": 155000000
-      }
-    },
-    {
-      "id": "YCJcjwgyZsN6YIJE7Nzq",
-      "type": "demotion",
       "player": "teste2",
-      "text": "foi rebaixado para a Série D.",
+      "text": "foi o primeiro a alcançar a Série B! 🧗‍♂️",
       "timestamp": {
-        "_seconds": 1750579536,
-        "_nanoseconds": 386000000
+        "_seconds": 1751424285,
+        "_nanoseconds": 414000000
       }
     },
     {
-      "id": "YOBkwjSJk17A3vAIzjMi",
-      "type": "promotion",
-      "player": "teste_1",
-      "text": "foi promovido para a Série C! 🎉",
-      "timestamp": {
-        "_seconds": 1750446393,
-        "_nanoseconds": 849000000
-      }
-    },
-    {
-      "id": "Yinvtr374szCWSpBp20O",
-      "type": "demotion",
-      "player": "teste5",
-      "text": "foi rebaixado para a Série C.",
-      "timestamp": {
-        "_seconds": 1750600805,
-        "_nanoseconds": 432000000
-      }
-    },
-    {
-      "id": "Z0t7C20HmkuHT3CKu4AY",
-      "type": "promotion",
-      "player": "teste5",
-      "text": "foi promovido para a Série D! 🎉",
-      "timestamp": {
-        "_seconds": 1750548535,
-        "_nanoseconds": 39000000
-      }
-    },
-    {
-      "id": "ZDThoMsg9diMlqjRwNfH",
-      "type": "demotion",
-      "player": "teste1",
-      "text": "foi rebaixado para a Série B.",
-      "timestamp": {
-        "_seconds": 1750808448,
-        "_nanoseconds": 547000000
-      }
-    },
-    {
-      "id": "ZUkoPOhQybunGZQGiNTx",
+      "id": "WJ07US2LrSl7590Vrm8W",
       "type": "achievement",
-      "player": "visitante",
-      "text": "alcançou uma sequência de 3 raios seguidos! 🔥🚀🚀",
+      "player": "teste3",
+      "text": "tomou uma lambreta e permanece na Série Amador",
       "timestamp": {
-        "_seconds": 1750421482,
-        "_nanoseconds": 607000000
+        "_seconds": 1751185386,
+        "_nanoseconds": 458000000
       }
     },
     {
@@ -1162,56 +435,6 @@
       }
     },
     {
-      "id": "ZeNNAOsI0uYBGG7NL9Lt",
-      "type": "promotion",
-      "player": "teste2",
-      "text": "foi promovido para a Série C! 🎉",
-      "timestamp": {
-        "_seconds": 1750578807,
-        "_nanoseconds": 773000000
-      }
-    },
-    {
-      "id": "ZlXhZxhfpjYXdTjLJGx6",
-      "type": "achievement",
-      "player": "teste_2",
-      "text": "sofreu uma sequência de 6 lambretas! 🚑",
-      "timestamp": {
-        "_seconds": 1750441710,
-        "_nanoseconds": 98000000
-      }
-    },
-    {
-      "id": "ZvJL9i32Fh4icVmY65Dw",
-      "type": "promotion",
-      "player": "teste1",
-      "text": "foi promovido para a Série C! 🎉",
-      "timestamp": {
-        "_seconds": 1750783862,
-        "_nanoseconds": 451000000
-      }
-    },
-    {
-      "id": "a4Ng6TsPZH8iNNVaxtMx",
-      "type": "promotion",
-      "player": "teste1",
-      "text": "foi promovido para a Série B! 🎉",
-      "timestamp": {
-        "_seconds": 1750786256,
-        "_nanoseconds": 195000000
-      }
-    },
-    {
-      "id": "a6pTXns55TvrmHh4cOsS",
-      "type": "achievement",
-      "player": "teste_1",
-      "text": "sofreu uma sequência de 3 lambretas Seguidas! 🚑🤕🤕",
-      "timestamp": {
-        "_seconds": 1750425880,
-        "_nanoseconds": 6000000
-      }
-    },
-    {
       "id": "aIxFbnSrRuWXoLanPYeS",
       "type": "promotion",
       "player": "Alexandre",
@@ -1222,113 +445,23 @@
       }
     },
     {
-      "id": "ahkTm1MF1DqwHx8uXdWz",
+      "id": "dx6K05EsuTCXJuK5K5Bf",
       "type": "achievement",
-      "player": "teste_4",
-      "text": "sofreu uma sequência de 3 lambretas! 🚑🤕🤕",
+      "player": "teste3",
+      "text": "tomou uma lambreta e permanece na Série Amador",
       "timestamp": {
-        "_seconds": 1750443523,
-        "_nanoseconds": 820000000
+        "_seconds": 1751180439,
+        "_nanoseconds": 650000000
       }
     },
     {
-      "id": "bTpWlLzVSODVD0gx33hy",
-      "type": "promotion",
-      "player": "teste1",
-      "text": "foi promovido para a Série A! 🎉",
-      "timestamp": {
-        "_seconds": 1750808382,
-        "_nanoseconds": 829000000
-      }
-    },
-    {
-      "id": "bzZSoHL37VESpOXpC1NL",
-      "type": "promotion",
-      "player": "teste_3",
-      "text": "foi promovido para a Série D! 🎉",
-      "timestamp": {
-        "_seconds": 1750539198,
-        "_nanoseconds": 922000000
-      }
-    },
-    {
-      "id": "cIXaxgVesoIyiwO1OiwY",
-      "type": "demotion",
-      "player": "teste1",
-      "text": "foi rebaixado para a Série D.",
-      "timestamp": {
-        "_seconds": 1750627351,
-        "_nanoseconds": 411000000
-      }
-    },
-    {
-      "id": "cKzvQ6AEkz0WNlVfVufZ",
-      "type": "promotion",
-      "player": "teste5",
-      "text": "foi promovido para a Série D! 🎉",
-      "timestamp": {
-        "_seconds": 1750548535,
-        "_nanoseconds": 127000000
-      }
-    },
-    {
-      "id": "cV0bju5VEVoYLcqflo5m",
+      "id": "e06zIKdQxALXKh6pCOAc",
       "type": "achievement",
-      "player": "teste_1",
-      "text": "sofreu uma sequência de 4 lambretas Seguidas! 🚑🤕🤕",
+      "player": "teste3",
+      "text": "tomou uma lambreta e permanece na Série Amador",
       "timestamp": {
-        "_seconds": 1750426416,
-        "_nanoseconds": 401000000
-      }
-    },
-    {
-      "id": "ccFnp6ELgmdBVqbKOxxb",
-      "type": "achievement",
-      "player": "teste_1",
-      "text": "sofreu uma sequência de 16 lambretas Seguidas! 🚑🤕🤕",
-      "timestamp": {
-        "_seconds": 1750428530,
-        "_nanoseconds": 365000000
-      }
-    },
-    {
-      "id": "dHvIo5FBAo1j8kgYXl5n",
-      "type": "promotion",
-      "player": "teste_1",
-      "text": "foi promovido para a Série D! 🎉",
-      "timestamp": {
-        "_seconds": 1750457830,
-        "_nanoseconds": 78000000
-      }
-    },
-    {
-      "id": "dyZfzGzdsEYhNVuG7uWv",
-      "type": "promotion",
-      "player": "teste5",
-      "text": "foi promovido para a Série D! 🎉",
-      "timestamp": {
-        "_seconds": 1750548535,
-        "_nanoseconds": 136000000
-      }
-    },
-    {
-      "id": "e6YVjTjtyuWaEYNhA8bi",
-      "type": "achievement",
-      "player": "teste_4",
-      "text": "sofreu uma sequência de 6 lambretas! 🚑🤕🤕",
-      "timestamp": {
-        "_seconds": 1750454343,
-        "_nanoseconds": 209000000
-      }
-    },
-    {
-      "id": "ehvdPhOFUZjnvfBuZC4t",
-      "type": "achievement",
-      "player": "visitante",
-      "text": "alcançou uma sequência de 3 raios! 🔥🚀🚀",
-      "timestamp": {
-        "_seconds": 1750441410,
-        "_nanoseconds": 43000000
+        "_seconds": 1751177162,
+        "_nanoseconds": 947000000
       }
     },
     {
@@ -1342,103 +475,53 @@
       }
     },
     {
-      "id": "fAdJTqKWO8AN1rgWrZ1q",
-      "type": "promotion",
-      "player": "teste1",
-      "text": "foi promovido para a Série C! 🎉",
-      "timestamp": {
-        "_seconds": 1750627260,
-        "_nanoseconds": 160000000
-      }
-    },
-    {
-      "id": "ffd1n4cAAbTaHT9qTsJ8",
-      "type": "demotion",
-      "player": "teste1",
-      "text": "foi rebaixado para a Série D.",
-      "timestamp": {
-        "_seconds": 1750781325,
-        "_nanoseconds": 422000000
-      }
-    },
-    {
-      "id": "g3LsI8dIpi0D4OpH7CI3",
+      "id": "fC7NGpJnyK4nmHPxhxH8",
       "type": "achievement",
-      "player": "teste_1",
-      "text": "alcançou uma sequência de 3 raio! 🔥🚀🚀",
-      "timestamp": {
-        "_seconds": 1750454197,
-        "_nanoseconds": 116000000
-      }
-    },
-    {
-      "id": "hNcctSZVWUz0KXNYP0XQ",
-      "type": "promotion",
-      "player": "teste5",
-      "text": "foi promovido para a Série D! 🎉",
-      "timestamp": {
-        "_seconds": 1750548506,
-        "_nanoseconds": 354000000
-      }
-    },
-    {
-      "id": "hUuSGM3YCh9ONN1aoIy0",
-      "type": "promotion",
-      "player": "teste5",
-      "text": "foi promovido para a Série D! 🎉",
-      "timestamp": {
-        "_seconds": 1750548535,
-        "_nanoseconds": 191000000
-      }
-    },
-    {
-      "id": "hzzlqr1w97qQfiNd3TQI",
-      "type": "achievement",
-      "player": "teste_1",
-      "text": "sofreu uma sequência de 3 lambretas Seguidas! 🚑🤕🤕",
-      "timestamp": {
-        "_seconds": 1750433688,
-        "_nanoseconds": 118000000
-      }
-    },
-    {
-      "id": "jDlqVnXBp1dKq4VtP0MH",
-      "type": "achievement",
-      "player": "teste_1",
+      "player": "Renata",
       "text": "sofreu uma sequência de 3 lambretas! 🚑🤕🤕",
       "timestamp": {
-        "_seconds": 1750442956,
-        "_nanoseconds": 667000000
+        "_seconds": 1750832485,
+        "_nanoseconds": 766000000
       }
     },
     {
-      "id": "jEkXkIJOFEMTwUJDCIEb",
-      "type": "promotion",
-      "player": "teste1",
-      "text": "foi promovido para a Série D! 🎉",
-      "timestamp": {
-        "_seconds": 1750621544,
-        "_nanoseconds": 543000000
-      }
-    },
-    {
-      "id": "k17eGMQ3Et38h6Afg1k7",
-      "type": "promotion",
-      "player": "teste1",
-      "text": "foi promovido para a Série C! 🎉",
-      "timestamp": {
-        "_seconds": 1750622146,
-        "_nanoseconds": 900000000
-      }
-    },
-    {
-      "id": "kdJdgHlbNQJ9ctqqfzza",
+      "id": "g79xQAMDwQsT8iVBPR2x",
       "type": "achievement",
-      "player": "visitante",
-      "text": "alcançou uma sequência de 3 raios seguidos! 🔥🚀🚀",
+      "player": "teste3",
+      "text": "tomou uma lambreta e permanece na Série Amador",
       "timestamp": {
-        "_seconds": 1750439441,
-        "_nanoseconds": 93000000
+        "_seconds": 1751186719,
+        "_nanoseconds": 482000000
+      }
+    },
+    {
+      "id": "gFXWx9HG7e58nBEZ4mr0",
+      "type": "achievement",
+      "player": "teste3",
+      "text": "🚔👮🏻Chama a policia que teste3 acabou de roubar o raio de teste_1",
+      "timestamp": {
+        "_seconds": 1751186168,
+        "_nanoseconds": 849000000
+      }
+    },
+    {
+      "id": "gqUbf9J4oWlIa2RkMbAX",
+      "type": "achievement",
+      "player": "teste3",
+      "text": "tomou uma lambreta e permanece na Série Amador",
+      "timestamp": {
+        "_seconds": 1751178348,
+        "_nanoseconds": 793000000
+      }
+    },
+    {
+      "id": "jLBe7cF6XKiJiP5H7vCA",
+      "type": "achievement",
+      "player": "Rivelino",
+      "text": "sofreu uma sequência de 3 lambretas! 🚑🤕🤕",
+      "timestamp": {
+        "_seconds": 1750980863,
+        "_nanoseconds": 887000000
       }
     },
     {
@@ -1452,513 +535,33 @@
       }
     },
     {
-      "id": "l8RKh5Nn2EeRobCWzqeR",
-      "type": "promotion",
-      "player": "teste5",
-      "text": "foi promovido para a Série D! 🎉",
-      "timestamp": {
-        "_seconds": 1750548535,
-        "_nanoseconds": 76000000
-      }
-    },
-    {
-      "id": "l8Ve7QLVm6RxPwb2OrEJ",
-      "type": "promotion",
-      "player": "teste1",
-      "text": "foi promovido para a Série C! 🎉",
-      "timestamp": {
-        "_seconds": 1750778365,
-        "_nanoseconds": 830000000
-      }
-    },
-    {
-      "id": "lKeKgscbAGOuU9grslqQ",
-      "type": "promotion",
-      "player": "teste5",
-      "text": "foi promovido para a Série D! 🎉",
-      "timestamp": {
-        "_seconds": 1750548535,
-        "_nanoseconds": 66000000
-      }
-    },
-    {
-      "id": "lVbUEDEdpwC0PuQbUaWd",
-      "type": "demotion",
-      "player": "teste1",
-      "text": "foi rebaixado para a Série Amador.",
-      "timestamp": {
-        "_seconds": 1750627448,
-        "_nanoseconds": 385000000
-      }
-    },
-    {
-      "id": "lhmvkVZamXSuUBjiB5Ca",
-      "type": "demotion",
-      "player": "teste1",
-      "text": "foi rebaixado para a Série Amador.",
-      "timestamp": {
-        "_seconds": 1750782524,
-        "_nanoseconds": 47000000
-      }
-    },
-    {
-      "id": "lokncEimJuse9OCtNG6D",
+      "id": "kqVLE6GLRfg5wSZItajF",
       "type": "achievement",
-      "player": "visitante",
-      "text": "alcançou uma sequência de 3 raios seguidos! 🔥🚀🚀",
-      "timestamp": {
-        "_seconds": 1750421612,
-        "_nanoseconds": 71000000
-      }
-    },
-    {
-      "id": "lre8TJHrWfeKoBmZLoXj",
-      "type": "promotion",
-      "player": "teste5",
-      "text": "foi promovido para a Série D! 🎉",
-      "timestamp": {
-        "_seconds": 1750548534,
-        "_nanoseconds": 928000000
-      }
-    },
-    {
-      "id": "mV1C4VRpnpcxUsNMroAg",
-      "type": "achievement",
-      "player": "visitante",
-      "text": "alcançou uma sequência de 3 raios seguidos! 🔥🚀🚀",
-      "timestamp": {
-        "_seconds": 1750433687,
-        "_nanoseconds": 959000000
-      }
-    },
-    {
-      "id": "mf8hSfeopNgqlGY5dYCl",
-      "type": "promotion",
-      "player": "teste5",
-      "text": "foi promovido para a Série D! 🎉",
-      "timestamp": {
-        "_seconds": 1750548535,
-        "_nanoseconds": 89000000
-      }
-    },
-    {
-      "id": "na7x5vm3nfiIh9kDsYzo",
-      "type": "promotion",
-      "player": "teste2",
-      "text": "foi promovido para a Série D! 🎉",
-      "timestamp": {
-        "_seconds": 1750577931,
-        "_nanoseconds": 795000000
-      }
-    },
-    {
-      "id": "nqxIzfV0irQEvdENmnyj",
-      "type": "achievement",
-      "player": "teste_1",
-      "text": "sofreu uma sequência de 16 lambretas Seguidas! 🚑🤕🤕",
-      "timestamp": {
-        "_seconds": 1750428490,
-        "_nanoseconds": 138000000
-      }
-    },
-    {
-      "id": "nzdNHNO6t2GLii5LsWpi",
-      "type": "demotion",
-      "player": "teste5",
-      "text": "foi rebaixado para a Série C.",
-      "timestamp": {
-        "_seconds": 1750577792,
-        "_nanoseconds": 510000000
-      }
-    },
-    {
-      "id": "o63sA9pXKqOtmrp0qBcN",
-      "type": "achievement",
-      "player": "visitante",
-      "text": "alcançou uma sequência de 3 raios seguidos! 🔥🚀🚀",
-      "timestamp": {
-        "_seconds": 1750438823,
-        "_nanoseconds": 211000000
-      }
-    },
-    {
-      "id": "oL06P6OHMX4WDz7d9AMv",
-      "type": "demotion",
-      "player": "teste5",
-      "text": "foi rebaixado para a Série C.",
-      "timestamp": {
-        "_seconds": 1750585265,
-        "_nanoseconds": 328000000
-      }
-    },
-    {
-      "id": "oSzE9fJxfIndtFQsL1B2",
-      "type": "promotion",
-      "player": "teste5",
-      "text": "foi promovido para a Série C! 🎉",
-      "timestamp": {
-        "_seconds": 1750583126,
-        "_nanoseconds": 56000000
-      }
-    },
-    {
-      "id": "orIZ6zFaTSsLDI8v5I4S",
-      "type": "achievement",
-      "player": "teste_1",
-      "text": "sofreu uma sequência de 4 lambretas Seguidas! 🚑🤕🤕",
-      "timestamp": {
-        "_seconds": 1750426435,
-        "_nanoseconds": 180000000
-      }
-    },
-    {
-      "id": "pCDUPRLtVrZBCgVk9nkU",
-      "type": "promotion",
       "player": "teste3",
-      "text": "foi promovido para a Série D! 🎉",
+      "text": "tomou uma lambreta e permanece na Série Amador",
       "timestamp": {
-        "_seconds": 1750586652,
-        "_nanoseconds": 966000000
+        "_seconds": 1751186766,
+        "_nanoseconds": 304000000
       }
     },
     {
-      "id": "pMTfvJRHNKdcSxXRMVDQ",
-      "type": "promotion",
-      "player": "teste5",
-      "text": "foi promovido para a Série D! 🎉",
-      "timestamp": {
-        "_seconds": 1750548534,
-        "_nanoseconds": 916000000
-      }
-    },
-    {
-      "id": "pZ3IfzypzMIo4E93ChBb",
-      "type": "demotion",
-      "player": "teste1",
-      "text": "foi rebaixado para a Série Amador.",
-      "timestamp": {
-        "_seconds": 1750808937,
-        "_nanoseconds": 148000000
-      }
-    },
-    {
-      "id": "pvMeWvJ50DLvAllj8mm3",
-      "type": "promotion",
-      "player": "teste1",
-      "text": "foi promovido para a Série D! 🎉",
-      "timestamp": {
-        "_seconds": 1750783390,
-        "_nanoseconds": 536000000
-      }
-    },
-    {
-      "id": "pxWKcmjtn4cs014mUKwN",
-      "type": "promotion",
-      "player": "teste_1",
-      "text": "foi promovido para a Série D! 🎉",
-      "timestamp": {
-        "_seconds": 1750457829,
-        "_nanoseconds": 883000000
-      }
-    },
-    {
-      "id": "q9tWtc42WaluyCko9lMo",
+      "id": "oKC8V7IpwYxPZsAMjzVS",
       "type": "achievement",
-      "player": "teste_3",
-      "text": "sofreu uma sequência de 3 lambretas! 🚑🤕🤕",
+      "player": "teste3",
+      "text": "tomou uma lambreta e permanece na Série Amador",
       "timestamp": {
-        "_seconds": 1750421482,
-        "_nanoseconds": 892000000
+        "_seconds": 1751182451,
+        "_nanoseconds": 60000000
       }
     },
     {
-      "id": "sB4qrcFhKpjGUxLhrjui",
-      "type": "demotion",
-      "player": "teste_3",
-      "text": "foi rebaixado para a Série Amador.",
-      "timestamp": {
-        "_seconds": 1750546436,
-        "_nanoseconds": 257000000
-      }
-    },
-    {
-      "id": "sOuQBs13oIaWudaeiZnH",
-      "type": "promotion",
-      "player": "teste1",
-      "text": "foi promovido para a Série D! 🎉",
-      "timestamp": {
-        "_seconds": 1750630263,
-        "_nanoseconds": 495000000
-      }
-    },
-    {
-      "id": "sRTOt7IxA3OWrfePWi7V",
+      "id": "qqWTjc64mwReLIbjWreY",
       "type": "achievement",
-      "player": "teste_1",
-      "text": "sofreu uma sequência de 3 lambretas Seguidas! 🚑🤕🤕",
+      "player": "teste3",
+      "text": "🚔👮🏻Chama a policia que teste3 acabou de roubar o raio de teste_1",
       "timestamp": {
-        "_seconds": 1750433705,
-        "_nanoseconds": 646000000
-      }
-    },
-    {
-      "id": "sfnZFVgWBpyEeZEWviA7",
-      "type": "promotion",
-      "player": "teste5",
-      "text": "foi promovido para a Série C! 🎉",
-      "timestamp": {
-        "_seconds": 1750548535,
-        "_nanoseconds": 234000000
-      }
-    },
-    {
-      "id": "skjxjo2FJGWUcLXA1EWG",
-      "type": "achievement",
-      "player": "teste_1",
-      "text": "sofreu uma sequência de 3 lambretas Seguidas! 🚑🤕🤕",
-      "timestamp": {
-        "_seconds": 1750425956,
-        "_nanoseconds": 680000000
-      }
-    },
-    {
-      "id": "tUk70wubwzkN36t8DMpR",
-      "type": "demotion",
-      "player": "teste_3",
-      "text": "foi rebaixado para a Série Amador.",
-      "timestamp": {
-        "_seconds": 1750546436,
-        "_nanoseconds": 707000000
-      }
-    },
-    {
-      "id": "tY8pj2kTbAVIV5Rt5GgS",
-      "type": "achievement",
-      "player": "visitante",
-      "text": "alcançou uma sequência de 6 raios seguidos! 🔥🚀🚀",
-      "timestamp": {
-        "_seconds": 1750434007,
-        "_nanoseconds": 291000000
-      }
-    },
-    {
-      "id": "taEnOm8sHDpRCFhXEKnV",
-      "type": "achievement",
-      "player": "teste_3",
-      "text": "alcançou uma sequência de 3 raio! 🔥🚀🚀",
-      "timestamp": {
-        "_seconds": 1750539239,
-        "_nanoseconds": 436000000
-      }
-    },
-    {
-      "id": "thZfXFVCLxAKJLMKPbgL",
-      "type": "promotion",
-      "player": "teste5",
-      "text": "foi promovido para a Série D! 🎉",
-      "timestamp": {
-        "_seconds": 1750548534,
-        "_nanoseconds": 937000000
-      }
-    },
-    {
-      "id": "vMi4etQsQkrt7gR56cG9",
-      "type": "demotion",
-      "player": "teste2",
-      "text": "foi rebaixado para a Série D.",
-      "timestamp": {
-        "_seconds": 1750583748,
-        "_nanoseconds": 761000000
-      }
-    },
-    {
-      "id": "vO9L3hcW4aqKQCZntqTG",
-      "type": "promotion",
-      "player": "teste5",
-      "text": "foi promovido para a Série B! 🎉",
-      "timestamp": {
-        "_seconds": 1750577330,
-        "_nanoseconds": 870000000
-      }
-    },
-    {
-      "id": "vPmZ4kaSq9HnuQd3wFxh",
-      "type": "demotion",
-      "player": "teste1",
-      "text": "foi rebaixado para a Série D.",
-      "timestamp": {
-        "_seconds": 1750625620,
-        "_nanoseconds": 559000000
-      }
-    },
-    {
-      "id": "vbjIHbOlJBtjnEkPFzGX",
-      "type": "promotion",
-      "player": "teste5",
-      "text": "foi promovido para a Série D! 🎉",
-      "timestamp": {
-        "_seconds": 1750548535,
-        "_nanoseconds": 153000000
-      }
-    },
-    {
-      "id": "vtW8bm1JDBJ1njpxId8Q",
-      "type": "demotion",
-      "player": "teste1",
-      "text": "foi rebaixado para a Série D.",
-      "timestamp": {
-        "_seconds": 1750808803,
-        "_nanoseconds": 733000000
-      }
-    },
-    {
-      "id": "wfNKcpeVZTbBzyyHO8UJ",
-      "type": "achievement",
-      "player": "teste_1",
-      "text": "sofreu uma sequência de 3 lambretas! 🚑🤕🤕",
-      "timestamp": {
-        "_seconds": 1750441395,
-        "_nanoseconds": 864000000
-      }
-    },
-    {
-      "id": "wuNIsMEVeQjguRXFbZgR",
-      "type": "promotion",
-      "player": "teste5",
-      "text": "foi promovido para a Série D! 🎉",
-      "timestamp": {
-        "_seconds": 1750548534,
-        "_nanoseconds": 974000000
-      }
-    },
-    {
-      "id": "x9x7SHAh1IQJtmnTzgpf",
-      "type": "achievement",
-      "player": "visitante",
-      "text": "alcançou uma sequência de 3 raios seguidos! 🔥🚀🚀",
-      "timestamp": {
-        "_seconds": 1750429125,
-        "_nanoseconds": 328000000
-      }
-    },
-    {
-      "id": "xHSSW5EaKJSaJvZa3GeE",
-      "type": "promotion",
-      "player": "teste1",
-      "text": "foi promovido para a Série B! 🎉",
-      "timestamp": {
-        "_seconds": 1750646141,
-        "_nanoseconds": 224000000
-      }
-    },
-    {
-      "id": "xkmAglMIAOLGJdKD46la",
-      "type": "demotion",
-      "player": "teste1",
-      "text": "foi rebaixado para a Série C.",
-      "timestamp": {
-        "_seconds": 1750780835,
-        "_nanoseconds": 861000000
-      }
-    },
-    {
-      "id": "xmjDSYpa5toVh0ZszG6u",
-      "type": "achievement",
-      "player": "teste_1",
-      "text": "sofreu uma sequência de 16 lambretas Seguidas! 🚑🤕🤕",
-      "timestamp": {
-        "_seconds": 1750429966,
-        "_nanoseconds": 972000000
-      }
-    },
-    {
-      "id": "yJccVG1up82Ob77SYxxj",
-      "type": "demotion",
-      "player": "teste1",
-      "text": "foi rebaixado para a Série C.",
-      "timestamp": {
-        "_seconds": 1750775658,
-        "_nanoseconds": 767000000
-      }
-    },
-    {
-      "id": "yP725y7mfwYBLjgJJuWi",
-      "type": "achievement",
-      "player": "teste_1",
-      "text": "sofreu uma sequência de 3 lambretas! 🚑🤕🤕",
-      "timestamp": {
-        "_seconds": 1750421483,
-        "_nanoseconds": 20000000
-      }
-    },
-    {
-      "id": "yeC7Wbwgr5PdWfmvAwIe",
-      "type": "achievement",
-      "player": "visitante",
-      "text": "alcançou uma sequência de 3 raios seguidos! 🔥🚀🚀",
-      "timestamp": {
-        "_seconds": 1750433571,
-        "_nanoseconds": 499000000
-      }
-    },
-    {
-      "id": "ykhgKggTYKkaJCkEfenA",
-      "type": "achievement",
-      "player": "visitante",
-      "text": "alcançou uma sequência de 3 raios seguidos! 🔥🚀🚀",
-      "timestamp": {
-        "_seconds": 1750429923,
-        "_nanoseconds": 347000000
-      }
-    },
-    {
-      "id": "ywLJW5eAbs4b5BZBrlGH",
-      "type": "achievement",
-      "player": "teste_1",
-      "text": "alcançou uma sequência de 3 vitórias de raio! 🔥",
-      "timestamp": {
-        "_seconds": 1750441709,
-        "_nanoseconds": 948000000
-      }
-    },
-    {
-      "id": "zCla6eO3KthqnHk71ZCd",
-      "type": "achievement",
-      "player": "visitante",
-      "text": "alcançou uma sequência de 3 raios seguidos! 🔥🚀🚀",
-      "timestamp": {
-        "_seconds": 1750438280,
-        "_nanoseconds": 839000000
-      }
-    },
-    {
-      "id": "zLMhsRDCaWxrSaDvLyvG",
-      "type": "achievement",
-      "player": "visitante",
-      "text": "alcançou uma sequência de 3 raios seguidos! 🔥🚀🚀",
-      "timestamp": {
-        "_seconds": 1750425879,
-        "_nanoseconds": 824000000
-      }
-    },
-    {
-      "id": "zMchZNT0AIv6lKuHO32y",
-      "type": "achievement",
-      "player": "visitante",
-      "text": "alcançou uma sequência de 3 raios seguidos! 🔥🚀🚀",
-      "timestamp": {
-        "_seconds": 1750440079,
-        "_nanoseconds": 540000000
-      }
-    },
-    {
-      "id": "zxlf3XwlB7sUJMSUap4U",
-      "type": "promotion",
-      "player": "teste2",
-      "text": "foi promovido para a Série C! 🎉",
-      "timestamp": {
-        "_seconds": 1750580085,
-        "_nanoseconds": 203000000
+        "_seconds": 1751186538,
+        "_nanoseconds": 297000000
       }
     }
   ],
@@ -1971,10 +574,10 @@
       }
     },
     {
-      "id": "c6E_YjSUrK-JiJinB6ftMO:APA91bGFtaHFq1HssLPqKt1V-36O1NxJQoKZt0DMwI3kFjQFoHGpf_M4cBKdSZtS2SXwfmDsVNG-m7RVp9dhoivVy-TWReJ36WB5ewpHRQQxXCo3PgqTElo",
+      "id": "c6M7Z5LB7LkkrIthY29NbB:APA91bHTiwpTfq8Ft5mqTs0VGbnY5Vlp_Wp4nT0Bhf8WhY5xnvwW2FqEO3aXUfQ0ho3vK_bEDqhHhQWLnviJhBU2Tx8471x_5kT1_BTT7wS-vKj-Afzc6rw",
       "timestamp": {
-        "_seconds": 1750799081,
-        "_nanoseconds": 3000000
+        "_seconds": 1750955947,
+        "_nanoseconds": 991000000
       }
     },
     {
@@ -1985,10 +588,10 @@
       }
     },
     {
-      "id": "d934t0HwtGLcd1Sh-PMAih:APA91bFBJ23UdvOtiy26cw1saSvMHxFRRRN1akDuqnbZrFNYxetUNfc8iFmn0miSjSfu-K2PVNRFMX9bfgjJGxzzTnRr0NVRZ2djMWqy4MKUy2IYdpa6d_o",
+      "id": "dWXlTMztjg84J1CjUIA3C1:APA91bGYsALtOycb01K2viYt74EwS7L97fGSQXZLumMFZ-czP2x__JrwEwzFI4ED1E4kvPtMXHItMc42kipy0K-SQJTeyjYZS1oTyUeNEQpkFFhIcxW_tzM",
       "timestamp": {
-        "_seconds": 1750798945,
-        "_nanoseconds": 307000000
+        "_seconds": 1751208221,
+        "_nanoseconds": 312000000
       }
     },
     {
@@ -1999,17 +602,24 @@
       }
     },
     {
-      "id": "ekQLZ0TfnFxj4OxsUqA3mf:APA91bGPT0mRYSlxav1Duhz2qJQywA4wVkKZq8haUf5f4vVvMvMCSPX5jDXsbgUw80PbcBIjzNg0m8g2pVJMm6nH40XVnyMS121fGtsWbx6L6MwhRzvqk9E",
+      "id": "eQiv42mgl-Mc3XVWhNjrhw:APA91bF2O4uvA3RSjt2l_twq5ml_KAp3PXObz0VBaduYjhIXMbQViEQ8MEYccIyqaVTjNcXwpAXApcE0K8cx3TUSWn_crgGOE6tmx4o8PF4oalkrjnKc-Ms",
       "timestamp": {
-        "_seconds": 1750807852,
-        "_nanoseconds": 361000000
+        "_seconds": 1750980751,
+        "_nanoseconds": 274000000
       }
     },
     {
-      "id": "fTQdXzEo142PcqiyZdOJ7J:APA91bFRhvcHpufan1Kc1VsItiG4xy8XFhXJPsWDiQaFygWYnZES3eKvG3qAtZY1X9oC21B2f-tPzzZMJJ35GaZ-Nskvt-yaIU8DlMpJ_1W_VHYDignRNxQ",
+      "id": "ew4oQScZTjSFX-okDd5cIa:APA91bHz--HbVqmUJKOhPFd1H5WlnAhRmt4YEmxoJxkX-pMeDd9kGLOJwKuSimNcTKCgXG-lG0C8wsmqkelgPow0g3oRm47qbOC4TBdoK4ks5m6SEovwZ8c",
       "timestamp": {
-        "_seconds": 1750808413,
-        "_nanoseconds": 32000000
+        "_seconds": 1751057627,
+        "_nanoseconds": 918000000
+      }
+    },
+    {
+      "id": "f_-wlBv8Oj3XDJng_v_jG-:APA91bHQvL01D6R_jrSsNPZFigUn9XEoiPs9I7qt9zOLIb2_tXsNf5wpFUOv0OjEokFybNKZpi5rEMuuoZGTMdd04wNN-iiwOPjJA0I2KDJhVvv8YkQChbE",
+      "timestamp": {
+        "_seconds": 1750956827,
+        "_nanoseconds": 120000000
       }
     }
   ]
