@@ -1933,6 +1933,7 @@
                     newSeries: null,
                     oldSeries: player.series,
                     unlockedAchievements: [],
+                    promotion: false,
                     demotion: false,
                     stagnant: false
                 };
@@ -1941,7 +1942,7 @@
                 if ((player.raiosNaSerie || 0) >= 15 && currentIndex < seriesOrder.length - 1) {
                     changes.newSeries = seriesOrder[currentIndex + 1];
                     changes.changed = true;
-                    changes.changed = true;
+                    changes.promotion = true;
 
                     // Verifica se é o primeiro a chegar nesta série
                     const jogadoresNaSerie = Object.values(appState.players).filter(p =>
@@ -1950,7 +1951,7 @@
 
                     if (jogadoresNaSerie.length === 0) {
                         changes.unlockedAchievements.push('desbravador');
-                        await concederConquista(playerId, 'desbravador', `foi o primeiro a alcançar a Série ${newSeries}! 🧗‍♂️`);
+                        await concederConquista(playerId, 'desbravador', `foi o primeiro a alcançar a Série ${changes.newSeries}! 🧗‍♂️`);
                     }
 
                     if (changes.newSeries === 'A') {
@@ -1998,10 +1999,10 @@
                 // Concede conquistas relacionadas a séries
 
                 if (changes.demotion){
-                    await concederConquista(playerId, "demotion", `foi rebaixado para Série ${player.newSeries}`);
+                    await concederConquista(playerId, "demotion", `foi rebaixado para Série ${changes.newSeries}`);
                 }
                 else if (changes.promotion){
-                    await concederConquista(playerId, "promotion", `foi promovido para Série ${player.newSeries}`);
+                    await concederConquista(playerId, "promotion", `foi promovido para Série ${changes.newSeries}`);
                 }
                 else if (changes.stagnant){
                     await concederConquista(playerId, "stagnant", player.series === "A" ? `ganhou um raio e contioua na Série  ${player.series}` : `tomou uma lambreta e permanece na Série ${player.series}`);
