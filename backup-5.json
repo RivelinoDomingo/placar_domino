@@ -3,133 +3,124 @@
     {
       "id": "2uTKIpn00eUFJM0wXC5G",
       "name": "Renata",
-      "series": "Amador",
       "conquistas": {
-        "azarao": 4
+        "azarao": 4,
+        "roubo": 1
       },
-      "raios": 18,
-      "pontos": 108,
-      "partidasJogadas": 62,
-      "lambreta": 26,
+      "series": "Amador",
+      "pontos": 119,
       "raiosNaSerie": 9,
-      "lambretasNaSerie": 12
+      "raios": 29,
+      "partidasJogadas": 96,
+      "lambretasNaSerie": 4,
+      "lambreta": 33
+    },
+    {
+      "id": "3Z77VX0LJSmtntPaWH7i",
+      "name": "Lucinha",
+      "raios": 0,
+      "lambreta": 0,
+      "pontos": 0,
+      "series": "Amador",
+      "conquistas": {},
+      "raiosNaSerie": 0,
+      "lambretasNaSerie": 0,
+      "partidasJogadas": 4
     },
     {
       "id": "4lAtcPIEKcu6pYOpTbUf",
       "name": "Alexandre",
-      "series": "D",
+      "pontos": 139,
+      "raios": 29,
+      "partidasJogadas": 82,
+      "lambreta": 17,
+      "raiosNaSerie": 1,
+      "lambretasNaSerie": 1,
+      "series": "C",
       "conquistas": {
-        "imbativel": 1
-      },
-      "pontos": 132,
-      "raiosNaSerie": 9,
-      "raios": 22,
-      "partidasJogadas": 55,
-      "lambretasNaSerie": 5,
-      "lambreta": 13
+        "imbativel": 1,
+        "desbravador": 2
+      }
     },
     {
       "id": "AYPmYnX34qqGae7HcIYU",
       "name": "Kauê",
       "series": "Amador",
-      "pontos": 24,
-      "raiosNaSerie": 8,
-      "raios": 7,
-      "partidasJogadas": 10,
-      "lambretasNaSerie": 6,
-      "lambreta": 6
-    },
-    {
-      "id": "BiKwpxsAHoDoNQGrZBJQ",
-      "name": "teste_3",
-      "series": "Amador",
-      "raiosNaSerie": 5,
-      "raios": 5,
-      "pontos": 24,
-      "conquistas": {
-        "roubo": 0,
-        "azarao": 9
-      },
-      "partidasJogadas": 14,
-      "lambretasNaSerie": 8,
-      "lambreta": 8
+      "pontos": 26,
+      "raiosNaSerie": 10,
+      "raios": 9,
+      "partidasJogadas": 24,
+      "lambretasNaSerie": 11,
+      "lambreta": 11
     },
     {
       "id": "EqPTIkcP5QOiFWf2nRFw",
       "name": "CONVIDADO",
       "series": "Amador",
       "conquistas": {},
-      "lambretasNaSerie": 2,
-      "lambreta": 2,
       "raiosNaSerie": 2,
       "raios": 2,
       "pontos": 12,
-      "partidasJogadas": 6
+      "lambretasNaSerie": 4,
+      "lambreta": 4,
+      "partidasJogadas": 12
     },
     {
       "id": "KUk2C2TEJlRyIm02hmDk",
       "name": "Cassio",
       "series": "Amador",
-      "partidasJogadas": 2,
-      "pontos": 1,
-      "raios": 2,
       "lambreta": 2,
-      "raiosNaSerie": 2,
-      "lambretasNaSerie": 2
+      "lambretasNaSerie": 2,
+      "pontos": 3,
+      "raiosNaSerie": 4,
+      "raios": 4,
+      "partidasJogadas": 5
     },
     {
       "id": "M30KhNvKs2K2a8IESxt4",
       "series": "Amador",
       "name": "Hugo",
-      "lambretasNaSerie": 4,
-      "lambreta": 4,
       "raiosNaSerie": 1,
       "raios": 1,
       "pontos": 15,
-      "partidasJogadas": 12
-    },
-    {
-      "id": "N4uV1LQw9vJPMCTsjU48",
-      "name": "teste_1",
-      "lambreta": 3,
-      "conquistas": {
-        "desbravador": 1,
-        "imbativel": 9
-      },
-      "partidasJogadas": 14,
-      "pontos": 32,
-      "raios": 14,
-      "lambretasNaSerie": 3,
-      "series": "Amador",
-      "raiosNaSerie": 15
-    },
-    {
-      "id": "U7I5DAcNE50ElBniucDm",
-      "name": "teste_4",
-      "series": "Amador",
-      "conquistas": {},
-      "raiosNaSerie": 2,
-      "raios": 1,
-      "lambretasNaSerie": 2,
-      "lambreta": 2,
-      "partidasJogadas": 14,
-      "pontos": 18
+      "lambretasNaSerie": 5,
+      "lambreta": 5,
+      "partidasJogadas": 16
     },
     {
       "id": "YOYDoV9WhNmAcbFws9Hl",
       "name": "Rivelino",
       "series": "Amador",
-      "partidasJogadas": 54,
-      "pontos": 100,
-      "lambretasNaSerie": 8,
-      "lambreta": 28,
-      "raiosNaSerie": 3,
-      "raios": 10,
+      "pontos": 105,
+      "raios": 19,
+      "partidasJogadas": 76,
+      "lambreta": 35,
+      "lambretasNaSerie": 0,
+      "raiosNaSerie": 0,
       "conquistas": {
         "imbativel": 1,
         "azarao": 3,
-        "roubo": 0
+        "roubo": 1,
+        "stagnant": 1
       }
+    },
+    {
+      "id": "ZXSIptDOtvs2oTioZvqo",
+      "name": "teste3",
+      "series": "Amador",
+      "conquistas": {
+        "azarao": 1,
+        "imbativel": 1,
+        "demotion": 1,
+        "roubo": 1,
+        "stagnant": 7
+      },
+      "lambretasNaSerie": 1,
+      "lambreta": 63,
+      "pontos": 16,
+      "raiosNaSerie": 1,
+      "raios": 40,
+      "partidasJogadas": 21
     },
     {
       "id": "dWVq6CyXLEn9vafbp5Fo",
@@ -147,15 +138,15 @@
       "id": "jbhADYHEOrT5lc8wxrQI",
       "name": "Enzo",
       "series": "Amador",
-      "lambretasNaSerie": 2,
-      "lambreta": 2,
-      "raiosNaSerie": 5,
-      "raios": 5,
-      "pontos": 24,
-      "partidasJogadas": 12,
+      "lambretasNaSerie": 3,
+      "lambreta": 3,
       "conquistas": {
-        "roubo": 0
-      }
+        "roubo": 1
+      },
+      "partidasJogadas": 21,
+      "pontos": 27,
+      "raiosNaSerie": 8,
+      "raios": 8
     },
     {
       "id": "jlIEtRMAWIQdaAySxIdB",
@@ -166,16 +157,16 @@
       "conquistas": {}
     },
     {
-      "id": "o5CVO2PKJLVfQAOEaf4m",
-      "name": "teste_2",
+      "id": "sJm8WZG4fGjGg9aaPoPe",
+      "name": "Convidado2",
+      "lambreta": 0,
       "series": "Amador",
       "conquistas": {},
+      "lambretasNaSerie": 0,
+      "partidasJogadas": 5,
+      "pontos": 2,
       "raiosNaSerie": 2,
-      "raios": 2,
-      "lambretasNaSerie": 2,
-      "lambreta": 2,
-      "pontos": 25,
-      "partidasJogadas": 14
+      "raios": 2
     },
     {
       "id": "u1423EoitFbGmcZOvytT",
@@ -184,12 +175,51 @@
       "conquistas": {
         "azarao": 3
       },
-      "lambretasNaSerie": 10,
-      "lambreta": 25,
-      "partidasJogadas": 65,
-      "pontos": 113,
-      "raiosNaSerie": 6,
-      "raios": 19
+      "lambretasNaSerie": 8,
+      "lambreta": 38,
+      "partidasJogadas": 102,
+      "pontos": 122,
+      "raiosNaSerie": 4,
+      "raios": 28
+    },
+    {
+      "id": "uF8qXsLv9MElkXPLdRqX",
+      "name": "teste4",
+      "series": "Amador",
+      "conquistas": {},
+      "lambretasNaSerie": 3,
+      "lambreta": 4,
+      "pontos": 5,
+      "raiosNaSerie": 4,
+      "raios": 5,
+      "partidasJogadas": 20
+    },
+    {
+      "id": "ueEvrpfR5jeMZUblyvcb",
+      "name": "teste2",
+      "lambreta": 3,
+      "lambretasNaSerie": 0,
+      "partidasJogadas": 21,
+      "pontos": 4,
+      "raios": 45,
+      "raiosNaSerie": 0,
+      "conquistas": {
+        "desbravador": 1,
+        "promotion": 2
+      },
+      "series": "Amador"
+    },
+    {
+      "id": "vZByaXgGtTkCwfmKLpnL",
+      "name": "teste_1",
+      "series": "Amador",
+      "conquistas": {},
+      "pontos": 2,
+      "raiosNaSerie": 2,
+      "raios": 3,
+      "lambretasNaSerie": 3,
+      "lambreta": 4,
+      "partidasJogadas": 21
     },
     {
       "id": "zNO2Zp7dZlyGMcL1xBS8",
@@ -205,6 +235,16 @@
   ],
   "events": [
     {
+      "id": "02gnIqQXtO84KnQwK6oC",
+      "type": "achievement",
+      "player": "teste3",
+      "text": "sofreu uma sequência de 3 lambretas! 🚑🤕🤕",
+      "timestamp": {
+        "_seconds": 1751180389,
+        "_nanoseconds": 403000000
+      }
+    },
+    {
       "id": "0ccCbnfzTTCs2wc0N852",
       "type": "achievement",
       "player": "Renata",
@@ -215,23 +255,33 @@
       }
     },
     {
-      "id": "6K4Jt0W7NoJJ8kbMMe8J",
+      "id": "3YhI3ktzDLIekvfskRCw",
       "type": "achievement",
-      "player": "teste_3",
-      "text": "sofreu uma sequência de 3 lambretas! 🚑🤕🤕",
+      "player": "teste2",
+      "text": "foi promovido para Série B",
       "timestamp": {
-        "_seconds": 1751001020,
-        "_nanoseconds": 38000000
+        "_seconds": 1751424285,
+        "_nanoseconds": 593000000
       }
     },
     {
-      "id": "6xXprWkkKWumVHtyOzUy",
+      "id": "44JqaoNpdC4vLz6L3Fqn",
       "type": "achievement",
-      "player": "teste_3",
-      "text": "sofreu uma sequência de 3 lambretas! 🚑🤕🤕",
+      "player": "teste2",
+      "text": "foi promovido para Série undefined",
       "timestamp": {
-        "_seconds": 1751000272,
-        "_nanoseconds": 567000000
+        "_seconds": 1751424069,
+        "_nanoseconds": 494000000
+      }
+    },
+    {
+      "id": "5FanW9GiA1S3JuDicrvo",
+      "type": "achievement",
+      "player": "Rivelino",
+      "text": "🚔👮🏻Chama a policia que Rivelino acabou de roubar o raio de Alexandre",
+      "timestamp": {
+        "_seconds": 1751164667,
+        "_nanoseconds": 505000000
       }
     },
     {
@@ -245,53 +295,43 @@
       }
     },
     {
-      "id": "APSZwhHeSZK9SsymBenz",
+      "id": "8jwUbFjHm68pa2csgsM7",
       "type": "achievement",
-      "player": "teste_3",
-      "text": "sofreu uma sequência de 3 lambretas! 🚑🤕🤕",
+      "player": "teste3",
+      "text": "foi rebaixado para Série undefined",
       "timestamp": {
-        "_seconds": 1750995968,
-        "_nanoseconds": 755000000
+        "_seconds": 1751184028,
+        "_nanoseconds": 192000000
       }
     },
     {
-      "id": "BlEez1g4efjvdutZdfGA",
+      "id": "G683QNMf4AVAVEeUj9kE",
       "type": "achievement",
-      "player": "teste_3",
-      "text": "sofreu uma sequência de 3 lambretas! 🚑🤕🤕",
+      "player": "Enzo",
+      "text": "🚔👮🏻Chama a policia que Enzo acabou de roubar o raio de Rivelino",
       "timestamp": {
-        "_seconds": 1750999369,
-        "_nanoseconds": 162000000
+        "_seconds": 1751240889,
+        "_nanoseconds": 405000000
       }
     },
     {
-      "id": "JoM7zD7PaII0rYMcI1QA",
+      "id": "InuYwPVrPXyq1K46pvZs",
       "type": "achievement",
-      "player": "teste_1",
-      "text": "alcançou uma sequência de 3 raio! 🔥🚀🚀",
+      "player": "Rivelino",
+      "text": "tomou uma lambreta e permanece na Série Amador",
       "timestamp": {
-        "_seconds": 1750999318,
-        "_nanoseconds": 756000000
+        "_seconds": 1751420775,
+        "_nanoseconds": 633000000
       }
     },
     {
-      "id": "JolqRkvl6btZIipQgBRl",
+      "id": "KthJQn6yqdKTkNoch1Ay",
       "type": "achievement",
-      "player": "teste_3",
-      "text": "🚔👮🏻Chama a policia que BiKwpxsAHoDoNQGrZBJQ acabou de roubar o raio de teste_2",
+      "player": "teste3",
+      "text": "🚔👮🏻Chama a policia que teste3 acabou de roubar o raio de teste_1",
       "timestamp": {
-        "_seconds": 1750997368,
-        "_nanoseconds": 0
-      }
-    },
-    {
-      "id": "L5h4a0CxY1ejCCzBVi7g",
-      "type": "achievement",
-      "player": "teste_1",
-      "text": "alcançou uma sequência de 3 raio! 🔥🚀🚀",
-      "timestamp": {
-        "_seconds": 1750995877,
-        "_nanoseconds": 355000000
+        "_seconds": 1751186679,
+        "_nanoseconds": 173000000
       }
     },
     {
@@ -305,13 +345,33 @@
       }
     },
     {
-      "id": "PgJzOrHz4ioSAmkHPmdA",
+      "id": "Mhrz6H7tnALfVW4RaxsB",
       "type": "achievement",
-      "player": "teste_3",
+      "player": "Renata",
+      "text": "🚔👮🏻Chama a policia que Renata acabou de roubar o raio de Ari",
+      "timestamp": {
+        "_seconds": 1751159843,
+        "_nanoseconds": 267000000
+      }
+    },
+    {
+      "id": "NKKnZH54UqmAjTTEL9Xx",
+      "type": "achievement",
+      "player": "teste3",
       "text": "sofreu uma sequência de 3 lambretas! 🚑🤕🤕",
       "timestamp": {
-        "_seconds": 1751000108,
-        "_nanoseconds": 600000000
+        "_seconds": 1751178348,
+        "_nanoseconds": 313000000
+      }
+    },
+    {
+      "id": "OGVYQYTcYVwJvH7qUoRb",
+      "type": "achievement",
+      "player": "teste3",
+      "text": "🚔👮🏻Chama a policia que teste3 acabou de roubar o raio de teste_1",
+      "timestamp": {
+        "_seconds": 1751182990,
+        "_nanoseconds": 26000000
       }
     },
     {
@@ -325,13 +385,13 @@
       }
     },
     {
-      "id": "V84JsUu9ECbKdlHhvvTN",
+      "id": "UlHn0J5wDJwMWghETU0C",
       "type": "achievement",
-      "player": "teste_3",
-      "text": "sofreu uma sequência de 3 lambretas! 🚑🤕🤕",
+      "player": "teste3",
+      "text": "alcançou uma sequência de 3 raio! 🔥🚀🚀",
       "timestamp": {
-        "_seconds": 1750996885,
-        "_nanoseconds": 271000000
+        "_seconds": 1751183556,
+        "_nanoseconds": 135000000
       }
     },
     {
@@ -345,13 +405,23 @@
       }
     },
     {
-      "id": "VDWgA72ubNnir8ygsniw",
+      "id": "VHYEMj3DwUjRqJyQHUJR",
       "type": "achievement",
-      "player": "teste_1",
-      "text": "alcançou uma sequência de 3 raio! 🔥🚀🚀",
+      "player": "teste2",
+      "text": "foi o primeiro a alcançar a Série B! 🧗‍♂️",
       "timestamp": {
-        "_seconds": 1750995815,
-        "_nanoseconds": 272000000
+        "_seconds": 1751424285,
+        "_nanoseconds": 414000000
+      }
+    },
+    {
+      "id": "WJ07US2LrSl7590Vrm8W",
+      "type": "achievement",
+      "player": "teste3",
+      "text": "tomou uma lambreta e permanece na Série Amador",
+      "timestamp": {
+        "_seconds": 1751185386,
+        "_nanoseconds": 458000000
       }
     },
     {
@@ -375,13 +445,23 @@
       }
     },
     {
-      "id": "dqLVlYGUcWHA72m8W8Ta",
+      "id": "dx6K05EsuTCXJuK5K5Bf",
       "type": "achievement",
-      "player": "teste_1",
-      "text": "alcançou uma sequência de 3 raio! 🔥🚀🚀",
+      "player": "teste3",
+      "text": "tomou uma lambreta e permanece na Série Amador",
       "timestamp": {
-        "_seconds": 1751000108,
-        "_nanoseconds": 429000000
+        "_seconds": 1751180439,
+        "_nanoseconds": 650000000
+      }
+    },
+    {
+      "id": "e06zIKdQxALXKh6pCOAc",
+      "type": "achievement",
+      "player": "teste3",
+      "text": "tomou uma lambreta e permanece na Série Amador",
+      "timestamp": {
+        "_seconds": 1751177162,
+        "_nanoseconds": 947000000
       }
     },
     {
@@ -405,23 +485,33 @@
       }
     },
     {
-      "id": "fOJfRShZWY5oiXHvtjVS",
+      "id": "g79xQAMDwQsT8iVBPR2x",
       "type": "achievement",
-      "player": "teste_3",
-      "text": "sofreu uma sequência de 3 lambretas! 🚑🤕🤕",
+      "player": "teste3",
+      "text": "tomou uma lambreta e permanece na Série Amador",
       "timestamp": {
-        "_seconds": 1750996313,
-        "_nanoseconds": 234000000
+        "_seconds": 1751186719,
+        "_nanoseconds": 482000000
       }
     },
     {
-      "id": "gaRg5Fhc0EA0AKDye0vH",
+      "id": "gFXWx9HG7e58nBEZ4mr0",
       "type": "achievement",
-      "player": "teste_1",
-      "text": "promovido para Série D",
+      "player": "teste3",
+      "text": "🚔👮🏻Chama a policia que teste3 acabou de roubar o raio de teste_1",
       "timestamp": {
-        "_seconds": 1750998820,
-        "_nanoseconds": 444000000
+        "_seconds": 1751186168,
+        "_nanoseconds": 849000000
+      }
+    },
+    {
+      "id": "gqUbf9J4oWlIa2RkMbAX",
+      "type": "achievement",
+      "player": "teste3",
+      "text": "tomou uma lambreta e permanece na Série Amador",
+      "timestamp": {
+        "_seconds": 1751178348,
+        "_nanoseconds": 793000000
       }
     },
     {
@@ -445,73 +535,33 @@
       }
     },
     {
-      "id": "lSUxRzgbjcBaoEaI0Acj",
+      "id": "kqVLE6GLRfg5wSZItajF",
       "type": "achievement",
-      "player": "teste_1",
-      "text": "alcançou uma sequência de 3 raio! 🔥🚀🚀",
+      "player": "teste3",
+      "text": "tomou uma lambreta e permanece na Série Amador",
       "timestamp": {
-        "_seconds": 1751000272,
-        "_nanoseconds": 411000000
+        "_seconds": 1751186766,
+        "_nanoseconds": 304000000
       }
     },
     {
-      "id": "mC0CCFZGYFN2RtDRvZtK",
+      "id": "oKC8V7IpwYxPZsAMjzVS",
       "type": "achievement",
-      "player": "teste_3",
-      "text": "sofreu uma sequência de 3 lambretas! 🚑🤕🤕",
+      "player": "teste3",
+      "text": "tomou uma lambreta e permanece na Série Amador",
       "timestamp": {
-        "_seconds": 1750999318,
-        "_nanoseconds": 901000000
+        "_seconds": 1751182451,
+        "_nanoseconds": 60000000
       }
     },
     {
-      "id": "mgV6wV819n8LsB8AX39U",
+      "id": "qqWTjc64mwReLIbjWreY",
       "type": "achievement",
-      "player": "teste_1",
-      "text": "alcançou uma sequência de 3 raio! 🔥🚀🚀",
+      "player": "teste3",
+      "text": "🚔👮🏻Chama a policia que teste3 acabou de roubar o raio de teste_1",
       "timestamp": {
-        "_seconds": 1751001019,
-        "_nanoseconds": 910000000
-      }
-    },
-    {
-      "id": "nAewwB0s10JsjphAqdRO",
-      "type": "achievement",
-      "player": "teste_1",
-      "text": "alcançou uma sequência de 3 raio! 🔥🚀🚀",
-      "timestamp": {
-        "_seconds": 1750995916,
-        "_nanoseconds": 978000000
-      }
-    },
-    {
-      "id": "nupnYe9clwLl1txuley4",
-      "type": "achievement",
-      "player": "teste_1",
-      "text": "alcançou uma sequência de 3 raio! 🔥🚀🚀",
-      "timestamp": {
-        "_seconds": 1751000906,
-        "_nanoseconds": 252000000
-      }
-    },
-    {
-      "id": "onk87PcKZK7nnACvbXfG",
-      "type": "achievement",
-      "player": "teste_3",
-      "text": "sofreu uma sequência de 3 lambretas! 🚑🤕🤕",
-      "timestamp": {
-        "_seconds": 1751000906,
-        "_nanoseconds": 402000000
-      }
-    },
-    {
-      "id": "qgWwP9uaFp5BSRuZdb8r",
-      "type": "achievement",
-      "player": "teste_1",
-      "text": "alcançou uma sequência de 3 raio! 🔥🚀🚀",
-      "timestamp": {
-        "_seconds": 1750999369,
-        "_nanoseconds": 6000000
+        "_seconds": 1751186538,
+        "_nanoseconds": 297000000
       }
     }
   ],
@@ -538,6 +588,13 @@
       }
     },
     {
+      "id": "dWXlTMztjg84J1CjUIA3C1:APA91bGYsALtOycb01K2viYt74EwS7L97fGSQXZLumMFZ-czP2x__JrwEwzFI4ED1E4kvPtMXHItMc42kipy0K-SQJTeyjYZS1oTyUeNEQpkFFhIcxW_tzM",
+      "timestamp": {
+        "_seconds": 1751208221,
+        "_nanoseconds": 312000000
+      }
+    },
+    {
       "id": "e4VMg3QkdYxqvqa-RWyh0q:APA91bH3h7-PEa6B5zd1Hk7M9b3KRP_rn34j9i8ins0aJPdJNMwF7YUnmbTYX159gGeXRzoamh9XFZeIVEo8LdfbmaQHHRh1RmuII1-5Vgtgc_fbN8KpSyg",
       "timestamp": {
         "_seconds": 1750798053,
@@ -552,10 +609,10 @@
       }
     },
     {
-      "id": "fTQdXzEo142PcqiyZdOJ7J:APA91bFRhvcHpufan1Kc1VsItiG4xy8XFhXJPsWDiQaFygWYnZES3eKvG3qAtZY1X9oC21B2f-tPzzZMJJ35GaZ-Nskvt-yaIU8DlMpJ_1W_VHYDignRNxQ",
+      "id": "ew4oQScZTjSFX-okDd5cIa:APA91bHz--HbVqmUJKOhPFd1H5WlnAhRmt4YEmxoJxkX-pMeDd9kGLOJwKuSimNcTKCgXG-lG0C8wsmqkelgPow0g3oRm47qbOC4TBdoK4ks5m6SEovwZ8c",
       "timestamp": {
-        "_seconds": 1750808413,
-        "_nanoseconds": 32000000
+        "_seconds": 1751057627,
+        "_nanoseconds": 918000000
       }
     },
     {
