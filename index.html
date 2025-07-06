@@ -244,6 +244,14 @@
             const activityFeedCollectionRef = () => collection(db, `artifacts/${appIdentifier}/public/data/events`);
             const matchesCollectionRef = () => collection(db, `artifacts/${appIdentifier}/public/data/partidas`);
 
+            function getCurrentSeasonNumber() {
+                const firstSeasonStart = new Date("2025-07-06T00:00:00Z"); // você pode mudar essa data
+                const now = new Date();
+                const daysSinceStart = Math.floor((now - firstSeasonStart) / (1000 * 60 * 60 * 24));
+                return Math.floor(daysSinceStart / 30);
+            }
+            const currentSeason = `temporada_${getCurrentSeasonNumber()}`;
+
             const ui = {
                 views: document.querySelectorAll('.view'),
                 messageBox: document.getElementById('messageBox'),
@@ -575,19 +583,25 @@
                         const winnerPlayerDocRef = doc(playersCollectionRef(), winnerId);
                         const newScore = (currentGame.scores[winnerId] || 0) + 1;
 
-                        const playerUpdates = { pontos: increment(1) };
+                        const playerUpdates = {};
                         const unlockedAchievements = {}; // Cria um objeto para armazenar as conquistas desbloqueadas neste round
                         let matchUpdates = {};
                         let completedRaio = false;
                         let lambretaLosersThisRound = [];
+                        let matchPointsThisRound = [];
                         let stateScore = {};
                         let ladraoDeRaio = { vitma: [], ladrao: [] };
+                        const loserIds = currentGame.playerIds.filter(id => id !== winnerId);
 
+                        // Adiciona pontos a cada um que ganha um round
+                        if (!isRaioMatch) {
+                            playerUpdates[`${currentSeason}.pontosNaTemporada`] = increment(1);
+                            playerUpdates.pontos = increment(1);
+                        }
                         // Lógica de ladrão de raio (quando um jogador está prestes a ganhar)
                         if (newScore >= 3) {
                             const loserIds = currentGame.playerIds.filter(id => id !== winnerId);
                             let ladraoIsTrue = false;
-
                             for (const jogador of loserIds) {
                                 if (currentGame.scores[jogador] === 0) {
                                     ladraoDeRaio.ladrao.push(jogador);
@@ -598,27 +612,28 @@
                                 }
                             }
                         }
+                        if (newScore === 3 ){
+                            // Adiciona matchpoint a cada jogador que fizer 3 pontos
+                            playerUpdates[`${currentSeason}.matchPointsNaTemporada`] = increment(1);
+                            matchPointsThisRound.push(winnerId);
+                        }
 
                         const jogadorRaiosLambretas = {};
 
                         if (newScore >= WINNING_SCORE) {
                             completedRaio = true;
                             playerUpdates.raios = increment(1);
-                            playerUpdates.raiosNaSerie = increment(1);
                             playerUpdates.partidasJogadas = increment(1);
-
-                            const loserIds = currentGame.playerIds.filter(id => id !== winnerId);
-
-                            // 1. Prepara todas as atualizações do batch
-                            batch.update(winnerPlayerDocRef, playerUpdates);
+                            playerUpdates[`${currentSeason}.raiosNaTemporada`] = increment(1);
+                            playerUpdates[`${currentSeason}.partidasNaTemporada`] = increment(1);
 
                             // Atualiza partidas jogadas dos perdedores
                             for (const loserId of loserIds) {
                                 batch.update(doc(playersCollectionRef(), loserId), {
+                                    [`${currentSeason}.partidasNaTemporada`]: increment(1),
                                     partidasJogadas: increment(1)
                                 });
                             }
-
                             // Lógica de lambretas
                             // scoresBeforeReset = { ...currentGame.scores, [winnerId]: newScore };
                             stateScore = { ...currentGame.scores, [winnerId]: newScore };
@@ -630,7 +645,7 @@
                                     if ((stateScore[loserId] || 0) === 0) {
                                         batch.update(doc(playersCollectionRef(), loserId), {
                                             lambreta: increment(1),
-                                            lambretasNaSerie: increment(1)
+                                            [`${currentSeason}.lambretasNaTemporada`]: increment(1)
                                         });
                                         lambretaLosersThisRound.push(loserId);
                                     }
@@ -692,8 +707,8 @@
                             showMessage(`${appState.players[winnerId].name} ganhou um Raio! ⚡️`, 'success');
                             // Pegando os raios, lambretas e serie atuais do ganhador para "desfazer"
                             jogadorRaiosLambretas[winnerId] = {
-                                raiosNaSerie: appState.players[winnerId].raiosNaSerie || 0,
-                                lambretasNaSerie: appState.players[winnerId].lambretasNaSerie || 0,
+                                raiosNaTemporada: appState.players[winnerId][currentSeason]?.raiosNaTemporada || 0,
+                                lambretasNaTemporada: appState.players[winnerId][currentSeason]?.lambretasNaTemporada || 0,
                                 series: appState.players[winnerId].series || 0
                             }
 
@@ -701,8 +716,8 @@
                                 showMessage(`${appState.players[loserId].name} tomou uma lambreta! 🚑`, 'info');
                                 // Pegando os raios, lambretas e serie atuais de quem tomou lambreta para "desfazer"
                                 jogadorRaiosLambretas[loserId] = {
-                                raiosNaSerie: appState.players[loserId].raiosNaSerie || 0,
-                                lambretasNaSerie: appState.players[loserId].lambretasNaSerie || 0,
+                                raiosNaTemporada: appState.players[loserId][currentSeason]?.raiosNaTemporada || 0,
+                                lambretasNaTemporada: appState.players[loserId][currentSeason]?.lambretasNaTemporada || 0,
                                 series: appState.players[loserId].series || 0
                                 };
 
@@ -747,6 +762,8 @@
                         matchUpdates.scores = { ...currentGame.scores, [winnerId]: newScore };
                         matchUpdates.raios = currentGame.raios;
                         matchUpdates.turn = winnerId;
+                        // Prepara todas as atualizações do batch
+                        batch.update(winnerPlayerDocRef, playerUpdates);
 
                         const roundEvent = {
                             roundNumber: currentGame.history.length + 1,
@@ -758,9 +775,9 @@
                         };
 
                         // Adiciona campos condicionais apenas se existirem
-                        if (lambretaLosersThisRound.length > 0) {
-                            roundEvent.lambretaPlayerIds = lambretaLosersThisRound;
-                        }
+                        if (lambretaLosersThisRound.length > 0) roundEvent.lambretaPlayerIds = lambretaLosersThisRound;
+
+                        if (matchPointsThisRound.length > 0) roundEvent.matchPointPlayerIds = matchPointsThisRound;
 
                         if (completedRaio){
                             roundEvent.stateScore = {
@@ -786,6 +803,13 @@
                         // 2. Executa todas as atualizações de uma vez
                         await batch.commit();
 
+                        if (completedRaio){
+                            await atualizarAproveitamentoTemporada(winnerId);
+                            for (const loserId of loserIds) {
+                                await atualizarAproveitamentoTemporada(loserId);
+                            }
+                        }
+
                         // 3. Atualiza o estado local após confirmação
                         matchUpdates.raios = roundEvent.stateScore.raios;
                         matchUpdates.scores = roundEvent.stateScore.scores;
@@ -794,14 +818,6 @@
                         // 4. Atualiza o histórico no banco
                         await updateDoc(gameDocRef, {...matchUpdates, history: newHistory});
                         // Final da construção do Round
-
-                        // Atualiza a series dos jogadores
-                        for (const playerId of currentGame.playerIds) {
-                            const player = appState.players[playerId];
-                            const changes = await checarStatusDaSerie(playerId);
-                            await applySeriesChanges(playerId, changes);
-                        }
-
                     }
                 };
             }
@@ -816,28 +832,38 @@
 
                 for (const playerId in lastRound.preUpdateStats){
                     batch.update(doc(playersCollectionRef(), playerId), {
-                        raiosNaSerie: lastRound.preUpdateStats[playerId].raiosNaSerie,
-                        lambretasNaSerie: lastRound.preUpdateStats[playerId].lambretasNaSerie,
+                        [`${currentSeason}.raiosNaTemporada`]: lastRound.preUpdateStats[playerId].raiosNaTemporada,
+                        [`${currentSeason}.lambretasNaTemporada`]: lastRound.preUpdateStats[playerId].lambretasNaTemporada,
                         series: lastRound.preUpdateStats[playerId].series
-
                     });
                 }
 
                 // 1. Reverte estatísticas básicas
                 batch.update(doc(playersCollectionRef(), lastRound.winnerId), {
-                    pontos: increment(-1)
+                    pontos: increment(-1),
+                    [`${currentSeason}.pontosNaTemporada`]: increment(-1)
                 });
+                // Reverte MatchPoints
+                if (lastRound.matchPointPlayerIds?.length > 0){
+                    lastRound.matchPointPlayerIds.forEach(id => {
+                        batch.update(doc(playersCollectionRef(), id), {
+                            [`${currentSeason}.matchPointsNaTemporada`]: increment(-1),
+                        });
+                    });
+                }
 
                 if (lastRound.completedRaio) {
                     batch.update(doc(playersCollectionRef(), lastRound.winnerId), {
                         raios: increment(-1),
-                        partidasJogadas: increment(-1)
+                        partidasJogadas: increment(-1),
+                        [`${currentSeason}.partidasNaTemporada`]: increment(-1)
                     });
 
                     // Reverte partidas jogadas dos outros jogadores
                     currentGame.playerIds.filter(id => id !== lastRound.winnerId).forEach(id => {
                         batch.update(doc(playersCollectionRef(), id), {
-                            partidasJogadas: increment(-1)
+                            partidasJogadas: increment(-1),
+                            [`${currentSeason}.partidasNaTemporada`]: increment(-1)
                         });
                     });
 
@@ -857,8 +883,10 @@
                         const playerRef = doc(playersCollectionRef(), playerId);
                         achievements.forEach(ach => {
                             batch.update(playerRef, {
-                                [`conquistas.${ach}`]: increment(-1)
+                                [`conquistas.${ach}`]: increment(-1),
+                                [`${currentSeason}.conquistasNaTemporada.${ach}`]: increment(-1)
                             });
+
                         });
                     }
                 }
@@ -1132,39 +1160,34 @@
                 const seriesOrder = ['A', 'B', 'C', 'D', 'Amador'];
 
                 players.sort((a, b) => {
-                    const seriesIndexA = seriesOrder.indexOf(a.series || 'Amador');
-                    const seriesIndexB = seriesOrder.indexOf(b.series || 'Amador');
-                    if (seriesIndexA !== seriesIndexB) return seriesIndexA - seriesIndexB;
-                    if ((b.raiosNaSerie || 0) !== (a.raiosNaSerie || 0)) return (b.raiosNaSerie || 0) - (a.raiosNaSerie || 0);
-                    if ((a.lambretasNaSerie || 0) !== (b.lambretasNaSerie || 0)) return (a.lambretasNaSerie || 0) - (b.lambretasNaSerie || 0);
-                    return (b.pontos || 0) - (a.pontos || 0);
+                    const statsA = a[currentSeason] || {};
+                    const statsB = b[currentSeason] || {};
+
+                    const aproveitamentoDiff = (statsB.aproveitamentoNaTemporada || 0) - (statsA.aproveitamentoNaTemporada || 0);
+                    if (aproveitamentoDiff !== 0) return aproveitamentoDiff;
+
+                    const pontosDiff = (statsB.pontosNaTemporada || 0) - (statsA.pontosNaTemporada || 0);
+                    if (pontosDiff !== 0) return pontosDiff;
+
+                    return (statsA.lambretasNaTemporada || 0) - (statsB.lambretasNaTemporada || 0);
                 });
 
                 ui.playersListDiv.innerHTML = players.map((player, index) => {
-                    // Classes base + posicionamento
+                    const stats = player[currentSeason] || {};
+
                     let cardClasses = "p-4 rounded-xl shadow-sm flex items-center justify-between transition-all duration-200 hover:scale-[1.01]";
                     let positionIcon = "";
                     let positionText = `${index + 1}º`;
 
-                    // Primeiros colocados (1-4)
-                    if (index < 4) {
+                    if (index < 3) {
                         cardClasses += " bg-green-50 border-l-4 border-green-500";
-
-                        // Ícones para os 3 primeiros (ponto 3)
-                        if (index < 3) {
-                            positionIcon = ["🥇", "🥈", "🥉"][index];
-                        }
-                    }
-                    // Últimos colocados (últimos 4)
-                    else if (index >= players.length - 4) {
+                        positionIcon = ["🥇", "🥈", "🥉"][index] || "";
+                    } else if (index >= players.length - 3) {
                         cardClasses += " bg-red-50 border-l-4 border-red-500";
-                    }
-                    // Meio da tabela
-                    else {
+                    } else {
                         cardClasses += " bg-white";
                     }
 
-                    // Destaque especial para o líder (ponto 4)
                     if (index === 0) {
                         cardClasses += " ring-2 ring-yellow-400 animate-pulse";
                         positionText = "👑 " + positionText;
@@ -1185,16 +1208,40 @@
                                     </span>
                                 </div>
                             </div>
-                            <div class="text-right">
-                                <div class="font-semibold text-blue-600">
-                                    Raios: ${player.raiosNaSerie || 0}
+                            <div class="text-sm font-mono leading-tight text-right">
+                                <div class="grid grid-cols-4 text-gray-500 w-44 mx-auto">
+                                    <span class="text-center">RT</span>
+                                    <span class="text-center">LT</span>
+                                    <span class="text-center">PAT</span>
+                                    <span class="text-center">SR</span>
                                 </div>
-                                <div class="font-semibold text-yellow-600">
-                                    Lambretas: ${player.lambretasNaSerie || 0}
+                                <div class="grid grid-cols-4 font-semibold w-44 mx-auto">
+                                    <span class="text-blue-600 text-center">${stats.raiosNaTemporada || 0}</span>
+                                    <span class="text-yellow-600 text-center">${stats.lambretasNaTemporada || 0}</span>
+                                    <span class="text-center">${stats.partidasNaTemporada || 0}</span>
+                                    <span class="text-center">${(stats.aproveitamentoNaTemporada || 0).toFixed(1)}%</span>
                                 </div>
                             </div>
-                        </div>`;
+                        </div>
+                    `;
+
                 }).join('');
+            }
+
+            async function atualizarAproveitamentoTemporada(playerId) {
+                const playerRef = doc(playersCollectionRef(), playerId);
+                const playerSnap = await getDoc(playerRef);
+                if (!playerSnap.exists()) return;
+
+                const player = playerSnap.data();
+                const stats = player[currentSeason] || {};
+                const aproveitamento = stats.partidasNaTemporada > 0
+                    ? (stats.raiosNaTemporada / stats.partidasNaTemporada) * 100
+                    : 0;
+
+                await updateDoc(playerRef, {
+                    [`${currentSeason}.aproveitamentoNaTemporada`]: aproveitamento
+                });
             }
 
             async function concederConquista(playerId, conquistaId, textoDoEvento) {
@@ -1209,8 +1256,10 @@
                     // Usa a notação de ponto para atualizar um campo dentro de um objeto (mapa)
                     // e a função increment() para adicionar +1 de forma segura.
                     await updateDoc(playerDocRef, {
-                        [`conquistas.${conquistaId}`]: increment(1)
+                        [`conquistas.${conquistaId}`]: increment(1),
+                        [`${currentSeason}.conquistasNaTemporada.${conquistaId}`]: increment(1)
                     });
+
 
                     // Registra o feito no feed de atividades
                     await registrarEvento('achievement', playerId, textoDoEvento);
@@ -1435,8 +1484,8 @@
                         await updateDoc(playerDocRef, updates);
                     }
 
-                    const changes = await checarStatusDaSerie(playerId);
-                    await applySeriesChanges(playerId, changes);
+                    // const changes = await checarStatusDaSerie(playerId);
+                    // await applySeriesChanges(playerId, changes);
 
                 } catch (error) {
                     console.error(`Erro ao atualizar ${stat}:`, error);
@@ -1445,17 +1494,21 @@
             }
 
             function openPlayerDetailsModal(playerId) {
-                // Guarda o ID do jogador em um contexto do modal para que o listener principal possa usá-lo.
                 appState.modalContext = { currentViewedPlayerId: playerId };
 
                 const player = appState.players[playerId];
                 if (!player) return;
 
-                // Função interna para gerar os controles de stats no modo admin
+                const stats = player[currentSeason] || {};
+
                 const generateStatControlHTML = (stat, label) => {
                     const value = player[stat] || 0;
                     if (!appState.isAdminMode) {
-                        return `<div class="bg-gray-100 p-3 rounded-lg"><p class="text-sm text-gray-500 mb-2 font-semibold">${label}</p><p class="text-2xl font-bold">${value}</p></div>`;
+                        return `
+                            <div class="bg-gray-100 p-3 rounded-lg">
+                                <p class="text-sm text-gray-500 mb-2 font-semibold">${label}</p>
+                                <p class="text-2xl font-bold">${value}</p>
+                            </div>`;
                     }
                     return `
                         <div class="bg-gray-100 p-3 rounded-lg">
@@ -1468,7 +1521,6 @@
                         </div>`;
                 };
 
-                // Monta o HTML para as estatísticas
                 const statsHTML = `
                     <div class="grid grid-cols-2 gap-4 text-center">
                         <div class="bg-gray-100 p-3 rounded-lg">
@@ -1482,40 +1534,87 @@
                         ${generateStatControlHTML('raios', 'Raios')}
                         ${generateStatControlHTML('lambreta', 'Lambretas')}
                     </div>
+
+                    <h4 class="font-semibold mt-6 mb-2 flex items-center gap-2">
+                        Temporada Atual
+                        <span class="text-xs text-gray-400 cursor-help" title="LT: Lambretas, RT: Raios, PAT: Partidas, MP: MatchPoints, POT: Pontos, SR: Saldo de raio %, CQ: Conquistas">🛈</span>
+                    </h4>
+                    <div class="text-sm font-mono leading-tight text-right">
+                        <div class="grid grid-cols-4 text-gray-500 w-full max-w-sm mx-auto mb-1">
+                            <span class="text-center">LT</span>
+                            <span class="text-center">RT</span>
+                            <span class="text-center">PAT</span>
+                            <span class="text-center">MP</span>
+                        </div>
+                        <div class="grid grid-cols-4 font-semibold w-full max-w-sm mx-auto mb-3">
+                            <span class="text-yellow-600 text-center">${stats.lambretasNaTemporada || 0}</span>
+                            <span class="text-blue-600 text-center">${stats.raiosNaTemporada || 0}</span>
+                            <span class="text-center">${stats.partidasNaTemporada || 0}</span>
+                            <span class="text-center">${stats.matchPointsNaTemporada || 0}</span>
+                        </div>
+
+                        <div class="grid grid-cols-3 text-gray-500 w-full max-w-sm mx-auto mb-1">
+                            <span class="text-center">POT</span>
+                            <span class="text-center">SR</span>
+                            <span class="text-center">CQ</span>
+                        </div>
+                        <div class="grid grid-cols-3 font-semibold w-full max-w-sm mx-auto">
+                            <span class="text-center">${stats.pontosNaTemporada || 0}</span>
+                            <span class="text-center">${(stats.aproveitamentoNaTemporada || 0).toFixed(1)}%</span>
+                            <span class="text-center">${Object.keys(stats.conquistasNaTemporada || {}).length}</span>
+                        </div>
+                    </div>
+
                 `;
 
-                // Monta o HTML para as conquistas
-                let achievementsHTML = Object.keys(achievements).map(key => {
+                const achievementsHTML = Object.keys(achievements).map(key => {
                     const ach = achievements[key];
-                    const count = player.conquistas?.[key] || 0;
-                    const unlocked = count > 0;
-                    const counterHTML = count > 1 ? `<span class="absolute -top-1 -right-1 bg-red-500 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center border-2 border-white">${count}</span>` : '';
-                    return `<div class="relative text-center p-2 rounded-lg ${unlocked ? 'bg-yellow-100' : 'bg-gray-100'}"><span class="achievement-icon ${unlocked ? 'unlocked' : ''}" title="${ach.name}: ${ach.description}">${ach.icon}</span>${counterHTML}<p class="text-xs font-semibold mt-1 ${unlocked ? 'text-yellow-800' : 'text-gray-500'}">${ach.name}</p></div>`;
+                    const countGeral = player.conquistas?.[key] || 0;
+                    const countTemporada = stats.conquistasNaTemporada?.[key] || 0;
+                    const countTotal = countGeral + countTemporada;
+                    const unlocked = countTotal > 0;
+
+                    const counterHTML = countTotal > 1
+                        ? `<span class="absolute -top-1 -right-1 bg-red-500 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center border-2 border-white">${countTotal}</span>`
+                        : '';
+
+                    return `
+                        <div class="relative text-center p-2 rounded-lg ${unlocked ? 'bg-yellow-100' : 'bg-gray-100'}">
+                            <span class="achievement-icon ${unlocked ? 'unlocked' : ''}" title="${ach.name}: ${ach.description}">${ach.icon}</span>
+                            ${counterHTML}
+                            <p class="text-xs font-semibold mt-1 ${unlocked ? 'text-yellow-800' : 'text-gray-500'}">${ach.name}</p>
+                        </div>`;
                 }).join('');
 
-                // --- INÍCIO DA CORREÇÃO ---
-                // Esta linha estava faltando. Ela define os botões de Renomear e Deletar para o admin.
-                let adminControlsHTML = appState.isAdminMode ? `
+                const adminControlsHTML = appState.isAdminMode ? `
                     <hr class="my-6">
                     <div class="flex justify-around gap-4">
                         <button id="btnRenamePlayer" class="w-48 flex-grow bg-gray-200 text-gray-800 font-semibold py-3 px-3 rounded-lg hover:bg-gray-300 transition">Renomear</button>
                         <button id="btnDeletePlayer" class="w-8 flex-grow bg-red-600 text-white font-semibold py-3 px-3 rounded-lg hover:bg-red-700 transition">Deletar</button>
                     </div>` : '';
-                // --- FIM DA CORREÇÃO ---
 
-                // Monta o HTML final do modal
                 const modalHTML = `
                     <div class="flex justify-between items-start">
-                        <div><h3 class="text-2xl font-bold">${player.name}</h3><p class="text-gray-600">Série ${player.series}</p></div>
+                        <div>
+                            <h3 class="text-2xl font-bold">${player.name}</h3>
+                            <p class="text-gray-600">Série ${player.series}</p>
+                        </div>
                         <button id="modal-close-btn" class="text-gray-400 hover:text-gray-700 text-2xl">&times;</button>
                     </div>
-                    <div class="mt-6"><h4 class="font-semibold mb-2">Estatísticas</h4>${statsHTML}</div>
-                    <div class="mt-6"><h4 class="font-semibold mb-2">Conquistas</h4><div class="grid grid-cols-4 gap-2">${achievementsHTML}</div></div>
-                    ${adminControlsHTML}`;
+                    <div class="mt-6">
+                        <h4 class="font-semibold mb-2">Estatísticas</h4>
+                        ${statsHTML}
+                    </div>
+                    <div class="mt-6">
+                        <h4 class="font-semibold mb-2">Conquistas</h4>
+                        <div class="grid grid-cols-4 gap-2">${achievementsHTML}</div>
+                    </div>
+                    ${adminControlsHTML}
+                `;
 
                 openModal(modalHTML);
-                // A lógica de cliques agora é gerenciada pelo "super escutador" de eventos.
             }
+
 
             function createInitialGameState() { return { gameMode: 'individual', isRaioMatch: false, selectedSlots: { 1: null, 2: null, 3: null, 4: null }, activeGame: null, activeGameId: null, activeGameListener: null }; }
 
@@ -1731,10 +1830,17 @@
                                 partidasJogadas: 0,
                                 lambreta: 0,
                                 pontos: 0,
-                                series: 'Amador',
-                                conquistas: {}, // Adicionado para consistência
-                                raiosNaSerie: 0,
-                                lambretasNaSerie: 0
+                                series: 'D',
+                                conquistas: {},
+                                [currentSeason]: {
+                                lambretasNaTemporada: 0,
+                                raiosNaTemporada: 0,
+                                pontosNaTemporada: 0,
+                                matchPointsNaTemporada: 0,
+                                partidasNaTemporada: 0,
+                                conquistasNaTemporada:{}
+                                }
+
                             });
                             // A função showMessage continua sendo usada para feedback rápido no topo da tela.
                             showMessage(`Jogador "${newName}" adicionado com sucesso!`, 'success');
@@ -2487,34 +2593,37 @@
 
             // Forçar atualização do Service Worker
             if ('serviceWorker' in navigator) {
-            window.addEventListener('load', async () => {
-                const registration = await navigator.serviceWorker.register('/placar_domino/service-worker.js');
+                window.addEventListener('load', async () => {
+                    try {
+                        const swPath = './service-worker.js'; // ou ajuste para seu caso
+                        const registration = await navigator.serviceWorker.register(swPath);
 
-                // Verifica atualizações a cada acesso
-                registration.update();
+                        // Verifica por atualização imediatamente
+                        registration.update();
 
-                // Ouvinte para novas versões
-                registration.addEventListener('updatefound', () => {
-                const newWorker = registration.installing;
-                newWorker.addEventListener('statechange', () => {
-                    if (newWorker.state === 'activated') {
-                    // Atualização pronta - recarregar para aplicar
-                    if (confirm('Nova versão disponível! Recarregar agora?')) {
-                        window.location.reload();
-                    }
+                        registration.addEventListener('updatefound', () => {
+                        const newWorker = registration.installing;
+                        if (!newWorker) return;
+
+                        newWorker.addEventListener('statechange', () => {
+                            if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                                newWorker.postMessage('SKIP_WAITING');
+                                window.location.reload(); // força reload automático
+                            }
+                        });
+                    });
+
+                    } catch (err) {
+                        console.error('Erro ao registrar Service Worker:', err);
                     }
                 });
-                });
-            });
 
-            // Checa atualizações periodicamente (a cada 1h)
-            setInterval(() => {
-                navigator.serviceWorker.getRegistration().then(reg => reg?.update());
-            }, 60 * 60 * 1000);
+                // Verifica atualizações a cada 1h
+                setInterval(() => {
+                    navigator.serviceWorker.getRegistration().then(reg => reg?.update());
+                }, 60 * 60 * 1000);
             }
-
 
         </script>
     </body>
     </html>
-
