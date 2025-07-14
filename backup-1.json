@@ -1,21 +1,41 @@
 {
   "players": [
     {
-      "id": "7Y55712ADXnvx6C69HzM",
-      "name": "Ari",
+      "id": "0kWQHBEtY7ifz2JBMwBS",
+      "name": "Convidado",
       "raios": 0,
-      "partidasJogadas": 0,
-      "lambreta": 0,
       "pontos": 0,
       "series": "D",
       "conquistas": {},
+      "partidasJogadas": 1,
+      "lambreta": 1,
       "temporada_0": {
-        "lambretasNaTemporada": 0,
         "raiosNaTemporada": 0,
         "pontosNaTemporada": 0,
         "matchPointsNaTemporada": 0,
-        "partidasNaTemporada": 0,
-        "conquistasNaTemporada": {}
+        "conquistasNaTemporada": {},
+        "partidasNaTemporada": 1,
+        "lambretasNaTemporada": 1,
+        "aproveitamentoNaTemporada": 0
+      }
+    },
+    {
+      "id": "7Y55712ADXnvx6C69HzM",
+      "name": "Ari",
+      "series": "D",
+      "conquistas": {},
+      "raios": 4,
+      "lambreta": 5,
+      "pontos": 32,
+      "partidasJogadas": 19,
+      "temporada_0": {
+        "conquistasNaTemporada": {},
+        "matchPointsNaTemporada": 5,
+        "raiosNaTemporada": 4,
+        "lambretasNaTemporada": 5,
+        "pontosNaTemporada": 32,
+        "partidasNaTemporada": 19,
+        "aproveitamentoNaTemporada": 21.052631578947366
       }
     },
     {
@@ -39,19 +59,39 @@
     {
       "id": "JRsUCSKJLn576U0BVhFG",
       "name": "Alexandre",
-      "raios": 0,
-      "partidasJogadas": 0,
-      "lambreta": 0,
-      "pontos": 0,
       "series": "D",
       "conquistas": {},
+      "lambreta": 1,
+      "partidasJogadas": 17,
+      "pontos": 41,
+      "raios": 5,
       "temporada_0": {
-        "lambretasNaTemporada": 0,
-        "raiosNaTemporada": 0,
-        "pontosNaTemporada": 0,
-        "matchPointsNaTemporada": 0,
-        "partidasNaTemporada": 0,
-        "conquistasNaTemporada": {}
+        "conquistasNaTemporada": {},
+        "lambretasNaTemporada": 1,
+        "matchPointsNaTemporada": 8,
+        "pontosNaTemporada": 41,
+        "partidasNaTemporada": 17,
+        "raiosNaTemporada": 5,
+        "aproveitamentoNaTemporada": 29.411764705882355
+      }
+    },
+    {
+      "id": "O9HRWCk2kCHOKT5aLZ69",
+      "name": "Kauê",
+      "series": "D",
+      "conquistas": {},
+      "lambreta": 1,
+      "raios": 2,
+      "pontos": 6,
+      "partidasJogadas": 4,
+      "temporada_0": {
+        "conquistasNaTemporada": {},
+        "lambretasNaTemporada": 1,
+        "matchPointsNaTemporada": 1,
+        "raiosNaTemporada": 2,
+        "pontosNaTemporada": 6,
+        "partidasNaTemporada": 4,
+        "aproveitamentoNaTemporada": 50
       }
     },
     {
@@ -93,19 +133,20 @@
     {
       "id": "fJQaOTqKaLo4ucvkb3yw",
       "name": "Renata",
-      "raios": 0,
-      "partidasJogadas": 0,
-      "lambreta": 0,
-      "pontos": 0,
       "series": "D",
       "conquistas": {},
+      "raios": 7,
+      "lambreta": 4,
+      "pontos": 45,
+      "partidasJogadas": 21,
       "temporada_0": {
-        "lambretasNaTemporada": 0,
-        "raiosNaTemporada": 0,
-        "pontosNaTemporada": 0,
-        "matchPointsNaTemporada": 0,
-        "partidasNaTemporada": 0,
-        "conquistasNaTemporada": {}
+        "conquistasNaTemporada": {},
+        "matchPointsNaTemporada": 9,
+        "raiosNaTemporada": 7,
+        "lambretasNaTemporada": 4,
+        "pontosNaTemporada": 45,
+        "partidasNaTemporada": 21,
+        "aproveitamentoNaTemporada": 33.33333333333333
       }
     },
     {
@@ -147,37 +188,39 @@
     {
       "id": "veewz7agRoCE0bM4KwWa",
       "name": "Rivelino",
-      "raios": 0,
-      "partidasJogadas": 0,
-      "lambreta": 0,
-      "pontos": 0,
       "series": "D",
       "conquistas": {},
+      "raios": 3,
+      "lambreta": 3,
+      "pontos": 37,
+      "partidasJogadas": 19,
       "temporada_0": {
-        "lambretasNaTemporada": 0,
-        "raiosNaTemporada": 0,
-        "pontosNaTemporada": 0,
-        "matchPointsNaTemporada": 0,
-        "partidasNaTemporada": 0,
-        "conquistasNaTemporada": {}
+        "conquistasNaTemporada": {},
+        "raiosNaTemporada": 3,
+        "lambretasNaTemporada": 3,
+        "pontosNaTemporada": 37,
+        "matchPointsNaTemporada": 8,
+        "partidasNaTemporada": 19,
+        "aproveitamentoNaTemporada": 15.789473684210526
       }
     },
     {
       "id": "zKnvEnwu79cfz5nVvJ9l",
       "name": "Hugo",
       "raios": 0,
-      "partidasJogadas": 0,
       "lambreta": 0,
-      "pontos": 0,
       "series": "D",
       "conquistas": {},
+      "pontos": 6,
+      "partidasJogadas": 3,
       "temporada_0": {
         "lambretasNaTemporada": 0,
         "raiosNaTemporada": 0,
-        "pontosNaTemporada": 0,
-        "matchPointsNaTemporada": 0,
-        "partidasNaTemporada": 0,
-        "conquistasNaTemporada": {}
+        "conquistasNaTemporada": {},
+        "matchPointsNaTemporada": 1,
+        "aproveitamentoNaTemporada": 0,
+        "pontosNaTemporada": 6,
+        "partidasNaTemporada": 3
       }
     }
   ],
