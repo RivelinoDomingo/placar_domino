@@ -1,77 +1,144 @@
 {
   "players": [
     {
+      "id": "0kWQHBEtY7ifz2JBMwBS",
+      "name": "Convidado",
+      "raios": 0,
+      "pontos": 0,
+      "series": "D",
+      "conquistas": {},
+      "partidasJogadas": 1,
+      "lambreta": 1,
+      "temporada_0": {
+        "raiosNaTemporada": 0,
+        "pontosNaTemporada": 0,
+        "matchPointsNaTemporada": 0,
+        "conquistasNaTemporada": {},
+        "partidasNaTemporada": 1,
+        "lambretasNaTemporada": 1,
+        "aproveitamentoNaTemporada": 0
+      }
+    },
+    {
+      "id": "4Dgr0sg7Gfs9nnXsDnQZ",
+      "name": "Iago",
+      "series": "D",
+      "lambreta": 3,
+      "conquistas": {
+        "azarao": 1
+      },
+      "partidasJogadas": 4,
+      "pontos": 4,
+      "raios": 1,
+      "temporada_0": {
+        "lambretasNaTemporada": 3,
+        "matchPointsNaTemporada": 1,
+        "conquistasNaTemporada": {
+          "azarao": 1
+        },
+        "pontosNaTemporada": 4,
+        "partidasNaTemporada": 4,
+        "raiosNaTemporada": 1,
+        "aproveitamentoNaTemporada": 25
+      }
+    },
+    {
       "id": "7Y55712ADXnvx6C69HzM",
       "name": "Ari",
       "series": "D",
       "conquistas": {},
-      "lambreta": 2,
-      "raios": 3,
-      "pontos": 20,
-      "partidasJogadas": 9,
+      "raios": 9,
+      "pontos": 74,
+      "partidasJogadas": 45,
+      "lambreta": 16,
       "temporada_0": {
         "conquistasNaTemporada": {},
-        "lambretasNaTemporada": 2,
-        "matchPointsNaTemporada": 4,
-        "raiosNaTemporada": 3,
-        "pontosNaTemporada": 20,
-        "partidasNaTemporada": 9,
-        "aproveitamentoNaTemporada": 33.33333333333333
+        "matchPointsNaTemporada": 15,
+        "raiosNaTemporada": 9,
+        "pontosNaTemporada": 74,
+        "partidasNaTemporada": 45,
+        "lambretasNaTemporada": 16,
+        "aproveitamentoNaTemporada": 20
       }
     },
     {
       "id": "7ztUP4gPbmzCMwQ0K5kF",
       "name": "Enzo",
       "raios": 0,
-      "partidasJogadas": 0,
       "lambreta": 0,
-      "pontos": 0,
       "series": "D",
       "conquistas": {},
+      "pontos": 3,
+      "partidasJogadas": 1,
       "temporada_0": {
         "lambretasNaTemporada": 0,
         "raiosNaTemporada": 0,
-        "pontosNaTemporada": 0,
-        "matchPointsNaTemporada": 0,
-        "partidasNaTemporada": 0,
-        "conquistasNaTemporada": {}
+        "conquistasNaTemporada": {},
+        "pontosNaTemporada": 3,
+        "matchPointsNaTemporada": 1,
+        "partidasNaTemporada": 1,
+        "aproveitamentoNaTemporada": 0
       }
     },
     {
       "id": "JRsUCSKJLn576U0BVhFG",
       "name": "Alexandre",
       "series": "D",
+      "lambreta": 4,
+      "conquistas": {
+        "roubo": 1
+      },
+      "raios": 13,
+      "pontos": 100,
+      "partidasJogadas": 45,
+      "temporada_0": {
+        "lambretasNaTemporada": 4,
+        "conquistasNaTemporada": {
+          "roubo": 1
+        },
+        "matchPointsNaTemporada": 19,
+        "raiosNaTemporada": 13,
+        "pontosNaTemporada": 100,
+        "partidasNaTemporada": 45,
+        "aproveitamentoNaTemporada": 28.888888888888886
+      }
+    },
+    {
+      "id": "O9HRWCk2kCHOKT5aLZ69",
+      "name": "Kauê",
+      "series": "D",
       "conquistas": {},
       "lambreta": 1,
-      "raios": 1,
+      "raios": 4,
       "pontos": 18,
-      "partidasJogadas": 9,
+      "partidasJogadas": 8,
       "temporada_0": {
         "conquistasNaTemporada": {},
         "lambretasNaTemporada": 1,
-        "raiosNaTemporada": 1,
         "matchPointsNaTemporada": 3,
+        "raiosNaTemporada": 4,
         "pontosNaTemporada": 18,
-        "partidasNaTemporada": 9,
-        "aproveitamentoNaTemporada": 11.11111111111111
+        "partidasNaTemporada": 8,
+        "aproveitamentoNaTemporada": 50
       }
     },
     {
       "id": "S5rgZjCCXzsuvGAObQrd",
       "name": "Lucinha",
       "raios": 0,
-      "partidasJogadas": 0,
       "lambreta": 0,
-      "pontos": 0,
       "series": "D",
       "conquistas": {},
+      "pontos": 6,
+      "partidasJogadas": 3,
       "temporada_0": {
         "lambretasNaTemporada": 0,
         "raiosNaTemporada": 0,
-        "pontosNaTemporada": 0,
-        "matchPointsNaTemporada": 0,
-        "partidasNaTemporada": 0,
-        "conquistasNaTemporada": {}
+        "conquistasNaTemporada": {},
+        "matchPointsNaTemporada": 1,
+        "aproveitamentoNaTemporada": 0,
+        "pontosNaTemporada": 6,
+        "partidasNaTemporada": 3
       }
     },
     {
@@ -97,18 +164,18 @@
       "name": "Renata",
       "series": "D",
       "conquistas": {},
-      "lambreta": 1,
-      "raios": 3,
-      "pontos": 22,
-      "partidasJogadas": 9,
+      "raios": 14,
+      "lambreta": 8,
+      "pontos": 88,
+      "partidasJogadas": 41,
       "temporada_0": {
         "conquistasNaTemporada": {},
-        "lambretasNaTemporada": 1,
-        "matchPointsNaTemporada": 4,
-        "raiosNaTemporada": 3,
-        "pontosNaTemporada": 22,
-        "partidasNaTemporada": 9,
-        "aproveitamentoNaTemporada": 33.33333333333333
+        "matchPointsNaTemporada": 18,
+        "raiosNaTemporada": 14,
+        "lambretasNaTemporada": 8,
+        "pontosNaTemporada": 88,
+        "partidasNaTemporada": 41,
+        "aproveitamentoNaTemporada": 34.146341463414636
       }
     },
     {
@@ -151,41 +218,77 @@
       "id": "veewz7agRoCE0bM4KwWa",
       "name": "Rivelino",
       "series": "D",
-      "conquistas": {},
-      "lambreta": 1,
-      "partidasJogadas": 9,
-      "pontos": 20,
-      "raios": 2,
+      "conquistas": {
+        "roubo": 1
+      },
+      "pontos": 76,
+      "raios": 8,
+      "partidasJogadas": 43,
+      "lambreta": 11,
       "temporada_0": {
-        "conquistasNaTemporada": {},
-        "lambretasNaTemporada": 1,
-        "matchPointsNaTemporada": 5,
-        "pontosNaTemporada": 20,
-        "partidasNaTemporada": 9,
-        "raiosNaTemporada": 2,
-        "aproveitamentoNaTemporada": 22.22222222222222
+        "conquistasNaTemporada": {
+          "roubo": 1
+        },
+        "matchPointsNaTemporada": 16,
+        "pontosNaTemporada": 76,
+        "raiosNaTemporada": 8,
+        "partidasNaTemporada": 43,
+        "lambretasNaTemporada": 11,
+        "aproveitamentoNaTemporada": 18.6046511627907
       }
     },
     {
       "id": "zKnvEnwu79cfz5nVvJ9l",
       "name": "Hugo",
       "raios": 0,
-      "partidasJogadas": 0,
       "lambreta": 0,
-      "pontos": 0,
       "series": "D",
       "conquistas": {},
+      "pontos": 11,
+      "partidasJogadas": 5,
       "temporada_0": {
         "lambretasNaTemporada": 0,
         "raiosNaTemporada": 0,
-        "pontosNaTemporada": 0,
-        "matchPointsNaTemporada": 0,
-        "partidasNaTemporada": 0,
-        "conquistasNaTemporada": {}
+        "conquistasNaTemporada": {},
+        "aproveitamentoNaTemporada": 0,
+        "pontosNaTemporada": 11,
+        "matchPointsNaTemporada": 2,
+        "partidasNaTemporada": 5
       }
     }
   ],
-  "events": [],
+  "events": [
+    {
+      "id": "3CGnfgfFR3xPdzohtRha",
+      "type": "achievement",
+      "player": "Rivelino",
+      "text": "🚔👮🏻Chama a policia que Rivelino acabou de roubar o raio de Alexandre",
+      "timestamp": {
+        "_seconds": 1752549571,
+        "_nanoseconds": 867000000
+      }
+    },
+    {
+      "id": "pPVEc3zf7u1IQwa4124I",
+      "type": "achievement",
+      "player": "Iago",
+      "text": "sofreu uma sequência de 3 lambretas! 🚑🤕🤕",
+      "timestamp": {
+        "_seconds": 1752778498,
+        "_nanoseconds": 872000000
+      }
+    },
+    {
+      "id": "uT4h9iKRccRQHTabrgPR",
+      "type": "achievement",
+      "player": "Alexandre",
+      "text": "🚔👮🏻Chama a policia que Alexandre acabou de roubar o raio de Renata",
+      "timestamp": {
+        "_seconds": 1752688299,
+        "_nanoseconds": 473000000
+      }
+    }
+  ],
   "subscriptions": [
     {
       "id": "c-8aArxlRblPM82KS0QIzJ:APA91bGDeXYfgVRNhp4Nzn3HSFBP-m-wlIdyX--Me1oVZpnRSgqwiZHx5J5RaNNVfUlyTBDuoo0SUwkODWI0P-XVWnupKo4wQivRZARxgbiRfxuXBSDUN6o",
@@ -195,66 +298,10 @@
       }
     },
     {
-      "id": "c5binNp-yublVq9qWknSKR:APA91bGmSmXtxlRVoVZ-C3hpb3bJl127qvC5Sqw8L0SHU189pLDWHjrnEy14O1MQDknueGTvcz19mDr8a_JkujfopKPwCthi5K980T9R0W2fdHNSuYuxISg",
-      "timestamp": {
-        "_seconds": 1750808681,
-        "_nanoseconds": 348000000
-      }
-    },
-    {
-      "id": "c6M7Z5LB7LkkrIthY29NbB:APA91bHTiwpTfq8Ft5mqTs0VGbnY5Vlp_Wp4nT0Bhf8WhY5xnvwW2FqEO3aXUfQ0ho3vK_bEDqhHhQWLnviJhBU2Tx8471x_5kT1_BTT7wS-vKj-Afzc6rw",
-      "timestamp": {
-        "_seconds": 1750955947,
-        "_nanoseconds": 991000000
-      }
-    },
-    {
-      "id": "cIqXZm_NLWYumuLlZwF4G8:APA91bFO_-vw0CF6eFwPFJ-dtSXChDkkV4RoSIzp2NTHYoQR2XzPgI9ooxIADAux8lN4fhslwllNsFWsxNMF2bTgspxockOogJtzXFqZCMjbuiN55arwwgk",
-      "timestamp": {
-        "_seconds": 1750793347,
-        "_nanoseconds": 185000000
-      }
-    },
-    {
-      "id": "dWXlTMztjg84J1CjUIA3C1:APA91bGYsALtOycb01K2viYt74EwS7L97fGSQXZLumMFZ-czP2x__JrwEwzFI4ED1E4kvPtMXHItMc42kipy0K-SQJTeyjYZS1oTyUeNEQpkFFhIcxW_tzM",
-      "timestamp": {
-        "_seconds": 1751208221,
-        "_nanoseconds": 312000000
-      }
-    },
-    {
       "id": "e4VMg3QkdYxqvqa-RWyh0q:APA91bH3h7-PEa6B5zd1Hk7M9b3KRP_rn34j9i8ins0aJPdJNMwF7YUnmbTYX159gGeXRzoamh9XFZeIVEo8LdfbmaQHHRh1RmuII1-5Vgtgc_fbN8KpSyg",
       "timestamp": {
         "_seconds": 1750798053,
         "_nanoseconds": 43000000
-      }
-    },
-    {
-      "id": "eQiv42mgl-Mc3XVWhNjrhw:APA91bF2O4uvA3RSjt2l_twq5ml_KAp3PXObz0VBaduYjhIXMbQViEQ8MEYccIyqaVTjNcXwpAXApcE0K8cx3TUSWn_crgGOE6tmx4o8PF4oalkrjnKc-Ms",
-      "timestamp": {
-        "_seconds": 1750980751,
-        "_nanoseconds": 274000000
-      }
-    },
-    {
-      "id": "egVbwEN453aUngS_JRnSoR:APA91bHH_BlS02OUxh7Aq6brJY0e3X3KQJswazsHiv--mbPq4RduNuwYJn-ZqSKeJuS2C7-KOgyyRM7VTEQDnl5wR02d40bXcpq8zBd1yI_gCSTv1jF4c_o",
-      "timestamp": {
-        "_seconds": 1751808765,
-        "_nanoseconds": 994000000
-      }
-    },
-    {
-      "id": "ew4oQScZTjSFX-okDd5cIa:APA91bHz--HbVqmUJKOhPFd1H5WlnAhRmt4YEmxoJxkX-pMeDd9kGLOJwKuSimNcTKCgXG-lG0C8wsmqkelgPow0g3oRm47qbOC4TBdoK4ks5m6SEovwZ8c",
-      "timestamp": {
-        "_seconds": 1751057627,
-        "_nanoseconds": 918000000
-      }
-    },
-    {
-      "id": "f_-wlBv8Oj3XDJng_v_jG-:APA91bHQvL01D6R_jrSsNPZFigUn9XEoiPs9I7qt9zOLIb2_tXsNf5wpFUOv0OjEokFybNKZpi5rEMuuoZGTMdd04wNN-iiwOPjJA0I2KDJhVvv8YkQChbE",
-      "timestamp": {
-        "_seconds": 1750956827,
-        "_nanoseconds": 120000000
       }
     }
   ]
