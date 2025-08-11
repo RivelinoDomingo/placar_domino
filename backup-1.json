@@ -4,11 +4,8 @@
       "id": "0kWQHBEtY7ifz2JBMwBS",
       "name": "Convidado",
       "raios": 0,
-      "pontos": 0,
       "series": "D",
       "conquistas": {},
-      "partidasJogadas": 1,
-      "lambreta": 1,
       "temporada_0": {
         "raiosNaTemporada": 0,
         "pontosNaTemporada": 0,
@@ -17,7 +14,16 @@
         "partidasNaTemporada": 1,
         "lambretasNaTemporada": 1,
         "aproveitamentoNaTemporada": 0
-      }
+      },
+      "pontos": 3,
+      "partidasJogadas": 4,
+      "temporada_1": {
+        "aproveitamentoNaTemporada": null,
+        "pontosNaTemporada": 3,
+        "partidasNaTemporada": 3,
+        "lambretasNaTemporada": 1
+      },
+      "lambreta": 2
     },
     {
       "id": "4Dgr0sg7Gfs9nnXsDnQZ",
@@ -47,11 +53,9 @@
       "name": "Ari",
       "series": "D",
       "raios": 12,
-      "pontos": 95,
       "conquistas": {
         "azarao": 1
       },
-      "partidasJogadas": 60,
       "lambreta": 23,
       "temporada_0": {
         "matchPointsNaTemporada": 19,
@@ -63,17 +67,23 @@
         "partidasNaTemporada": 60,
         "lambretasNaTemporada": 23,
         "aproveitamentoNaTemporada": 20
+      },
+      "pontos": 105,
+      "partidasJogadas": 65,
+      "temporada_1": {
+        "aproveitamentoNaTemporada": null,
+        "matchPointsNaTemporada": 2,
+        "pontosNaTemporada": 10,
+        "partidasNaTemporada": 5
       }
     },
     {
       "id": "7ztUP4gPbmzCMwQ0K5kF",
       "name": "Enzo",
       "raios": 0,
-      "lambreta": 0,
       "series": "D",
       "conquistas": {},
       "pontos": 3,
-      "partidasJogadas": 1,
       "temporada_0": {
         "lambretasNaTemporada": 0,
         "raiosNaTemporada": 0,
@@ -82,6 +92,13 @@
         "matchPointsNaTemporada": 1,
         "partidasNaTemporada": 1,
         "aproveitamentoNaTemporada": 0
+      },
+      "partidasJogadas": 2,
+      "lambreta": 1,
+      "temporada_1": {
+        "partidasNaTemporada": 1,
+        "lambretasNaTemporada": 1,
+        "aproveitamentoNaTemporada": null
       }
     },
     {
@@ -93,8 +110,6 @@
         "azarao": 1
       },
       "lambreta": 8,
-      "partidasJogadas": 52,
-      "pontos": 109,
       "raios": 15,
       "temporada_0": {
         "conquistasNaTemporada": {
@@ -107,6 +122,14 @@
         "partidasNaTemporada": 52,
         "raiosNaTemporada": 15,
         "aproveitamentoNaTemporada": 28.846153846153843
+      },
+      "pontos": 114,
+      "partidasJogadas": 54,
+      "temporada_1": {
+        "matchPointsNaTemporada": 1,
+        "aproveitamentoNaTemporada": null,
+        "pontosNaTemporada": 5,
+        "partidasNaTemporada": 2
       }
     },
     {
@@ -170,9 +193,6 @@
       "name": "Renata",
       "series": "D",
       "conquistas": {},
-      "pontos": 116,
-      "raios": 19,
-      "partidasJogadas": 56,
       "lambreta": 12,
       "temporada_0": {
         "conquistasNaTemporada": {},
@@ -182,6 +202,16 @@
         "partidasNaTemporada": 56,
         "lambretasNaTemporada": 12,
         "aproveitamentoNaTemporada": 33.92857142857143
+      },
+      "raios": 21,
+      "pontos": 131,
+      "partidasJogadas": 61,
+      "temporada_1": {
+        "raiosNaTemporada": 2,
+        "matchPointsNaTemporada": 3,
+        "pontosNaTemporada": 15,
+        "partidasNaTemporada": 5,
+        "aproveitamentoNaTemporada": 40
       }
     },
     {
@@ -228,10 +258,6 @@
       "conquistas": {
         "roubo": 1
       },
-      "pontos": 96,
-      "raios": 11,
-      "partidasJogadas": 52,
-      "lambreta": 13,
       "temporada_0": {
         "conquistasNaTemporada": {
           "roubo": 1
@@ -242,6 +268,18 @@
         "partidasNaTemporada": 52,
         "lambretasNaTemporada": 13,
         "aproveitamentoNaTemporada": 21.153846153846153
+      },
+      "pontos": 100,
+      "raios": 12,
+      "partidasJogadas": 54,
+      "lambreta": 14,
+      "temporada_1": {
+        "matchPointsNaTemporada": 1,
+        "pontosNaTemporada": 4,
+        "raiosNaTemporada": 1,
+        "partidasNaTemporada": 2,
+        "lambretasNaTemporada": 1,
+        "aproveitamentoNaTemporada": 50
       }
     },
     {
@@ -250,9 +288,6 @@
       "lambreta": 0,
       "series": "D",
       "conquistas": {},
-      "raios": 2,
-      "pontos": 20,
-      "partidasJogadas": 8,
       "temporada_0": {
         "lambretasNaTemporada": 0,
         "conquistasNaTemporada": {},
@@ -261,7 +296,17 @@
         "pontosNaTemporada": 20,
         "partidasNaTemporada": 8,
         "aproveitamentoNaTemporada": 25
-      }
+      },
+      "partidasJogadas": 10,
+      "pontos": 28,
+      "temporada_1": {
+        "aproveitamentoNaTemporada": 100,
+        "matchPointsNaTemporada": 2,
+        "pontosNaTemporada": 8,
+        "partidasNaTemporada": 2,
+        "raiosNaTemporada": 2
+      },
+      "raios": 4
     }
   ],
   "events": [
