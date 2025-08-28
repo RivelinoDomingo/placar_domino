@@ -15,16 +15,16 @@
         "lambretasNaTemporada": 1,
         "aproveitamentoNaTemporada": 0
       },
-      "lambreta": 3,
-      "pontos": 12,
-      "partidasJogadas": 9,
+      "pontos": 13,
+      "partidasJogadas": 11,
       "temporada_1": {
         "aproveitamentoNaTemporada": null,
-        "lambretasNaTemporada": 2,
-        "pontosNaTemporada": 12,
         "matchPointsNaTemporada": 1,
-        "partidasNaTemporada": 8
-      }
+        "pontosNaTemporada": 13,
+        "partidasNaTemporada": 10,
+        "lambretasNaTemporada": 3
+      },
+      "lambreta": 4
     },
     {
       "id": "4Dgr0sg7Gfs9nnXsDnQZ",
@@ -69,20 +69,20 @@
         "roubo": 1
       },
       "lambreta": 38,
-      "raios": 23,
-      "pontos": 183,
-      "partidasJogadas": 110,
+      "partidasJogadas": 114,
+      "pontos": 196,
+      "raios": 25,
       "temporada_1": {
         "conquistasNaTemporada": {
           "azarao": 1,
           "roubo": 1
         },
         "lambretasNaTemporada": 15,
-        "raiosNaTemporada": 11,
-        "pontosNaTemporada": 88,
-        "matchPointsNaTemporada": 18,
-        "partidasNaTemporada": 50,
-        "aproveitamentoNaTemporada": 22
+        "matchPointsNaTemporada": 21,
+        "pontosNaTemporada": 101,
+        "partidasNaTemporada": 54,
+        "raiosNaTemporada": 13,
+        "aproveitamentoNaTemporada": 24.074074074074073
       }
     },
     {
@@ -126,23 +126,24 @@
         "aproveitamentoNaTemporada": 28.846153846153843
       },
       "conquistas": {
-        "roubo": 1,
-        "azarao": 2
+        "azarao": 2,
+        "roubo": 2
       },
-      "lambreta": 18,
-      "partidasJogadas": 89,
-      "pontos": 175,
-      "raios": 21,
+      "pontos": 182,
+      "raios": 22,
+      "partidasJogadas": 93,
+      "lambreta": 19,
       "temporada_1": {
+        "matchPointsNaTemporada": 13,
         "conquistasNaTemporada": {
-          "azarao": 1
+          "azarao": 1,
+          "roubo": 1
         },
-        "lambretasNaTemporada": 10,
-        "matchPointsNaTemporada": 12,
-        "pontosNaTemporada": 66,
-        "partidasNaTemporada": 37,
-        "raiosNaTemporada": 6,
-        "aproveitamentoNaTemporada": 16.216216216216218
+        "pontosNaTemporada": 73,
+        "raiosNaTemporada": 7,
+        "partidasNaTemporada": 41,
+        "lambretasNaTemporada": 11,
+        "aproveitamentoNaTemporada": 17.073170731707318
       }
     },
     {
@@ -224,19 +225,19 @@
         "roubo": 1
       },
       "raios": 33,
-      "lambreta": 20,
-      "pontos": 219,
-      "partidasJogadas": 102,
+      "lambreta": 21,
+      "pontos": 223,
+      "partidasJogadas": 106,
       "temporada_1": {
         "conquistasNaTemporada": {
           "roubo": 1
         },
         "matchPointsNaTemporada": 21,
         "raiosNaTemporada": 14,
-        "lambretasNaTemporada": 8,
-        "pontosNaTemporada": 103,
-        "partidasNaTemporada": 46,
-        "aproveitamentoNaTemporada": 30.434782608695656
+        "lambretasNaTemporada": 9,
+        "pontosNaTemporada": 107,
+        "partidasNaTemporada": 50,
+        "aproveitamentoNaTemporada": 28.000000000000004
       }
     },
     {
@@ -309,19 +310,19 @@
         "azarao": 1
       },
       "lambreta": 23,
-      "raios": 20,
-      "pontos": 152,
-      "partidasJogadas": 82,
+      "raios": 21,
+      "pontos": 157,
+      "partidasJogadas": 84,
       "temporada_1": {
         "conquistasNaTemporada": {
           "azarao": 1
         },
         "lambretasNaTemporada": 10,
-        "raiosNaTemporada": 9,
-        "pontosNaTemporada": 56,
-        "matchPointsNaTemporada": 12,
-        "partidasNaTemporada": 30,
-        "aproveitamentoNaTemporada": 30
+        "matchPointsNaTemporada": 13,
+        "raiosNaTemporada": 10,
+        "pontosNaTemporada": 61,
+        "partidasNaTemporada": 32,
+        "aproveitamentoNaTemporada": 31.25
       }
     },
     {
@@ -353,6 +354,16 @@
     }
   ],
   "events": [
+    {
+      "id": "1Amw5JehBP0o8HyOkgr0",
+      "type": "achievement",
+      "player": "Alexandre",
+      "text": "🚔👮🏻Chama a policia que Alexandre acabou de roubar o raio de Ari",
+      "timestamp": {
+        "_seconds": 1755822722,
+        "_nanoseconds": 426000000
+      }
+    },
     {
       "id": "3CGnfgfFR3xPdzohtRha",
       "type": "achievement",
