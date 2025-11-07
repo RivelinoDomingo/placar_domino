@@ -80,9 +80,6 @@
         "partidasNaTemporada": 56,
         "aproveitamentoNaTemporada": 23.214285714285715
       },
-      "pontos": 201,
-      "raios": 26,
-      "partidasJogadas": 119,
       "lambreta": 41,
       "temporada_2": {
         "matchPointsNaTemporada": 1,
@@ -91,6 +88,16 @@
         "partidasNaTemporada": 3,
         "lambretasNaTemporada": 2,
         "aproveitamentoNaTemporada": 33.33333333333333
+      },
+      "partidasJogadas": 123,
+      "pontos": 210,
+      "raios": 27,
+      "temporada_4": {
+        "matchPointsNaTemporada": 1,
+        "pontosNaTemporada": 9,
+        "partidasNaTemporada": 4,
+        "raiosNaTemporada": 1,
+        "aproveitamentoNaTemporada": 25
       }
     },
     {
@@ -137,10 +144,6 @@
         "azarao": 2,
         "roubo": 2
       },
-      "raios": 22,
-      "lambreta": 20,
-      "pontos": 185,
-      "partidasJogadas": 95,
       "temporada_1": {
         "conquistasNaTemporada": {
           "azarao": 1,
@@ -152,6 +155,18 @@
         "matchPointsNaTemporada": 14,
         "partidasNaTemporada": 43,
         "aproveitamentoNaTemporada": 16.27906976744186
+      },
+      "raios": 23,
+      "pontos": 192,
+      "partidasJogadas": 99,
+      "lambreta": 21,
+      "temporada_4": {
+        "matchPointsNaTemporada": 1,
+        "raiosNaTemporada": 1,
+        "pontosNaTemporada": 7,
+        "partidasNaTemporada": 4,
+        "lambretasNaTemporada": 1,
+        "aproveitamentoNaTemporada": 25
       }
     },
     {
@@ -232,7 +247,6 @@
       "conquistas": {
         "roubo": 1
       },
-      "lambreta": 21,
       "temporada_1": {
         "conquistasNaTemporada": {
           "roubo": 1
@@ -244,15 +258,24 @@
         "partidasNaTemporada": 50,
         "aproveitamentoNaTemporada": 28.000000000000004
       },
-      "partidasJogadas": 109,
-      "pontos": 232,
-      "raios": 35,
       "temporada_2": {
         "matchPointsNaTemporada": 2,
         "pontosNaTemporada": 9,
         "partidasNaTemporada": 3,
         "raiosNaTemporada": 2,
         "aproveitamentoNaTemporada": 66.66666666666666
+      },
+      "lambreta": 22,
+      "raios": 37,
+      "pontos": 242,
+      "partidasJogadas": 113,
+      "temporada_4": {
+        "lambretasNaTemporada": 1,
+        "matchPointsNaTemporada": 2,
+        "raiosNaTemporada": 2,
+        "pontosNaTemporada": 10,
+        "partidasNaTemporada": 4,
+        "aproveitamentoNaTemporada": 50
       }
     },
     {
@@ -343,8 +366,6 @@
         "partidasNaTemporada": 32,
         "aproveitamentoNaTemporada": 31.25
       },
-      "pontos": 160,
-      "partidasJogadas": 87,
       "temporada_2": {
         "pontosNaTemporada": 3,
         "matchPointsNaTemporada": 1,
@@ -352,7 +373,15 @@
         "partidasNaTemporada": 3,
         "lambretasNaTemporada": 2
       },
-      "lambreta": 25
+      "lambreta": 25,
+      "pontos": 165,
+      "partidasJogadas": 89,
+      "temporada_4": {
+        "matchPointsNaTemporada": 1,
+        "aproveitamentoNaTemporada": null,
+        "pontosNaTemporada": 5,
+        "partidasNaTemporada": 2
+      }
     },
     {
       "id": "zKnvEnwu79cfz5nVvJ9l",
@@ -377,15 +406,20 @@
         "partidasNaTemporada": 23,
         "aproveitamentoNaTemporada": 43.47826086956522
       },
-      "pontos": 74,
-      "partidasJogadas": 34,
       "temporada_2": {
         "aproveitamentoNaTemporada": null,
         "pontosNaTemporada": 2,
         "partidasNaTemporada": 3,
         "lambretasNaTemporada": 1
       },
-      "lambreta": 8
+      "lambreta": 8,
+      "pontos": 77,
+      "partidasJogadas": 36,
+      "temporada_4": {
+        "aproveitamentoNaTemporada": null,
+        "pontosNaTemporada": 3,
+        "partidasNaTemporada": 2
+      }
     }
   ],
   "events": [
