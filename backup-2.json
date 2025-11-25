@@ -89,16 +89,16 @@
         "aproveitamentoNaTemporada": 33.33333333333333
       },
       "raios": 28,
-      "lambreta": 44,
-      "pontos": 219,
-      "partidasJogadas": 130,
+      "lambreta": 47,
+      "pontos": 226,
+      "partidasJogadas": 138,
       "temporada_4": {
         "raiosNaTemporada": 2,
-        "lambretasNaTemporada": 3,
-        "pontosNaTemporada": 18,
         "matchPointsNaTemporada": 3,
-        "partidasNaTemporada": 11,
-        "aproveitamentoNaTemporada": 18.181818181818183
+        "lambretasNaTemporada": 6,
+        "pontosNaTemporada": 25,
+        "partidasNaTemporada": 19,
+        "aproveitamentoNaTemporada": 10.526315789473683
       }
     },
     {
@@ -153,24 +153,24 @@
         "partidasNaTemporada": 43,
         "aproveitamentoNaTemporada": 16.27906976744186
       },
-      "lambreta": 22,
+      "lambreta": 25,
       "conquistas": {
         "azarao": 2,
-        "roubo": 3
+        "roubo": 4
       },
-      "partidasJogadas": 106,
-      "pontos": 213,
-      "raios": 27,
+      "partidasJogadas": 117,
+      "pontos": 238,
+      "raios": 31,
       "temporada_4": {
-        "lambretasNaTemporada": 2,
-        "matchPointsNaTemporada": 6,
+        "lambretasNaTemporada": 5,
         "conquistasNaTemporada": {
-          "roubo": 1
+          "roubo": 2
         },
-        "pontosNaTemporada": 28,
-        "partidasNaTemporada": 11,
-        "raiosNaTemporada": 5,
-        "aproveitamentoNaTemporada": 45.45454545454545
+        "matchPointsNaTemporada": 12,
+        "pontosNaTemporada": 53,
+        "partidasNaTemporada": 22,
+        "raiosNaTemporada": 9,
+        "aproveitamentoNaTemporada": 40.909090909090914
       }
     },
     {
@@ -214,7 +214,6 @@
     {
       "id": "eOEKzWEEIwyfwycDFfSs",
       "name": "Cassio",
-      "raios": 0,
       "lambreta": 0,
       "series": "D",
       "conquistas": {},
@@ -226,13 +225,21 @@
         "partidasNaTemporada": 0,
         "conquistasNaTemporada": {}
       },
-      "pontos": 4,
-      "partidasJogadas": 2,
       "temporada_1": {
         "aproveitamentoNaTemporada": null,
         "pontosNaTemporada": 4,
         "matchPointsNaTemporada": 1,
         "partidasNaTemporada": 2
+      },
+      "raios": 1,
+      "pontos": 11,
+      "partidasJogadas": 4,
+      "temporada_4": {
+        "raiosNaTemporada": 1,
+        "pontosNaTemporada": 7,
+        "matchPointsNaTemporada": 2,
+        "partidasNaTemporada": 2,
+        "aproveitamentoNaTemporada": 50
       }
     },
     {
@@ -269,17 +276,17 @@
         "raiosNaTemporada": 2,
         "aproveitamentoNaTemporada": 66.66666666666666
       },
-      "raios": 38,
-      "lambreta": 25,
-      "pontos": 249,
-      "partidasJogadas": 120,
+      "raios": 40,
+      "lambreta": 28,
+      "pontos": 269,
+      "partidasJogadas": 131,
       "temporada_4": {
-        "matchPointsNaTemporada": 3,
-        "raiosNaTemporada": 3,
-        "lambretasNaTemporada": 4,
-        "pontosNaTemporada": 17,
-        "partidasNaTemporada": 11,
-        "aproveitamentoNaTemporada": 27.27272727272727
+        "raiosNaTemporada": 5,
+        "lambretasNaTemporada": 7,
+        "pontosNaTemporada": 37,
+        "matchPointsNaTemporada": 7,
+        "partidasNaTemporada": 22,
+        "aproveitamentoNaTemporada": 22.727272727272727
       }
     },
     {
@@ -302,16 +309,16 @@
         "raiosNaTemporada": 1,
         "aproveitamentoNaTemporada": 50
       },
-      "raios": 2,
-      "lambreta": 1,
-      "pontos": 11,
-      "partidasJogadas": 5,
+      "raios": 3,
+      "lambreta": 2,
+      "pontos": 18,
+      "partidasJogadas": 8,
       "temporada_4": {
-        "matchPointsNaTemporada": 1,
-        "raiosNaTemporada": 1,
-        "lambretasNaTemporada": 1,
-        "pontosNaTemporada": 6,
-        "partidasNaTemporada": 3,
+        "raiosNaTemporada": 2,
+        "lambretasNaTemporada": 2,
+        "pontosNaTemporada": 13,
+        "matchPointsNaTemporada": 3,
+        "partidasNaTemporada": 6,
         "aproveitamentoNaTemporada": 33.33333333333333
       }
     },
@@ -366,7 +373,6 @@
         "roubo": 1,
         "azarao": 1
       },
-      "raios": 21,
       "temporada_1": {
         "conquistasNaTemporada": {
           "azarao": 1
@@ -385,15 +391,17 @@
         "partidasNaTemporada": 3,
         "lambretasNaTemporada": 2
       },
-      "pontos": 171,
-      "partidasJogadas": 93,
-      "lambreta": 27,
+      "lambreta": 28,
+      "raios": 23,
+      "pontos": 187,
+      "partidasJogadas": 100,
       "temporada_4": {
-        "aproveitamentoNaTemporada": null,
-        "pontosNaTemporada": 11,
-        "matchPointsNaTemporada": 3,
-        "partidasNaTemporada": 6,
-        "lambretasNaTemporada": 2
+        "lambretasNaTemporada": 3,
+        "raiosNaTemporada": 2,
+        "matchPointsNaTemporada": 6,
+        "pontosNaTemporada": 27,
+        "partidasNaTemporada": 13,
+        "aproveitamentoNaTemporada": 15.384615384615385
       }
     },
     {
@@ -410,7 +418,6 @@
         "partidasNaTemporada": 8,
         "aproveitamentoNaTemporada": 25
       },
-      "raios": 12,
       "temporada_1": {
         "lambretasNaTemporada": 7,
         "raiosNaTemporada": 10,
@@ -425,13 +432,17 @@
         "partidasNaTemporada": 3,
         "lambretasNaTemporada": 1
       },
-      "lambreta": 8,
-      "pontos": 77,
-      "partidasJogadas": 36,
+      "lambreta": 9,
+      "partidasJogadas": 38,
+      "pontos": 81,
+      "raios": 13,
       "temporada_4": {
-        "aproveitamentoNaTemporada": null,
-        "pontosNaTemporada": 3,
-        "partidasNaTemporada": 2
+        "lambretasNaTemporada": 1,
+        "matchPointsNaTemporada": 1,
+        "pontosNaTemporada": 7,
+        "partidasNaTemporada": 4,
+        "raiosNaTemporada": 1,
+        "aproveitamentoNaTemporada": 25
       }
     }
   ],
@@ -454,6 +465,16 @@
       "timestamp": {
         "_seconds": 1752549571,
         "_nanoseconds": 867000000
+      }
+    },
+    {
+      "id": "6VP0RUhTx8ehUSR0x8Yx",
+      "type": "achievement",
+      "player": "Alexandre",
+      "text": "🚔👮🏻Chama a policia que Alexandre acabou de roubar o raio de Rivelino",
+      "timestamp": {
+        "_seconds": 1764033130,
+        "_nanoseconds": 449000000
       }
     },
     {
