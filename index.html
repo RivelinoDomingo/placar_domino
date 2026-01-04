@@ -1435,8 +1435,28 @@
                 renderHistoryFeed(gameData);
             }
 
-            function openModal(contentHTML) { ui.modal.content.innerHTML = contentHTML; ui.modal.container.style.display = 'flex'; }
-            function closeModal() { ui.modal.container.style.display = 'none'; }
+            function openModal(html) {
+                ui.modal.content.innerHTML = html;
+                ui.modal.container.classList.remove('hidden');
+                ui.modal.container.classList.add('flex');
+
+                // Esconde o container do botão flutuante (FAB)
+                const fabContainer = document.querySelector('.admin-fab-container');
+                if (fabContainer) fabContainer.classList.add('hidden');
+            }
+
+            function closeModal() {
+                ui.modal.container.classList.add('hidden');
+                ui.modal.container.classList.remove('flex');
+                ui.modal.content.innerHTML = '';
+
+                // Mostra novamente o container do botão flutuante (FAB)
+                const fabContainer = document.querySelector('.admin-fab-container');
+                if (fabContainer) fabContainer.classList.remove('hidden');
+            }
+
+            // function openModal(contentHTML) { ui.modal.content.innerHTML = contentHTML; ui.modal.container.style.display = 'flex'; }
+            // function closeModal() { ui.modal.container.style.display = 'none'; }
 
             async function updatePlayerStat(playerId, stat, amount) {
                 if (!appState.isAdminMode) return;
