@@ -1,4 +1,5 @@
-const {onDocumentCreated} = require("firebase-functions/v2/firestore");
+const {onDocumentCreated, onDocumentWritten,
+} = require("firebase-functions/v2/firestore");
 const {initializeApp} = require("firebase-admin/app");
 const {getFirestore} = require("firebase-admin/firestore");
 const {getMessaging} = require("firebase-admin/messaging");
@@ -125,13 +126,13 @@ exports.notifyActiveMatch = onDocumentWritten({
   };
 
   await Promise.allSettled(
-    tokens.map((token) =>
-      getMessaging().send({...payload, token}).catch((err) => {
-        logger.error(`Erro no token ${token}:`, err.message);
-        if (err.code === "messaging/registration-token-not-registered") {
-          return db.collection(path).doc(token).delete();
-        }
-      }),
-    ),
+      tokens.map((token) =>
+        getMessaging().send({...payload, token}).catch((err) => {
+          logger.error(`Erro no token ${token}:`, err.message);
+          if (err.code === "messaging/registration-token-not-registered") {
+            return db.collection(path).doc(token).delete();
+          }
+        }),
+      ),
   );
 });
