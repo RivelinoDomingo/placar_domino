@@ -85,15 +85,20 @@ exports.sendNotification = onDocumentCreated({
       Falha: ${failureCount}`);
 });
 
-exports.notifyActiveMatch = onDocumentCreated({
+exports.notifyActiveMatch = onDocumentWritten({
   document: `artifacts/${appIdentifier}/public/data/partidas/{matchId}`,
   region: region,
 }, async (event) => {
-  const matchData = event.data.data();
+  const matchData = event.data.after.data(); // Dados após a gravação
+  const prevData = event.data.before.data(); // Dados antes da gravação
 
-  if (!matchData || matchData.status !== "active") {
-    return null;
-  }
+  // Verificação lógica:
+  // Envia se: o novo status é "active" E (era diferente de "active"
+  // OU o documento acabou de ser criado)
+  if (!matchData || matchData.status !== "active") return null;
+  if (prevData && prevData.status === "active") return null;
+
+  logger.info("Partida ativa detectada! Iniciando envio de notificações...");
 
   const title = "🀄 Partida Iniciada!";
   const body = "Uma nova partida de Dominó começou. Clique para acompanhar!";
@@ -101,7 +106,10 @@ exports.notifyActiveMatch = onDocumentCreated({
   const path = `artifacts/${appIdentifier}/public/data/subscriptions`;
   const snapshot = await db.collection(path).get();
 
-  if (snapshot.empty) return null;
+  if (snapshot.empty) {
+    logger.warn("Nenhum dispositivo inscrito para notificações.");
+    return null;
+  }
 
   const tokens = snapshot.docs.map((doc) => doc.id);
   const payload = {
@@ -117,17 +125,13 @@ exports.notifyActiveMatch = onDocumentCreated({
   };
 
   await Promise.allSettled(
-      tokens.map((token) =>
-        getMessaging().send({...payload, token}).catch((err) => {
-          if (
-            err.code === "messaging/invalid-argument" ||
-            err.code === "messaging/registration-token-not-registered"
-          ) {
-            return db.collection(path).doc(token).delete();
-          }
-        }),
-      ),
+    tokens.map((token) =>
+      getMessaging().send({...payload, token}).catch((err) => {
+        logger.error(`Erro no token ${token}:`, err.message);
+        if (err.code === "messaging/registration-token-not-registered") {
+          return db.collection(path).doc(token).delete();
+        }
+      }),
+    ),
   );
-
-  logger.info(`Notificação enviada para ${tokens.length} dispositivos.`);
 });
