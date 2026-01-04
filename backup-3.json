@@ -1,597 +1,749 @@
 {
   "players": [
     {
-      "id": "2uTKIpn00eUFJM0wXC5G",
-      "name": "Renata",
-      "conquistas": {
-        "azarao": 4,
-        "roubo": 1
+      "id": "0kWQHBEtY7ifz2JBMwBS",
+      "name": "Convidado",
+      "series": "D",
+      "conquistas": {},
+      "temporada_0": {
+        "raiosNaTemporada": 0,
+        "pontosNaTemporada": 0,
+        "matchPointsNaTemporada": 0,
+        "conquistasNaTemporada": {},
+        "partidasNaTemporada": 1,
+        "lambretasNaTemporada": 1,
+        "aproveitamentoNaTemporada": 0
       },
-      "series": "Amador",
-      "pontos": 119,
-      "raiosNaSerie": 9,
-      "raios": 29,
-      "partidasJogadas": 96,
-      "lambretasNaSerie": 4,
-      "lambreta": 33
-    },
-    {
-      "id": "3Z77VX0LJSmtntPaWH7i",
-      "name": "Lucinha",
-      "raios": 0,
-      "lambreta": 0,
-      "pontos": 0,
-      "series": "Amador",
-      "conquistas": {},
-      "raiosNaSerie": 0,
-      "lambretasNaSerie": 0,
-      "partidasJogadas": 4
-    },
-    {
-      "id": "4lAtcPIEKcu6pYOpTbUf",
-      "name": "Alexandre",
-      "pontos": 139,
-      "raios": 29,
-      "partidasJogadas": 82,
-      "lambreta": 17,
-      "raiosNaSerie": 1,
-      "lambretasNaSerie": 1,
-      "series": "C",
-      "conquistas": {
-        "imbativel": 1,
-        "desbravador": 2
-      }
-    },
-    {
-      "id": "AYPmYnX34qqGae7HcIYU",
-      "name": "Kauê",
-      "series": "Amador",
-      "pontos": 26,
-      "raiosNaSerie": 10,
-      "raios": 9,
-      "partidasJogadas": 24,
-      "lambretasNaSerie": 11,
-      "lambreta": 11
-    },
-    {
-      "id": "EqPTIkcP5QOiFWf2nRFw",
-      "name": "CONVIDADO",
-      "series": "Amador",
-      "conquistas": {},
-      "raiosNaSerie": 2,
-      "raios": 2,
-      "pontos": 12,
-      "lambretasNaSerie": 4,
-      "lambreta": 4,
-      "partidasJogadas": 12
-    },
-    {
-      "id": "KUk2C2TEJlRyIm02hmDk",
-      "name": "Cassio",
-      "series": "Amador",
-      "lambreta": 2,
-      "lambretasNaSerie": 2,
-      "pontos": 3,
-      "raiosNaSerie": 4,
-      "raios": 4,
-      "partidasJogadas": 5
-    },
-    {
-      "id": "M30KhNvKs2K2a8IESxt4",
-      "series": "Amador",
-      "name": "Hugo",
-      "raiosNaSerie": 1,
+      "temporada_1": {
+        "aproveitamentoNaTemporada": null,
+        "matchPointsNaTemporada": 1,
+        "pontosNaTemporada": 13,
+        "partidasNaTemporada": 10,
+        "lambretasNaTemporada": 3
+      },
       "raios": 1,
-      "pontos": 15,
-      "lambretasNaSerie": 5,
-      "lambreta": 5,
-      "partidasJogadas": 16
-    },
-    {
-      "id": "YOYDoV9WhNmAcbFws9Hl",
-      "name": "Rivelino",
-      "series": "Amador",
-      "pontos": 105,
-      "raios": 19,
-      "partidasJogadas": 76,
-      "lambreta": 35,
-      "lambretasNaSerie": 0,
-      "raiosNaSerie": 0,
-      "conquistas": {
-        "imbativel": 1,
-        "azarao": 3,
-        "roubo": 1,
-        "stagnant": 1
+      "lambreta": 6,
+      "pontos": 33,
+      "partidasJogadas": 23,
+      "temporada_5": {
+        "matchPointsNaTemporada": 2,
+        "raiosNaTemporada": 1,
+        "lambretasNaTemporada": 2,
+        "pontosNaTemporada": 20,
+        "partidasNaTemporada": 12,
+        "aproveitamentoNaTemporada": 8.333333333333332
       }
     },
     {
-      "id": "ZXSIptDOtvs2oTioZvqo",
-      "name": "teste3",
-      "series": "Amador",
-      "conquistas": {
-        "azarao": 1,
-        "imbativel": 1,
-        "demotion": 1,
-        "roubo": 1,
-        "stagnant": 7
-      },
-      "lambretasNaSerie": 1,
-      "lambreta": 63,
-      "pontos": 16,
-      "raiosNaSerie": 1,
-      "raios": 40,
-      "partidasJogadas": 21
-    },
-    {
-      "id": "dWVq6CyXLEn9vafbp5Fo",
-      "name": "Caio",
-      "partidasJogadas": 0,
-      "lambreta": 0,
-      "pontos": 0,
-      "series": "Amador",
-      "conquistas": {},
-      "lambretasNaSerie": 0,
-      "raiosNaSerie": 2,
-      "raios": 2
-    },
-    {
-      "id": "jbhADYHEOrT5lc8wxrQI",
-      "name": "Enzo",
-      "series": "Amador",
-      "lambretasNaSerie": 3,
+      "id": "4Dgr0sg7Gfs9nnXsDnQZ",
+      "name": "Iago",
+      "series": "D",
       "lambreta": 3,
+      "conquistas": {
+        "azarao": 1
+      },
+      "partidasJogadas": 4,
+      "pontos": 4,
+      "raios": 1,
+      "temporada_0": {
+        "lambretasNaTemporada": 3,
+        "matchPointsNaTemporada": 1,
+        "conquistasNaTemporada": {
+          "azarao": 1
+        },
+        "pontosNaTemporada": 4,
+        "partidasNaTemporada": 4,
+        "raiosNaTemporada": 1,
+        "aproveitamentoNaTemporada": 25
+      }
+    },
+    {
+      "id": "7Y55712ADXnvx6C69HzM",
+      "name": "Ari",
+      "series": "D",
+      "temporada_0": {
+        "matchPointsNaTemporada": 19,
+        "raiosNaTemporada": 12,
+        "pontosNaTemporada": 95,
+        "conquistasNaTemporada": {
+          "azarao": 1
+        },
+        "partidasNaTemporada": 60,
+        "lambretasNaTemporada": 23,
+        "aproveitamentoNaTemporada": 20
+      },
+      "temporada_1": {
+        "conquistasNaTemporada": {
+          "azarao": 1,
+          "roubo": 1
+        },
+        "matchPointsNaTemporada": 21,
+        "raiosNaTemporada": 13,
+        "lambretasNaTemporada": 16,
+        "pontosNaTemporada": 102,
+        "partidasNaTemporada": 56,
+        "aproveitamentoNaTemporada": 23.214285714285715
+      },
+      "temporada_2": {
+        "matchPointsNaTemporada": 1,
+        "pontosNaTemporada": 4,
+        "raiosNaTemporada": 1,
+        "partidasNaTemporada": 3,
+        "lambretasNaTemporada": 2,
+        "aproveitamentoNaTemporada": 33.33333333333333
+      },
+      "temporada_4": {
+        "matchPointsNaTemporada": 4,
+        "raiosNaTemporada": 3,
+        "lambretasNaTemporada": 8,
+        "pontosNaTemporada": 34,
+        "partidasNaTemporada": 25,
+        "aproveitamentoNaTemporada": 12
+      },
+      "conquistas": {
+        "azarao": 2,
+        "roubo": 1,
+        "imbativel": 1
+      },
+      "raios": 34,
+      "pontos": 285,
+      "partidasJogadas": 167,
+      "lambreta": 54,
+      "temporada_5": {
+        "conquistasNaTemporada": {
+          "imbativel": 1
+        },
+        "raiosNaTemporada": 5,
+        "matchPointsNaTemporada": 10,
+        "pontosNaTemporada": 50,
+        "partidasNaTemporada": 23,
+        "lambretasNaTemporada": 5,
+        "aproveitamentoNaTemporada": 21.73913043478261
+      }
+    },
+    {
+      "id": "7ztUP4gPbmzCMwQ0K5kF",
+      "name": "Enzo",
+      "series": "D",
+      "temporada_0": {
+        "lambretasNaTemporada": 0,
+        "raiosNaTemporada": 0,
+        "conquistasNaTemporada": {},
+        "pontosNaTemporada": 3,
+        "matchPointsNaTemporada": 1,
+        "partidasNaTemporada": 1,
+        "aproveitamentoNaTemporada": 0
+      },
+      "temporada_1": {
+        "aproveitamentoNaTemporada": null,
+        "partidasNaTemporada": 2,
+        "lambretasNaTemporada": 2
+      },
       "conquistas": {
         "roubo": 1
       },
-      "partidasJogadas": 21,
-      "pontos": 27,
-      "raiosNaSerie": 8,
-      "raios": 8
-    },
-    {
-      "id": "jlIEtRMAWIQdaAySxIdB",
-      "name": "Eduardo",
-      "raios": 0,
-      "lambreta": 0,
-      "series": "Amador",
-      "conquistas": {}
-    },
-    {
-      "id": "sJm8WZG4fGjGg9aaPoPe",
-      "name": "Convidado2",
-      "lambreta": 0,
-      "series": "Amador",
-      "conquistas": {},
-      "lambretasNaSerie": 0,
-      "partidasJogadas": 5,
-      "pontos": 2,
-      "raiosNaSerie": 2,
-      "raios": 2
-    },
-    {
-      "id": "u1423EoitFbGmcZOvytT",
-      "series": "Amador",
-      "name": "Ari",
-      "conquistas": {
-        "azarao": 3
-      },
-      "lambretasNaSerie": 8,
-      "lambreta": 38,
-      "partidasJogadas": 102,
-      "pontos": 122,
-      "raiosNaSerie": 4,
-      "raios": 28
-    },
-    {
-      "id": "uF8qXsLv9MElkXPLdRqX",
-      "name": "teste4",
-      "series": "Amador",
-      "conquistas": {},
-      "lambretasNaSerie": 3,
+      "raios": 2,
       "lambreta": 4,
-      "pontos": 5,
-      "raiosNaSerie": 4,
-      "raios": 5,
-      "partidasJogadas": 20
+      "pontos": 13,
+      "partidasJogadas": 9,
+      "temporada_5": {
+        "conquistasNaTemporada": {
+          "roubo": 1
+        },
+        "matchPointsNaTemporada": 2,
+        "raiosNaTemporada": 2,
+        "lambretasNaTemporada": 2,
+        "pontosNaTemporada": 10,
+        "partidasNaTemporada": 6,
+        "aproveitamentoNaTemporada": 33.33333333333333
+      }
     },
     {
-      "id": "ueEvrpfR5jeMZUblyvcb",
-      "name": "teste2",
-      "lambreta": 3,
-      "lambretasNaSerie": 0,
-      "partidasJogadas": 21,
-      "pontos": 4,
-      "raios": 45,
-      "raiosNaSerie": 0,
-      "conquistas": {
-        "desbravador": 1,
-        "promotion": 2
+      "id": "JRsUCSKJLn576U0BVhFG",
+      "name": "Alexandre",
+      "series": "D",
+      "temporada_0": {
+        "conquistasNaTemporada": {
+          "roubo": 1,
+          "azarao": 1
+        },
+        "lambretasNaTemporada": 8,
+        "matchPointsNaTemporada": 21,
+        "pontosNaTemporada": 109,
+        "partidasNaTemporada": 52,
+        "raiosNaTemporada": 15,
+        "aproveitamentoNaTemporada": 28.846153846153843
       },
-      "series": "Amador"
+      "temporada_1": {
+        "conquistasNaTemporada": {
+          "azarao": 1,
+          "roubo": 1
+        },
+        "raiosNaTemporada": 7,
+        "lambretasNaTemporada": 12,
+        "pontosNaTemporada": 76,
+        "matchPointsNaTemporada": 14,
+        "partidasNaTemporada": 43,
+        "aproveitamentoNaTemporada": 16.27906976744186
+      },
+      "conquistas": {
+        "azarao": 2,
+        "roubo": 4
+      },
+      "lambreta": 26,
+      "temporada_4": {
+        "conquistasNaTemporada": {
+          "roubo": 2
+        },
+        "lambretasNaTemporada": 6,
+        "matchPointsNaTemporada": 13,
+        "pontosNaTemporada": 57,
+        "partidasNaTemporada": 24,
+        "raiosNaTemporada": 10,
+        "aproveitamentoNaTemporada": 41.66666666666667
+      },
+      "raios": 37,
+      "pontos": 291,
+      "partidasJogadas": 136,
+      "temporada_5": {
+        "raiosNaTemporada": 5,
+        "matchPointsNaTemporada": 12,
+        "pontosNaTemporada": 49,
+        "partidasNaTemporada": 17,
+        "aproveitamentoNaTemporada": 29.411764705882355
+      }
     },
     {
-      "id": "vZByaXgGtTkCwfmKLpnL",
-      "name": "teste_1",
-      "series": "Amador",
+      "id": "O9HRWCk2kCHOKT5aLZ69",
+      "name": "Kauê",
+      "series": "D",
       "conquistas": {},
-      "pontos": 2,
-      "raiosNaSerie": 2,
-      "raios": 3,
-      "lambretasNaSerie": 3,
-      "lambreta": 4,
-      "partidasJogadas": 21
+      "temporada_0": {
+        "conquistasNaTemporada": {},
+        "lambretasNaTemporada": 1,
+        "matchPointsNaTemporada": 3,
+        "raiosNaTemporada": 4,
+        "pontosNaTemporada": 18,
+        "partidasNaTemporada": 8,
+        "aproveitamentoNaTemporada": 50
+      },
+      "pontos": 35,
+      "raios": 7,
+      "partidasJogadas": 16,
+      "lambreta": 3,
+      "temporada_5": {
+        "matchPointsNaTemporada": 4,
+        "pontosNaTemporada": 17,
+        "raiosNaTemporada": 3,
+        "partidasNaTemporada": 8,
+        "lambretasNaTemporada": 2,
+        "aproveitamentoNaTemporada": 37.5
+      }
     },
     {
-      "id": "zNO2Zp7dZlyGMcL1xBS8",
-      "name": "Jorginho",
-      "series": "Amador",
-      "lambretasNaSerie": 3,
-      "lambreta": 3,
+      "id": "S5rgZjCCXzsuvGAObQrd",
+      "name": "Lucinha",
+      "series": "D",
+      "conquistas": {},
+      "temporada_0": {
+        "lambretasNaTemporada": 0,
+        "raiosNaTemporada": 0,
+        "conquistasNaTemporada": {},
+        "matchPointsNaTemporada": 1,
+        "aproveitamentoNaTemporada": 0,
+        "pontosNaTemporada": 6,
+        "partidasNaTemporada": 3
+      },
+      "raios": 1,
+      "lambreta": 1,
+      "pontos": 13,
       "partidasJogadas": 6,
+      "temporada_5": {
+        "raiosNaTemporada": 1,
+        "lambretasNaTemporada": 1,
+        "pontosNaTemporada": 7,
+        "matchPointsNaTemporada": 2,
+        "partidasNaTemporada": 3,
+        "aproveitamentoNaTemporada": 33.33333333333333
+      }
+    },
+    {
+      "id": "eOEKzWEEIwyfwycDFfSs",
+      "name": "Cassio",
+      "lambreta": 0,
+      "series": "D",
+      "conquistas": {},
+      "temporada_0": {
+        "lambretasNaTemporada": 0,
+        "raiosNaTemporada": 0,
+        "pontosNaTemporada": 0,
+        "matchPointsNaTemporada": 0,
+        "partidasNaTemporada": 0,
+        "conquistasNaTemporada": {}
+      },
+      "temporada_1": {
+        "aproveitamentoNaTemporada": null,
+        "pontosNaTemporada": 4,
+        "matchPointsNaTemporada": 1,
+        "partidasNaTemporada": 2
+      },
+      "raios": 1,
       "pontos": 11,
-      "raiosNaSerie": 2,
-      "raios": 2
+      "partidasJogadas": 4,
+      "temporada_4": {
+        "raiosNaTemporada": 1,
+        "pontosNaTemporada": 7,
+        "matchPointsNaTemporada": 2,
+        "partidasNaTemporada": 2,
+        "aproveitamentoNaTemporada": 50
+      }
+    },
+    {
+      "id": "fJQaOTqKaLo4ucvkb3yw",
+      "name": "Renata",
+      "series": "D",
+      "temporada_0": {
+        "conquistasNaTemporada": {},
+        "matchPointsNaTemporada": 24,
+        "pontosNaTemporada": 116,
+        "raiosNaTemporada": 19,
+        "partidasNaTemporada": 56,
+        "lambretasNaTemporada": 12,
+        "aproveitamentoNaTemporada": 33.92857142857143
+      },
+      "temporada_1": {
+        "conquistasNaTemporada": {
+          "roubo": 1
+        },
+        "matchPointsNaTemporada": 21,
+        "raiosNaTemporada": 14,
+        "lambretasNaTemporada": 9,
+        "pontosNaTemporada": 107,
+        "partidasNaTemporada": 50,
+        "aproveitamentoNaTemporada": 28.000000000000004
+      },
+      "temporada_2": {
+        "matchPointsNaTemporada": 2,
+        "pontosNaTemporada": 9,
+        "partidasNaTemporada": 3,
+        "raiosNaTemporada": 2,
+        "aproveitamentoNaTemporada": 66.66666666666666
+      },
+      "temporada_4": {
+        "lambretasNaTemporada": 7,
+        "matchPointsNaTemporada": 11,
+        "raiosNaTemporada": 8,
+        "pontosNaTemporada": 54,
+        "partidasNaTemporada": 28,
+        "aproveitamentoNaTemporada": 28.57142857142857
+      },
+      "lambreta": 33,
+      "conquistas": {
+        "roubo": 3
+      },
+      "partidasJogadas": 156,
+      "pontos": 328,
+      "raios": 50,
+      "temporada_5": {
+        "lambretasNaTemporada": 5,
+        "matchPointsNaTemporada": 10,
+        "conquistasNaTemporada": {
+          "roubo": 2
+        },
+        "pontosNaTemporada": 42,
+        "partidasNaTemporada": 19,
+        "raiosNaTemporada": 7,
+        "aproveitamentoNaTemporada": 36.84210526315789
+      }
+    },
+    {
+      "id": "kt4oIdoklPpTIvQGHcYl",
+      "name": "Caio",
+      "series": "D",
+      "conquistas": {},
+      "temporada_0": {
+        "lambretasNaTemporada": 0,
+        "raiosNaTemporada": 0,
+        "pontosNaTemporada": 0,
+        "matchPointsNaTemporada": 0,
+        "partidasNaTemporada": 0,
+        "conquistasNaTemporada": {}
+      },
+      "temporada_1": {
+        "matchPointsNaTemporada": 1,
+        "pontosNaTemporada": 5,
+        "partidasNaTemporada": 2,
+        "raiosNaTemporada": 1,
+        "aproveitamentoNaTemporada": 50
+      },
+      "raios": 3,
+      "lambreta": 2,
+      "pontos": 18,
+      "partidasJogadas": 8,
+      "temporada_4": {
+        "raiosNaTemporada": 2,
+        "lambretasNaTemporada": 2,
+        "pontosNaTemporada": 13,
+        "matchPointsNaTemporada": 3,
+        "partidasNaTemporada": 6,
+        "aproveitamentoNaTemporada": 33.33333333333333
+      }
+    },
+    {
+      "id": "pDcUjSsVXz0D5pGStdoT",
+      "name": "Jorginho",
+      "series": "D",
+      "temporada_0": {
+        "raiosNaTemporada": 0,
+        "conquistasNaTemporada": {},
+        "aproveitamentoNaTemporada": 0,
+        "matchPointsNaTemporada": 1,
+        "pontosNaTemporada": 9,
+        "partidasNaTemporada": 11,
+        "lambretasNaTemporada": 5
+      },
+      "conquistas": {
+        "roubo": 1
+      },
+      "raios": 1,
+      "lambreta": 6,
+      "pontos": 16,
+      "partidasJogadas": 15,
+      "temporada_1": {
+        "matchPointsNaTemporada": 1,
+        "conquistasNaTemporada": {
+          "roubo": 1
+        },
+        "raiosNaTemporada": 1,
+        "lambretasNaTemporada": 1,
+        "pontosNaTemporada": 7,
+        "partidasNaTemporada": 4,
+        "aproveitamentoNaTemporada": 25
+      }
+    },
+    {
+      "id": "veewz7agRoCE0bM4KwWa",
+      "name": "Rivelino",
+      "series": "D",
+      "temporada_0": {
+        "conquistasNaTemporada": {
+          "roubo": 1
+        },
+        "matchPointsNaTemporada": 21,
+        "pontosNaTemporada": 96,
+        "raiosNaTemporada": 11,
+        "partidasNaTemporada": 52,
+        "lambretasNaTemporada": 13,
+        "aproveitamentoNaTemporada": 21.153846153846153
+      },
+      "temporada_1": {
+        "conquistasNaTemporada": {
+          "azarao": 1
+        },
+        "lambretasNaTemporada": 10,
+        "matchPointsNaTemporada": 13,
+        "raiosNaTemporada": 10,
+        "pontosNaTemporada": 61,
+        "partidasNaTemporada": 32,
+        "aproveitamentoNaTemporada": 31.25
+      },
+      "temporada_2": {
+        "pontosNaTemporada": 3,
+        "matchPointsNaTemporada": 1,
+        "aproveitamentoNaTemporada": null,
+        "partidasNaTemporada": 3,
+        "lambretasNaTemporada": 2
+      },
+      "raios": 23,
+      "conquistas": {
+        "roubo": 1,
+        "azarao": 2
+      },
+      "temporada_4": {
+        "raiosNaTemporada": 2,
+        "matchPointsNaTemporada": 6,
+        "lambretasNaTemporada": 6,
+        "conquistasNaTemporada": {
+          "azarao": 1
+        },
+        "pontosNaTemporada": 31,
+        "partidasNaTemporada": 19,
+        "aproveitamentoNaTemporada": 10.526315789473683
+      },
+      "lambreta": 33,
+      "pontos": 203,
+      "partidasJogadas": 114,
+      "temporada_5": {
+        "aproveitamentoNaTemporada": null,
+        "lambretasNaTemporada": 2,
+        "pontosNaTemporada": 12,
+        "matchPointsNaTemporada": 2,
+        "partidasNaTemporada": 8
+      }
+    },
+    {
+      "id": "zKnvEnwu79cfz5nVvJ9l",
+      "name": "Hugo",
+      "series": "D",
+      "temporada_0": {
+        "lambretasNaTemporada": 0,
+        "conquistasNaTemporada": {},
+        "matchPointsNaTemporada": 4,
+        "raiosNaTemporada": 2,
+        "pontosNaTemporada": 20,
+        "partidasNaTemporada": 8,
+        "aproveitamentoNaTemporada": 25
+      },
+      "temporada_1": {
+        "lambretasNaTemporada": 7,
+        "raiosNaTemporada": 10,
+        "pontosNaTemporada": 52,
+        "matchPointsNaTemporada": 12,
+        "partidasNaTemporada": 23,
+        "aproveitamentoNaTemporada": 43.47826086956522
+      },
+      "temporada_2": {
+        "aproveitamentoNaTemporada": null,
+        "pontosNaTemporada": 2,
+        "partidasNaTemporada": 3,
+        "lambretasNaTemporada": 1
+      },
+      "temporada_4": {
+        "lambretasNaTemporada": 3,
+        "matchPointsNaTemporada": 2,
+        "pontosNaTemporada": 12,
+        "partidasNaTemporada": 8,
+        "raiosNaTemporada": 2,
+        "aproveitamentoNaTemporada": 25
+      },
+      "conquistas": {
+        "roubo": 1
+      },
+      "raios": 15,
+      "lambreta": 12,
+      "pontos": 96,
+      "partidasJogadas": 46,
+      "temporada_5": {
+        "conquistasNaTemporada": {
+          "roubo": 1
+        },
+        "raiosNaTemporada": 1,
+        "lambretasNaTemporada": 1,
+        "pontosNaTemporada": 10,
+        "matchPointsNaTemporada": 3,
+        "partidasNaTemporada": 4,
+        "aproveitamentoNaTemporada": 25
+      }
     }
   ],
   "events": [
     {
-      "id": "02gnIqQXtO84KnQwK6oC",
+      "id": "1Amw5JehBP0o8HyOkgr0",
       "type": "achievement",
-      "player": "teste3",
-      "text": "sofreu uma sequência de 3 lambretas! 🚑🤕🤕",
+      "player": "Alexandre",
+      "text": "🚔👮🏻Chama a policia que Alexandre acabou de roubar o raio de Ari",
       "timestamp": {
-        "_seconds": 1751180389,
-        "_nanoseconds": 403000000
+        "_seconds": 1755822722,
+        "_nanoseconds": 426000000
       }
     },
     {
-      "id": "0ccCbnfzTTCs2wc0N852",
-      "type": "achievement",
-      "player": "Renata",
-      "text": "sofreu uma sequência de 3 lambretas! 🚑🤕🤕",
-      "timestamp": {
-        "_seconds": 1750741104,
-        "_nanoseconds": 951000000
-      }
-    },
-    {
-      "id": "3YhI3ktzDLIekvfskRCw",
-      "type": "achievement",
-      "player": "teste2",
-      "text": "foi promovido para Série B",
-      "timestamp": {
-        "_seconds": 1751424285,
-        "_nanoseconds": 593000000
-      }
-    },
-    {
-      "id": "44JqaoNpdC4vLz6L3Fqn",
-      "type": "achievement",
-      "player": "teste2",
-      "text": "foi promovido para Série undefined",
-      "timestamp": {
-        "_seconds": 1751424069,
-        "_nanoseconds": 494000000
-      }
-    },
-    {
-      "id": "5FanW9GiA1S3JuDicrvo",
+      "id": "3CGnfgfFR3xPdzohtRha",
       "type": "achievement",
       "player": "Rivelino",
       "text": "🚔👮🏻Chama a policia que Rivelino acabou de roubar o raio de Alexandre",
       "timestamp": {
-        "_seconds": 1751164667,
-        "_nanoseconds": 505000000
+        "_seconds": 1752549571,
+        "_nanoseconds": 867000000
       }
     },
     {
-      "id": "89aoFb4qSfutzssN9cCT",
-      "type": "stagnant",
-      "player": "Rivelino",
-      "text": "permanece na Série Amador.",
-      "timestamp": {
-        "_seconds": 1750827106,
-        "_nanoseconds": 261000000
-      }
-    },
-    {
-      "id": "8jwUbFjHm68pa2csgsM7",
-      "type": "achievement",
-      "player": "teste3",
-      "text": "foi rebaixado para Série undefined",
-      "timestamp": {
-        "_seconds": 1751184028,
-        "_nanoseconds": 192000000
-      }
-    },
-    {
-      "id": "G683QNMf4AVAVEeUj9kE",
-      "type": "achievement",
-      "player": "Enzo",
-      "text": "🚔👮🏻Chama a policia que Enzo acabou de roubar o raio de Rivelino",
-      "timestamp": {
-        "_seconds": 1751240889,
-        "_nanoseconds": 405000000
-      }
-    },
-    {
-      "id": "InuYwPVrPXyq1K46pvZs",
+      "id": "56cyP2wY4kLbtCGkNtr0",
       "type": "achievement",
       "player": "Rivelino",
-      "text": "tomou uma lambreta e permanece na Série Amador",
+      "text": "sofreu uma sequência de 3 lambretas! 🚑🤕🤕",
       "timestamp": {
-        "_seconds": 1751420775,
-        "_nanoseconds": 633000000
+        "_seconds": 1764115326,
+        "_nanoseconds": 99000000
       }
     },
     {
-      "id": "KthJQn6yqdKTkNoch1Ay",
+      "id": "6VP0RUhTx8ehUSR0x8Yx",
       "type": "achievement",
-      "player": "teste3",
-      "text": "🚔👮🏻Chama a policia que teste3 acabou de roubar o raio de teste_1",
+      "player": "Alexandre",
+      "text": "🚔👮🏻Chama a policia que Alexandre acabou de roubar o raio de Rivelino",
       "timestamp": {
-        "_seconds": 1751186679,
-        "_nanoseconds": 173000000
+        "_seconds": 1764033130,
+        "_nanoseconds": 449000000
       }
     },
     {
-      "id": "LtdxSpGOvJg4yFaRo1Lh",
+      "id": "7wROIw3lZj89J2wxnoeW",
+      "type": "achievement",
+      "player": "Ari",
+      "text": "🚔👮🏻Chama a policia que Ari acabou de roubar o raio de Cassio",
+      "timestamp": {
+        "_seconds": 1755650076,
+        "_nanoseconds": 223000000
+      }
+    },
+    {
+      "id": "8T7uoCHaYEjWpizjmZ8U",
+      "type": "achievement",
+      "player": "Renata",
+      "text": "🚔👮🏻Chama a policia que Renata acabou de roubar o raio de Alexandre",
+      "timestamp": {
+        "_seconds": 1766684125,
+        "_nanoseconds": 154000000
+      }
+    },
+    {
+      "id": "AAGQzxTQ3L35BJqwSFJS",
+      "type": "achievement",
+      "player": "Rivelino",
+      "text": "sofreu uma sequência de 3 lambretas! 🚑🤕🤕",
+      "timestamp": {
+        "_seconds": 1755474005,
+        "_nanoseconds": 303000000
+      }
+    },
+    {
+      "id": "DHcxQwAD8coWVxDNycwV",
+      "type": "achievement",
+      "player": "Renata",
+      "text": "🚔👮🏻Chama a policia que Renata acabou de roubar o raio de Rivelino",
+      "timestamp": {
+        "_seconds": 1754960977,
+        "_nanoseconds": 836000000
+      }
+    },
+    {
+      "id": "HGrfJWWLF3Pyw8tqy7KH",
+      "type": "achievement",
+      "player": "Alexandre",
+      "text": "sofreu uma sequência de 3 lambretas! 🚑🤕🤕",
+      "timestamp": {
+        "_seconds": 1753488039,
+        "_nanoseconds": 138000000
+      }
+    },
+    {
+      "id": "MMipcgbjSD9jaWDiBAGU",
       "type": "achievement",
       "player": "Ari",
       "text": "sofreu uma sequência de 3 lambretas! 🚑🤕🤕",
       "timestamp": {
-        "_seconds": 1750828018,
-        "_nanoseconds": 113000000
+        "_seconds": 1753496917,
+        "_nanoseconds": 28000000
       }
     },
     {
-      "id": "Mhrz6H7tnALfVW4RaxsB",
+      "id": "Sk9NYppBbigMAtES54kc",
       "type": "achievement",
-      "player": "Renata",
-      "text": "🚔👮🏻Chama a policia que Renata acabou de roubar o raio de Ari",
-      "timestamp": {
-        "_seconds": 1751159843,
-        "_nanoseconds": 267000000
-      }
-    },
-    {
-      "id": "NKKnZH54UqmAjTTEL9Xx",
-      "type": "achievement",
-      "player": "teste3",
+      "player": "Ari",
       "text": "sofreu uma sequência de 3 lambretas! 🚑🤕🤕",
       "timestamp": {
-        "_seconds": 1751178348,
-        "_nanoseconds": 313000000
+        "_seconds": 1755390040,
+        "_nanoseconds": 668000000
       }
     },
     {
-      "id": "OGVYQYTcYVwJvH7qUoRb",
-      "type": "achievement",
-      "player": "teste3",
-      "text": "🚔👮🏻Chama a policia que teste3 acabou de roubar o raio de teste_1",
-      "timestamp": {
-        "_seconds": 1751182990,
-        "_nanoseconds": 26000000
-      }
-    },
-    {
-      "id": "PsyuICArXwet6uesSdDO",
+      "id": "T2XQIWfinZ3fxCL9AcaK",
       "type": "achievement",
       "player": "Alexandre",
+      "text": "🚔👮🏻Chama a policia que Alexandre acabou de roubar o raio de Ari",
+      "timestamp": {
+        "_seconds": 1762732385,
+        "_nanoseconds": 805000000
+      }
+    },
+    {
+      "id": "YH0CaE3RyFIgK60WbYza",
+      "type": "achievement",
+      "player": "Jorginho",
+      "text": "🚔👮🏻Chama a policia que Jorginho acabou de roubar o raio de Renata",
+      "timestamp": {
+        "_seconds": 1755215643,
+        "_nanoseconds": 173000000
+      }
+    },
+    {
+      "id": "hGqgd7602OywWcT67jRV",
+      "type": "achievement",
+      "player": "Hugo",
+      "text": "🚔👮🏻Chama a policia que Hugo acabou de roubar o raio de Alexandre",
+      "timestamp": {
+        "_seconds": 1764977212,
+        "_nanoseconds": 95000000
+      }
+    },
+    {
+      "id": "lf1qGre1HEMUJSoRHDQo",
+      "type": "achievement",
+      "player": "Renata",
+      "text": "🚔👮🏻Chama a policia que Renata acabou de roubar o raio de Rivelino",
+      "timestamp": {
+        "_seconds": 1766711831,
+        "_nanoseconds": 3000000
+      }
+    },
+    {
+      "id": "np75vHExJMDJoJKDy8La",
+      "type": "achievement",
+      "player": "Ari",
       "text": "alcançou uma sequência de 3 raio! 🔥🚀🚀",
       "timestamp": {
-        "_seconds": 1750901743,
-        "_nanoseconds": 318000000
+        "_seconds": 1766283968,
+        "_nanoseconds": 465000000
       }
     },
     {
-      "id": "UlHn0J5wDJwMWghETU0C",
+      "id": "p3wyrbAMDrfrV32PBAVH",
       "type": "achievement",
-      "player": "teste3",
-      "text": "alcançou uma sequência de 3 raio! 🔥🚀🚀",
-      "timestamp": {
-        "_seconds": 1751183556,
-        "_nanoseconds": 135000000
-      }
-    },
-    {
-      "id": "V9C9BQMNrwdae2KlwAdl",
-      "type": "achievement",
-      "player": "Rivelino",
-      "text": "sofreu uma sequência de 3 lambretas! 🚑🤕🤕",
-      "timestamp": {
-        "_seconds": 1750823494,
-        "_nanoseconds": 791000000
-      }
-    },
-    {
-      "id": "VHYEMj3DwUjRqJyQHUJR",
-      "type": "achievement",
-      "player": "teste2",
-      "text": "foi o primeiro a alcançar a Série B! 🧗‍♂️",
-      "timestamp": {
-        "_seconds": 1751424285,
-        "_nanoseconds": 414000000
-      }
-    },
-    {
-      "id": "WJ07US2LrSl7590Vrm8W",
-      "type": "achievement",
-      "player": "teste3",
-      "text": "tomou uma lambreta e permanece na Série Amador",
-      "timestamp": {
-        "_seconds": 1751185386,
-        "_nanoseconds": 458000000
-      }
-    },
-    {
-      "id": "ZXy8LUFNYCudO9mc6M8s",
-      "type": "achievement",
-      "player": "Rivelino",
-      "text": "sofreu uma sequência de 3 lambretas! 🚑🤕🤕",
-      "timestamp": {
-        "_seconds": 1750617033,
-        "_nanoseconds": 494000000
-      }
-    },
-    {
-      "id": "aIxFbnSrRuWXoLanPYeS",
-      "type": "promotion",
       "player": "Alexandre",
-      "text": "foi promovido para a Série D! 🎉",
-      "timestamp": {
-        "_seconds": 1750737103,
-        "_nanoseconds": 228000000
-      }
-    },
-    {
-      "id": "dx6K05EsuTCXJuK5K5Bf",
-      "type": "achievement",
-      "player": "teste3",
-      "text": "tomou uma lambreta e permanece na Série Amador",
-      "timestamp": {
-        "_seconds": 1751180439,
-        "_nanoseconds": 650000000
-      }
-    },
-    {
-      "id": "e06zIKdQxALXKh6pCOAc",
-      "type": "achievement",
-      "player": "teste3",
-      "text": "tomou uma lambreta e permanece na Série Amador",
-      "timestamp": {
-        "_seconds": 1751177162,
-        "_nanoseconds": 947000000
-      }
-    },
-    {
-      "id": "ejSkzjx5WV7xAEZ2zb6J",
-      "type": "achievement",
-      "player": "Renata",
       "text": "sofreu uma sequência de 3 lambretas! 🚑🤕🤕",
       "timestamp": {
-        "_seconds": 1750617033,
-        "_nanoseconds": 669000000
+        "_seconds": 1755390040,
+        "_nanoseconds": 914000000
       }
     },
     {
-      "id": "fC7NGpJnyK4nmHPxhxH8",
+      "id": "pPVEc3zf7u1IQwa4124I",
       "type": "achievement",
-      "player": "Renata",
+      "player": "Iago",
       "text": "sofreu uma sequência de 3 lambretas! 🚑🤕🤕",
       "timestamp": {
-        "_seconds": 1750832485,
-        "_nanoseconds": 766000000
+        "_seconds": 1752778498,
+        "_nanoseconds": 872000000
       }
     },
     {
-      "id": "g79xQAMDwQsT8iVBPR2x",
+      "id": "uT4h9iKRccRQHTabrgPR",
       "type": "achievement",
-      "player": "teste3",
-      "text": "tomou uma lambreta e permanece na Série Amador",
+      "player": "Alexandre",
+      "text": "🚔👮🏻Chama a policia que Alexandre acabou de roubar o raio de Renata",
       "timestamp": {
-        "_seconds": 1751186719,
-        "_nanoseconds": 482000000
+        "_seconds": 1752688299,
+        "_nanoseconds": 473000000
       }
     },
     {
-      "id": "gFXWx9HG7e58nBEZ4mr0",
+      "id": "xa3oU8ALXP3QhAutqvyb",
       "type": "achievement",
-      "player": "teste3",
-      "text": "🚔👮🏻Chama a policia que teste3 acabou de roubar o raio de teste_1",
+      "player": "Enzo",
+      "text": "🚔👮🏻Chama a policia que Enzo acabou de roubar o raio de Renata",
       "timestamp": {
-        "_seconds": 1751186168,
-        "_nanoseconds": 849000000
-      }
-    },
-    {
-      "id": "gqUbf9J4oWlIa2RkMbAX",
-      "type": "achievement",
-      "player": "teste3",
-      "text": "tomou uma lambreta e permanece na Série Amador",
-      "timestamp": {
-        "_seconds": 1751178348,
-        "_nanoseconds": 793000000
-      }
-    },
-    {
-      "id": "jLBe7cF6XKiJiP5H7vCA",
-      "type": "achievement",
-      "player": "Rivelino",
-      "text": "sofreu uma sequência de 3 lambretas! 🚑🤕🤕",
-      "timestamp": {
-        "_seconds": 1750980863,
-        "_nanoseconds": 887000000
-      }
-    },
-    {
-      "id": "ke1bDdGjXblBoySYSAKq",
-      "type": "achievement",
-      "player": "Renata",
-      "text": "sofreu uma sequência de 3 lambretas! 🚑🤕🤕",
-      "timestamp": {
-        "_seconds": 1750635358,
-        "_nanoseconds": 316000000
-      }
-    },
-    {
-      "id": "kqVLE6GLRfg5wSZItajF",
-      "type": "achievement",
-      "player": "teste3",
-      "text": "tomou uma lambreta e permanece na Série Amador",
-      "timestamp": {
-        "_seconds": 1751186766,
-        "_nanoseconds": 304000000
-      }
-    },
-    {
-      "id": "oKC8V7IpwYxPZsAMjzVS",
-      "type": "achievement",
-      "player": "teste3",
-      "text": "tomou uma lambreta e permanece na Série Amador",
-      "timestamp": {
-        "_seconds": 1751182451,
-        "_nanoseconds": 60000000
-      }
-    },
-    {
-      "id": "qqWTjc64mwReLIbjWreY",
-      "type": "achievement",
-      "player": "teste3",
-      "text": "🚔👮🏻Chama a policia que teste3 acabou de roubar o raio de teste_1",
-      "timestamp": {
-        "_seconds": 1751186538,
-        "_nanoseconds": 297000000
+        "_seconds": 1766273694,
+        "_nanoseconds": 250000000
       }
     }
   ],
   "subscriptions": [
     {
-      "id": "c5binNp-yublVq9qWknSKR:APA91bGmSmXtxlRVoVZ-C3hpb3bJl127qvC5Sqw8L0SHU189pLDWHjrnEy14O1MQDknueGTvcz19mDr8a_JkujfopKPwCthi5K980T9R0W2fdHNSuYuxISg",
+      "id": "c-8aArxlRblPM82KS0QIzJ:APA91bGDeXYfgVRNhp4Nzn3HSFBP-m-wlIdyX--Me1oVZpnRSgqwiZHx5J5RaNNVfUlyTBDuoo0SUwkODWI0P-XVWnupKo4wQivRZARxgbiRfxuXBSDUN6o",
       "timestamp": {
-        "_seconds": 1750808681,
-        "_nanoseconds": 348000000
-      }
-    },
-    {
-      "id": "c6M7Z5LB7LkkrIthY29NbB:APA91bHTiwpTfq8Ft5mqTs0VGbnY5Vlp_Wp4nT0Bhf8WhY5xnvwW2FqEO3aXUfQ0ho3vK_bEDqhHhQWLnviJhBU2Tx8471x_5kT1_BTT7wS-vKj-Afzc6rw",
-      "timestamp": {
-        "_seconds": 1750955947,
-        "_nanoseconds": 991000000
-      }
-    },
-    {
-      "id": "cIqXZm_NLWYumuLlZwF4G8:APA91bFO_-vw0CF6eFwPFJ-dtSXChDkkV4RoSIzp2NTHYoQR2XzPgI9ooxIADAux8lN4fhslwllNsFWsxNMF2bTgspxockOogJtzXFqZCMjbuiN55arwwgk",
-      "timestamp": {
-        "_seconds": 1750793347,
-        "_nanoseconds": 185000000
-      }
-    },
-    {
-      "id": "dWXlTMztjg84J1CjUIA3C1:APA91bGYsALtOycb01K2viYt74EwS7L97fGSQXZLumMFZ-czP2x__JrwEwzFI4ED1E4kvPtMXHItMc42kipy0K-SQJTeyjYZS1oTyUeNEQpkFFhIcxW_tzM",
-      "timestamp": {
-        "_seconds": 1751208221,
-        "_nanoseconds": 312000000
+        "_seconds": 1751839045,
+        "_nanoseconds": 579000000
       }
     },
     {
@@ -599,27 +751,6 @@
       "timestamp": {
         "_seconds": 1750798053,
         "_nanoseconds": 43000000
-      }
-    },
-    {
-      "id": "eQiv42mgl-Mc3XVWhNjrhw:APA91bF2O4uvA3RSjt2l_twq5ml_KAp3PXObz0VBaduYjhIXMbQViEQ8MEYccIyqaVTjNcXwpAXApcE0K8cx3TUSWn_crgGOE6tmx4o8PF4oalkrjnKc-Ms",
-      "timestamp": {
-        "_seconds": 1750980751,
-        "_nanoseconds": 274000000
-      }
-    },
-    {
-      "id": "ew4oQScZTjSFX-okDd5cIa:APA91bHz--HbVqmUJKOhPFd1H5WlnAhRmt4YEmxoJxkX-pMeDd9kGLOJwKuSimNcTKCgXG-lG0C8wsmqkelgPow0g3oRm47qbOC4TBdoK4ks5m6SEovwZ8c",
-      "timestamp": {
-        "_seconds": 1751057627,
-        "_nanoseconds": 918000000
-      }
-    },
-    {
-      "id": "f_-wlBv8Oj3XDJng_v_jG-:APA91bHQvL01D6R_jrSsNPZFigUn9XEoiPs9I7qt9zOLIb2_tXsNf5wpFUOv0OjEokFybNKZpi5rEMuuoZGTMdd04wNN-iiwOPjJA0I2KDJhVvv8YkQChbE",
-      "timestamp": {
-        "_seconds": 1750956827,
-        "_nanoseconds": 120000000
       }
     }
   ]
