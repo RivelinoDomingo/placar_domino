@@ -1668,9 +1668,12 @@
                         ${generateStatControlHTML('pontos', 'Pontos')}
                     </div>
 
-                    ${appState.isAdmin ? `
+                    ${appState.isAdminMode ? `
                         <div class="mt-6 pt-4 border-t border-gray-100">
-                            <button onclick="deletePlayer('${playerId}')" class="w-full bg-red-50 text-red-600 py-3 rounded-xl font-bold text-xs uppercase tracking-widest">Excluir Jogador</button>
+                            <button onclick="deletarJogador('${playerId}')"
+                                    class="w-full bg-red-50 text-red-600 py-3 rounded-xl font-bold text-xs uppercase tracking-widest hover:bg-red-100 transition-colors">
+                                EXCLUIR JOGADOR
+                            </button>
                         </div>
                     ` : ''}
                 `;
@@ -1972,37 +1975,40 @@
             }
 
             async function deletarJogador(playerId) {
+                // 1. Verificação de Segurança (Admin)
                 if (!appState.isAdminMode) {
-                    showMessage("Ação não permitida.", 'error');
+                    showMessage("Ação não permitida. Você precisa estar em modo Admin.", 'error');
                     return;
                 }
+
                 const player = appState.players[playerId];
-                const playerDocRef = doc(playersCollectionRef(), playerId);
+                if (!player) return;
 
-                // Modal de confirmação usando o sistema padrão
-                const modalHTML = `
-                    <h3 class="text-xl font-bold text-red-600">Confirmar Exclusão</h3>
-                    <p class="my-4">Tem certeza que deseja remover permanentemente o jogador <strong>${player.name}</strong>? Esta ação não pode ser desfeita.</p>
-                    <div class="flex justify-end gap-3 mt-6">
-                        <button id="confirmDeleteNo" class="bg-gray-200 text-gray-800 font-semibold py-2 px-4 rounded-lg hover:bg-gray-300 transition">Não, cancelar</button>
-                        <button id="confirmDeleteYes" class="bg-red-600 text-white font-semibold py-2 px-4 rounded-lg hover:bg-red-700 transition">Sim, deletar</button>
-                    </div>`;
-                openModal(modalHTML);
+                // 2. Pedido de Confirmação (Sua solicitação)
+                const confirmacao = confirm(`⚠️ ATENÇÃO: Tem certeza que deseja excluir o jogador "${player.name}"?\n\nIsso removerá permanentemente todos os dados, estatísticas e conquistas dele de todas as temporadas. Esta ação não pode ser desfeita.`);
 
-                document.getElementById('confirmDeleteYes').onclick = async () => {
+                if (confirmacao) {
                     try {
+                        // 3. Referência correta do documento no Firestore
+                        // O caminho segue o padrão do seu projeto: artifacts/ID/public/data/players
+                        const playerDocRef = doc(db, `artifacts/${appIdentifier}/public/data/players`, playerId);
+
                         await deleteDoc(playerDocRef);
+
+                        // 4. Feedback e Limpeza
                         closeModal();
-                        showMessage(`Jogador "${player.name}" removido com sucesso!`, 'success');
-                        // Opcional: registrar evento de remoção no feed de atividades
-                        // await addDoc(activityFeedCollectionRef(), { type: 'removal', player: player.name, text: 'foi removido do placar.', timestamp: serverTimestamp() });
+                        showMessage(`Jogador "${player.name}" removido com sucesso.`, 'success');
+
+                        // O listener do Firestore (onSnapshot) cuidará de atualizar a lista na tela automaticamente
                     } catch (error) {
-                        showMessage("Erro ao remover jogador.", 'error');
-                        console.error("Erro ao deletar: ", error);
+                        console.error("Erro ao deletar jogador:", error);
+                        showMessage("Erro técnico ao tentar excluir o jogador no banco de dados.", 'error');
                     }
-                };
-                document.getElementById('confirmDeleteNo').onclick = () => closeModal();
+                }
             }
+
+            // 5. ESSENCIAL: Torna a função visível para o 'onclick' do botão no modal
+            window.deletarJogador = deletarJogador;
 
             function setupFirestoreListeners() {
                 // Limpa listeners antigos para evitar duplicação
