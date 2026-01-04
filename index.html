@@ -1515,126 +1515,161 @@
 
             function openPlayerDetailsModal(playerId) {
                 appState.modalContext = { currentViewedPlayerId: playerId };
-
                 const player = appState.players[playerId];
                 if (!player) return;
 
-                const stats = player[currentSeason] || {};
+                const s = player[currentSeason] || {};
 
-                const generateStatControlHTML = (stat, label) => {
-                    const value = player[stat] || 0;
-                    if (!appState.isAdminMode) {
-                        return `
-                            <div class="bg-gray-100 p-3 rounded-lg">
-                                <p class="text-sm text-gray-500 mb-2 font-semibold">${label}</p>
-                                <p class="text-2xl font-bold">${value}</p>
-                            </div>`;
-                    }
-                    return `
-                        <div class="bg-gray-100 p-3 rounded-lg">
-                            <p class="text-sm text-gray-500 mb-2 font-semibold">${label}</p>
-                            <div class="flex items-center justify-center gap-3">
-                                <button data-action="decrement" data-stat="${stat}" class="stat-button h-8 w-8 rounded-full bg-red-200 text-red-700 font-bold text-xl hover:bg-red-300 transition flex items-center justify-center">-</button>
-                                <p id="${stat}-value" class="text-2xl font-bold w-10 text-center">${value}</p>
-                                <button data-action="increment" data-stat="${stat}" class="stat-button h-8 w-8 rounded-full bg-green-200 text-green-700 font-bold text-xl hover:bg-green-300 transition flex items-center justify-center">+</button>
-                            </div>
-                        </div>`;
-                };
+                // --- 1. CÁLCULOS GLOBAIS ---
+                const totalPartidas = player.partidasJogadas || 0;
+                const aprovRaiosGlobal = totalPartidas > 0 ? ((player.raios / totalPartidas) * 100).toFixed(1) : "0";
+                const aprovLambretasGlobal = totalPartidas > 0 ? ((player.lambreta / totalPartidas) * 100).toFixed(1) : "0";
 
-                const statsHTML = `
-                    <div class="grid grid-cols-2 gap-4 text-center">
-                        <div class="bg-gray-100 p-3 rounded-lg">
-                            <p class="text-sm text-gray-500 mb-2 font-semibold">Rodadas Vencidas</p>
-                            <p class="text-2xl font-bold">${player.pontos || 0}</p>
-                        </div>
-                        <div class="bg-gray-100 p-3 rounded-lg">
-                            <p class="text-sm text-gray-500 mb-2 font-semibold">Partidas Jogadas</p>
-                            <p class="text-2xl font-bold">${player.partidasJogadas || 0}</p>
-                        </div>
-                        ${generateStatControlHTML('raios', 'Raios')}
-                        ${generateStatControlHTML('lambreta', 'Lambretas')}
-                    </div>
+                // --- 2. CÁLCULOS DA TEMPORADA ---
+                const partidasTemporada = s.partidasNaTemporada || 0;
+                const aprovRaiosTemp = s.aproveitamentoNaTemporada || 0;
+                const aprovLambTemp = partidasTemporada > 0 ? (((s.lambretasNaTemporada || 0) / partidasTemporada) * 100).toFixed(1) : "0";
 
-                    <h4 class="font-semibold mt-6 mb-2 flex items-center gap-2">
-                        Temporada Atual
-                        <span class="text-xs text-gray-400 cursor-help" title="Lamabretas: Lambretas, Raios: Raios, Partidas: Partidas, MP: MatchPoints, Pontos: Pontos, SR: Saldo de raio %, Conquistas: Conquistas">🛈</span>
-                    </h4>
-                    <div class="text-sm font-mono leading-tight text-right">
-                        <div class="grid grid-cols-4 text-gray-500 w-full max-w-sm mx-auto mb-1">
-                            <span class="text-center">Lambretas</span>
-                            <span class="text-center">Raios</span>
-                            <span class="text-center">Partidas</span>
-                            <span class="text-center">MP</span>
-                        </div>
-                        <div class="grid grid-cols-4 font-semibold w-full max-w-sm mx-auto mb-3">
-                            <span class="text-yellow-600 text-center">${stats.lambretasNaTemporada || 0}</span>
-                            <span class="text-blue-600 text-center">${stats.raiosNaTemporada || 0}</span>
-                            <span class="text-center">${stats.partidasNaTemporada || 0}</span>
-                            <span class="text-center">${stats.matchPointsNaTemporada || 0}</span>
-                        </div>
-
-                        <div class="grid grid-cols-3 text-gray-500 w-full max-w-sm mx-auto mb-1">
-                            <span class="text-center">Pontos</span>
-                            <span class="text-center">SR</span>
-                            <span class="text-center">CQ</span>
-                        </div>
-                        <div class="grid grid-cols-3 font-semibold w-full max-w-sm mx-auto">
-                            <span class="text-center">${stats.pontosNaTemporada || 0}</span>
-                            <span class="text-center">${(stats.aproveitamentoNaTemporada || 0).toFixed(1)}%</span>
-                            <span class="text-center">${Object.keys(stats.conquistasNaTemporada || {}).length}</span>
-                        </div>
-                    </div>
-
-                `;
-
+                // --- 3. GALERIA DE TROFÉUS (GERAL) ---
                 const achievementsHTML = Object.keys(achievements).map(key => {
                     const ach = achievements[key];
                     const countGeral = player.conquistas?.[key] || 0;
-                    const countTemporada = stats.conquistasNaTemporada?.[key] || 0;
+                    const countTemporada = s.conquistasNaTemporada?.[key] || 0;
                     const countTotal = countGeral + countTemporada;
-                    const unlocked = countTotal > 0;
+
+                    if (countTotal === 0) return '';
 
                     const counterHTML = countTotal > 1
-                        ? `<span class="absolute -top-1 -right-1 bg-red-500 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center border-2 border-white">${countTotal}</span>`
+                        ? `<span class="absolute -top-1 -right-1 bg-red-600 text-white text-[9px] font-bold rounded-full h-4 w-4 flex items-center justify-center border border-white">${countTotal}</span>`
                         : '';
 
                     return `
-                        <div class="relative text-center p-2 rounded-lg ${unlocked ? 'bg-yellow-100' : 'bg-gray-100'}">
-                            <span class="achievement-icon ${unlocked ? 'unlocked' : ''}" title="${ach.name}: ${ach.description}">${ach.icon}</span>
+                        <div class="relative flex flex-col items-center bg-gray-50 p-2 rounded-xl border border-gray-100 min-w-[65px]">
+                            <span class="text-2xl" title="${ach.description}">${ach.icon}</span>
+                            <p class="text-[8px] font-bold text-gray-500 uppercase mt-1 text-center leading-tight">${ach.name}</p>
                             ${counterHTML}
-                            <p class="text-xs font-semibold mt-1 ${unlocked ? 'text-yellow-800' : 'text-gray-500'}">${ach.name}</p>
                         </div>`;
                 }).join('');
 
-                const adminControlsHTML = appState.isAdminMode ? `
-                    <hr class="my-6">
-                    <div class="flex justify-around gap-4">
-                        <button id="btnRenamePlayer" class="w-48 flex-grow bg-gray-200 text-gray-800 font-semibold py-3 px-3 rounded-lg hover:bg-gray-300 transition">Renomear</button>
-                        <button id="btnDeletePlayer" class="w-8 flex-grow bg-red-600 text-white font-semibold py-3 px-3 rounded-lg hover:bg-red-700 transition">Deletar</button>
-                    </div>` : '';
+                // --- 4. CONQUISTAS ESPECÍFICAS DA TEMPORADA (DETALHADO) ---
+                const conquistasTemporadaHTML = s.conquistasNaTemporada && Object.keys(s.conquistasNaTemporada).length > 0
+                    ? Object.keys(s.conquistasNaTemporada).map(key => {
+                        const ach = achievements[key]; // Busca no dicionário global pelo ID que está na temporada
+                        if (!ach) return '';
+                        return `
+                            <div class="bg-green-50 px-2 py-1 rounded border border-green-100 flex items-center gap-1">
+                                <span class="text-sm">${ach.icon}</span>
+                                <span class="text-[8px] font-bold text-green-700 uppercase">${ach.name}</span>
+                            </div>`;
+                    }).join('')
+                    : '<p class="text-[10px] text-gray-400 italic">Nenhum troféu nesta temporada ainda...</p>';
+
+                const generateStatControlHTML = (stat, label) => {
+                    const value = player[stat] || 0;
+                    return `
+                        <div class="bg-gray-50 p-2 rounded-lg border border-gray-100 font-mono">
+                            <p class="text-[9px] uppercase font-bold text-gray-400 mb-1">${label}</p>
+                            <div class="flex items-center justify-between">
+                                <span class="text-lg font-bold text-gray-700">${value}</span>
+                                ${appState.isAdmin ? `
+                                    <div class="flex gap-1">
+                                        <button onclick="updateStat('${playerId}', '${stat}', -1)" class="w-5 h-5 bg-red-100 text-red-600 rounded flex items-center justify-center text-xs">-</button>
+                                        <button onclick="updateStat('${playerId}', '${stat}', 1)" class="w-5 h-5 bg-green-100 text-green-600 rounded flex items-center justify-center text-xs">+</button>
+                                    </div>
+                                ` : ''}
+                            </div>
+                        </div>
+                    `;
+                };
 
                 const modalHTML = `
-                    <div class="flex justify-between items-start">
+                    <div class="flex justify-between items-start mb-4">
                         <div>
-                            <h3 class="text-2xl font-bold">${player.name}</h3>
-                            <p class="text-gray-600">Série ${player.series}</p>
+                            <h3 class="text-2xl font-bold text-gray-800">${player.name}</h3>
+                            <p class="text-[10px] text-blue-600 uppercase tracking-widest font-black">Performance Geral</p>
                         </div>
-                        <button id="modal-close-btn" class="text-gray-400 hover:text-gray-700 text-2xl">&times;</button>
+                        <button id="modal-close-btn" class="text-gray-400 hover:text-gray-700 text-3xl">&times;</button>
                     </div>
-                    <div class="mt-6">
-                        <h4 class="font-semibold mb-2">Estatísticas</h4>
-                        ${statsHTML}
+
+                    <div class="grid grid-cols-2 gap-3 mb-6">
+                        <div class="bg-gradient-to-br from-yellow-50 to-orange-50 border border-yellow-100 p-3 rounded-xl">
+                            <p class="text-[9px] uppercase font-black text-yellow-700">Aprov. Raios Global</p>
+                            <p class="text-2xl font-black text-yellow-900">${aprovRaiosGlobal}%</p>
+                        </div>
+                        <div class="bg-gradient-to-br from-blue-50 to-indigo-50 border border-blue-100 p-3 rounded-xl">
+                            <p class="text-[9px] uppercase font-black text-blue-700">Aprov. Lambretas Global</p>
+                            <p class="text-2xl font-black text-blue-900">${aprovLambretasGlobal}%</p>
+                        </div>
                     </div>
-                    <div class="mt-6">
-                        <h4 class="font-semibold mb-2">Conquistas</h4>
-                        <div class="grid grid-cols-4 gap-2">${achievementsHTML}</div>
+
+                    <div class="mb-6 px-1">
+                        <h4 class="text-[10px] font-black text-gray-400 uppercase mb-2">Galeria de Troféus</h4>
+                        <div class="flex flex-wrap gap-2">
+                            ${achievementsHTML || '<p class="text-xs text-gray-300 italic font-medium">Nenhum troféu ainda.</p>'}
+                        </div>
                     </div>
-                    ${adminControlsHTML}
+
+                    <div class="bg-white border-t-2 border-green-500 rounded-2xl p-4 mb-6 shadow-sm border border-gray-100">
+                        <h4 class="text-xs font-black text-gray-700 uppercase mb-3 flex justify-between items-center">
+                            <span>Temporada Atual</span>
+                            <span class="bg-green-100 text-green-700 px-2 py-0.5 rounded text-[9px] font-black">${currentSeason}</span>
+                        </h4>
+
+                        <div class="grid grid-cols-4 text-[9px] text-gray-400 uppercase font-bold text-center mb-1">
+                            <span>Lamb.</span><span>Raios</span><span>Part.</span><span>MP</span>
+                        </div>
+                        <div class="grid grid-cols-4 font-bold text-gray-800 text-center mb-4 border-b border-gray-50 pb-2 font-mono">
+                            <span class="text-blue-600">${s.lambretasNaTemporada || 0}</span>
+                            <span class="text-yellow-600">${s.raiosNaTemporada || 0}</span>
+                            <span>${s.partidasNaTemporada || 0}</span>
+                            <span>${s.matchPointsNaTemporada || 0}</span>
+                        </div>
+
+                        <div class="space-y-4 mb-5">
+                            <div>
+                                <div class="flex justify-between text-[10px] font-bold uppercase mb-1">
+                                    <span class="text-gray-500">Aprov. Raios (Temp.)</span>
+                                    <span class="text-yellow-600">${aprovRaiosTemp}%</span>
+                                </div>
+                                <div class="w-full bg-gray-100 h-1.5 rounded-full overflow-hidden">
+                                    <div class="bg-yellow-500 h-full" style="width: ${aprovRaiosTemp}%"></div>
+                                </div>
+                            </div>
+                            <div>
+                                <div class="flex justify-between text-[10px] font-bold uppercase mb-1">
+                                    <span class="text-gray-500">Aprov. Lambretas (Temp.)</span>
+                                    <span class="text-blue-600">${aprovLambTemp}%</span>
+                                </div>
+                                <div class="w-full bg-gray-100 h-1.5 rounded-full overflow-hidden">
+                                    <div class="bg-blue-600 h-full" style="width: ${aprovLambTemp}%"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <h5 class="text-[9px] font-black text-gray-400 uppercase mb-2">Conquistado nesta temporada:</h5>
+                        <div class="flex flex-wrap gap-2">
+                            ${conquistasTemporadaHTML}
+                        </div>
+                    </div>
+
+                    <h4 class="text-[10px] font-black text-gray-400 uppercase mb-2 px-1">Totais de Carreira</h4>
+                    <div class="grid grid-cols-2 gap-2 mb-4">
+                        ${generateStatControlHTML('partidasJogadas', 'Partidas')}
+                        ${generateStatControlHTML('raios', 'Raios')}
+                        ${generateStatControlHTML('lambreta', 'Lambretas')}
+                        ${generateStatControlHTML('pontos', 'Pontos')}
+                    </div>
+
+                    ${appState.isAdmin ? `
+                        <div class="mt-6 pt-4 border-t border-gray-100">
+                            <button onclick="deletePlayer('${playerId}')" class="w-full bg-red-50 text-red-600 py-3 rounded-xl font-bold text-xs uppercase tracking-widest">Excluir Jogador</button>
+                        </div>
+                    ` : ''}
                 `;
 
                 openModal(modalHTML);
+                document.getElementById('modal-close-btn').onclick = closeModal;
             }
-
 
             function createInitialGameState() { return { gameMode: 'individual', isRaioMatch: false, selectedSlots: { 1: null, 2: null, 3: null, 4: null }, activeGame: null, activeGameId: null, activeGameListener: null }; }
 
