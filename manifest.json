@@ -1,5 +1,6 @@
 {
   "name": "Placar Dominó",
+  "gcm_sender_id": "103953800507",
   "short_name": "Dominó",
   "start_url": "/placar_domino/index.html",
   "display": "standalone",

@@ -279,22 +279,30 @@
                 try {
                     const permission = await Notification.requestPermission();
                     if (permission !== "granted") {
-                    showMessage("Permissão negada para notificações.", "info");
-                    return;
+                        showMessage("Permissão negada para notificações.", "info");
+                        return;
                     }
 
                     const messaging = getMessaging(app);
+
+                    // Chamada única e correta usando o parâmetro swRegistration
                     const currentToken = await getToken(messaging, {
-                    vapidKey: "BJdf45m2Tewt6PAawR7dbwpIwhP_iEsA4wirxSSOxd6dqhj1tGAJe_zTo3CznlFeTeHLdvOTYi6XjOdnbaYcqQw",
-                    serviceWorkerRegistration: swRegistration
+                        vapidKey: "BJdf45m2Tewt6PAawR7dbwpIwhP_iEsA4wirxSSOxd6dqhj1tGAJe_zTo3CznlFeTeHLdvOTYi6XjOdnbaYcqQw",
+                        serviceWorkerRegistration: swRegistration
                     });
 
                     if (currentToken) {
-                    const tokensRef = collection(db, `artifacts/${appIdentifier}/public/data/subscriptions`);
-                    await setDoc(doc(tokensRef, currentToken), { timestamp: serverTimestamp() });
-                    showMessage("Notificações ativadas!", "success");
+                        // Salva no Firestore
+                        const tokensRef = collection(db, `artifacts/${appIdentifier}/public/data/subscriptions`);
+                        await setDoc(doc(tokensRef, currentToken), {
+                            timestamp: serverTimestamp(),
+                            browser: navigator.userAgent // Útil para debug
+                        });
+
+                        console.log("Novo token gerado e salvo:", currentToken);
+                        showMessage("Notificações ativadas!", "success");
                     } else {
-                    showMessage("Token não pôde ser obtido.", "error");
+                        showMessage("Token não pôde ser obtido.", "error");
                     }
                 } catch (error) {
                     console.error("Erro ao obter permissão ou token:", error);
