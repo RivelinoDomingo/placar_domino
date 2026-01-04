@@ -8,12 +8,12 @@ initializeApp();
 
 const db = getFirestore();
 const appIdentifier = "1:187178310074:web:5f56292dea8dc776532583";
-// Define a região da função para rodar perto do seu banco de dados.
 const region = "southamerica-east1";
 
 exports.sendNotification = onDocumentCreated({
   document: `artifacts/${appIdentifier}/public/data/events/{eventId}`,
-  region: region}, async (event) => {
+  region: region,
+}, async (event) => {
   const eventData = event.data.data();
 
   if (!eventData || !eventData.player || !eventData.text) {
@@ -44,7 +44,7 @@ exports.sendNotification = onDocumentCreated({
 
   const tokens = snapshot.docs.map((doc) => doc.id);
   const payload = {
-    notification: {title, body}, // simples
+    notification: {title, body},
     webpush: {
       notification: {
         icon: "https://rivelinodomingo.github.io/placar_domino/icons/icon-192.png",
@@ -59,7 +59,6 @@ exports.sendNotification = onDocumentCreated({
         link: "https://rivelinodomingo.github.io/placar_domino/index.html",
       },
     },
-
   };
 
   const sendResults = await Promise.allSettled(
@@ -83,6 +82,52 @@ exports.sendNotification = onDocumentCreated({
   const failureCount = sendResults.length - successCount;
 
   logger.info(`Envio concluído. Sucesso: ${successCount},
-        Falha: ${failureCount}`);
-},
-);
+      Falha: ${failureCount}`);
+});
+
+exports.notifyActiveMatch = onDocumentCreated({
+  document: `artifacts/${appIdentifier}/public/data/partidas/{matchId}`,
+  region: region,
+}, async (event) => {
+  const matchData = event.data.data();
+
+  if (!matchData || matchData.status !== "active") {
+    return null;
+  }
+
+  const title = "🀄 Partida Iniciada!";
+  const body = "Uma nova partida de Dominó começou. Clique para acompanhar!";
+
+  const path = `artifacts/${appIdentifier}/public/data/subscriptions`;
+  const snapshot = await db.collection(path).get();
+
+  if (snapshot.empty) return null;
+
+  const tokens = snapshot.docs.map((doc) => doc.id);
+  const payload = {
+    notification: {title, body},
+    webpush: {
+      notification: {
+        icon: "https://rivelinodomingo.github.io/placar_domino/icons/icon-192.png",
+      },
+      fcmOptions: {
+        link: "https://rivelinodomingo.github.io/placar_domino/index.html",
+      },
+    },
+  };
+
+  await Promise.allSettled(
+      tokens.map((token) =>
+        getMessaging().send({...payload, token}).catch((err) => {
+          if (
+            err.code === "messaging/invalid-argument" ||
+            err.code === "messaging/registration-token-not-registered"
+          ) {
+            return db.collection(path).doc(token).delete();
+          }
+        }),
+      ),
+  );
+
+  logger.info(`Notificação enviada para ${tokens.length} dispositivos.`);
+});
