@@ -63,6 +63,31 @@
             .history-details-tab { cursor: pointer; padding: 0.75rem 1rem; border-bottom: 3px solid transparent; transition: all 0.2s; }
             .history-details-tab.active { border-bottom-color: #3b82f6; color: #2563eb; font-weight: 600; }
             .point-circle { width: 28px; height: 28px; }
+            /* Impede que o fundo role quando uma classe específica for adicionada ao body */
+            body.modal-open {
+                overflow: hidden;
+                height: 100vh;
+            }
+
+            /* Garante que o container do modal cubra a tela e permita scroll */
+            #modalContainer {
+                position: fixed;
+                inset: 0;
+                z-index: 9999;
+                overflow-y: auto; /* Permite rolar o conteúdo do modal */
+                -webkit-overflow-scrolling: touch; /* Rolagem suave no iOS */
+                background-color: rgba(0, 0, 0, 0.5);
+                display: none; /* Inicialmente escondido */
+                overscroll-behavior: contain; /* Bloqueia a propagação do scroll para o fundo */
+            }
+
+            /* Ajuste no conteúdo para não ficar colado nas bordas no celular */
+            #modalContent {
+                margin: 1.5rem auto;
+                width: 90%;
+                max-width: 500px;
+                position: relative;
+            }
         </style>
     </head>
     <body class="text-gray-800">
@@ -1445,20 +1470,29 @@
 
             function openModal(html) {
                 ui.modal.content.innerHTML = html;
-                ui.modal.container.classList.remove('hidden');
-                ui.modal.container.classList.add('flex');
 
-                // Esconde o container do botão flutuante (FAB)
+                // Mostra o container
+                ui.modal.container.style.display = 'block'; // Usando block para o overflow-y funcionar melhor
+
+                // TRAVA O SCROLL DO FUNDO
+                document.body.classList.add('modal-open');
+
+                // Esconde o botão flutuante (FAB)
                 const fabContainer = document.querySelector('.admin-fab-container');
                 if (fabContainer) fabContainer.classList.add('hidden');
+
+                // Garante que o modal comece no topo ao abrir
+                ui.modal.container.scrollTop = 0;
             }
 
             function closeModal() {
-                ui.modal.container.classList.add('hidden');
-                ui.modal.container.classList.remove('flex');
+                ui.modal.container.style.display = 'none';
                 ui.modal.content.innerHTML = '';
 
-                // Mostra novamente o container do botão flutuante (FAB)
+                // DESTRAVA O SCROLL DO FUNDO
+                document.body.classList.remove('modal-open');
+
+                // Mostra novamente o FAB
                 const fabContainer = document.querySelector('.admin-fab-container');
                 if (fabContainer) fabContainer.classList.remove('hidden');
             }
