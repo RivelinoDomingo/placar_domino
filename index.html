@@ -1411,20 +1411,18 @@
                     return;
                 }
 
-                const recentHistory = history.slice(-5).reverse();
-                historyDiv.innerHTML = recentHistory.map(round => {
+                // REMOVEMOS o .slice(-5). Agora pegamos tudo e apenas invertemos para o mais novo ficar no topo.
+                const fullHistoryReversed = [...history].reverse();
+
+                historyDiv.innerHTML = fullHistoryReversed.map(round => {
                     let eventHTML = '';
 
-                    // --- INÍCIO DA LÓGICA DE EXIBIÇÃO ---
-                    // Verifica o tipo de evento no histórico
                     if (round.type === 'swap') {
-                        // Se for uma troca, formata a mensagem de substituição
                         eventHTML = `
                             <p class="text-gray-800 text-sm italic">
                                 Troca de jogadores 🔄 Saiu <span class="font-semibold">${round.oldPlayerName}</span> e entrou <span class="font-semibold">${round.newPlayerName}</span>.
                             </p>`;
                     } else {
-                        // Se for uma rodada normal, usa a formatação antiga
                         const winnerName = appState.players[round.winnerId]?.name || 'Desconhecido';
                         let roundText = round.completedRaio ?
                             `ganhou um <strong>Raio! ⚡️</strong>` :
@@ -1432,13 +1430,12 @@
 
                         eventHTML = `
                             <p class="text-sm text-gray-800">
-                                <span class="font-semibold text-gray-500">Rodada ${round.roundNumber}:</span>
+                                <span class="font-semibold text-gray-400">Rod. ${round.roundNumber}:</span>
                                 <span class="font-bold">${winnerName}</span> ${roundText}
                             </p>`;
                     }
-                    // --- FIM DA LÓGICA DE EXIBIÇÃO ---
 
-                    return `<div class="p-2 border-t border-gray-100 first:border-t-0">${eventHTML}</div>`;
+                    return `<div class="p-2 border-t border-gray-50 first:border-t-0 hover:bg-gray-50 transition-colors">${eventHTML}</div>`;
                 }).join('');
             }
 
@@ -1446,15 +1443,14 @@
                 const feedContainer = document.getElementById('liveMatchFeed');
                 if (!feedContainer) return;
 
-                // Cria a estrutura de duas partes dentro do painel
+                // Adicionamos as classes de scroll e altura máxima no container do histórico
                 feedContainer.innerHTML = `
                     <div id="liveMatchScoreboard" class="grid grid-cols-2 md:grid-cols-4 gap-2 pb-4 border-b border-gray-200">
-                        </div>
-                    <div id="liveMatchHistory" class="pt-2">
-                        </div>
+                    </div>
+                    <div id="liveMatchHistory" class="pt-2 max-h-48 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300">
+                    </div>
                 `;
 
-                // Chama as duas novas funções para popular as seções
                 renderVisualScoreboard(gameData);
                 renderHistoryFeed(gameData);
             }
