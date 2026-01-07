@@ -584,19 +584,18 @@
                     return;
                 }
 
-                const { gameMode, isRaioMatch, playerIds, teams } = appState.gameState.activeGame;
-                const WINNING_SCORE = isRaioMatch ? 1 : 4;
+                const { playerIds } = appState.gameState.activeGame;
+                // Removido isRaioMatch. A vitória agora é sempre com 4 pontos.
+                const WINNING_SCORE = 4;
 
-                // 1. Criação do modal de seleção do vencedor
+                // 1. Criação do modal de seleção do vencedor (Apenas Individual)
                 let modalHTML = `<h3 class="text-2xl font-bold mb-4">Quem venceu a rodada?</h3><div class="space-y-2 max-h-64 overflow-y-auto">`;
 
-                if (gameMode === 'duplas') {
-                    modalHTML += `<button class="w-full text-left p-3 bg-gray-100 rounded-lg hover:bg-blue-100 transition winner-select-btn" data-team="A">Time A (${teams.A.players.map(id => appState.players[id]?.name || '?').join(' & ')})</button>`;
-                    modalHTML += `<button class="w-full text-left p-3 bg-gray-100 rounded-lg hover:bg-blue-100 transition winner-select-btn" data-team="B">Time B (${teams.B.players.map(id => appState.players[id]?.name || '?').join(' & ')})</button>`;
-                } else {
-                    const players = playerIds.map(id => appState.players[id]);
-                    modalHTML += players.map(p => p ? `<button class="w-full text-left p-3 bg-gray-100 rounded-lg hover:bg-blue-100 transition winner-select-btn" data-player-id="${p.id}">${p.name}</button>` : '').join('');
-                }
+                const players = playerIds.map(id => appState.players[id]);
+                modalHTML += playerIds.map(id => {
+                    const p = appState.players[id];
+                    return p ? `<button class="w-full text-left p-3 bg-gray-100 rounded-lg hover:bg-blue-100 transition winner-select-btn" data-player-id="${id}">${p.name}</button>` : '';
+                }).join('');
 
                 modalHTML += `</div><button id="modal-cancel-btn" class="mt-6 bg-gray-200 text-gray-800 font-semibold py-2 px-4 rounded-lg w-full">Cancelar</button>`;
                 openModal(modalHTML);
@@ -606,252 +605,231 @@
                     const target = e.target.closest('.winner-select-btn');
                     if (!target) return;
 
+                    const winnerIdFromButton = target.dataset.playerId;
+                    const winnerNameFromButton = target.innerText;
+
+                    console.log("CLIQUE DETECTADO:");
+                    console.log("Nome no Botão:", winnerNameFromButton);
+                    console.log("ID no dataset:", winnerIdFromButton);
+                    console.log("Nome esperado no Cache:", appState.players[winnerIdFromButton]?.name);
+
                     closeModal();
                     const batch = writeBatch(db);
                     const gameDocRef = doc(matchesCollectionRef(), appState.gameState.activeGameId);
                     const currentGame = appState.gameState.activeGame;
 
-                    if (gameMode === 'individual') {
-                        const winnerId = target.dataset.playerId;
-                        const winnerPlayerDocRef = doc(playersCollectionRef(), winnerId);
-                        const newScore = (currentGame.scores[winnerId] || 0) + 1;
+                    // winnerId capturado diretamente do botão clicado
+                    const winnerId = target.dataset.playerId;
+                    const winnerPlayerDocRef = doc(playersCollectionRef(), winnerId);
+                    const newScore = (currentGame.scores[winnerId] || 0) + 1;
 
-                        const playerUpdates = {};
-                        const unlockedAchievements = {}; // Cria um objeto para armazenar as conquistas desbloqueadas neste round
-                        let matchUpdates = {};
-                        let completedRaio = false;
-                        let lambretaLosersThisRound = [];
-                        let matchPointsThisRound = [];
-                        let stateScore = {};
-                        let ladraoDeRaio = { vitma: [], ladrao: [] };
-                        const loserIds = currentGame.playerIds.filter(id => id !== winnerId);
+                    const playerUpdates = {};
+                    const unlockedAchievements = {};
+                    let matchUpdates = {};
+                    let completedRaio = false;
+                    let lambretaLosersThisRound = [];
+                    let matchPointsThisRound = [];
+                    let stateScore = {};
+                    let ladraoDeRaio = { vitma: [], ladrao: [] };
+                    const loserIds = currentGame.playerIds.filter(id => id !== winnerId);
 
-                        // Adiciona pontos a cada um que ganha um round
-                        if (!isRaioMatch) {
-                            playerUpdates[`${currentSeason}.pontosNaTemporada`] = increment(1);
-                            playerUpdates.pontos = increment(1);
-                        }
-                        // Lógica de ladrão de raio (quando um jogador está prestes a ganhar)
-                        if (newScore >= 3) {
-                            const loserIds = currentGame.playerIds.filter(id => id !== winnerId);
-                            let ladraoIsTrue = false;
-                            for (const jogador of loserIds) {
-                                if (currentGame.scores[jogador] === 0) {
-                                    ladraoDeRaio.ladrao.push(jogador);
-                                    if (!ladraoIsTrue) {
-                                        ladraoDeRaio.vitma.push(winnerId);
-                                        ladraoIsTrue = true;
-                                    }
+                    // Atualização de pontos na temporada
+                    playerUpdates[`${currentSeason}.pontosNaTemporada`] = increment(1);
+                    playerUpdates.pontos = increment(1);
+
+                    // Lógica de ladrão de raio (quando alguém está com 3 e o outro pontua)
+                    if (newScore >= 3) {
+                        let ladraoIsTrue = false;
+                        for (const jogador of loserIds) {
+                            if (currentGame.scores[jogador] === 0) {
+                                ladraoDeRaio.ladrao.push(jogador);
+                                if (!ladraoIsTrue) {
+                                    ladraoDeRaio.vitma.push(winnerId);
+                                    ladraoIsTrue = true;
                                 }
                             }
                         }
-                        if (newScore === 3 ){
-                            // Adiciona matchpoint a cada jogador que fizer 3 pontos
-                            playerUpdates[`${currentSeason}.matchPointsNaTemporada`] = increment(1);
-                            matchPointsThisRound.push(winnerId);
+                    }
+
+                    if (newScore === 3) {
+                        playerUpdates[`${currentSeason}.matchPointsNaTemporada`] = increment(1);
+                        matchPointsThisRound.push(winnerId);
+                    }
+
+                    const jogadorRaiosLambretas = {};
+
+                    if (newScore >= WINNING_SCORE) {
+                        completedRaio = true;
+                        playerUpdates.raios = increment(1);
+                        playerUpdates.partidasJogadas = increment(1);
+                        playerUpdates[`${currentSeason}.raiosNaTemporada`] = increment(1);
+                        playerUpdates[`${currentSeason}.partidasNaTemporada`] = increment(1);
+
+                        // Atualiza partidas jogadas dos perdedores
+                        for (const loserId of loserIds) {
+                            batch.update(doc(playersCollectionRef(), loserId), {
+                                [`${currentSeason}.partidasNaTemporada`]: increment(1),
+                                partidasJogadas: increment(1)
+                            });
                         }
 
-                        const jogadorRaiosLambretas = {};
+                        // Lógica de lambretas
+                        stateScore = { ...currentGame.scores, [winnerId]: newScore };
 
-                        if (newScore >= WINNING_SCORE) {
-                            completedRaio = true;
-                            playerUpdates.raios = increment(1);
-                            playerUpdates.partidasJogadas = increment(1);
-                            playerUpdates[`${currentSeason}.raiosNaTemporada`] = increment(1);
-                            playerUpdates[`${currentSeason}.partidasNaTemporada`] = increment(1);
-
-                            // Atualiza partidas jogadas dos perdedores
-                            for (const loserId of loserIds) {
+                        for (const loserId of loserIds) {
+                            if ((stateScore[loserId] || 0) === 0) {
                                 batch.update(doc(playersCollectionRef(), loserId), {
-                                    [`${currentSeason}.partidasNaTemporada`]: increment(1),
-                                    partidasJogadas: increment(1)
+                                    lambreta: increment(1),
+                                    [`${currentSeason}.lambretasNaTemporada`]: increment(1)
                                 });
+                                lambretaLosersThisRound.push(loserId);
                             }
-                            // Lógica de lambretas
-                            // scoresBeforeReset = { ...currentGame.scores, [winnerId]: newScore };
-                            stateScore = { ...currentGame.scores, [winnerId]: newScore };
+                        }
 
-                            if (!isRaioMatch) {
-                                // Lambretas automáticas no modo normal
-                                for (const loserId of loserIds) {
-                                    // if ((scoresBeforeReset[loserId] || 0) === 0) {
-                                    if ((stateScore[loserId] || 0) === 0) {
-                                        batch.update(doc(playersCollectionRef(), loserId), {
-                                            lambreta: increment(1),
-                                            [`${currentSeason}.lambretasNaTemporada`]: increment(1)
-                                        });
-                                        lambretaLosersThisRound.push(loserId);
-                                    }
-                                }
+                        // Lógica de conquista Roubo de Raio
+                        const ultimoRaioIndex = currentGame.history.findLastIndex(r => r.completedRaio);
+                        const rodadasRelevantes = ultimoRaioIndex !== -1 ? currentGame.history.slice(ultimoRaioIndex + 1) : currentGame.history.slice();
 
-                                // Lógica do Ladrão de raio
-                                // Encontra o índice do último raio completado
-                                const ultimoRaioIndex = currentGame.history.findLastIndex(r => r.completedRaio);
-                                // console.log("Valor de index de completeRaio: ", ultimoRaioIndex);
+                        const vitimas = [];
+                        const ladroes = [];
 
-                                const rodadasRelevantes = ultimoRaioIndex !== -1 ? currentGame.history.slice(ultimoRaioIndex + 1) : currentGame.history.slice();
-
-                                const vitimas = [];
-                                const ladroes = [];
-
-                                rodadasRelevantes.forEach(round => {
-                                    if (round.ladraoDeRaio?.vitma?.length) {
-                                        vitimas.push(...round.ladraoDeRaio.vitma);
-                                        ladroes.push(...round.ladraoDeRaio.ladrao);
-                                    }
-                                });
-
-                                const vitimasUnicas = [...new Set(vitimas)];
-                                const ladroesUnicos = [...new Set(ladroes)];
-
-
-                                // Verifica se o vencedor atual foi ladrão
-                                if (ladroesUnicos.includes(winnerId)) {
-                                    const vitimaId = vitimasUnicas.find(vitimaId =>
-                                        rodadasRelevantes.some(r =>
-                                            r.ladraoDeRaio?.ladrao?.includes(winnerId) &&
-                                            r.ladraoDeRaio.vitma?.includes(vitimaId)
-                                        )
-                                    );
-
-                                    if (vitimaId) {
-                                        showMessage(
-                                            `${appState.players[winnerId]?.name} ROUBOU o raio de ${appState.players[vitimaId]?.name}! 🕵️‍♂️⚡`,
-                                            'warning'
-                                        );
-                                        await concederConquista(winnerId, 'roubo', `🚔👮🏻Chama a policia que ${appState.players[winnerId]?.name} acabou de roubar o raio de ${appState.players[vitimaId]?.name}`);
-                                        if (!unlockedAchievements[winnerId]) unlockedAchievements[winnerId] = [];
-                                        unlockedAchievements[winnerId].push('roubo');
-                                    }
-                                }
-                                // Fim da Lógica de ladrão
-
-                            } else {
-                                // Lambretas manuais no modo raio
-                                lambretaLosersThisRound = await promptLambretaManual(loserIds, appState.players[winnerId].name);
-                                for (const loserId of lambretaLosersThisRound) {
-                                    batch.update(doc(playersCollectionRef(), loserId), {
-                                        lambreta: increment(1)
-                                    });
-                                }
+                        rodadasRelevantes.forEach(round => {
+                            if (round.ladraoDeRaio?.vitma?.length) {
+                                vitimas.push(...round.ladraoDeRaio.vitma);
+                                ladroes.push(...round.ladraoDeRaio.ladrao);
                             }
+                        });
 
-                            // Feedback visual
-                            showMessage(`${appState.players[winnerId].name} ganhou um Raio! ⚡️`, 'success');
-                            // Pegando os raios, lambretas e serie atuais do ganhador para "desfazer"
-                            jogadorRaiosLambretas[winnerId] = {
-                                raiosNaTemporada: appState.players[winnerId][currentSeason]?.raiosNaTemporada || 0,
-                                lambretasNaTemporada: appState.players[winnerId][currentSeason]?.lambretasNaTemporada || 0,
-                                series: appState.players[winnerId].series || 0
+                        const vitimasUnicas = [...new Set(vitimas)];
+                        const ladroesUnicos = [...new Set(ladroes)];
+
+                        if (ladroesUnicos.includes(winnerId)) {
+                            const vitimaId = vitimasUnicas.find(vId =>
+                                rodadasRelevantes.some(r =>
+                                    r.ladraoDeRaio?.ladrao?.includes(winnerId) &&
+                                    r.ladraoDeRaio.vitma?.includes(vId)
+                                )
+                            );
+
+                            if (vitimaId) {
+                                showMessage(`${appState.players[winnerId]?.name} ROUBOU o raio de ${appState.players[vitimaId]?.name}! 🕵️‍♂️⚡`, 'warning');
+                                await concederConquista(winnerId, 'roubo', `🚔👮🏻Chama a policia que ${appState.players[winnerId]?.name} acabou de roubar o raio de ${appState.players[vitimaId]?.name}`);
+                                if (!unlockedAchievements[winnerId]) unlockedAchievements[winnerId] = [];
+                                unlockedAchievements[winnerId].push('roubo');
                             }
+                        }
 
-                            for (const loserId of lambretaLosersThisRound) {
-                                showMessage(`${appState.players[loserId].name} tomou uma lambreta! 🚑`, 'info');
-                                // Pegando os raios, lambretas e serie atuais de quem tomou lambreta para "desfazer"
-                                jogadorRaiosLambretas[loserId] = {
+                        // Feedback visual do raio
+                        showMessage(`${appState.players[winnerId].name} ganhou um Raio! ⚡️`, 'success');
+
+                        // Backup para desfazer ação se necessário
+                        jogadorRaiosLambretas[winnerId] = {
+                            raiosNaTemporada: appState.players[winnerId][currentSeason]?.raiosNaTemporada || 0,
+                            lambretasNaTemporada: appState.players[winnerId][currentSeason]?.lambretasNaTemporada || 0,
+                            series: appState.players[winnerId].series || 0
+                        };
+
+                        for (const loserId of lambretaLosersThisRound) {
+                            showMessage(`${appState.players[loserId].name} tomou uma lambreta! 🚑`, 'info');
+                            jogadorRaiosLambretas[loserId] = {
                                 raiosNaTemporada: appState.players[loserId][currentSeason]?.raiosNaTemporada || 0,
                                 lambretasNaTemporada: appState.players[loserId][currentSeason]?.lambretasNaTemporada || 0,
                                 series: appState.players[loserId].series || 0
-                                };
-
-                            }
-
-                            // Lógica de conquistas
-                            const historicoDeRaios = currentGame.history.filter(r => r.completedRaio);
-
-                            // Conquista "Imbatível"
-                            if (historicoDeRaios.length >= 3) {
-                                let vitoriasConsecutivas = 0;
-                                for (let i = historicoDeRaios.length - 1; i >= 0; i--) {
-                                    if (historicoDeRaios[i].winnerId === winnerId) vitoriasConsecutivas++;
-                                    else break;
-                                }
-                                if (vitoriasConsecutivas > 0 && vitoriasConsecutivas % 3 === 0) {
-                                    await concederConquista(winnerId, 'imbativel', `alcançou uma sequência de ${vitoriasConsecutivas} raio! 🔥🚀🚀`);
-                                    if (!unlockedAchievements[winnerId]) unlockedAchievements[winnerId] = [];
-                                        unlockedAchievements[winnerId].push('imbativel');
-                                }
-                            }
-
-                            // Conquista "Azarão"
-                            for (const jogadorId of playerIds) {
-                                let derrotasConsecutivas = 0;
-                                for (let i = historicoDeRaios.length - 1; i >= 0; i--) {
-                                    const round = historicoDeRaios[i];
-                                    if (round.lambretaPlayerIds && round.winnerId !== jogadorId && round.lambretaPlayerIds.includes(jogadorId)) {
-                                        derrotasConsecutivas++;
-                                    } else {
-                                        break;
-                                    }
-                                }
-                                if (derrotasConsecutivas > 0 && derrotasConsecutivas % 3 === 0) {
-                                    await concederConquista(jogadorId, 'azarao', `sofreu uma sequência de ${derrotasConsecutivas} lambretas! 🚑🤕🤕`);
-                                    if (!unlockedAchievements[jogadorId]) unlockedAchievements[jogadorId] = [];
-                                        unlockedAchievements[jogadorId].push('azarao');
-                                }
-                            }
-                        }
-                        // Construção do do roundEvent
-                        matchUpdates.scores = { ...currentGame.scores, [winnerId]: newScore };
-                        matchUpdates.raios = currentGame.raios;
-                        matchUpdates.turn = winnerId;
-                        // Prepara todas as atualizações do batch
-                        batch.update(winnerPlayerDocRef, playerUpdates);
-
-                        const roundEvent = {
-                            roundNumber: currentGame.history.length + 1,
-                            winnerId: winnerId,
-                            completedRaio: completedRaio,
-                            unlockedAchievements: unlockedAchievements,
-                            preUpdateStats: jogadorRaiosLambretas,
-                            timestamp: new Date()
-                        };
-
-                        // Adiciona campos condicionais apenas se existirem
-                        if (lambretaLosersThisRound.length > 0) roundEvent.lambretaPlayerIds = lambretaLosersThisRound;
-
-                        if (matchPointsThisRound.length > 0) roundEvent.matchPointPlayerIds = matchPointsThisRound;
-
-                        if (completedRaio){
-                            roundEvent.stateScore = {
-                                scores: currentGame.playerIds.reduce((acc, id) => ({ ...acc, [id]: 0 }), {}),
-                                raios: {
-                                    ...currentGame.raios,
-                                    [winnerId]: (currentGame.raios[winnerId] || 0) + 1
-                                }
                             };
-                        } else {
-                            roundEvent.stateScore = {
-                                scores: matchUpdates.scores,
-                                raios: matchUpdates.raios
+                        }
+
+                        // Lógica Conquista Imbatível (3 raios seguidos)
+                        const historicoDeRaios = currentGame.history.filter(r => r.completedRaio);
+                        if (historicoDeRaios.length >= 3) { // 2 anteriores + o atual = 3
+                            let vitoriasConsecutivas = 0;
+                            for (let i = historicoDeRaios.length - 1; i >= 0; i--) {
+                                if (historicoDeRaios[i].winnerId === winnerId) vitoriasConsecutivas++;
+                                else break;
                             }
-                        }
-                        // Adiciona ladraoDeRaio apenas se houver dados relevantes
-                        if (ladraoDeRaio.vitma.length > 0) {
-                            roundEvent.ladraoDeRaio = ladraoDeRaio;
-                        }
-
-                        const newHistory = [...currentGame.history, roundEvent];
-
-                        // 2. Executa todas as atualizações de uma vez
-                        await batch.commit();
-
-                        if (completedRaio){
-                            await atualizarAproveitamentoTemporada(winnerId);
-                            for (const loserId of loserIds) {
-                                await atualizarAproveitamentoTemporada(loserId);
+                            if (vitoriasConsecutivas > 0 && vitoriasConsecutivas % 3 === 0) {
+                                await concederConquista(winnerId, 'imbativel', `alcançou uma sequência de ${vitoriasConsecutivas} raios! 🔥🚀🚀`);
+                                if (!unlockedAchievements[winnerId]) unlockedAchievements[winnerId] = [];
+                                unlockedAchievements[winnerId].push('imbativel');
                             }
                         }
 
-                        // 3. Atualiza o estado local após confirmação
-                        matchUpdates.raios = roundEvent.stateScore.raios;
-                        matchUpdates.scores = roundEvent.stateScore.scores;
-                        matchUpdates.turn = winnerId;
+                        // Lógica Conquista Azarão (3 lambretas seguidas)
+                        for (const jogadorId of playerIds) {
+                            let derrotasConsecutivas = (lambretaLosersThisRound.includes(jogadorId)) ? 1 : 0;
+                            if (derrotasConsecutivas === 0) continue;
 
-                        // 4. Atualiza o histórico no banco
-                        await updateDoc(gameDocRef, {...matchUpdates, history: newHistory});
-                        // Final da construção do Round
+                            for (let i = historicoDeRaios.length - 1; i >= 0; i--) {
+                                const round = historicoDeRaios[i];
+                                if (round.lambretaPlayerIds?.includes(jogadorId)) {
+                                    derrotasConsecutivas++;
+                                } else {
+                                    break;
+                                }
+                            }
+                            if (derrotasConsecutivas > 0 && derrotasConsecutivas % 3 === 0) {
+                                await concederConquista(jogadorId, 'azarao', `sofreu uma sequência de ${derrotasConsecutivas} lambretas! 🚑🤕🤕`);
+                                if (!unlockedAchievements[jogadorId]) unlockedAchievements[jogadorId] = [];
+                                unlockedAchievements[jogadorId].push('azarao');
+                            }
+                        }
                     }
+
+                    // Construção do roundEvent
+                    matchUpdates.scores = { ...currentGame.scores, [winnerId]: newScore };
+                    matchUpdates.raios = currentGame.raios;
+                    matchUpdates.turn = winnerId;
+
+                    batch.update(winnerPlayerDocRef, playerUpdates);
+
+                    const roundEvent = {
+                        roundNumber: currentGame.history.length + 1,
+                        winnerId: winnerId,
+                        completedRaio: completedRaio,
+                        unlockedAchievements: unlockedAchievements,
+                        preUpdateStats: jogadorRaiosLambretas,
+                        timestamp: new Date()
+                    };
+
+                    if (lambretaLosersThisRound.length > 0) roundEvent.lambretaPlayerIds = lambretaLosersThisRound;
+                    if (matchPointsThisRound.length > 0) roundEvent.matchPointPlayerIds = matchPointsThisRound;
+
+                    if (completedRaio) {
+                        roundEvent.stateScore = {
+                            scores: currentGame.playerIds.reduce((acc, id) => ({ ...acc, [id]: 0 }), {}),
+                            raios: {
+                                ...currentGame.raios,
+                                [winnerId]: (currentGame.raios[winnerId] || 0) + 1
+                            }
+                        };
+                    } else {
+                        roundEvent.stateScore = {
+                            scores: matchUpdates.scores,
+                            raios: matchUpdates.raios
+                        };
+                    }
+
+                    if (ladraoDeRaio.vitma.length > 0) {
+                        roundEvent.ladraoDeRaio = ladraoDeRaio;
+                    }
+
+                    const newHistory = [...currentGame.history, roundEvent];
+
+                    // 1. Executa as atualizações das estatísticas dos jogadores
+                    await batch.commit();
+
+                    if (completedRaio) {
+                        await atualizarAproveitamentoTemporada(winnerId);
+                        for (const loserId of loserIds) {
+                            await atualizarAproveitamentoTemporada(loserId);
+                        }
+                    }
+
+                    // 2. Atualiza o objeto da partida no banco
+                    matchUpdates.raios = roundEvent.stateScore.raios;
+                    matchUpdates.scores = roundEvent.stateScore.scores;
+                    matchUpdates.turn = winnerId;
+
+                    await updateDoc(gameDocRef, { ...matchUpdates, history: newHistory });
                 };
             }
 
@@ -1000,56 +978,69 @@
                 showMessage("Processando troca...", "info");
 
                 const gameId = appState.gameState.activeGameId;
-                if (!gameId) { /* ... */ return; }
+                if (!gameId) return;
 
                 const gameDocRef = doc(matchesCollectionRef(), gameId);
 
                 try {
                     const gameDocSnapshot = await getDoc(gameDocRef);
-                    if (!gameDocSnapshot.exists()) { /* ... */ return; }
+                    if (!gameDocSnapshot.exists()) return;
                     const currentGame = gameDocSnapshot.data();
 
+                    // 1. Localiza qual slot (posição na mesa) o jogador antigo ocupava
                     const slotToUpdate = Object.keys(currentGame.selectedSlots).find(key => currentGame.selectedSlots[key] === oldPlayerId);
-                    if (!slotToUpdate) { /* ... */ return; }
+                    if (!slotToUpdate) return;
 
+                    // 2. Atualiza os slots ativos e a lista de IDs na mesa
                     const newSelectedSlots = { ...currentGame.selectedSlots, [slotToUpdate]: newPlayerId };
                     const newPlayerIds = Object.values(newSelectedSlots);
 
+                    // 3. Gerencia Scores e Raios
+                    // Mantemos os pontos do jogador antigo no objeto para o histórico não quebrar,
+                    // e inicializamos o novo jogador com 0.
                     const newScores = { ...(currentGame.scores || {}) };
-                    delete newScores[oldPlayerId];
                     newScores[newPlayerId] = 0;
+                    // Nota: NÃO deletamos o oldPlayerId daqui, para que os pontos dele continuem registrados na partida.
 
                     const newRaios = { ...(currentGame.raios || {}) };
-                    delete newRaios[oldPlayerId];
                     newRaios[newPlayerId] = 0;
 
-                    const newHistory = (currentGame.history || []).map(round => {
-                        let newRound = { ...round };
-                        if (round.winnerId === oldPlayerId) newRound.winnerId = newPlayerId;
-                        if (round.lambretaPlayerIds?.includes(oldPlayerId)) {
-                            newRound.lambretaPlayerIds = round.lambretaPlayerIds.map(id => id === oldPlayerId ? newPlayerId : id);
-                        }
-                        return newRound;
-                    });
+                    // 4. HISTÓRICO: NÃO alteramos os rounds passados!
+                    // Apenas criamos uma cópia do histórico atual e adicionamos o evento de troca.
+                    const historyArray = [...(currentGame.history || [])];
 
-                    // --- INÍCIO DA NOVA LÓGICA ---
-                    // Cria um evento de troca para adicionar ao histórico
                     const swapEvent = {
-                        type: 'swap', // Um novo tipo de evento
+                        type: 'swap',
+                        roundNumber: historyArray.length + 1,
+                        playerOutId: oldPlayerId, // Guardamos o ID para análise
+                        playerInId: newPlayerId,   // Guardamos o ID para análise
                         oldPlayerName: appState.players[oldPlayerId]?.name || 'Jogador Anterior',
                         newPlayerName: appState.players[newPlayerId]?.name || 'Novo Jogador',
-                        timestamp: new Date()
+                        timestamp: new Date(),
+                        // Salvamos o estado dos pontos no momento da troca
+                        stateScore: {
+                            scores: { ...newScores },
+                            raios: { ...newRaios }
+                        }
                     };
-                    newHistory.push(swapEvent);
-                    // --- FIM DA NOVA LÓGICA ---
 
+                    historyArray.push(swapEvent);
+
+                    // 5. Atualiza o turno se era do jogador que saiu
                     let newTurn = currentGame.turn;
                     if (newTurn === oldPlayerId) newTurn = newPlayerId;
 
-                    const updates = { selectedSlots: newSelectedSlots, playerIds: newPlayerIds, scores: newScores, raios: newRaios, history: newHistory, turn: newTurn };
+                    const updates = {
+                        selectedSlots: newSelectedSlots,
+                        playerIds: newPlayerIds,
+                        scores: newScores,
+                        raios: newRaios,
+                        history: historyArray,
+                        turn: newTurn
+                    };
 
                     await updateDoc(gameDocRef, updates);
-                    showMessage("Troca de jogador realizada com sucesso!", "success");
+                    showMessage("Troca realizada! O histórico original foi preservado.", "success");
 
                 } catch (error) {
                     console.error("Erro ao realizar a troca:", error);
@@ -2275,23 +2266,40 @@
                 }
 
                 ui.history.matchList.innerHTML = appState.matchHistory.map(match => {
-                    const winnerId = match.winnerInfo?.winnerId;
-                    const winnerName = winnerId ? (appState.players[winnerId]?.name || 'Vencedor') : 'Empate';
-                    const date = match.endedAt?.seconds ? new Date(match.endedAt.seconds * 1000).toLocaleDateString('pt-BR') : 'Data indefinida';
-                    return `
-                        <div data-match-id="${match.id}" class="bg-white p-4 rounded-lg shadow-sm flex items-center justify-between cursor-pointer hover:bg-gray-50 transition-colors">
-                            <div>
-                                <p class="font-bold">${winnerName} venceu</p>
-                                <p class="text-sm text-gray-500">Em ${date}</p>
-                            </div>
-                            <span class="text-gray-400">›</span>
-                        </div>`;
-                }).join('');
+                const winnerId = match.winnerInfo?.winnerId;
+                const winnerName = winnerId ? (appState.players[winnerId]?.name || 'Vencedor') : 'Empate';
+                const date = match.endedAt?.seconds ? new Date(match.endedAt.seconds * 1000).toLocaleDateString('pt-BR') : 'Data indefinida';
+
+                return `
+                    <div onclick="showMatchDetails('${match.id}')" data-match-id="${match.id}" class="bg-white p-4 rounded-lg shadow-sm flex items-center justify-between cursor-pointer hover:bg-gray-50 transition-colors">
+                        <div>
+                            <p class="font-bold">${winnerName} venceu</p>
+                            <p class="text-sm text-gray-500">Em ${date}</p>
+                        </div>
+                        <span class="text-gray-400">›</span>
+                    </div>`;
+            }).join('');
             }
 
             function showMatchDetails(matchId) {
                 const matchData = appState.matchHistory.find(m => m.id === matchId);
                 if (!matchData) return;
+
+                // Executa a análise para obter a lista real de participantes
+                const { playerStats, raios } = analyzeMatchHistory(matchData);
+                const listaParticipantes = Object.keys(playerStats);
+
+                // --- LOG NO CONSOLE ---
+                console.group(`🔍 Detalhes da Partida: ${matchId}`);
+                console.log("Todos os jogadores detectados no histórico (via scores):", listaParticipantes);
+                console.table(listaParticipantes.map(id => ({
+                    ID: id,
+                    Nome: appState.players[id]?.name || "Jogador Antigo",
+                    Pontos: playerStats[id].pontos,
+                    Raios: playerStats[id].raios,
+                    Lambretas:playerStats[id].lambretas
+                })));
+                console.groupEnd();
 
                 appState.currentMatchDetails = matchData;
                 ui.history.listView.classList.add('hidden');
@@ -2307,67 +2315,71 @@
             }
 
             function analyzeMatchHistory(matchData) {
-                const playerIds = matchData.playerIds;
-                const totalStats = { lambretas: 0, conquistas: {} };
                 const playerStats = {};
-                playerIds.forEach(id => {
-                    playerStats[id] = { pontos: 0, raios: 0, lambretas: 0, vitimaDeRoubo: 0, conquistas: {} };
-                });
-
+                const totalStats = { lambretas: 0, conquistas: {} };
                 const raios = [];
                 let currentRaioRounds = [];
                 let raioNumber = 1;
 
-                for (const round of matchData.history) {
-                    if (round.type === 'swap') continue;
-                    currentRaioRounds.push(round);
-
-                    if (round.completedRaio) {
-                        const raioWinnerId = round.winnerId;
-
-                        if(playerStats[raioWinnerId]) playerStats[raioWinnerId].raios++;
-
-                        const raioAnalysis = {
-                            raioNumber: raioNumber++,
-                            winnerId: raioWinnerId,
-                            completionTime: round.timestamp,
-                            pointSequence: currentRaioRounds.map((r, index) => ({
-                                scorerId: r.winnerId,
-                                pointOrder: index + 1
-                            }))
-                        };
-
-                        if(round.lambretaPlayerIds?.length > 0){
-                            totalStats.lambretas += round.lambretaPlayerIds.length;
-                            round.lambretaPlayerIds.forEach(id => {
-                                if(playerStats[id]) playerStats[id].lambretas++;
-                            });
-                        }
-                        if(round.unlockedAchievements){
-                            for(const [pId, achs] of Object.entries(round.unlockedAchievements)){
-                                achs.forEach(achId => {
-                                    if(playerStats[pId] && achievements[achId]) {
-                                        playerStats[pId].conquistas[achId] = (playerStats[pId].conquistas[achId] || 0) + 1;
-                                        totalStats.conquistas[achId] = (totalStats.conquistas[achId] || 0) + 1;
-                                    }
-                                });
-                            }
-                        }
-                        currentRaioRounds.forEach(r => {
-                            if (r.ladraoDeRaio?.vitma?.length > 0) {
-                                r.ladraoDeRaio.vitma.forEach(id => {
-                                    if(playerStats[id]) playerStats[id].vitimaDeRoubo++;
-                                });
-                            }
-                        });
-
-                        raios.push(raioAnalysis);
-                        currentRaioRounds = [];
+                // Função auxiliar para garantir que o jogador existe no objeto antes de mexer nele
+                const getStats = (id) => {
+                    if (!id) return null;
+                    if (!playerStats[id]) {
+                        playerStats[id] = { pontos: 0, raios: 0, lambretas: 0, vitimaDeRoubo: 0, conquistas: {} };
                     }
-                }
-                playerIds.forEach(id => {
-                    if (playerStats[id]) {
-                        playerStats[id].pontos = matchData.history.filter(r => r.winnerId === id && r.type !== 'swap').length;
+                    return playerStats[id];
+                };
+
+                matchData.history.forEach((round) => {
+                    const pId = round.winnerId;
+                    const scoresObj = round.stateScore?.scores || round.scores || {};
+
+                    // 1. SEMPRE garante que todos os IDs presentes no placar deste round existem nas stats
+                    Object.keys(scoresObj).forEach(id => getStats(id));
+
+                    if (round.type !== 'swap' && pId) {
+                        const stats = getStats(pId);
+                        if (stats) {
+                            stats.pontos++;
+                            currentRaioRounds.push(round);
+
+                            if (round.completedRaio) {
+                                stats.raios++;
+
+                                // CAPTURA DE PARTICIPANTES: Pegamos todos os IDs que estavam no placar
+                                // Isso garante que mesmo quem tem 0 pontos apareça no gráfico
+                                const participantes = new Set(Object.keys(scoresObj));
+                                if (pId) participantes.add(pId);
+
+                                raios.push({
+                                    raioNumber: raioNumber++,
+                                    winnerId: pId,
+                                    completionTime: round.timestamp,
+                                    pointSequence: currentRaioRounds.map((r, idx) => ({
+                                        scorerId: r.winnerId,
+                                        pointOrder: idx + 1
+                                    })),
+                                    participantesIds: Array.from(participantes)
+                                });
+                                currentRaioRounds = [];
+                            }
+                        }
+                    }
+
+                    // 2. Processa Lambretas (Manual/Histórico)
+                    if (round.lambretaPlayerIds) {
+                        round.lambretaPlayerIds.forEach(id => {
+                            const s = getStats(id);
+                            if (s) { s.lambretas++; totalStats.lambretas++; }
+                        });
+                    }
+
+                    // 3. Processa Roubos
+                    if (round.ladraoDeRaio?.vitma) {
+                        round.ladraoDeRaio.vitma.forEach(id => {
+                            const s = getStats(id);
+                            if (s) s.vitimaDeRoubo++;
+                        });
                     }
                 });
 
@@ -2391,79 +2403,78 @@
                 `;
 
                 let contentHTML = summaryBannerHTML + '<div class="space-y-4">';
-                matchData.playerIds.forEach(id => {
-                    const player = appState.players[id];
-                    if(!player) return;
+                // ITERAR SOBRE TODOS OS DETETADOS (Enzo, Rivelino, etc.)
+                Object.keys(playerStats).forEach(id => {
                     const stats = playerStats[id];
-                    const conquistasHTML = Object.entries(stats.conquistas).map(([achId, count]) => {
-                        const achInfo = achievements[achId];
-                        if (!achInfo) return '';
-                        return `<span title="${achInfo.name}" class="text-xl">${achInfo.icon}${count > 1 ? `x${count}`: ''}</span>`;
-                    }).join(' ');
+
+                    // Opcional: não mostrar jogadores que passaram pela mesa mas não fizeram nada
+                    // if (stats.pontos === 0 && stats.raios === 0 && stats.lambretas === 0) return;
+
+                    const player = appState.players[id];
+                    const displayName = player ? player.name : `Jogador Antigo (${id.substring(0,5)})`;
 
                     contentHTML += `
                         <div class="bg-gray-50 p-3 rounded-lg border border-gray-200">
-                            <div class="flex justify-between items-center mb-2">
-                                <p class="font-bold text-lg">${player.name}</p>
-                                <div class="flex gap-2 items-center">${conquistasHTML}</div>
-                            </div>
+                            <p class="font-bold text-lg">${displayName}</p>
                             <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 text-center">
-                                <div class="bg-white p-2 rounded shadow-sm"><p class="text-xs font-semibold text-gray-500">PONTOS TOTAIS</p><p class="font-bold text-lg">${stats.pontos}</p></div>
-                                <div class="bg-white p-2 rounded shadow-sm"><p class="text-xs font-semibold text-gray-500">RAIOS ⚡️</p><p class="font-bold text-lg">${stats.raios}</p></div>
-                                <div class="bg-white p-2 rounded shadow-sm"><p class="text-xs font-semibold text-gray-500">LAMBRETAS 🚑</p><p class="font-bold text-lg">${stats.lambretas}</p></div>
+                                <div class="bg-white p-2 rounded shadow-sm"><p class="text-xs font-semibold text-gray-500">PONTOS</p><p class="font-bold text-lg">${stats.pontos}</p></div>
+                                <div class="bg-white p-2 rounded shadow-sm"><p class="text-xs font-semibold text-gray-500">RAIOS</p><p class="font-bold text-lg">${stats.raios}</p></div>
+                                <div class="bg-white p-2 rounded shadow-sm"><p class="text-xs font-semibold text-gray-500">LAMBRETAS</p><p class="font-bold text-lg">${stats.lambretas}</p></div>
                                 <div class="bg-white p-2 rounded shadow-sm"><p class="text-xs font-semibold text-gray-500">MATCH POINT</p><p class="font-bold text-lg">${stats.vitimaDeRoubo}</p></div>
                             </div>
                         </div>`;
                 });
-                contentHTML += '</div>';
-                ui.history.detailsContent.innerHTML = contentHTML;
+
+                ui.history.detailsContent.innerHTML = contentHTML + '</div>';
             }
 
             function renderMatchRaios(matchData) {
                 const { raios } = analyzeMatchHistory(matchData);
                 if (raios.length === 0) {
-                    ui.history.detailsContent.innerHTML = `<p class="text-center text-gray-500 p-8">Nenhum raio foi completado nesta partida.</p>`;
+                    ui.history.detailsContent.innerHTML = `<p class="text-center text-gray-500 p-8">Nenhum raio.</p>`;
                     return;
                 }
+
                 let contentHTML = '<div class="space-y-4">';
                 raios.forEach((raio) => {
-                    const winnerName = appState.players[raio.winnerId]?.name || 'Indefinido';
-                    const completionDate = new Date(raio.completionTime.seconds * 1000);
-                    const completionTimeStr = completionDate.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
-
+                    const winnerName = appState.players[raio.winnerId]?.name || 'Vencedor';
                     let playerTracksHTML = '';
-                    matchData.playerIds.forEach(playerId => {
+
+                    // Iteramos sobre todos que passaram pela mesa NESTE RAIO
+                    raio.participantesIds.forEach(playerId => {
                         const player = appState.players[playerId];
-                        if (!player) return;
+                        const playerName = player ? player.name : `Jogador (${playerId.substring(0,4)})`;
 
                         let circlesHTML = '';
-                        const playerPointsInRaio = raio.pointSequence.filter(p => p.scorerId === playerId);
+                        // Filtramos os pontos que ESSE jogador específico fez neste raio
+                        const pointsInThisRaio = raio.pointSequence.filter(p => p.scorerId === playerId);
+
+                        // Desenha sempre 4 espaços
                         for (let i = 0; i < 4; i++) {
-                            const point = playerPointsInRaio[i];
-                            if (point) {
-                                circlesHTML += `<div class="point-circle rounded-full flex items-center justify-center bg-yellow-400 border-2 border-yellow-500 text-yellow-900 font-bold text-sm"><span>${point.pointOrder}</span></div>`;
+                            const pt = pointsInThisRaio[i];
+                            if (pt) {
+                                // Bolinha amarela com o número da ordem do ponto na partida
+                                circlesHTML += `<div class="point-circle rounded-full flex items-center justify-center bg-yellow-400 border-2 border-yellow-500 text-yellow-900 font-bold text-xs"><span>${pt.pointOrder}</span></div>`;
                             } else {
+                                // Bolinha cinza (vazia)
                                 circlesHTML += `<div class="point-circle rounded-full bg-gray-200 border-2 border-gray-300"></div>`;
                             }
                         }
+
                         playerTracksHTML += `
                             <div class="flex items-center gap-3">
-                                <p class="font-semibold w-24 truncate text-right">${player.name}</p>
+                                <p class="font-semibold w-24 truncate text-right text-sm">${playerName}</p>
                                 <div class="flex items-center gap-2">${circlesHTML}</div>
-                            </div>
-                        `;
+                            </div>`;
                     });
 
                     contentHTML += `
                         <div class="bg-gray-50 rounded-lg border border-gray-200 p-4">
-                            <div class="text-center mb-3">
-                                <p class="font-bold text-lg">Raio Vencido por ${winnerName} - <span class="font-normal text-gray-600">às ${completionTimeStr}</span></p>
-                            </div>
+                            <p class="font-bold text-center mb-3 text-blue-900">Raio de ${winnerName}</p>
                             <div class="space-y-2">${playerTracksHTML}</div>
                         </div>`;
                 });
-                contentHTML += '</div>';
-                ui.history.detailsContent.innerHTML = contentHTML;
+                ui.history.detailsContent.innerHTML = contentHTML + '</div>';
             }
 
             function setActiveHistoryTab(tabName) {
