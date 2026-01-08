@@ -262,7 +262,6 @@
                 roubo: { icon: '👮🏻🚔', name: 'Ladrão', description: 'Ladrão de raio' }
             };
 
-            // let appState = { players: {}, finalGameData: {}, activityFeed: [], isAdminMode: false, userId: null, gameState: {}, unsubscribers: [] };
             let appState = { players: {}, finalGameData: {}, activityFeed: [], isAdminMode: false, userId: null, gameState: {}, unsubscribers: [], messageQueue: [], isMessageShowing: false, matchHistory: [], currentMatchDetails: null };
 
             const playersCollectionRef = () => collection(db, `artifacts/${appIdentifier}/public/data/players`);
@@ -1233,7 +1232,7 @@
                                     <span class="text-center">RT</span>
                                     <span class="text-center">LT</span>
                                     <span class="text-center">PAT</span>
-                                    <span class="text-center">SR</span>
+                                    <span class="text-center">SALDO</span>
                                 </div>
                                 <div class="grid grid-cols-4 font-semibold w-44 mx-auto">
                                     <span class="text-blue-600 text-center">${stats.raiosNaTemporada || 0}</span>
@@ -1255,10 +1254,23 @@
 
                 const player = playerSnap.data();
                 const stats = player[currentSeason] || {};
-                const aproveitamentoRA = stats.partidasNaTemporada > 0 ? (stats.raiosNaTemporada / stats.partidasNaTemporada) * 100 : 0;
-                const aproveitamentoLB = stats.partidasNaTemporada > 0 ? (stats.lambretasNaTemporada / stats.partidasNaTemporada) * 100: 0;
+                let peso = 50;
+                // const aproveitamentoRA = stats.partidasNaTemporada > 0 ? (stats.raiosNaTemporada / stats.partidasNaTemporada) * 100 : 0;
+                // const aproveitamentoLB = stats.partidasNaTemporada > 0 ? (stats.lambretasNaTemporada / stats.partidasNaTemporada) * 100: 0;
+                // Garantimos que todos os valores sejam números, usando || 0 para campos inexistentes
+                const partidas = stats.partidasNaTemporada || 0;
+                const raios = stats.raiosNaTemporada || 0;
+                const lambretas = stats.lambretasNaTemporada || 0;
+
+                if (raios === 0) peso = 0;
+
+                // Agora o cálculo fica blindado contra NaN
+                const aproveitamentoRA = partidas > 0 ? (raios / partidas) * 100 : 0;
+                const aproveitamentoLB = partidas > 0 ? (lambretas / partidas) * 100 : 0;
+
+                // Fórmula final
                 // Aproveitamento agora passa pelo peso dos raios e das lambretas.
-                const aproveitamento = 50 - aproveitamentoLB + aproveitamentoRA;
+                const aproveitamento = peso - aproveitamentoLB + aproveitamentoRA;
 
                 await updateDoc(playerRef, {
                     [`${currentSeason}.aproveitamentoNaTemporada`]: aproveitamento
@@ -2727,6 +2739,65 @@
                     navigator.serviceWorker.getRegistration().then(reg => reg?.update());
                 }, 60 * 60 * 1000);
             }
+
+            /*async function recalcularTodosOsAproveitamentos() {
+                console.log("Iniciando recalculo global...");
+
+                try {
+                    // Tenta buscar os documentos - Se der erro aqui, as funções do Firebase não estão globais
+                    const querySnapshot = await getDocs(playersCollectionRef());
+                    const batch = writeBatch(db);
+                    let contador = 0;
+
+                    querySnapshot.forEach((docSnap) => {
+                        const player = docSnap.data();
+                        const stats = player[currentSeason] || {};
+                        let peso = 50;
+
+                        if (stats.partidasNaTemporada > 0) {
+                            const partidas = stats.partidasNaTemporada || 0;
+                            const raios = stats.raiosNaTemporada || 0;
+                            const lambretas = stats.lambretasNaTemporada || 0;
+
+                            if (raios === 0) {
+                                peso = 0;
+                            }
+
+                            // Agora o cálculo fica blindado contra NaN
+                            const aproveitamentoRA = partidas > 0 ? (raios / partidas) * 100 : 0;
+                            const aproveitamentoLB = partidas > 0 ? (lambretas / partidas) * 100 : 0;
+                            // const aproveitamentoRA = (stats.raiosNaTemporada / stats.partidasNaTemporada) * 100;
+                            // const aproveitamentoLB = (stats.lambretasNaTemporada / stats.partidasNaTemporada) * 100;
+                            console.log("aproveitamentoLB: ", aproveitamentoLB);
+
+
+                            // Sua fórmula: 50 - %Lambretas + %Raios
+                            const novoAproveitamento = peso - aproveitamentoLB + aproveitamentoRA;
+
+                            const playerRef = doc(playersCollectionRef(), docSnap.id);
+                            batch.update(playerRef, {
+                                [`${currentSeason}.aproveitamentoNaTemporada`]: novoAproveitamento
+                            });
+                            contador++;
+                        }
+                    });
+
+                    if (contador > 0) {
+                        await batch.commit();
+                        console.log(`Sucesso! ${contador} jogadores atualizados.`);
+                        alert(`Sucesso! ${contador} jogadores foram recalculados.`);
+                        if (typeof fetchPlayers === 'function') fetchPlayers();
+                    } else {
+                        console.log("Nenhum jogador com partidas para atualizar.");
+                    }
+
+                } catch (error) {
+                    console.error("Erro crítico no console:", error);
+                    alert("Erro: " + error.message);
+                }
+            }
+            // Chama a função imediatamente após colar
+            recalcularTodosOsAproveitamentos();*/
 
         </script>
     </body>
