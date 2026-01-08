@@ -335,10 +335,6 @@
                 }
             }
 
-            // --- BLOCO DE FUNÇÕES DE INÍCIO DE JOGO (VERSÃO CORRIGIDA) ---
-
-            // FUNÇÃO 1: Chamada pelo botão "Iniciar Modo Partida" no placar.
-            // Ela é a "telefonista" que decide o que fazer.
             async function handleStartGameClick() {
                 if (!appState.isAdminMode) {
                     showMessage("Apenas administradores podem iniciar uma partida.", "error");
@@ -1483,9 +1479,6 @@
                 const fabContainer = document.querySelector('.admin-fab-container');
                 if (fabContainer) fabContainer.classList.remove('hidden');
             }
-
-            // function openModal(contentHTML) { ui.modal.content.innerHTML = contentHTML; ui.modal.container.style.display = 'flex'; }
-            // function closeModal() { ui.modal.container.style.display = 'none'; }
 
             async function updatePlayerStat(playerId, stat, amount) {
                 if (!appState.isAdminMode) return;
