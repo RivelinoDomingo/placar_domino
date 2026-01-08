@@ -604,10 +604,10 @@
                     const winnerIdFromButton = target.dataset.playerId;
                     const winnerNameFromButton = target.innerText;
 
-                    console.log("CLIQUE DETECTADO:");
-                    console.log("Nome no Botão:", winnerNameFromButton);
-                    console.log("ID no dataset:", winnerIdFromButton);
-                    console.log("Nome esperado no Cache:", appState.players[winnerIdFromButton]?.name);
+                    // console.log("CLIQUE DETECTADO:");
+                    // console.log("Nome no Botão:", winnerNameFromButton);
+                    // console.log("ID no dataset:", winnerIdFromButton);
+                    // console.log("Nome esperado no Cache:", appState.players[winnerIdFromButton]?.name);
 
                     closeModal();
                     const batch = writeBatch(db);
@@ -1255,9 +1255,10 @@
 
                 const player = playerSnap.data();
                 const stats = player[currentSeason] || {};
-                const aproveitamento = stats.partidasNaTemporada > 0
-                    ? (stats.raiosNaTemporada / stats.partidasNaTemporada) * 100
-                    : 0;
+                const aproveitamentoRA = stats.partidasNaTemporada > 0 ? (stats.raiosNaTemporada / stats.partidasNaTemporada) * 100 : 0;
+                const aproveitamentoLB = stats.partidasNaTemporada > 0 ? (stats.lambretasNaTemporada / stats.partidasNaTemporada) * 100: 0;
+                // Aproveitamento agora passa pelo peso dos raios e das lambretas.
+                const aproveitamento = 50 - aproveitamentoLB + aproveitamentoRA;
 
                 await updateDoc(playerRef, {
                     [`${currentSeason}.aproveitamentoNaTemporada`]: aproveitamento
@@ -1549,7 +1550,7 @@
 
                 // --- 2. CÁLCULOS DA TEMPORADA ---
                 const partidasTemporada = s.partidasNaTemporada || 0;
-                const aprovRaiosTemp = s.aproveitamentoNaTemporada || 0;
+                const aprovRaiosTemp = partidasTemporada > 0 ? (((s.raiosNaTemporada || 0) / partidasTemporada) * 100).toFixed(1) : "0";
                 const aprovLambTemp = partidasTemporada > 0 ? (((s.lambretasNaTemporada || 0) / partidasTemporada) * 100).toFixed(1) : "0";
 
                 // --- 3. GALERIA DE TROFÉUS (GERAL) ---
