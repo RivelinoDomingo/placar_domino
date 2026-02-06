@@ -28,11 +28,7 @@
         "partidasNaTemporada": 12,
         "aproveitamentoNaTemporada": 8.333333333333332
       },
-      "raios": 2,
       "name": "Visita",
-      "lambreta": 9,
-      "pontos": 46,
-      "partidasJogadas": 32,
       "temporada_6": {
         "matchPointsNaTemporada": 3,
         "raiosNaTemporada": 1,
@@ -40,6 +36,18 @@
         "pontosNaTemporada": 13,
         "partidasNaTemporada": 9,
         "aproveitamentoNaTemporada": 27.777777777777782
+      },
+      "raios": 3,
+      "pontos": 52,
+      "partidasJogadas": 38,
+      "lambreta": 12,
+      "temporada_7": {
+        "matchPointsNaTemporada": 1,
+        "raiosNaTemporada": 1,
+        "pontosNaTemporada": 6,
+        "partidasNaTemporada": 6,
+        "lambretasNaTemporada": 3,
+        "aproveitamentoNaTemporada": 16.666666666666664
       }
     },
     {
@@ -98,24 +106,32 @@
       },
       "conquistas": {
         "imbativel": 1,
-        "azarao": 3,
-        "roubo": 2
+        "roubo": 2,
+        "azarao": 4
       },
-      "lambreta": 107,
-      "partidasJogadas": 330,
-      "pontos": 565,
-      "raios": 64,
       "temporada_6": {
         "conquistasNaTemporada": {
-          "azarao": 1,
-          "roubo": 1
+          "roubo": 1,
+          "azarao": 2
         },
-        "lambretasNaTemporada": 50,
-        "matchPointsNaTemporada": 49,
-        "pontosNaTemporada": 266,
-        "partidasNaTemporada": 154,
-        "raiosNaTemporada": 30,
-        "aproveitamentoNaTemporada": 37.01298701298702
+        "raiosNaTemporada": 31,
+        "lambretasNaTemporada": 56,
+        "pontosNaTemporada": 280,
+        "matchPointsNaTemporada": 52,
+        "partidasNaTemporada": 166,
+        "aproveitamentoNaTemporada": 34.93975903614458
+      },
+      "raios": 69,
+      "lambreta": 120,
+      "pontos": 621,
+      "partidasJogadas": 365,
+      "temporada_7": {
+        "raiosNaTemporada": 4,
+        "matchPointsNaTemporada": 9,
+        "lambretasNaTemporada": 7,
+        "pontosNaTemporada": 42,
+        "partidasNaTemporada": 23,
+        "aproveitamentoNaTemporada": 36.95652173913043
       }
     },
     {
@@ -150,20 +166,28 @@
       "conquistas": {
         "roubo": 2
       },
-      "lambreta": 15,
-      "raios": 11,
-      "pontos": 95,
-      "partidasJogadas": 54,
       "temporada_6": {
         "conquistasNaTemporada": {
           "roubo": 1
         },
-        "lambretasNaTemporada": 9,
-        "matchPointsNaTemporada": 10,
-        "raiosNaTemporada": 6,
-        "pontosNaTemporada": 67,
-        "partidasNaTemporada": 39,
-        "aproveitamentoNaTemporada": 42.30769230769231
+        "matchPointsNaTemporada": 14,
+        "raiosNaTemporada": 10,
+        "lambretasNaTemporada": 12,
+        "pontosNaTemporada": 85,
+        "partidasNaTemporada": 47,
+        "aproveitamentoNaTemporada": 45.74468085106383
+      },
+      "raios": 17,
+      "lambreta": 19,
+      "pontos": 128,
+      "partidasJogadas": 69,
+      "temporada_7": {
+        "raiosNaTemporada": 2,
+        "matchPointsNaTemporada": 3,
+        "lambretasNaTemporada": 1,
+        "pontosNaTemporada": 15,
+        "partidasNaTemporada": 7,
+        "aproveitamentoNaTemporada": 64.28571428571428
       }
     },
     {
@@ -212,24 +236,32 @@
         "raiosNaTemporada": 8,
         "aproveitamentoNaTemporada": 30.76923076923077
       },
-      "raios": 65,
       "conquistas": {
         "roubo": 4,
         "azarao": 4
       },
-      "lambreta": 49,
-      "pontos": 510,
-      "partidasJogadas": 243,
       "temporada_6": {
-        "raiosNaTemporada": 25,
         "conquistasNaTemporada": {
           "azarao": 2
         },
-        "matchPointsNaTemporada": 41,
-        "lambretasNaTemporada": 23,
-        "pontosNaTemporada": 198,
-        "partidasNaTemporada": 98,
-        "aproveitamentoNaTemporada": 52.04081632653062
+        "lambretasNaTemporada": 25,
+        "matchPointsNaTemporada": 42,
+        "pontosNaTemporada": 203,
+        "partidasNaTemporada": 102,
+        "raiosNaTemporada": 26,
+        "aproveitamentoNaTemporada": 50.98039215686275
+      },
+      "lambreta": 54,
+      "partidasJogadas": 265,
+      "pontos": 565,
+      "raios": 75,
+      "temporada_7": {
+        "lambretasNaTemporada": 3,
+        "matchPointsNaTemporada": 12,
+        "pontosNaTemporada": 50,
+        "partidasNaTemporada": 18,
+        "raiosNaTemporada": 9,
+        "aproveitamentoNaTemporada": 83.33333333333334
       }
     },
     {
@@ -299,10 +331,7 @@
         "partidasNaTemporada": 10,
         "aproveitamentoNaTemporada": 30
       },
-      "pontos": 44,
       "raios": 4,
-      "partidasJogadas": 21,
-      "lambreta": 5,
       "temporada_6": {
         "matchPointsNaTemporada": 3,
         "pontosNaTemporada": 14,
@@ -310,6 +339,15 @@
         "partidasNaTemporada": 8,
         "lambretasNaTemporada": 3,
         "aproveitamentoNaTemporada": 25
+      },
+      "lambreta": 6,
+      "pontos": 45,
+      "partidasJogadas": 23,
+      "temporada_7": {
+        "lambretasNaTemporada": 1,
+        "pontosNaTemporada": 1,
+        "partidasNaTemporada": 2,
+        "aproveitamentoNaTemporada": -50
       }
     },
     {
@@ -367,22 +405,30 @@
         "roubo": 6,
         "azarao": 2
       },
-      "lambreta": 68,
-      "raios": 86,
-      "pontos": 553,
-      "partidasJogadas": 270,
       "temporada_6": {
         "conquistasNaTemporada": {
           "imbativel": 2,
           "roubo": 3,
           "azarao": 2
         },
-        "lambretasNaTemporada": 35,
-        "matchPointsNaTemporada": 46,
-        "raiosNaTemporada": 36,
-        "pontosNaTemporada": 219,
-        "partidasNaTemporada": 111,
-        "aproveitamentoNaTemporada": 50.90090090090091
+        "matchPointsNaTemporada": 49,
+        "raiosNaTemporada": 39,
+        "lambretasNaTemporada": 37,
+        "pontosNaTemporada": 242,
+        "partidasNaTemporada": 123,
+        "aproveitamentoNaTemporada": 51.6260162601626
+      },
+      "lambreta": 77,
+      "raios": 93,
+      "pontos": 608,
+      "partidasJogadas": 302,
+      "temporada_7": {
+        "lambretasNaTemporada": 7,
+        "matchPointsNaTemporada": 5,
+        "raiosNaTemporada": 4,
+        "pontosNaTemporada": 32,
+        "partidasNaTemporada": 20,
+        "aproveitamentoNaTemporada": 35
       }
     },
     {
@@ -414,9 +460,6 @@
         "aproveitamentoNaTemporada": 33.33333333333333
       },
       "raios": 5,
-      "pontos": 44,
-      "partidasJogadas": 24,
-      "lambreta": 6,
       "temporada_6": {
         "raiosNaTemporada": 2,
         "pontosNaTemporada": 26,
@@ -424,6 +467,15 @@
         "partidasNaTemporada": 16,
         "lambretasNaTemporada": 4,
         "aproveitamentoNaTemporada": 37.5
+      },
+      "lambreta": 8,
+      "pontos": 50,
+      "partidasJogadas": 30,
+      "temporada_7": {
+        "lambretasNaTemporada": 2,
+        "pontosNaTemporada": 6,
+        "partidasNaTemporada": 6,
+        "aproveitamentoNaTemporada": -33.33333333333333
       }
     },
     {
@@ -450,23 +502,25 @@
         "partidasNaTemporada": 4,
         "aproveitamentoNaTemporada": 25
       },
-      "conquistas": {
-        "roubo": 2
-      },
-      "lambreta": 18,
-      "partidasJogadas": 62,
-      "pontos": 114,
       "raios": 18,
+      "conquistas": {
+        "roubo": 2,
+        "azarao": 1
+      },
+      "lambreta": 22,
+      "pontos": 117,
+      "partidasJogadas": 69,
       "temporada_6": {
-        "conquistasNaTemporada": {
-          "roubo": 1
-        },
-        "lambretasNaTemporada": 12,
         "matchPointsNaTemporada": 21,
-        "pontosNaTemporada": 98,
-        "partidasNaTemporada": 47,
         "raiosNaTemporada": 17,
-        "aproveitamentoNaTemporada": 60.63829787234043
+        "conquistasNaTemporada": {
+          "roubo": 1,
+          "azarao": 1
+        },
+        "lambretasNaTemporada": 16,
+        "pontosNaTemporada": 101,
+        "partidasNaTemporada": 54,
+        "aproveitamentoNaTemporada": 51.851851851851855
       }
     },
     {
@@ -524,25 +578,36 @@
         "lambretasNaTemporada": 4,
         "aproveitamentoNaTemporada": 14.285714285714285
       },
-      "conquistas": {
-        "roubo": 4,
-        "azarao": 3
-      },
-      "raios": 47,
-      "pontos": 387,
-      "partidasJogadas": 224,
-      "lambreta": 65,
       "temporada_6": {
         "conquistasNaTemporada": {
           "roubo": 2,
           "azarao": 1
         },
-        "matchPointsNaTemporada": 30,
-        "raiosNaTemporada": 22,
-        "pontosNaTemporada": 173,
-        "partidasNaTemporada": 104,
-        "lambretasNaTemporada": 30,
-        "aproveitamentoNaTemporada": 42.30769230769231
+        "lambretasNaTemporada": 31,
+        "raiosNaTemporada": 25,
+        "pontosNaTemporada": 188,
+        "matchPointsNaTemporada": 34,
+        "partidasNaTemporada": 109,
+        "aproveitamentoNaTemporada": 44.49541284403669
+      },
+      "conquistas": {
+        "roubo": 4,
+        "azarao": 4
+      },
+      "pontos": 418,
+      "raios": 53,
+      "partidasJogadas": 239,
+      "lambreta": 70,
+      "temporada_7": {
+        "conquistasNaTemporada": {
+          "azarao": 1
+        },
+        "matchPointsNaTemporada": 3,
+        "pontosNaTemporada": 16,
+        "raiosNaTemporada": 3,
+        "partidasNaTemporada": 10,
+        "lambretasNaTemporada": 4,
+        "aproveitamentoNaTemporada": 40
       }
     },
     {
@@ -660,6 +725,16 @@
       "timestamp": {
         "_seconds": 1752549571,
         "_nanoseconds": 867000000
+      }
+    },
+    {
+      "id": "3KcK8PQyRnozfUezRO64",
+      "type": "achievement",
+      "player": "Ari",
+      "text": "sofreu uma sequência de 3 lambretas! 🚑🤕🤕",
+      "timestamp": {
+        "_seconds": 1769823524,
+        "_nanoseconds": 564000000
       }
     },
     {
@@ -803,6 +878,16 @@
       }
     },
     {
+      "id": "IM3NvnVrIn2lyx09Nh2d",
+      "type": "achievement",
+      "player": "Jorginho",
+      "text": "sofreu uma sequência de 3 lambretas! 🚑🤕🤕",
+      "timestamp": {
+        "_seconds": 1769825053,
+        "_nanoseconds": 747000000
+      }
+    },
+    {
       "id": "MMipcgbjSD9jaWDiBAGU",
       "type": "achievement",
       "player": "Ari",
@@ -880,6 +965,16 @@
       "timestamp": {
         "_seconds": 1767838299,
         "_nanoseconds": 181000000
+      }
+    },
+    {
+      "id": "fbKD5Rj7XutsWJirn7Y9",
+      "type": "achievement",
+      "player": "Rivelino",
+      "text": "sofreu uma sequência de 3 lambretas! 🚑🤕🤕",
+      "timestamp": {
+        "_seconds": 1770081310,
+        "_nanoseconds": 947000000
       }
     },
     {
@@ -1000,6 +1095,16 @@
       "timestamp": {
         "_seconds": 1752688299,
         "_nanoseconds": 473000000
+      }
+    },
+    {
+      "id": "x9USEtH8Xvtv460TspLs",
+      "type": "achievement",
+      "player": "Rivelino",
+      "text": "sofreu uma sequência de 3 lambretas! 🚑🤕🤕",
+      "timestamp": {
+        "_seconds": 1770081188,
+        "_nanoseconds": 886000000
       }
     },
     {
