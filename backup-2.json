@@ -28,9 +28,7 @@
         "partidasNaTemporada": 12,
         "aproveitamentoNaTemporada": 8.333333333333332
       },
-      "raios": 2,
       "name": "Visita",
-      "pontos": 46,
       "temporada_6": {
         "matchPointsNaTemporada": 3,
         "raiosNaTemporada": 1,
@@ -39,12 +37,17 @@
         "partidasNaTemporada": 9,
         "aproveitamentoNaTemporada": 27.777777777777782
       },
-      "partidasJogadas": 33,
-      "lambreta": 10,
+      "raios": 3,
+      "lambreta": 13,
+      "pontos": 58,
+      "partidasJogadas": 44,
       "temporada_7": {
-        "partidasNaTemporada": 1,
-        "lambretasNaTemporada": 1,
-        "aproveitamentoNaTemporada": -100
+        "matchPointsNaTemporada": 1,
+        "raiosNaTemporada": 1,
+        "lambretasNaTemporada": 4,
+        "pontosNaTemporada": 12,
+        "partidasNaTemporada": 12,
+        "aproveitamentoNaTemporada": 25.000000000000004
       }
     },
     {
@@ -118,17 +121,17 @@
         "partidasNaTemporada": 166,
         "aproveitamentoNaTemporada": 34.93975903614458
       },
-      "raios": 66,
-      "lambreta": 114,
-      "pontos": 594,
-      "partidasJogadas": 349,
+      "pontos": 633,
+      "raios": 71,
+      "partidasJogadas": 370,
+      "lambreta": 121,
       "temporada_7": {
-        "raiosNaTemporada": 1,
-        "lambretasNaTemporada": 1,
-        "aproveitamentoNaTemporada": 50,
-        "matchPointsNaTemporada": 3,
-        "pontosNaTemporada": 15,
-        "partidasNaTemporada": 7
+        "matchPointsNaTemporada": 11,
+        "pontosNaTemporada": 54,
+        "raiosNaTemporada": 6,
+        "partidasNaTemporada": 28,
+        "lambretasNaTemporada": 8,
+        "aproveitamentoNaTemporada": 42.85714285714286
       }
     },
     {
@@ -163,7 +166,6 @@
       "conquistas": {
         "roubo": 2
       },
-      "lambreta": 18,
       "temporada_6": {
         "conquistasNaTemporada": {
           "roubo": 1
@@ -175,15 +177,17 @@
         "partidasNaTemporada": 47,
         "aproveitamentoNaTemporada": 45.74468085106383
       },
-      "partidasJogadas": 63,
-      "pontos": 117,
-      "raios": 16,
+      "raios": 17,
+      "pontos": 133,
+      "partidasJogadas": 75,
+      "lambreta": 22,
       "temporada_7": {
-        "matchPointsNaTemporada": 1,
-        "pontosNaTemporada": 4,
-        "partidasNaTemporada": 1,
-        "raiosNaTemporada": 1,
-        "aproveitamentoNaTemporada": 150
+        "raiosNaTemporada": 2,
+        "matchPointsNaTemporada": 3,
+        "pontosNaTemporada": 20,
+        "partidasNaTemporada": 13,
+        "lambretasNaTemporada": 4,
+        "aproveitamentoNaTemporada": 34.61538461538461
       }
     },
     {
@@ -236,7 +240,6 @@
         "roubo": 4,
         "azarao": 4
       },
-      "lambreta": 51,
       "temporada_6": {
         "conquistasNaTemporada": {
           "azarao": 2
@@ -248,16 +251,17 @@
         "raiosNaTemporada": 26,
         "aproveitamentoNaTemporada": 50.98039215686275
       },
-      "pontos": 531,
-      "raios": 69,
-      "partidasJogadas": 252,
+      "lambreta": 56,
+      "partidasJogadas": 269,
+      "pontos": 572,
+      "raios": 76,
       "temporada_7": {
-        "lambretasNaTemporada": 0,
-        "matchPointsNaTemporada": 4,
-        "raiosNaTemporada": 3,
-        "pontosNaTemporada": 16,
-        "partidasNaTemporada": 5,
-        "aproveitamentoNaTemporada": 110
+        "lambretasNaTemporada": 5,
+        "matchPointsNaTemporada": 14,
+        "pontosNaTemporada": 57,
+        "partidasNaTemporada": 22,
+        "raiosNaTemporada": 10,
+        "aproveitamentoNaTemporada": 72.72727272727272
       }
     },
     {
@@ -298,6 +302,25 @@
         "partidasNaTemporada": 19,
         "raiosNaTemporada": 11,
         "aproveitamentoNaTemporada": 97.36842105263159
+      }
+    },
+    {
+      "id": "RTN5Bn71X3CJSlEWxaNe",
+      "name": "Maria",
+      "raios": 0,
+      "lambreta": 0,
+      "series": "D",
+      "conquistas": {},
+      "pontos": 3,
+      "partidasJogadas": 1,
+      "temporada_7": {
+        "lambretasNaTemporada": 0,
+        "raiosNaTemporada": 0,
+        "conquistasNaTemporada": {},
+        "pontosNaTemporada": 3,
+        "matchPointsNaTemporada": 1,
+        "partidasNaTemporada": 1,
+        "aproveitamentoNaTemporada": 0
       }
     },
     {
@@ -396,11 +419,6 @@
         "partidasNaTemporada": 22,
         "aproveitamentoNaTemporada": 31.818181818181817
       },
-      "conquistas": {
-        "imbativel": 2,
-        "roubo": 6,
-        "azarao": 2
-      },
       "temporada_6": {
         "conquistasNaTemporada": {
           "imbativel": 2,
@@ -414,17 +432,25 @@
         "partidasNaTemporada": 123,
         "aproveitamentoNaTemporada": 51.6260162601626
       },
-      "lambreta": 72,
-      "partidasJogadas": 289,
-      "pontos": 589,
-      "raios": 90,
+      "conquistas": {
+        "imbativel": 2,
+        "azarao": 2,
+        "roubo": 7
+      },
+      "raios": 96,
+      "lambreta": 79,
+      "pontos": 630,
+      "partidasJogadas": 313,
       "temporada_7": {
-        "lambretasNaTemporada": 2,
-        "matchPointsNaTemporada": 2,
-        "pontosNaTemporada": 13,
-        "partidasNaTemporada": 7,
-        "raiosNaTemporada": 1,
-        "aproveitamentoNaTemporada": 35.714285714285715
+        "matchPointsNaTemporada": 9,
+        "conquistasNaTemporada": {
+          "roubo": 1
+        },
+        "raiosNaTemporada": 7,
+        "lambretasNaTemporada": 9,
+        "pontosNaTemporada": 54,
+        "partidasNaTemporada": 31,
+        "aproveitamentoNaTemporada": 43.54838709677419
       }
     },
     {
@@ -456,9 +482,6 @@
         "aproveitamentoNaTemporada": 33.33333333333333
       },
       "raios": 5,
-      "pontos": 44,
-      "partidasJogadas": 24,
-      "lambreta": 6,
       "temporada_6": {
         "raiosNaTemporada": 2,
         "pontosNaTemporada": 26,
@@ -466,6 +489,15 @@
         "partidasNaTemporada": 16,
         "lambretasNaTemporada": 4,
         "aproveitamentoNaTemporada": 37.5
+      },
+      "lambreta": 8,
+      "pontos": 50,
+      "partidasJogadas": 30,
+      "temporada_7": {
+        "lambretasNaTemporada": 2,
+        "pontosNaTemporada": 6,
+        "partidasNaTemporada": 6,
+        "aproveitamentoNaTemporada": -33.33333333333333
       }
     },
     {
@@ -580,24 +612,27 @@
         "partidasNaTemporada": 109,
         "aproveitamentoNaTemporada": 44.49541284403669
       },
+      "lambreta": 73,
       "conquistas": {
-        "roubo": 4,
-        "azarao": 4
+        "azarao": 4,
+        "roubo": 5,
+        "imbativel": 1
       },
-      "lambreta": 69,
-      "raios": 51,
-      "pontos": 408,
-      "partidasJogadas": 234,
+      "partidasJogadas": 250,
+      "pontos": 444,
+      "raios": 58,
       "temporada_7": {
+        "lambretasNaTemporada": 7,
+        "matchPointsNaTemporada": 9,
         "conquistasNaTemporada": {
-          "azarao": 1
+          "azarao": 1,
+          "roubo": 1,
+          "imbativel": 1
         },
-        "lambretasNaTemporada": 3,
-        "matchPointsNaTemporada": 1,
-        "raiosNaTemporada": 1,
-        "aproveitamentoNaTemporada": 10,
-        "pontosNaTemporada": 6,
-        "partidasNaTemporada": 5
+        "pontosNaTemporada": 42,
+        "partidasNaTemporada": 21,
+        "raiosNaTemporada": 8,
+        "aproveitamentoNaTemporada": 54.761904761904766
       }
     },
     {
@@ -878,6 +913,16 @@
       }
     },
     {
+      "id": "JdenlCvYoYM12o8oqRot",
+      "type": "achievement",
+      "player": "Rivelino",
+      "text": "🚔👮🏻Chama a policia que Rivelino acabou de roubar o raio de Maria",
+      "timestamp": {
+        "_seconds": 1770692526,
+        "_nanoseconds": 936000000
+      }
+    },
+    {
       "id": "MMipcgbjSD9jaWDiBAGU",
       "type": "achievement",
       "player": "Ari",
@@ -985,6 +1030,26 @@
       "timestamp": {
         "_seconds": 1768356796,
         "_nanoseconds": 464000000
+      }
+    },
+    {
+      "id": "jI6uzDtwAp7YZ6e3cz00",
+      "type": "achievement",
+      "player": "Rivelino",
+      "text": "alcançou uma sequência de 3 raios! 🔥🚀🚀",
+      "timestamp": {
+        "_seconds": 1770692527,
+        "_nanoseconds": 337000000
+      }
+    },
+    {
+      "id": "jpy6ONLnXeIt9ER2I7d3",
+      "type": "achievement",
+      "player": "Renata",
+      "text": "🚔👮🏻Chama a policia que Renata acabou de roubar o raio de Rivelino",
+      "timestamp": {
+        "_seconds": 1770685828,
+        "_nanoseconds": 930000000
       }
     },
     {
