@@ -1371,64 +1371,6 @@ async function processAndShowGameOver(gameData) {
     setTimeout(() => { isProcessingGameOver = false; }, 2000);
 }
 
-// // Adicione esta função temporária no seu código
-// async function limparSpamDeConquistas() {
-//     console.log("Iniciando varredura para limpeza de eventos spam...");
-//
-//     try {
-//         // ⚠️ PASSO 1: AJUSTE OS NOMES AQUI PARA BATER COM O SEU BANCO DE DADOS
-//         // Troque 'eventos' pelo nome exato da coleção onde os feeds de conquista ficam salvos
-//         const caminhoExato = "artifacts/1:187178310074:web:5f56292dea8dc776532583/public/data/events";
-//         const eventosRef = collection(db, caminhoExato);
-//
-//         // Substitua 'ID_DO_TESTE1' pelo ID real do jogador 'teste1'
-//         const idDoJogador = "IjH5b9XpwaXRWdjY3XU7";
-//
-//         // Cria a busca: Pega todos os eventos do teste1 que sejam do tipo da conquista
-//         // Ajuste os nomes dos campos ("playerId", "type") para como eles estão no seu banco
-//         const q = query(
-//             eventosRef,
-//             // where("playerId", "==", idDoJogador),
-//             where("player", "==", "teste1") // ou "roubo", dependendo de como você salva
-//         );
-//
-//         const querySnapshot = await getDocs(q);
-//
-//         if (querySnapshot.empty) {
-//             console.log("Nenhum evento spam encontrado! A faxina não é necessária.");
-//             return;
-//         }
-//
-//         console.log(`Encontrados ${querySnapshot.size} eventos para deletar. Preparando a lixeira...`);
-//
-//         // Cria o lote de exclusão
-//         const batch = writeBatch(db);
-//         let contador = 0;
-//
-//         querySnapshot.forEach((documento) => {
-//             // Se quiser salvar 1 evento para ele não perder a conquista, podemos ignorar o primeiro
-//             if (contador > 0) {
-//                 batch.delete(documento.ref);
-//             }
-//             contador++;
-//         });
-//
-//         // ⚠️ Importante: O Batch deleta no máximo 500 por vez.
-//         // Se o seu banco lotou com mais de 500, você precisará rodar essa função algumas vezes.
-//         await batch.commit();
-//
-//         console.log(`🧹 Faxina concluída com sucesso! Foram apagados ${contador - 1} eventos duplicados.`);
-//         alert(`Limpeza finalizada! ${contador - 1} eventos excluídos.`);
-//
-//     } catch (error) {
-//         console.error("🔥 Erro durante a faxina:", error);
-//     }
-// }
-// let limpeza = true;
-// if (limpeza) {
-//     limparSpamDeConquistas();
-//     limpeza = false;
-// }
 function switchView(viewId) { ui.views.forEach(v => v.classList.toggle('active', v.id === viewId)); }
 
 function renderScoreboard() {
