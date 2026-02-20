@@ -91,6 +91,23 @@
             width: 100%; max-width: 400px;
             position: relative;
         }
+        /* Animação do Breaking News */
+        @keyframes marquee {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-100%); }
+        }
+
+        .animate-marquee {
+            display: inline-block;
+            padding-left: 100%; /* Começa fora da tela pela direita */
+            animation: marquee 70s linear infinite;
+            will-change: transform;
+        }
+
+        /* Evita que a barra de notícias cubra o conteúdo do fim da página */
+        body {
+            padding-bottom: 3rem;
+        }
     </style>
 </head>
 <body class="text-gray-800 relative min-h-screen">
@@ -247,6 +264,18 @@
         </div>
     </div>
 </div>
+<div id="breakingNewsTicker" class="fixed bottom-0 left-0 w-full bg-blue-900 text-white z-50 overflow-hidden shadow-lg border-t-2 border-yellow-500">
+    <div class="flex items-center">
+        <div class="bg-red-600 font-bold px-4 py-2 whitespace-nowrap z-10 font-condensed tracking-wider uppercase text-sm sm:text-base">
+            ⚡ DESTAQUES
+        </div>
+        <div class="overflow-hidden w-full relative h-10 flex items-center bg-blue-900">
+            <div id="tickerContent" class="whitespace-nowrap absolute animate-marquee font-medium text-sm sm:text-base">
+                Buscando destaques da temporada...
+            </div>
+        </div>
+    </div>
+</div>
 
 <div id="modalContainer" class="fixed inset-0 bg-black/60 hidden items-center justify-center p-4 z-50"><div id="modalContent" class="bg-white rounded-xl shadow-2xl p-6 w-full max-w-md m-auto"></div></div>
 <script type="module">
@@ -307,6 +336,18 @@ function getCurrentSeasonNumber() {
     return Math.floor(daysSinceStart / 30);
 }
 const currentSeason = `temporada_${getCurrentSeasonNumber()}`;
+
+function getDiasDaTemporadaAtual() {
+    const firstSeasonStart = new Date("2025-07-06T00:00:00Z");
+    const now = new Date();
+    const daysSinceStart = Math.floor((now - firstSeasonStart) / (1000 * 60 * 60 * 24));
+
+    // O resto da divisão por 30 (daysSinceStart % 30) dá os dias decorridos.
+    // Somamos + 1 para que o início seja "Dia 1" e não "Dia 0".
+    const diaAtual = (daysSinceStart % 30) + 1;
+
+    return diaAtual;
+}
 
 // --- UI Objects Map Reformulado ---
 const ui = {
@@ -2282,6 +2323,68 @@ async function deletarJogador(playerId) {
 // 5. ESSENCIAL: Torna a função visível para o 'onclick' do botão no modal
 window.deletarJogador = deletarJogador;
 
+function atualizarBarraDeNoticias() {
+    const tickerContent = document.getElementById('tickerContent');
+    if (!tickerContent || !appState.players) return;
+
+    // Transforma os jogadores em uma lista
+    const jogadores = Object.values(appState.players);
+    if (jogadores.length === 0) return;
+
+    // 1. Quem tem mais partidas na temporada atual?
+    const maisPartidas = [...jogadores].sort((a, b) =>
+        ((b[currentSeason]?.partidasNaTemporada || 0) - (a[currentSeason]?.partidasNaTemporada || 0))
+    )[0];
+
+    // 2. Quem tem mais raios?
+    const maisRaios = [...jogadores].sort((a, b) =>
+        ((b[currentSeason]?.raiosNaTemporada || 0) - (a[currentSeason]?.raiosNaTemporada || 0))
+    )[0];
+
+    // 3. Quem tem mais lambretas?
+    const maisLambretas = [...jogadores].sort((a, b) =>
+        ((b[currentSeason]?.lambretasNaTemporada || 0) - (a[currentSeason]?.lambretasNaTemporada || 0))
+    )[0];
+
+     // 4. Quem tem mais pontos?
+    const maisPontos = [...jogadores].sort((a, b) =>
+        ((b[currentSeason]?.pontosNaTemporada || 0) - (a[currentSeason]?.pontosNaTemporada || 0))
+    )[0];
+
+    // 5. Montar as frases
+    let noticias = [];
+
+    // Notícia genérica inicial
+    noticias.push(`🀄 Resumo da Temporada!`);
+
+    // NOVA NOTÍCIA DA TEMPORADA 👇
+    const diaTemporada = getDiasDaTemporadaAtual();
+    // noticias.push(`⏳ TEMPORADA ATUAL: Faltam ${30 - diaTemporada + 1} dias para o fim! Estamos no dia ${diaTemporada}/30.`);
+    noticias.push(`⏳ TEMPORADA ATUAL: Faltam ${30 - diaTemporada + 1} dias para o fim!`);
+
+    if (maisPartidas && (maisPartidas[currentSeason]?.partidasNaTemporada || 0) > 0) {
+        noticias.push(`🔥 VICIADO: ${maisPartidas.name} lidera a mesa com ${maisPartidas[currentSeason].partidasNaTemporada} partidas disputadas nesta temporada!`);
+    }
+
+    if (maisRaios && (maisRaios[currentSeason]?.raiosNaTemporada || 0) > 0) {
+        noticias.push(`⚡ REI DOS RAIOS: Ninguém segura ${maisRaios.name}, já são ${maisRaios[currentSeason].raiosNaTemporada} raios na conta!`);
+    }
+
+    if (maisLambretas && (maisLambretas[currentSeason]?.lambretasNaTemporada || 0) > 0) {
+        noticias.push(`🤕 QUE COISA em  ${maisLambretas.name}, já são ${maisLambretas[currentSeason].lambretasNaTemporada} lambretas nessa temporada! QUE FASE 🤕🤕`);
+    }
+
+    if (maisPontos && (maisPontos[currentSeason]?.pontosNaTemporada || 0) > 0) {
+        noticias.push(`🤺 O BATEDOR, ${maisPontos.name}, já acumula ${maisPontos[currentSeason].pontosNaTemporada} pontos nessa temporada! Quem perdoa é Deus! não ${maisPontos.name}`);
+    }
+
+    // Une todas as frases separadas por um ícone
+    tickerContent.innerHTML = noticias.join(' &nbsp;&nbsp;&nbsp; 🟢 &nbsp;&nbsp;&nbsp; ');
+
+    // Duplica o conteúdo caso o texto seja muito curto e quebre a ilusão do loop
+    tickerContent.innerHTML += ' &nbsp;&nbsp;&nbsp; 🟢 &nbsp;&nbsp;&nbsp; ' + noticias.join(' &nbsp;&nbsp;&nbsp; 🟢 &nbsp;&nbsp;&nbsp; ');
+}
+
 function setupFirestoreListeners() {
     // Limpa listeners antigos para evitar duplicação
     appState.unsubscribers.forEach(unsub => unsub());
@@ -2301,6 +2404,8 @@ function setupFirestoreListeners() {
         if (appState.gameState.activeGame) {
             renderLiveMatchFeed(appState.gameState.activeGame);
         }
+        // A barra será atualizada ao abrir o app e sempre que um jogador ganhar um raio/partida!
+        atualizarBarraDeNoticias();
     });
 
     if(document.getElementById('view-history').classList.contains('active')) {
