@@ -121,7 +121,7 @@
         </svg>
     </button>
 
-    <div id="mainMenuDropdown" class="dropdown-menu absolute right-0 mt-2 w-56 bg-white rounded-xl shadow-xl border border-gray-100 overflow-hidden">
+    <div id="mainMenuDropdown" class="dropdown-menu absolute right-0 mt-2 w-64 bg-white rounded-xl shadow-xl border border-gray-100 overflow-hidden">
         <div class="py-1">
             <button id="menuItemNotifications" class="w-full text-left px-4 py-3 hover:bg-gray-50 flex items-center gap-3 text-gray-700 transition">
                 <span class="text-xl">🔔</span>
@@ -137,6 +137,15 @@
                 <span class="font-medium">Iniciar Partida</span>
             </button>
 
+            <button id="menuItemCriarAviso" onclick="criarAvisoAdmin()" class="hidden w-full text-left px-4 py-3 hover:bg-blue-50 flex items-center gap-3 text-blue-700 transition font-medium border-t border-gray-100">
+                <span class="text-xl">📢</span>
+                <span class="font-medium">Criar Aviso Global</span>
+            </button>
+
+            <button id="menuItemDesativarAviso" onclick="desativarAvisoAdmin()" class="hidden w-full text-left px-4 py-3 hover:bg-red-50 flex items-center gap-3 text-red-600 transition font-medium">
+                <span class="text-xl">🔇</span>
+                <span class="font-medium">Desativar Aviso</span>
+            </button>
             <div class="h-px bg-gray-100 my-1"></div>
 
             <button id="menuItemAdmin" class="w-full text-left px-4 py-3 hover:bg-gray-50 flex items-center gap-3 text-gray-700 transition">
@@ -511,7 +520,7 @@ function checarGatilhoDoResumo() {
     }
 }
 
-Tratar o fim de temporada para resumo
+//Tratar o fim de temporada para resumo
 function gerarResumoDaTemporadaAnterior() {
     const seasonPassadaNum = getCurrentSeasonNumber() - 1;
     if (seasonPassadaNum < 0) return null; // Não existe temporada anterior
@@ -625,6 +634,139 @@ function mostrarModalFimDeTemporada() {
         closeModal();
     };
 }
+
+/////// --------------///////////
+////// Criação de avisos /////////
+// Função para o Admin criar um novo aviso
+async function criarAvisoAdmin() {
+    // 1. Pede o texto do aviso para o Admin (podemos trocar por um modal customizado depois)
+    const textoAviso = prompt("📢 Digite o aviso para todos os jogadores:\n(Deixe em branco ou cancele para não enviar nada)");
+
+    if (!textoAviso || textoAviso.trim() === "") {
+        console.log("Criação de aviso cancelada.");
+        return;
+    }
+
+    // 2. Cria os dados do aviso
+    const agora = Date.now(); // Pega a data e hora exata em milissegundos
+    const novoAviso = {
+        id: `aviso_${agora}`, // Ex: aviso_1715000000000
+        texto: textoAviso.trim(),
+        dataCriacao: agora,
+        ativo: true
+    };
+
+    // 3. Caminho da nossa Portaria no Firebase
+    const caminhoBase = "artifacts/1:187178310074:web:5f56292dea8dc776532583/public/data";
+    const avisoRef = doc(db, `${caminhoBase}/system`, "avisoAtual");
+
+    try {
+        // 4. Salva no Firebase
+        await setDoc(avisoRef, novoAviso);
+        alert("✅ Aviso publicado com sucesso! Ele aparecerá para os jogadores por 3 dias.");
+    } catch (error) {
+        console.error("🔥 Erro ao publicar o aviso:", error);
+        alert("Erro ao publicar o aviso. Verifique se você está logado como admin!");
+    }
+}
+
+// Função para o Admin cancelar/desativar o aviso atual
+async function desativarAvisoAdmin() {
+    // 1. Pede confirmação para não desativar sem querer num clique acidental
+    const confirmacao = confirm("🔇 Tem certeza que deseja desativar o aviso atual?\nA partir de agora, ninguém mais verá a mensagem na tela inicial.");
+
+    if (!confirmacao) {
+        return; // Se o admin cancelar, não faz nada
+    }
+
+    // 2. Caminho exato da nossa Portaria no Firebase
+    const caminhoBase = "artifacts/1:187178310074:web:5f56292dea8dc776532583/public/data";
+    const avisoRef = doc(db, `${caminhoBase}/system`, "avisoAtual");
+
+    try {
+        // 3. Atualiza APENAS o campo 'ativo' para false
+        await updateDoc(avisoRef, {
+            ativo: false
+        });
+
+        alert("✅ Aviso desativado com sucesso! A tela inicial voltou ao normal.");
+    } catch (error) {
+        console.error("🔥 Erro ao desativar o aviso:", error);
+        alert("Erro ao desativar o aviso. Verifique se você está logado como admin e se existe um aviso ativo.");
+    }
+}
+
+// Expõe a função para que o botão no HTML (onclick="desativarAvisoAdmin()") consiga encontrá-la
+window.desativarAvisoAdmin = desativarAvisoAdmin;
+// Expõe a função para o console ou para o botão de três pontinhos
+window.criarAvisoAdmin = criarAvisoAdmin;
+
+async function verificarAvisoDoSistema() {
+    const caminhoBase = "artifacts/1:187178310074:web:5f56292dea8dc776532583/public/data";
+    const avisoRef = doc(db, `${caminhoBase}/system`, "avisoAtual");
+
+    try {
+        const docSnap = await getDoc(avisoRef);
+
+        if (!docSnap.exists()) return; // Não tem arquivo de aviso, segue a vida
+
+        const aviso = docSnap.data();
+
+        // 1. Verifica se o aviso está marcado como ativo
+        if (!aviso.ativo) return;
+
+        // 2. Verifica se já se passaram 3 dias (3 dias * 24h * 60m * 60s * 1000ms = 259.200.000 ms)
+        const tresDiasEmMs = 3 * 24 * 60 * 60 * 1000;
+        const tempoPassado = Date.now() - aviso.dataCriacao;
+
+        if (tempoPassado > tresDiasEmMs) {
+            console.log("O aviso atual já expirou (> 3 dias).");
+            return;
+        }
+
+        // 3. Verifica se ESTE celular já viu ESTE aviso específico
+        const chaveMemoria = `jaViu_${aviso.id}`;
+        if (localStorage.getItem(chaveMemoria)) {
+            console.log("Usuário já leu este aviso.");
+            return;
+        }
+
+        // Se passou por todas as travas, MOSTRA O AVISO!
+        mostrarModalDeAviso(aviso.texto, chaveMemoria);
+
+    } catch (error) {
+        console.error("🔥 Erro ao checar avisos do sistema:", error);
+    }
+}
+
+function mostrarModalDeAviso(textoDoAviso, chaveMemoria) {
+    const modalHTML = `
+        <div class="text-center animate-bounce-in">
+            <div class="text-4xl mb-3">📢</div>
+            <h2 class="text-2xl font-black text-blue-600 mb-2">Aviso Importante</h2>
+
+            <div class="bg-blue-50 border-l-4 border-blue-500 p-4 rounded-r-lg text-left mb-6 shadow-sm">
+                <p class="text-gray-700 font-medium text-lg whitespace-pre-line">
+                    ${textoDoAviso}
+                </p>
+            </div>
+
+            <button id="btnEntendiAviso" class="w-full bg-blue-600 text-white font-bold py-3 rounded-xl hover:bg-blue-700 transition shadow-md">
+                Entendi!
+            </button>
+        </div>
+    `;
+
+    // Usa a sua função openModal que já existe no projeto
+    openModal(modalHTML);
+
+    // O pulo do gato: quando ele fecha, o celular nunca mais esquece!
+    document.getElementById('btnEntendiAviso').onclick = () => {
+        localStorage.setItem(chaveMemoria, "true");
+        closeModal();
+    };
+}
+/////////////FIM//////////////////
 
 // --- UI Objects Map Reformulado ---
 const ui = {
@@ -1767,6 +1909,7 @@ function renderScoreboard() {
     if (!temporadaJaVerificada) {
         verificarViradaDeTemporada();
         checarGatilhoDoResumo();
+        verificarAvisoDoSistema();
         temporadaJaVerificada = true; // Avisa que já checou, não precisa checar de novo hoje!
     }
 }
@@ -3253,6 +3396,8 @@ function showScoreboardFromHistory() {
 
             // ---> AQUI: Libera o botão no menu <---
             ui.menu.startGame.classList.remove('hidden');
+            document.getElementById('menuItemCriarAviso').classList.remove('hidden');
+            document.getElementById('menuItemDesativarAviso').classList.remove('hidden');
 
             showMessage("Modo Admin Ativado!", "success");
             renderScoreboard();
