@@ -281,7 +281,7 @@
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
 import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-import { getFirestore, doc, getDoc, addDoc, setDoc, updateDoc, deleteDoc, onSnapshot, collection, query, getDocs, orderBy, limit, serverTimestamp, writeBatch, increment, where } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+import { getFirestore, doc, getDoc, runTransaction, addDoc, setDoc, updateDoc, deleteDoc, onSnapshot, collection, query, getDocs, orderBy, limit, serverTimestamp, writeBatch, increment, where } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 import { getMessaging, getToken, onMessage } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-messaging.js";
 
 const firebaseConfig = {
@@ -347,6 +347,283 @@ function getDiasDaTemporadaAtual() {
     const diaAtual = (daysSinceStart % 30) + 1;
 
     return diaAtual;
+}
+
+// Adicionamos o 'seasonToEvaluate' no parênteses
+function calcularFechamentoDeTemporada(seasonToEvaluate) {
+    // Se não passarmos nada, ele usa a atual. Mas na virada, vamos passar a anterior!
+    const season = seasonToEvaluate || currentSeason;
+    const jogadores = Object.values(appState.players);
+
+    if (jogadores.length === 0) return [];
+
+    console.log(`🔍 O Juiz está avaliando a temporada: ${season}`);
+
+    let ligas = { 'A': [], 'B': [], 'C': [], 'D': [], 'Amador': [] };
+
+    jogadores.forEach(p => {
+        const serieAtual = p.series || 'D';
+        if(ligas[serieAtual]) ligas[serieAtual].push(p);
+    });
+
+    let movimentacoes = [];
+
+    for (let i = 0; i < SERIES_CONFIG.length; i++) {
+        const serieName = SERIES_CONFIG[i].name;
+        const playersInSerie = ligas[serieName];
+
+        if (!playersInSerie || playersInSerie.length === 0) continue;
+
+        playersInSerie.sort((a, b) => {
+            const statsA = a[season] || {};
+            const statsB = b[season] || {};
+
+            const aproveitamentoDiff = (statsB.aproveitamentoNaTemporada || 0) - (statsA.aproveitamentoNaTemporada || 0);
+            if (aproveitamentoDiff !== 0) return aproveitamentoDiff;
+
+            const pontosDiff = (statsB.pontosNaTemporada || 0) - (statsA.pontosNaTemporada || 0);
+            if (pontosDiff !== 0) return pontosDiff;
+
+            return (statsA.lambretasNaTemporada || 0) - (statsB.lambretasNaTemporada || 0);
+        });
+
+        // --- QUEM SOBE ---
+        let promocoes = 0;
+        if (i < SERIES_CONFIG.length - 1) {
+            for (let j = 0; j < playersInSerie.length && promocoes < 3; j++) {
+                let p = playersInSerie[j];
+                let partidas = p[season]?.partidasNaTemporada || 0;
+
+                if (partidas >= 20) {
+                    movimentacoes.push({ id: p.id, nome: p.name, de: serieName, para: SERIES_CONFIG[i + 1].name, status: '⬆️ PROMOVIDO' });
+                    promocoes++;
+                    p._jaMovimentado = true;
+                }
+            }
+        }
+
+        // --- QUEM CAI ---
+        let rebaixamentos = 0;
+        if (i > 0) {
+            for (let j = playersInSerie.length - 1; j >= 0 && rebaixamentos < 3; j--) {
+                let p = playersInSerie[j];
+
+                if (!p._jaMovimentado) {
+                    movimentacoes.push({ id: p.id, nome: p.name, de: serieName, para: SERIES_CONFIG[i - 1].name, status: '⬇️ REBAIXADO' });
+                    rebaixamentos++;
+                }
+            }
+        }
+    }
+
+    return movimentacoes;
+}
+// 🔑 A CHAVE DO COFRE: Isso expõe a função para o console (F12)
+window.calcularFechamentoDeTemporada = calcularFechamentoDeTemporada;
+
+// 1. O PORTEIRO (Verifica se virou o mês)
+let temporadaJaVerificada = false;
+
+async function verificarViradaDeTemporada() {
+    const seasonAtualPeloRelogio = currentSeason;
+    const caminhoBase = "artifacts/1:187178310074:web:5f56292dea8dc776532583/public/data";
+    const configRef = doc(db, `${caminhoBase}/system`, "config");
+
+    try {
+        // 🔥 A TRANSAÇÃO: O Firebase garante que só UMA pessoa passa por aqui por vez
+        const resultado = await runTransaction(db, async (transaction) => {
+            const configDoc = await transaction.get(configRef);
+
+            // 1. Se não existe, cria (primeira vez rodando o app)
+            if (!configDoc.exists()) {
+                transaction.set(configRef, { ultimaTemporadaProcessada: seasonAtualPeloRelogio });
+                return "criado";
+            }
+
+            const seasonNoBanco = configDoc.data().ultimaTemporadaProcessada;
+
+            // 2. Se o relógio andou pra frente, ESSE usuário é o escolhido!
+            if (seasonAtualPeloRelogio !== seasonNoBanco) {
+                // Já tranca a porta na mesma fração de segundo
+                transaction.update(configRef, { ultimaTemporadaProcessada: seasonAtualPeloRelogio });
+                return { precisaProcessar: true, seasonAntiga: seasonNoBanco };
+            }
+
+            // 3. Se já estiver atualizado, não faz nada
+            return "em_dia";
+        });
+
+        // --- FORA DA TRANSAÇÃO: Só o usuário "escolhido" faz o trabalho pesado ---
+        if (resultado && resultado.precisaProcessar) {
+            console.log(`🚨 Você é o Porteiro! Processando virada da ${resultado.seasonAntiga}...`);
+            await executarViradaAutomatica(resultado.seasonAntiga);
+        } else if (resultado === "criado") {
+            console.log("⚙️ Arquivo de sistema criado com sucesso.");
+        } else {
+            console.log(`✅ Temporada (${seasonAtualPeloRelogio}) está em dia.`);
+        }
+
+    } catch (error) {
+        console.error("🔥 Erro na portaria do sistema:", error);
+    }
+}
+
+// 2. O EXECUTOR INVISÍVEL (Faz a mudança no banco de dados)
+async function executarViradaAutomatica(seasonPassada) {
+    console.log(`⏳ Calculando rebaixamentos da ${seasonPassada}...`);
+
+    // Chama o nosso Juiz passando o passado
+    const movimentacoes = calcularFechamentoDeTemporada(seasonPassada);
+
+    if (movimentacoes.length === 0) {
+        console.log("Nenhuma movimentação de série necessária nesta virada.");
+        return;
+    }
+
+    try {
+        const batch = writeBatch(db);
+
+        movimentacoes.forEach(mov => {
+            const playerDocRef = doc(playersCollectionRef(), mov.id);
+            // Atualiza a série do jogador!
+            batch.update(playerDocRef, { series: mov.para });
+            console.log(`🔄 Automático - ${mov.nome}: Série ${mov.de} ➔ Série ${mov.para}`);
+        });
+
+        await batch.commit();
+        console.log("🎉 Virada de temporada concluída com sucesso! Séries atualizadas.");
+
+        // Opcional: Mostra um aviso rápido na tela para o "jogador porteiro"
+        showMessage(`Temporada encerrada! ${movimentacoes.length} jogadores mudaram de série.`, "success");
+
+    } catch (error) {
+        console.error("🔥 Erro fatal ao rodar a virada automática:", error);
+    }
+}
+
+// O GATILHO: Uma função simples e elegante
+function checarGatilhoDoResumo() {
+    const diaAtual = getDiasDaTemporadaAtual();
+
+    // Se a temporada começou há 7 dias ou menos, tenta mostrar a tela!
+    if (diaAtual <= 7) {
+        mostrarModalFimDeTemporada();
+    }
+}
+
+Tratar o fim de temporada para resumo
+function gerarResumoDaTemporadaAnterior() {
+    const seasonPassadaNum = getCurrentSeasonNumber() - 1;
+    if (seasonPassadaNum < 0) return null; // Não existe temporada anterior
+
+    const seasonPassada = `temporada_${seasonPassadaNum}`;
+    const jogadores = Object.values(appState.players);
+
+    // Nossos "Troféus"
+    let resumo = {
+        temporadaNome: seasonPassada,
+        maisPartidas: { nome: 'Ninguém', valor: 0 },
+        maisPontos: { nome: 'Ninguém', valor: 0 },
+        maisRaios: { nome: 'Ninguém', valor: 0 },
+        maisLambretas: { nome: 'Ninguém', valor: 0 },
+        maisMatchPoints: { nome: 'Ninguém', valor: 0 },
+        maisConquistas: { nome: 'Ninguém', valor: 0 },
+        conquistaMaisRecorrente: { nome: 'Nenhuma', valor: 0 }
+    };
+
+    let todasConquistas = {};
+
+    jogadores.forEach(p => {
+        const stats = p[seasonPassada];
+        if (!stats) return; // Se não jogou a temporada passada, pula
+
+        // Compara e atualiza os recordes
+        if ((stats.partidasNaTemporada || 0) > resumo.maisPartidas.valor) resumo.maisPartidas = { nome: p.name, valor: stats.partidasNaTemporada };
+        if ((stats.pontosNaTemporada || 0) > resumo.maisPontos.valor) resumo.maisPontos = { nome: p.name, valor: stats.pontosNaTemporada };
+        if ((stats.raiosNaTemporada || 0) > resumo.maisRaios.valor) resumo.maisRaios = { nome: p.name, valor: stats.raiosNaTemporada };
+        if ((stats.lambretasNaTemporada || 0) > resumo.maisLambretas.valor) resumo.maisLambretas = { nome: p.name, valor: stats.lambretasNaTemporada };
+        if ((stats.matchPointsNaTemporada || 0) > resumo.maisMatchPoints.valor) resumo.maisMatchPoints = { nome: p.name, valor: stats.matchPointsNaTemporada };
+
+        // Conta o total de conquistas do jogador e soma no global
+        let totalConquistasJogador = 0;
+        if (stats.conquistasNaTemporada) {
+            for (const [conquistaNome, qtd] of Object.entries(stats.conquistasNaTemporada)) {
+                totalConquistasJogador += qtd;
+                todasConquistas[conquistaNome] = (todasConquistas[conquistaNome] || 0) + qtd;
+            }
+        }
+        if (totalConquistasJogador > resumo.maisConquistas.valor) resumo.maisConquistas = { nome: p.name, valor: totalConquistasJogador };
+    });
+
+    // Acha a conquista que mais aconteceu na mesa toda
+    for (const [nome, qtd] of Object.entries(todasConquistas)) {
+        if (qtd > resumo.conquistaMaisRecorrente.valor) {
+            resumo.conquistaMaisRecorrente = { nome: nome.toUpperCase(), valor: qtd };
+        }
+    }
+
+    return resumo;
+}
+
+function mostrarModalFimDeTemporada() {
+    const diaAtual = getDiasDaTemporadaAtual();
+    const seasonPassadaNum = getCurrentSeasonNumber() - 1;
+    const chaveMemoria = `resumoVisto_temporada_${seasonPassadaNum}`;
+
+    // REGRAS DE EXIBIÇÃO:
+    // 1. Tem que ser até o 7º dia.
+    // 2. Não pode ser a temporada 0 (início do app).
+    // 3. O usuário não pode ter visto ainda neste aparelho.
+    if (diaAtual > 7 || seasonPassadaNum < 0 || localStorage.getItem(chaveMemoria)) {
+        return; // Sai silenciosamente, a vida segue!
+    }
+
+    const resumo = gerarResumoDaTemporadaAnterior();
+    if (!resumo || resumo.maisPartidas.valor === 0) return; // Se a temp passada foi vazia, ignora
+
+    // Cria o HTML do Modal (estilo Oscar)
+    const modalHTML = `
+        <div class="text-center animate-bounce-in">
+            <h2 class="text-2xl font-black text-yellow-500 mb-1">🏆 TEMPORADA ENCERRADA! 🏆</h2>
+            <p class="text-gray-600 font-semibold mb-6">Confira o Hall da Fama da última temporada</p>
+
+            <div class="grid grid-cols-2 gap-3 text-sm text-left mb-6">
+                <div class="bg-blue-50 p-3 rounded-lg border border-blue-100">
+                    <span class="block text-xs text-blue-400 font-bold uppercase">Mais Pontos</span>
+                    <strong class="text-blue-700 text-lg">${resumo.maisPontos.nome}</strong> <span class="text-blue-500">(${resumo.maisPontos.valor})</span>
+                </div>
+                <div class="bg-yellow-50 p-3 rounded-lg border border-yellow-100">
+                    <span class="block text-xs text-yellow-500 font-bold uppercase">O Rei do Raio</span>
+                    <strong class="text-yellow-700 text-lg">${resumo.maisRaios.nome}</strong> <span class="text-yellow-600">(${resumo.maisRaios.valor})</span>
+                </div>
+                <div class="bg-red-50 p-3 rounded-lg border border-red-100">
+                    <span class="block text-xs text-red-400 font-bold uppercase">Mais Lambretas</span>
+                    <strong class="text-red-700 text-lg">${resumo.maisLambretas.nome}</strong> <span class="text-red-500">(${resumo.maisLambretas.valor})</span>
+                </div>
+                <div class="bg-green-50 p-3 rounded-lg border border-green-100">
+                    <span class="block text-xs text-green-400 font-bold uppercase">Mestre das Conquistas</span>
+                    <strong class="text-green-700 text-lg">${resumo.maisConquistas.nome}</strong> <span class="text-green-500">(${resumo.maisConquistas.valor})</span>
+                </div>
+                <div class="bg-purple-50 p-3 rounded-lg border border-purple-100 col-span-2 text-center">
+                    <span class="block text-xs text-purple-400 font-bold uppercase">Maratona</span>
+                    <span class="text-purple-700 font-medium"><strong>${resumo.maisPartidas.nome}</strong> jogou incríveis <strong>${resumo.maisPartidas.valor}</strong> partidas!</span>
+                </div>
+            </div>
+
+            <button id="btnFecharResumo" class="w-full bg-gray-800 text-white font-bold py-3 rounded-xl hover:bg-gray-900 transition shadow-lg">
+                Começar Nova Temporada
+            </button>
+        </div>
+    `;
+
+    // Usa a sua função openModal existente
+    openModal(modalHTML);
+
+    // Quando ele clicar em fechar, salvamos no celular que ele já viu!
+    document.getElementById('btnFecharResumo').onclick = () => {
+        localStorage.setItem(chaveMemoria, "true"); // Grava na memória do navegador
+        closeModal();
+    };
 }
 
 // --- UI Objects Map Reformulado ---
@@ -1485,6 +1762,13 @@ function renderScoreboard() {
         `;
 
     }).join('');
+    // Verificando a Temporada, se virou para uma nova!
+    // 🛡️ O CADEADO: Chama o porteiro só na primeira vez que o placar carrega
+    if (!temporadaJaVerificada) {
+        verificarViradaDeTemporada();
+        checarGatilhoDoResumo();
+        temporadaJaVerificada = true; // Avisa que já checou, não precisa checar de novo hoje!
+    }
 }
 
 async function atualizarAproveitamentoTemporada(playerId) {
@@ -2359,6 +2643,17 @@ function atualizarBarraDeNoticias() {
 
     // NOVA NOTÍCIA DA TEMPORADA 👇
     const diaTemporada = getDiasDaTemporadaAtual();
+
+    // Se estamos na semana 1, injeta as fofocas da temporada passada!
+    if (diaTemporada <= 7) {
+        const resumo = gerarResumoDaTemporadaAnterior();
+        if (resumo && resumo.maisPontos.valor > 0) {
+            noticiasDaTemporada.push(`🏆 FIM DE TEMPORADA! ${resumo.maisPontos.nome} foi o campeão isolado com ${resumo.maisPontos.valor} pontos!`);
+            noticiasDaTemporada.push(`⚡ ${resumo.maisRaios.nome} fechou a mesa ${resumo.maisRaios.valor} vezes na última temporada.`);
+            noticiasDaTemporada.push(`🚔 Fiquem de olho: A conquista mais vista da última temporada foi '${resumo.conquistaMaisRecorrente.nome}'!`);
+        }
+    }
+
     // noticias.push(`⏳ TEMPORADA ATUAL: Faltam ${30 - diaTemporada + 1} dias para o fim! Estamos no dia ${diaTemporada}/30.`);
     noticias.push(`⏳ TEMPORADA ATUAL: Faltam ${30 - diaTemporada + 1} dias para o fim!`);
 
@@ -3160,6 +3455,7 @@ if ('serviceWorker' in navigator) {
         navigator.serviceWorker.getRegistration().then(reg => reg?.update());
     }, 60 * 60 * 1000);
 }
+// calcularFechamentoDeTemporada();
 
 </script>
 </body>
