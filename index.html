@@ -219,13 +219,24 @@
         </div>
     </div>
 
-    <div id="view-history" class="view fade-in">
-        <div class="flex justify-between items-center mb-6 pt-4">
-            <button id="btnBackToScoreboardFromHistory" class="text-gray-500 hover:text-gray-800 transition">← Voltar</button>
-            <h1 class="text-2xl sm:text-3xl font-bold font-condensed text-center">HISTÓRICO</h1>
-            <div class="w-12 sm:w-20"></div>
-        </div>
-        <div id="history-content-container">
+<div id="view-history" class="view fade-in">
+    <div class="flex justify-between items-center mb-4 pt-4">
+        <button id="btnBackToScoreboardFromHistory" class="text-gray-500 hover:text-gray-800 transition">← Voltar</button>
+        <h1 class="text-2xl sm:text-3xl font-bold font-condensed text-center">HISTÓRICO</h1>
+        <div class="w-12 sm:w-20"></div>
+    </div>
+
+    <div class="flex border-b border-gray-200 mb-6 px-1">
+        <button id="tabPartidas" class="flex-1 py-3 font-bold text-blue-600 border-b-2 border-blue-600 transition-colors" onclick="mudarAbaHistorico('partidas')">
+            Partidas
+        </button>
+        <button id="tabTemporadas" class="flex-1 py-3 font-bold text-gray-400 border-b-2 border-transparent transition-colors hover:text-gray-600" onclick="mudarAbaHistorico('temporadas')">
+            Temporadas
+        </button>
+    </div>
+
+    <div id="history-content-container">
+        <div id="conteudoPartidas" class="block">
             <div id="history-list-view">
                 <div id="history-match-list" class="space-y-3">
                     <p class="text-center text-gray-500 p-8">Buscando histórico...</p>
@@ -241,6 +252,14 @@
                     <div id="history-details-content"></div>
                 </div>
             </div>
+        </div>
+
+        <div id="conteudoTemporadas" class="hidden">
+            <select id="seletorTemporada" class="w-full p-3 mb-4 rounded-xl border border-gray-200 bg-white text-gray-700 font-medium focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-sm" onchange="renderScoreboardHistory(this.value, 'listaJogadoresTemporada')">
+            </select>
+
+            <div id="listaJogadoresTemporada" class="space-y-2 overflow-y-auto pb-4">
+                </div>
         </div>
     </div>
 </div>
@@ -3378,6 +3397,170 @@ function showScoreboardFromHistory() {
         switchView('view-scoreboard');
     }
 }
+
+// Histórico de Temporadas
+
+// Atualizamos a função de mudar de aba para popular o select na primeira vez!
+function mudarAbaHistorico(aba) {
+    const tabPartidas = document.getElementById('tabPartidas');
+    const tabTemporadas = document.getElementById('tabTemporadas');
+    const contPartidas = document.getElementById('conteudoPartidas');
+    const contTemporadas = document.getElementById('conteudoTemporadas');
+
+    if (aba === 'partidas') {
+        tabPartidas.className = "flex-1 py-3 font-bold text-blue-600 border-b-2 border-blue-600 transition-colors";
+        tabTemporadas.className = "flex-1 py-3 font-bold text-gray-400 border-b-2 border-transparent transition-colors hover:text-gray-600";
+        contPartidas.classList.remove('hidden');
+        contTemporadas.classList.add('hidden');
+    } else {
+        tabTemporadas.className = "flex-1 py-3 font-bold text-blue-600 border-b-2 border-blue-600 transition-colors";
+        tabPartidas.className = "flex-1 py-3 font-bold text-gray-400 border-b-2 border-transparent transition-colors hover:text-gray-600";
+        contTemporadas.classList.remove('hidden');
+        contPartidas.classList.add('hidden');
+
+        // Garante que o select tenha opções
+        if (document.getElementById('seletorTemporada').options.length === 0) {
+            popularSeletorDeTemporadas();
+        }
+
+        // Renderiza a temporada que estiver selecionada no dropdown
+        const seasonSelecionada = document.getElementById('seletorTemporada').value;
+        renderScoreboardHistory(seasonSelecionada, 'listaJogadoresTemporada');
+    }
+}
+
+// A Super Função de Renderização Histórica
+function renderScoreboardHistory(seasonName, containerId) {
+    // 1. Descobre o número da temporada (ex: "temporada_7" -> 7)
+    const seasonNum = parseInt(seasonName.replace('temporada_', ''));
+
+    // 2. Pega apenas os jogadores que têm dados gravados naquela temporada
+    let players = Object.values(appState.players).filter(p => p[seasonName]);
+
+    if (players.length === 0) {
+        document.getElementById(containerId).innerHTML = '<p class="text-center text-gray-500 py-8">Nenhum dado encontrado para esta temporada.</p>';
+        return;
+    }
+
+    // 3. ORDENAÇÃO DINÂMICA
+    players.sort((a, b) => {
+        const statsA = a[seasonName];
+        const statsB = b[seasonName];
+
+        if (seasonNum >= 7) {
+            // REGRA NOVA (Temporada 7 em diante)
+            // 1º Aproveitamento > 2º Pontos > 3º Menos Lambretas
+            const aproveitamentoDiff = (statsB.aproveitamentoNaTemporada || 0) - (statsA.aproveitamentoNaTemporada || 0);
+            if (aproveitamentoDiff !== 0) return aproveitamentoDiff;
+
+            const pontosDiff = (statsB.pontosNaTemporada || 0) - (statsA.pontosNaTemporada || 0);
+            if (pontosDiff !== 0) return pontosDiff;
+
+            return (statsA.lambretasNaTemporada || 0) - (statsB.lambretasNaTemporada || 0);
+        } else {
+            // REGRA ANTIGA (Temporada 6 para trás)
+            // 1º (Raios - Lambretas) > 2º Pontos
+            const saldoA = (statsA.raiosNaTemporada || 0) - (statsA.lambretasNaTemporada || 0);
+            const saldoB = (statsB.raiosNaTemporada || 0) - (statsB.lambretasNaTemporada || 0);
+
+            if (saldoB !== saldoA) return saldoB - saldoA;
+
+            // Desempate por pontos
+            return (statsB.pontosNaTemporada || 0) - (statsA.pontosNaTemporada || 0);
+        }
+    });
+
+    // 4. RENDERIZAÇÃO VISUAL (LAYOUT)
+    const html = players.map((player, index) => {
+        const stats = player[seasonName];
+
+        // Estilo base do card e medalhas para o Top 3
+        let cardClasses = "p-3 rounded-xl shadow-sm flex items-center justify-between mb-2 transition-all duration-200 hover:scale-[1.01] ";
+        let positionIcon = `${index + 1}º`;
+
+        if (index === 0) { cardClasses += "bg-yellow-50 border-l-4 border-yellow-400"; positionIcon = "🥇"; }
+        else if (index === 1) { cardClasses += "bg-gray-50 border-l-4 border-gray-400"; positionIcon = "🥈"; }
+        else if (index === 2) { cardClasses += "bg-orange-50 border-l-4 border-orange-400"; positionIcon = "🥉"; }
+        else { cardClasses += "bg-white border border-gray-100"; }
+
+        if (seasonNum >= 7) {
+            // LAYOUT NOVO (RT | LT | PAT | AT%)
+            return `
+                <div class="${cardClasses}">
+                    <div class="flex items-center gap-3">
+                        <span class="font-mono text-sm text-gray-400 w-6 text-center">${positionIcon}</span>
+                        <span class="font-bold text-gray-800">${player.name}</span>
+                    </div>
+                    <div class="text-xs font-mono text-right w-44">
+                        <div class="grid grid-cols-4 text-gray-400 mb-0.5">
+                            <span class="text-center">RT</span>
+                            <span class="text-center">LT</span>
+                            <span class="text-center">PAT</span>
+                            <span class="text-center">AT</span>
+                        </div>
+                        <div class="grid grid-cols-4 font-semibold text-sm">
+                            <span class="text-blue-600 text-center">${stats.raiosNaTemporada || 0}</span>
+                            <span class="text-yellow-600 text-center">${stats.lambretasNaTemporada || 0}</span>
+                            <span class="text-gray-700 text-center">${stats.partidasNaTemporada || 0}</span>
+                            <span class="text-gray-800 text-center">${(stats.aproveitamentoNaTemporada || 0).toFixed(1)}%</span>
+                        </div>
+                    </div>
+                </div>
+            `;
+        } else {
+            // LAYOUT ANTIGO (Jogos | Pts | Raios | Lambretas)
+            return `
+                <div class="${cardClasses}">
+                    <div class="flex items-center gap-3">
+                        <span class="font-mono text-sm text-gray-400 w-6 text-center">${positionIcon}</span>
+                        <span class="font-bold text-gray-800">${player.name}</span>
+                    </div>
+                    <div class="text-xs font-mono text-right w-44">
+                        <div class="grid grid-cols-4 text-gray-400 mb-0.5">
+                            <span class="text-center" title="Partidas Jogadas">JOG</span>
+                            <span class="text-center" title="Pontos">PTS</span>
+                            <span class="text-center" title="Raios">RT</span>
+                            <span class="text-center" title="Lambretas">LT</span>
+                        </div>
+                        <div class="grid grid-cols-4 font-semibold text-sm">
+                            <span class="text-gray-600 text-center">${stats.partidasNaTemporada || 0}</span>
+                            <span class="text-green-600 text-center">${stats.pontosNaTemporada || 0}</span>
+                            <span class="text-blue-600 text-center">${stats.raiosNaTemporada || 0}</span>
+                            <span class="text-red-500 text-center">${stats.lambretasNaTemporada || 0}</span>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+    }).join('');
+
+    document.getElementById(containerId).innerHTML = html;
+}
+
+// Função que gera a lista de temporadas no <select>
+function popularSeletorDeTemporadas() {
+    const select = document.getElementById('seletorTemporada');
+    select.innerHTML = ''; // Limpa a lista antes de preencher
+
+    // Usa a sua função que já existe para descobrir a temporada atual
+    const temporadaAtual = getCurrentSeasonNumber();
+
+    // Vamos do número atual até a temporada 1
+    for (let i = temporadaAtual; i >= 1; i--) {
+        const option = document.createElement('option');
+        option.value = `temporada_${i}`;
+
+        // Coloca a tag "(Atual)" na temporada vigente
+        option.textContent = i === temporadaAtual ? `Temporada ${i} (Atual)` : `Temporada ${i}`;
+
+        select.appendChild(option);
+    }
+}
+
+// Expondo as funções do Histórico para os botões do HTML conseguirem enxergar
+window.mudarAbaHistorico = mudarAbaHistorico;
+window.renderScoreboardHistory = renderScoreboardHistory;
+
 
 // =======================================================================
 //  FIM: FUNÇÕES DE HISTÓRICO
