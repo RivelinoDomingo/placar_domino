@@ -2782,7 +2782,7 @@ function atualizarBarraDeNoticias() {
     let noticias = [];
 
     // Notícia genérica inicial
-    noticias.push(`🀄 Resumo da Temporada!`);
+    // noticias.push(`🀄 Resumo da Temporada Atual!`);
 
     // NOVA NOTÍCIA DA TEMPORADA 👇
     const diaTemporada = getDiasDaTemporadaAtual();
@@ -2791,9 +2791,10 @@ function atualizarBarraDeNoticias() {
     if (diaTemporada <= 7) {
         const resumo = gerarResumoDaTemporadaAnterior();
         if (resumo && resumo.maisPontos.valor > 0) {
-            noticiasDaTemporada.push(`🏆 FIM DE TEMPORADA! ${resumo.maisPontos.nome} foi o campeão isolado com ${resumo.maisPontos.valor} pontos!`);
-            noticiasDaTemporada.push(`⚡ ${resumo.maisRaios.nome} fechou a mesa ${resumo.maisRaios.valor} vezes na última temporada.`);
-            noticiasDaTemporada.push(`🚔 Fiquem de olho: A conquista mais vista da última temporada foi '${resumo.conquistaMaisRecorrente.nome}'!`);
+            noticias.push(`🏆FIM DE TEMPORADA! ${resumo.maisRaios.nome} venceu ${resumo.maisRaios.valor} raios na última temporada.`);
+            noticias.push(`⚡ ${resumo.maisPontos.nome} foi o batedor isolado com ${resumo.maisPontos.valor} pontos!`);
+            noticias.push(`🚔 Fiquem de olho: A conquista mais vista da última temporada foi '${resumo.conquistaMaisRecorrente.nome}'!`);
+            noticias.push(` ${resumo.maisConquistas.nome} foi quem mais acumulou conquistas na temporada! Um total de ${resumo.maisConquistas.valor}`);
         }
     }
 
@@ -2801,7 +2802,7 @@ function atualizarBarraDeNoticias() {
     noticias.push(`⏳ TEMPORADA ATUAL: Faltam ${30 - diaTemporada + 1} dias para o fim!`);
 
     if (maisPartidas && (maisPartidas[currentSeason]?.partidasNaTemporada || 0) > 0) {
-        noticias.push(`🔥 VICIADO: ${maisPartidas.name} lidera a mesa com ${maisPartidas[currentSeason].partidasNaTemporada} partidas disputadas nesta temporada!`);
+        noticias.push(`🔥 VICIADO: ${maisPartidas.name} lidera a mesa com ${maisPartidas[currentSeason].partidasNaTemporada} partidas nesta temporada!`);
     }
 
     if (maisRaios && (maisRaios[currentSeason]?.raiosNaTemporada || 0) > 0) {
