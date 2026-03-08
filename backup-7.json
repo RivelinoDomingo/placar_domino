@@ -2,8 +2,6 @@
   "players": [
     {
       "id": "0kWQHBEtY7ifz2JBMwBS",
-      "series": "D",
-      "conquistas": {},
       "temporada_0": {
         "raiosNaTemporada": 0,
         "pontosNaTemporada": 0,
@@ -37,10 +35,6 @@
         "partidasNaTemporada": 9,
         "aproveitamentoNaTemporada": 27.777777777777782
       },
-      "raios": 3,
-      "lambreta": 13,
-      "pontos": 59,
-      "partidasJogadas": 45,
       "temporada_7": {
         "matchPointsNaTemporada": 1,
         "raiosNaTemporada": 1,
@@ -48,6 +42,25 @@
         "pontosNaTemporada": 13,
         "partidasNaTemporada": 13,
         "aproveitamentoNaTemporada": 26.923076923076923
+      },
+      "series": "Amador",
+      "conquistas": {
+        "roubo": 1
+      },
+      "pontos": 132,
+      "raios": 14,
+      "partidasJogadas": 79,
+      "lambreta": 23,
+      "temporada_8": {
+        "conquistasNaTemporada": {
+          "roubo": 1
+        },
+        "matchPointsNaTemporada": 17,
+        "pontosNaTemporada": 73,
+        "raiosNaTemporada": 11,
+        "partidasNaTemporada": 34,
+        "lambretasNaTemporada": 10,
+        "aproveitamentoNaTemporada": 52.94117647058823
       }
     },
     {
@@ -116,27 +129,40 @@
         "partidasNaTemporada": 166,
         "aproveitamentoNaTemporada": 34.93975903614458
       },
-      "lambreta": 151,
-      "raios": 98,
-      "pontos": 880,
-      "partidasJogadas": 500,
       "temporada_7": {
         "lambretasNaTemporada": 38,
-        "matchPointsNaTemporada": 57,
-        "raiosNaTemporada": 33,
-        "pontosNaTemporada": 301,
-        "partidasNaTemporada": 158,
-        "aproveitamentoNaTemporada": 46.835443037974684,
         "conquistasNaTemporada": {
           "roubo": 5,
           "tanque_de_guerra": 1
-        }
+        },
+        "matchPointsNaTemporada": 58,
+        "partidasNaTemporada": 160,
+        "raiosNaTemporada": 34,
+        "aproveitamentoNaTemporada": 47.5,
+        "pontosNaTemporada": 307
       },
       "conquistas": {
         "imbativel": 1,
-        "azarao": 4,
-        "roubo": 7,
-        "tanque_de_guerra": 1
+        "tanque_de_guerra": 2,
+        "azarao": 5,
+        "roubo": 8
+      },
+      "raios": 115,
+      "pontos": 1002,
+      "partidasJogadas": 572,
+      "lambreta": 177,
+      "temporada_8": {
+        "conquistasNaTemporada": {
+          "tanque_de_guerra": 1,
+          "azarao": 1,
+          "roubo": 1
+        },
+        "raiosNaTemporada": 16,
+        "matchPointsNaTemporada": 22,
+        "pontosNaTemporada": 116,
+        "partidasNaTemporada": 70,
+        "lambretasNaTemporada": 26,
+        "aproveitamentoNaTemporada": 35.71428571428571
       }
     },
     {
@@ -182,23 +208,30 @@
         "partidasNaTemporada": 47,
         "aproveitamentoNaTemporada": 45.74468085106383
       },
-      "raios": 25,
-      "lambreta": 32,
-      "pontos": 219,
-      "partidasJogadas": 122,
       "temporada_7": {
         "raiosNaTemporada": 10,
-        "lambretasNaTemporada": 14,
-        "matchPointsNaTemporada": 18,
-        "pontosNaTemporada": 106,
-        "partidasNaTemporada": 60,
-        "aproveitamentoNaTemporada": 43.33333333333333
+        "matchPointsNaTemporada": 19,
+        "partidasNaTemporada": 62,
+        "lambretasNaTemporada": 15,
+        "aproveitamentoNaTemporada": 41.935483870967744,
+        "pontosNaTemporada": 109
+      },
+      "lambreta": 38,
+      "partidasJogadas": 144,
+      "pontos": 260,
+      "raios": 28,
+      "temporada_8": {
+        "lambretasNaTemporada": 5,
+        "matchPointsNaTemporada": 7,
+        "pontosNaTemporada": 38,
+        "partidasNaTemporada": 20,
+        "raiosNaTemporada": 3,
+        "aproveitamentoNaTemporada": 40
       }
     },
     {
       "id": "JRsUCSKJLn576U0BVhFG",
       "name": "Alexandre",
-      "series": "D",
       "temporada_0": {
         "conquistasNaTemporada": {
           "roubo": 1,
@@ -252,30 +285,43 @@
         "raiosNaTemporada": 26,
         "aproveitamentoNaTemporada": 50.98039215686275
       },
-      "lambreta": 73,
-      "conquistas": {
-        "azarao": 4,
-        "roubo": 9
-      },
-      "partidasJogadas": 356,
-      "pontos": 775,
-      "raios": 110,
       "temporada_7": {
         "lambretasNaTemporada": 22,
-        "matchPointsNaTemporada": 57,
         "conquistasNaTemporada": {
           "roubo": 5
         },
-        "pontosNaTemporada": 260,
-        "partidasNaTemporada": 109,
-        "raiosNaTemporada": 44,
-        "aproveitamentoNaTemporada": 70.18348623853211
+        "matchPointsNaTemporada": 58,
+        "raiosNaTemporada": 45,
+        "pontosNaTemporada": 265,
+        "partidasNaTemporada": 111,
+        "aproveitamentoNaTemporada": 70.72072072072072
+      },
+      "series": "C",
+      "conquistas": {
+        "azarao": 4,
+        "tanque_de_guerra": 2,
+        "roubo": 10
+      },
+      "lambreta": 82,
+      "partidasJogadas": 399,
+      "pontos": 873,
+      "raios": 127,
+      "temporada_8": {
+        "conquistasNaTemporada": {
+          "tanque_de_guerra": 2,
+          "roubo": 1
+        },
+        "lambretasNaTemporada": 9,
+        "matchPointsNaTemporada": 19,
+        "pontosNaTemporada": 93,
+        "partidasNaTemporada": 41,
+        "raiosNaTemporada": 16,
+        "aproveitamentoNaTemporada": 67.07317073170731
       }
     },
     {
       "id": "O9HRWCk2kCHOKT5aLZ69",
       "name": "Kauê",
-      "series": "D",
       "temporada_0": {
         "conquistasNaTemporada": {},
         "lambretasNaTemporada": 1,
@@ -293,9 +339,6 @@
         "lambretasNaTemporada": 2,
         "aproveitamentoNaTemporada": 37.5
       },
-      "conquistas": {
-        "roubo": 1
-      },
       "temporada_6": {
         "conquistasNaTemporada": {
           "roubo": 1
@@ -307,10 +350,6 @@
         "raiosNaTemporada": 11,
         "aproveitamentoNaTemporada": 97.36842105263159
       },
-      "lambreta": 9,
-      "raios": 20,
-      "pontos": 115,
-      "partidasJogadas": 51,
       "temporada_7": {
         "lambretasNaTemporada": 4,
         "matchPointsNaTemporada": 4,
@@ -318,16 +357,30 @@
         "pontosNaTemporada": 26,
         "partidasNaTemporada": 16,
         "aproveitamentoNaTemporada": 37.5
+      },
+      "series": "Amador",
+      "lambreta": 13,
+      "conquistas": {
+        "roubo": 2
+      },
+      "partidasJogadas": 65,
+      "pontos": 145,
+      "raios": 25,
+      "temporada_8": {
+        "lambretasNaTemporada": 4,
+        "matchPointsNaTemporada": 7,
+        "conquistasNaTemporada": {
+          "roubo": 1
+        },
+        "pontosNaTemporada": 30,
+        "partidasNaTemporada": 14,
+        "raiosNaTemporada": 5,
+        "aproveitamentoNaTemporada": 57.142857142857146
       }
     },
     {
       "id": "RTN5Bn71X3CJSlEWxaNe",
       "name": "Maria",
-      "series": "D",
-      "conquistas": {},
-      "pontos": 11,
-      "raios": 1,
-      "partidasJogadas": 6,
       "lambreta": 1,
       "temporada_7": {
         "conquistasNaTemporada": {},
@@ -337,12 +390,28 @@
         "partidasNaTemporada": 6,
         "lambretasNaTemporada": 1,
         "aproveitamentoNaTemporada": 50
+      },
+      "series": "D",
+      "conquistas": {
+        "roubo": 1
+      },
+      "partidasJogadas": 7,
+      "pontos": 15,
+      "raios": 2,
+      "temporada_8": {
+        "matchPointsNaTemporada": 1,
+        "conquistasNaTemporada": {
+          "roubo": 1
+        },
+        "pontosNaTemporada": 4,
+        "partidasNaTemporada": 1,
+        "raiosNaTemporada": 1,
+        "aproveitamentoNaTemporada": 150
       }
     },
     {
       "id": "S5rgZjCCXzsuvGAObQrd",
       "name": "Lucinha",
-      "series": "D",
       "temporada_0": {
         "lambretasNaTemporada": 0,
         "raiosNaTemporada": 0,
@@ -375,10 +444,7 @@
         "azarao": 1,
         "roubo": 1
       },
-      "pontos": 80,
       "raios": 8,
-      "partidasJogadas": 41,
-      "lambreta": 11,
       "temporada_7": {
         "matchPointsNaTemporada": 6,
         "conquistasNaTemporada": {
@@ -389,12 +455,21 @@
         "partidasNaTemporada": 20,
         "lambretasNaTemporada": 6,
         "aproveitamentoNaTemporada": 40
+      },
+      "series": "D",
+      "pontos": 81,
+      "partidasJogadas": 44,
+      "lambreta": 13,
+      "temporada_8": {
+        "pontosNaTemporada": 1,
+        "partidasNaTemporada": 3,
+        "lambretasNaTemporada": 2,
+        "aproveitamentoNaTemporada": -66.66666666666666
       }
     },
     {
       "id": "fJQaOTqKaLo4ucvkb3yw",
       "name": "Renata",
-      "series": "D",
       "temporada_0": {
         "conquistasNaTemporada": {},
         "matchPointsNaTemporada": 24,
@@ -454,16 +529,6 @@
         "partidasNaTemporada": 123,
         "aproveitamentoNaTemporada": 51.6260162601626
       },
-      "conquistas": {
-        "imbativel": 3,
-        "azarao": 3,
-        "tanque_de_guerra": 2,
-        "roubo": 10
-      },
-      "lambreta": 104,
-      "partidasJogadas": 408,
-      "pontos": 833,
-      "raios": 124,
       "temporada_7": {
         "conquistasNaTemporada": {
           "imbativel": 1,
@@ -477,6 +542,28 @@
         "partidasNaTemporada": 126,
         "raiosNaTemporada": 35,
         "aproveitamentoNaTemporada": 50.7936507936508
+      },
+      "series": "C",
+      "conquistas": {
+        "imbativel": 3,
+        "tanque_de_guerra": 2,
+        "roubo": 10,
+        "azarao": 5
+      },
+      "lambreta": 120,
+      "raios": 126,
+      "pontos": 889,
+      "partidasJogadas": 451,
+      "temporada_8": {
+        "conquistasNaTemporada": {
+          "azarao": 2
+        },
+        "lambretasNaTemporada": 16,
+        "raiosNaTemporada": 2,
+        "pontosNaTemporada": 56,
+        "matchPointsNaTemporada": 12,
+        "partidasNaTemporada": 43,
+        "aproveitamentoNaTemporada": 17.441860465116278
       }
     },
     {
@@ -514,31 +601,43 @@
         "lambretasNaTemporada": 4,
         "aproveitamentoNaTemporada": 37.5
       },
-      "conquistas": {
-        "roubo": 2,
-        "azarao": 3
-      },
-      "raios": 24,
-      "pontos": 212,
-      "partidasJogadas": 118,
-      "lambreta": 30,
       "temporada_7": {
         "conquistasNaTemporada": {
           "roubo": 2,
           "azarao": 3
         },
         "raiosNaTemporada": 19,
-        "pontosNaTemporada": 168,
         "matchPointsNaTemporada": 28,
         "partidasNaTemporada": 94,
         "lambretasNaTemporada": 24,
-        "aproveitamentoNaTemporada": 44.680851063829785
+        "aproveitamentoNaTemporada": 44.680851063829785,
+        "pontosNaTemporada": 168
+      },
+      "conquistas": {
+        "azarao": 3,
+        "tanque_de_guerra": 1,
+        "roubo": 5
+      },
+      "pontos": 299,
+      "raios": 34,
+      "partidasJogadas": 170,
+      "lambreta": 43,
+      "temporada_8": {
+        "conquistasNaTemporada": {
+          "tanque_de_guerra": 1,
+          "roubo": 3
+        },
+        "matchPointsNaTemporada": 15,
+        "pontosNaTemporada": 87,
+        "raiosNaTemporada": 10,
+        "partidasNaTemporada": 52,
+        "lambretasNaTemporada": 13,
+        "aproveitamentoNaTemporada": 44.23076923076923
       }
     },
     {
       "id": "pDcUjSsVXz0D5pGStdoT",
       "name": "Jorginho",
-      "series": "D",
       "temporada_0": {
         "raiosNaTemporada": 0,
         "conquistasNaTemporada": {},
@@ -586,12 +685,12 @@
         "matchPointsNaTemporada": 7,
         "partidasNaTemporada": 16,
         "aproveitamentoNaTemporada": 75
-      }
+      },
+      "series": "D"
     },
     {
       "id": "veewz7agRoCE0bM4KwWa",
       "name": "Rivelino",
-      "series": "D",
       "temporada_0": {
         "conquistasNaTemporada": {
           "roubo": 1
@@ -655,16 +754,6 @@
         "partidasNaTemporada": 109,
         "aproveitamentoNaTemporada": 44.49541284403669
       },
-      "conquistas": {
-        "azarao": 4,
-        "imbativel": 1,
-        "roubo": 7,
-        "tanque_de_guerra": 1
-      },
-      "lambreta": 82,
-      "raios": 65,
-      "pontos": 517,
-      "partidasJogadas": 290,
       "temporada_7": {
         "conquistasNaTemporada": {
           "azarao": 1,
@@ -678,12 +767,33 @@
         "matchPointsNaTemporada": 23,
         "partidasNaTemporada": 61,
         "aproveitamentoNaTemporada": 48.36065573770492
+      },
+      "series": "C",
+      "conquistas": {
+        "azarao": 4,
+        "imbativel": 1,
+        "tanque_de_guerra": 1,
+        "roubo": 9
+      },
+      "lambreta": 87,
+      "raios": 73,
+      "pontos": 566,
+      "partidasJogadas": 314,
+      "temporada_8": {
+        "conquistasNaTemporada": {
+          "roubo": 2
+        },
+        "lambretasNaTemporada": 5,
+        "matchPointsNaTemporada": 10,
+        "raiosNaTemporada": 8,
+        "pontosNaTemporada": 49,
+        "partidasNaTemporada": 24,
+        "aproveitamentoNaTemporada": 62.49999999999999
       }
     },
     {
       "id": "zKnvEnwu79cfz5nVvJ9l",
       "name": "Hugo",
-      "series": "D",
       "temporada_0": {
         "lambretasNaTemporada": 0,
         "conquistasNaTemporada": {},
@@ -737,23 +847,35 @@
         "raiosNaTemporada": 3,
         "aproveitamentoNaTemporada": 41.66666666666667
       },
-      "conquistas": {
-        "roubo": 3
-      },
-      "raios": 20,
-      "lambreta": 19,
-      "pontos": 135,
-      "partidasJogadas": 68,
       "temporada_7": {
         "conquistasNaTemporada": {
           "roubo": 1
         },
         "raiosNaTemporada": 2,
-        "lambretasNaTemporada": 3,
         "matchPointsNaTemporada": 4,
-        "pontosNaTemporada": 19,
-        "partidasNaTemporada": 10,
-        "aproveitamentoNaTemporada": 40
+        "lambretasNaTemporada": 4,
+        "pontosNaTemporada": 21,
+        "partidasNaTemporada": 12,
+        "aproveitamentoNaTemporada": 33.333333333333336
+      },
+      "series": "Amador",
+      "conquistas": {
+        "roubo": 4
+      },
+      "raios": 30,
+      "pontos": 189,
+      "partidasJogadas": 96,
+      "lambreta": 27,
+      "temporada_8": {
+        "conquistasNaTemporada": {
+          "roubo": 1
+        },
+        "matchPointsNaTemporada": 11,
+        "raiosNaTemporada": 10,
+        "pontosNaTemporada": 52,
+        "partidasNaTemporada": 26,
+        "lambretasNaTemporada": 7,
+        "aproveitamentoNaTemporada": 61.53846153846155
       }
     }
   ],
@@ -889,6 +1011,16 @@
       }
     },
     {
+      "id": "6yOLnvnc1BPilyCWDtSb",
+      "type": "achievement",
+      "player": "Rivelino",
+      "text": "🚔👮🏻Chama a policia que Rivelino acabou de roubar o raio de Renata",
+      "timestamp": {
+        "_seconds": 1772591130,
+        "_nanoseconds": 827000000
+      }
+    },
+    {
       "id": "7ajEai5CKkekj8h1NT36",
       "type": "achievement",
       "player": "Renata",
@@ -969,6 +1101,16 @@
       }
     },
     {
+      "id": "BrELVMWKwZXVaQiv7li0",
+      "type": "achievement",
+      "player": "Rivelino",
+      "text": "🚔👮🏻Chama a policia que Rivelino acabou de roubar o raio de Renata",
+      "timestamp": {
+        "_seconds": 1772839261,
+        "_nanoseconds": 447000000
+      }
+    },
+    {
       "id": "Ce5CzJSN9MBirI975gcE",
       "type": "achievement",
       "player": "Renata",
@@ -979,6 +1121,16 @@
       }
     },
     {
+      "id": "D4byG3uOZEZL9wExXaUO",
+      "type": "achievement",
+      "player": "Caio",
+      "text": "🚔👮🏻Chama a policia que Caio acabou de roubar o raio de Ari",
+      "timestamp": {
+        "_seconds": 1772507103,
+        "_nanoseconds": 853000000
+      }
+    },
+    {
       "id": "DHcxQwAD8coWVxDNycwV",
       "type": "achievement",
       "player": "Renata",
@@ -986,6 +1138,26 @@
       "timestamp": {
         "_seconds": 1754960977,
         "_nanoseconds": 836000000
+      }
+    },
+    {
+      "id": "DLodib0EvhvVV9rWK13f",
+      "type": "achievement",
+      "player": "Caio",
+      "text": "🚔👮🏻Chama a policia que Caio acabou de roubar o raio de Renata",
+      "timestamp": {
+        "_seconds": 1772760275,
+        "_nanoseconds": 363000000
+      }
+    },
+    {
+      "id": "F5MWnmYeN2JRmGZgsDMC",
+      "type": "achievement",
+      "player": "Visita",
+      "text": "🚔👮🏻Chama a policia que Visita acabou de roubar o raio de Renata",
+      "timestamp": {
+        "_seconds": 1772589183,
+        "_nanoseconds": 519000000
       }
     },
     {
@@ -1016,6 +1188,16 @@
       "timestamp": {
         "_seconds": 1753488039,
         "_nanoseconds": 138000000
+      }
+    },
+    {
+      "id": "HaXVE3ToukWLCO6weymt",
+      "type": "achievement",
+      "player": "Maria",
+      "text": "🚔👮🏻Chama a policia que Maria acabou de roubar o raio de Alexandre",
+      "timestamp": {
+        "_seconds": 1772941108,
+        "_nanoseconds": 764000000
       }
     },
     {
@@ -1066,6 +1248,16 @@
       "timestamp": {
         "_seconds": 1753496917,
         "_nanoseconds": 28000000
+      }
+    },
+    {
+      "id": "Mz7w3lL319fdiZ2cYc0w",
+      "type": "achievement",
+      "player": "Hugo",
+      "text": "🚔👮🏻Chama a policia que Hugo acabou de roubar o raio de Visita",
+      "timestamp": {
+        "_seconds": 1772755859,
+        "_nanoseconds": 184000000
       }
     },
     {
@@ -1156,6 +1348,46 @@
       "timestamp": {
         "_seconds": 1768440724,
         "_nanoseconds": 77000000
+      }
+    },
+    {
+      "id": "UNQivmMXgMLGBboJsCip",
+      "type": "achievement",
+      "player": "Alexandre",
+      "text": "🎖️ O trator passou! Alexandre foi o Dono da Mesa acumulando 5 pontos!",
+      "timestamp": {
+        "_seconds": 1772585907,
+        "_nanoseconds": 89000000
+      }
+    },
+    {
+      "id": "VwzlWYxrBK6u0nBPxm6y",
+      "type": "achievement",
+      "player": "Renata",
+      "text": "sofreu uma sequência de 3 lambretas! 🚑🤕🤕",
+      "timestamp": {
+        "_seconds": 1772588036,
+        "_nanoseconds": 943000000
+      }
+    },
+    {
+      "id": "VylRfMaUqoCFayUh5M9s",
+      "type": "achievement",
+      "player": "Caio",
+      "text": "🎖️ O trator passou! Caio foi o Dono da Mesa acumulando 15 pontos!",
+      "timestamp": {
+        "_seconds": 1772678410,
+        "_nanoseconds": 290000000
+      }
+    },
+    {
+      "id": "WQmwRHerVTLzTpF97dsP",
+      "type": "achievement",
+      "player": "Ari",
+      "text": "sofreu uma sequência de 3 lambretas! 🚑🤕🤕",
+      "timestamp": {
+        "_seconds": 1772588036,
+        "_nanoseconds": 761000000
       }
     },
     {
@@ -1259,6 +1491,16 @@
       }
     },
     {
+      "id": "gHx8LUAwiiXzwGTUkmHt",
+      "type": "achievement",
+      "player": "Kauê",
+      "text": "🚔👮🏻Chama a policia que Kauê acabou de roubar o raio de Caio",
+      "timestamp": {
+        "_seconds": 1772932025,
+        "_nanoseconds": 133000000
+      }
+    },
+    {
       "id": "gicdhNn3z8NIu4bmn8BM",
       "type": "achievement",
       "player": "Alexandre",
@@ -1279,6 +1521,16 @@
       }
     },
     {
+      "id": "hTZ6FmYmgOSEBsDz2w7D",
+      "type": "achievement",
+      "player": "Renata",
+      "text": "sofreu uma sequência de 3 lambretas! 🚑🤕🤕",
+      "timestamp": {
+        "_seconds": 1772942161,
+        "_nanoseconds": 332000000
+      }
+    },
+    {
       "id": "iAQsJJ2Z25OcVg3dxV8k",
       "type": "achievement",
       "player": "Caio",
@@ -1286,6 +1538,16 @@
       "timestamp": {
         "_seconds": 1770774509,
         "_nanoseconds": 549000000
+      }
+    },
+    {
+      "id": "j8N33mFUqRuBuV3Oi53Z",
+      "type": "achievement",
+      "player": "Ari",
+      "text": "🚔👮🏻Chama a policia que Ari acabou de roubar o raio de Caio",
+      "timestamp": {
+        "_seconds": 1772850989,
+        "_nanoseconds": 623000000
       }
     },
     {
@@ -1459,6 +1721,26 @@
       }
     },
     {
+      "id": "sRFKJqPDXGi2UqMKPAzo",
+      "type": "achievement",
+      "player": "Alexandre",
+      "text": "🎖️ O trator passou! Alexandre foi o Dono da Mesa acumulando 13 pontos!",
+      "timestamp": {
+        "_seconds": 1772596533,
+        "_nanoseconds": 902000000
+      }
+    },
+    {
+      "id": "sgtjF4wtgSxSOyQQm5eA",
+      "type": "achievement",
+      "player": "Caio",
+      "text": "🚔👮🏻Chama a policia que Caio acabou de roubar o raio de Alexandre",
+      "timestamp": {
+        "_seconds": 1772938242,
+        "_nanoseconds": 120000000
+      }
+    },
+    {
       "id": "t7dVYtPFhCjEJwoBLXyY",
       "type": "achievement",
       "player": "Lucinha",
@@ -1476,6 +1758,16 @@
       "timestamp": {
         "_seconds": 1752688299,
         "_nanoseconds": 473000000
+      }
+    },
+    {
+      "id": "uocj9KlkDbY9fWNurKT7",
+      "type": "achievement",
+      "player": "Ari",
+      "text": "🎖️ O trator passou! Ari foi o Dono da Mesa acumulando 23 pontos!",
+      "timestamp": {
+        "_seconds": 1772507134,
+        "_nanoseconds": 888000000
       }
     },
     {
@@ -1519,6 +1811,16 @@
       }
     },
     {
+      "id": "yO06Ji6vzuFI3DV3NQPv",
+      "type": "achievement",
+      "player": "Alexandre",
+      "text": "🚔👮🏻Chama a policia que Alexandre acabou de roubar o raio de Caio",
+      "timestamp": {
+        "_seconds": 1772679518,
+        "_nanoseconds": 152000000
+      }
+    },
+    {
       "id": "ysmDw3yGbtvyR2Zb23Gx",
       "type": "achievement",
       "player": "Renata",
@@ -1538,11 +1840,11 @@
       }
     },
     {
-      "id": "cK2XYVHkHnKNfx6pVrP_YN:APA91bE69C5SUhbDjPo7EzkHyOuPCkwaYNBowyvtCiKVMCLuhpnRgwNlNJcZlKhh459WwWl85cff4QKmu69sh4KblK-UxLWzCpqUfP2gGSMNSO0FrPXvNdQ",
-      "browser": "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Mobile Safari/537.36",
+      "id": "cK2XYVHkHnKNfx6pVrP_YN:APA91bGlNIrheVmCagLDf01sdBsOgv99G3pf834E6breaHWvfI_9tfXi-ZHmJOMll3xnQV4R5h9slq59dkzVI3pfim0_YB4f_vEqsod1ZE-JkEP8-tv5EIM",
+      "browser": "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Mobile Safari/537.36",
       "timestamp": {
-        "_seconds": 1767658088,
-        "_nanoseconds": 931000000
+        "_seconds": 1772845081,
+        "_nanoseconds": 576000000
       }
     },
     {
@@ -1575,6 +1877,14 @@
       "timestamp": {
         "_seconds": 1771523090,
         "_nanoseconds": 528000000
+      }
+    },
+    {
+      "id": "fdltuLio3BqbWgLPa1XFR_:APA91bGsLP_jDihjvQt5FDXNThaUbyQ3lw7vekfPcilzV513NQuTrw_F2Aoa2mMIJS68D0so2ZfIy55IIMiSgpfhkNIQGGYVpDsGmZRyiZcog6Xl-7b-128",
+      "browser": "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Mobile Safari/537.36",
+      "timestamp": {
+        "_seconds": 1772678508,
+        "_nanoseconds": 906000000
       }
     },
     {
