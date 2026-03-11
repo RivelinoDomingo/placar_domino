@@ -8,8 +8,6 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=Roboto+Condensed:wght@700&display=swap" rel="stylesheet">
-<!--     <script src="https://code.responsivevoice.org/responsivevoice.js"></script> -->
-<script src="https://code.responsivevoice.org/responsivevoice.js?key=VOTUvWpF"></script>
     <link rel="manifest" href="manifest.json" />
     <meta name="theme-color" content="#000000" />
     <link rel="icon" href="icons/icone192.png" />
@@ -1338,6 +1336,7 @@ async function launchScore() {
 
             // Feedback visual do raio
             showMessage(`${appState.players[winnerId].name} ganhou um Raio! ⚡️`, 'success');
+            narrarNaLive(`Essa partida foi vencida por: ${appState.players[winnerId].name}.`);
 
             // Backup para desfazer ação se necessário
             jogadorRaiosLambretas[winnerId] = {
@@ -3580,19 +3579,39 @@ window.renderScoreboardHistory = renderScoreboardHistory;
 //  INICIO DAS FUNÇÕES DE LIVE SCREEN (TIKTOK,YOUTUBE)
 // =======================================================================
 
-// 1. Força o navegador a carregar a lista de vozes assim que o site abre
-window.speechSynthesis.onvoiceschanged = () => {
-    window.speechSynthesis.getVoices();
-};
+async function narrarNaLive(texto) {
+    // 1. Sua chave do VoiceRSS
+    const apiKey = "a8cdc570625b4ab2b820ac8c48c4097b";
+    const textoCodificado = encodeURIComponent(texto);
+    const urlAudio = `https://api.voicerss.org/?key=${apiKey}&hl=pt-br&v=Ligia&c=MP3&f=44khz_16bit_stereo&src=${textoCodificado}`;
 
-function narrarNaLive(texto) {
-    // Usa a voz unificada da biblioteca (Garante a mesma voz em qualquer lugar)
-    if (typeof responsiveVoice !== 'undefined') {
-        responsiveVoice.speak(texto, "Brazilian Portuguese Female", { rate: 1.1 });
+    try {
+        // 2. Faz o download do arquivo COMPLETO primeiro (O pulo do gato!)
+        const resposta = await fetch(urlAudio);
+        if (!resposta.ok) throw new Error("Servidor de voz não respondeu.");
+
+        // 3. Salva o áudio na memória temporária do navegador
+        const blob = await resposta.blob();
+        const urlLocal = URL.createObjectURL(blob);
+
+        // 4. Cria o tocador usando o arquivo local (O navegador nunca bloqueia arquivo local)
+        const tocador = new Audio(urlLocal);
+
+        // 5. Quando terminar de tocar, apaga da memória para não deixar o PC lento
+        tocador.onended = () => {
+            URL.revokeObjectURL(urlLocal);
+        };
+
+        // 6. Dá o play!
+        await tocador.play();
+
+    } catch (erro) {
+        console.error("🔥 Erro ao tocar o áudio da live:", erro);
     }
 }
-// Expondo a função para garantir que funcione em qualquer lugar
+
 window.narrarNaLive = narrarNaLive;
+
 /// FIM DAS FUNÇÕES DE LIVESTREAM
 
 
