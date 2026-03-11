@@ -1444,7 +1444,7 @@ async function launchScore() {
         matchUpdates.scores = roundEvent.stateScore.scores;
         matchUpdates.turn = winnerId;
 
-        await updateDoc(gameDocRef, { ...matchUpdates, history: newHistory });
+        await updateDoc(gameDocRef, { ...matchUpdates, history: newHistory, updatedAt: serverTimestamp() });
     };
 }
 
@@ -2901,13 +2901,13 @@ function setupFirestoreListeners() {
             setInactiveState();
         } else {
             const gameData = snapshot.docs[0].data();
-            const gameTimestamp = gameData.createdAt?.toDate();
-            const maxAgeHours = 4; // Define que jogos com mais de 4 horas são "zumbis"
+            // --- INÍCIO DA NOVA VERIFICAÇÃO DE INATIVIDADE REAL ---
+            // Usa a data da última ação. Se não existir, cai para a data de criação.
+            const gameTimestamp = (gameData.updatedAt || gameData.createdAt)?.toDate();
+            const maxAgeHours = 4; // 4 horas sem NINGUÉM marcar 1 ponto = zumbi
 
-            // --- INÍCIO DA NOVA VERIFICAÇÃO ---
-            // Se o jogo for muito antigo, trata como inativo
             if (gameTimestamp && (new Date() - gameTimestamp) / 1000 / 3600 > maxAgeHours) {
-                //  console.log("Jogo ativo encontrado, mas é muito antigo e será ignorado:", gameData.id);
+                console.log("Partida inativa há muito tempo. Escondendo placar...");
                 setInactiveState();
             } else {
             // --- FIM DA NOVA VERIFICAÇÃO ---
@@ -2923,6 +2923,9 @@ function setupFirestoreListeners() {
                 if (Object.keys(appState.players).length > 0) {
                     renderLiveMatchFeed(gameData);
                 }
+                // 👇 GATILHO DA LIVE: Abre o painel automaticamente
+                ui.liveMatchFeed.classList.add('open');
+                ui.liveMatchChevron.classList.add('open');
             }
         }
     });
