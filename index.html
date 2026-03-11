@@ -8,6 +8,8 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=Roboto+Condensed:wght@700&display=swap" rel="stylesheet">
+<!--     <script src="https://code.responsivevoice.org/responsivevoice.js"></script> -->
+<script src="https://code.responsivevoice.org/responsivevoice.js?key=VOTUvWpF"></script>
     <link rel="manifest" href="manifest.json" />
     <meta name="theme-color" content="#000000" />
     <link rel="icon" href="icons/icone192.png" />
@@ -1984,9 +1986,14 @@ async function concederConquista(playerId, conquistaId, textoDoEvento) {
         await registrarEvento('achievement', playerId, textoDoEvento);
 
         showMessage(`${player.name} ${textoDoEvento}`, 'success');
+        // Encontre o local exato da conquista e adicione esta lógica:
+        const nomeJogador = player.name; // Puxa o nome atualizado do jogador
+        const nomeDaConquista = "Nome da Conquista Aqui"; // Substitua pela sua variável real da conquista
+
+        narrarNaLive(`Atenção! ${textoDoEvento}`);
 
     } catch (error) {
-        console.error("Erro ao conceder conquista:", error);
+        // console.error("Erro ao conceder conquista:", error);
         showMessage("Erro ao processar conquista.", "error");
     }
 }
@@ -3568,6 +3575,26 @@ window.renderScoreboardHistory = renderScoreboardHistory;
 // =======================================================================
 //  FIM: FUNÇÕES DE HISTÓRICO
 // =======================================================================
+
+// =======================================================================
+//  INICIO DAS FUNÇÕES DE LIVE SCREEN (TIKTOK,YOUTUBE)
+// =======================================================================
+
+// 1. Força o navegador a carregar a lista de vozes assim que o site abre
+window.speechSynthesis.onvoiceschanged = () => {
+    window.speechSynthesis.getVoices();
+};
+
+function narrarNaLive(texto) {
+    // Usa a voz unificada da biblioteca (Garante a mesma voz em qualquer lugar)
+    if (typeof responsiveVoice !== 'undefined') {
+        responsiveVoice.speak(texto, "Brazilian Portuguese Female", { rate: 1.1 });
+    }
+}
+// Expondo a função para garantir que funcione em qualquer lugar
+window.narrarNaLive = narrarNaLive;
+/// FIM DAS FUNÇÕES DE LIVESTREAM
+
 
 // Ativação do modo admin
 
