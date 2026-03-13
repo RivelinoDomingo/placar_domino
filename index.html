@@ -132,6 +132,14 @@
                 <span class="font-medium">Histórico</span>
             </button>
 
+            <button id="menuItemLocutor" onclick="toggleModoLocutor()" class="w-full text-left px-4 py-3 hover:bg-purple-50 flex items-center justify-between text-gray-700 transition font-medium border-t border-gray-100">
+                <div class="flex items-center gap-3">
+                    <span class="text-xl">🎙️</span>
+                    <span>Áudio da Live</span>
+                </div>
+                <span id="indicadorLocutor" class="w-3 h-3 rounded-full bg-gray-300"></span>
+            </button>
+
             <button id="menuItemStartGame" class="hidden w-full text-left px-4 py-3 hover:bg-green-50 flex items-center gap-3 text-green-700 transition font-bold border-t border-gray-100">
                 <span class="text-xl">🀄</span>
                 <span class="font-medium">Iniciar Partida</span>
@@ -1389,6 +1397,48 @@ async function launchScore() {
                 }
             }
         }
+
+        
+
+        // ==========================================
+        // 🎙️ PREPARAÇÃO DO COMBO DE ÁUDIO DA LIVE
+        // ==========================================
+        const nomeGanhador = appState.players[winnerId].name;
+        let frasesParaFalar = []; // Criamos uma lista vazia para guardar as frases
+
+        // 1º Acontecimento: O Raio (Foi normal ou foi roubado?)
+        if (completedRaio) {
+            frasesParaFalar.push(`Sensacional! ${nomeGanhador} bateu o raio!`);
+        }
+
+        // 2º Acontecimento: Teve Lambreta na mesma jogada?
+        if (lambretaLosersThisRound && lambretaLosersThisRound.length > 0) {
+            const nomesVitimas = lambretaLosersThisRound.map(id => appState.players[id].name).join(" e ");
+            // Como já falamos o nome do ganhador no raio, podemos omitir aqui para soar mais natural
+            frasesParaFalar.push(`Eita! Aplicou uma lambreta em ${nomesVitimas}!`);
+        }
+
+        // 3º Acontecimento: Teve Conquista destravada junto?
+        if (unlockedAchievements && unlockedAchievements.length > 0) {
+            const nomesConquistas = unlockedAchievements.map(c => c.name || c).join(" e ");
+            if (nomesConquistas === "roubo"){
+                const nomeVitima = appState.players[ladraoDeRaio.vitma[0]].name;
+                frasesParaFalar.push(`Que reviravolta! ${nomeGanhador} roubou o raio de ${nomeVitima}!`);
+            } else {
+               frasesParaFalar.push(`E para completar a jogada, desbloqueou a conquista: ${nomesConquistas}!`); 
+            }
+            
+        }
+
+        // Junta todas as frases que aconteceram com um espaço entre elas
+        const mensagemNarracao = frasesParaFalar.join(" ");
+
+        // Se a mensagem não estiver vazia, manda para o Firebase!
+        if (mensagemNarracao !== "") {
+            matchUpdates.ultimaAcaoParaLer = mensagemNarracao;
+            matchUpdates.timestampDaAcao = Date.now();
+        }
+        // ==========================================
 
         // Construção do roundEvent
         matchUpdates.scores = { ...currentGame.scores, [winnerId]: newScore };
@@ -2854,6 +2904,8 @@ function setupFirestoreListeners() {
     appState.unsubscribers.forEach(unsub => unsub());
     appState.unsubscribers = [];
 
+    let ultimoAudioLido = null; 
+
     // Listener para a lista de jogadores (não muda)
     const unsubPlayers = onSnapshot(query(playersCollectionRef()), (snapshot) => {
         const newPlayersData = {};
@@ -2933,6 +2985,15 @@ function setupFirestoreListeners() {
                 ui.liveMatchFeed.classList.add('open');
                 ui.liveMatchChevron.classList.add('open');
             }
+            // --- 👇 NOVA LÓGICA DO LOCUTOR DE PONTOS 👇 ---
+            if (isLocutorAtivo && gameData.ultimaAcaoParaLer) {
+                // Verifica se este áudio é novo (pelo timestamp) para não repetir se a tela piscar
+                if (gameData.timestampDaAcao !== ultimoAudioLido) {
+                    narrarNaLive(gameData.ultimaAcaoParaLer);
+                    ultimoAudioLido = gameData.timestampDaAcao; // Salva na memória que já leu este
+                }
+            }
+            // --- 👆 FIM DA LÓGICA DO LOCUTOR 👆 ---
         }
     });
 
@@ -3611,6 +3672,39 @@ async function narrarNaLive(texto) {
 }
 
 window.narrarNaLive = narrarNaLive;
+
+// Verifica se este navegador já está configurado como locutor
+let isLocutorAtivo = localStorage.getItem('modoLocutor') === 'true';
+
+function toggleModoLocutor() {
+    isLocutorAtivo = !isLocutorAtivo; // Inverte o status
+    localStorage.setItem('modoLocutor', isLocutorAtivo);
+    
+    atualizarVisualDoBotaoLocutor();
+    
+    if (isLocutorAtivo) {
+        narrarNaLive("Modo locutor ativado com sucesso!");
+    }
+}
+
+function atualizarVisualDoBotaoLocutor() {
+    const indicador = document.getElementById('indicadorLocutor');
+    if (!indicador) return;
+
+    if (isLocutorAtivo) {
+        indicador.classList.remove('bg-gray-300');
+        indicador.classList.add('bg-red-500', 'animate-pulse'); // Fica piscando como gravando!
+    } else {
+        indicador.classList.remove('bg-red-500', 'animate-pulse');
+        indicador.classList.add('bg-gray-300');
+    }
+}
+
+// Expõe para o HTML
+window.toggleModoLocutor = toggleModoLocutor;
+
+// Atualiza a cor do botão assim que o site abre
+document.addEventListener('DOMContentLoaded', atualizarVisualDoBotaoLocutor);
 
 /// FIM DAS FUNÇÕES DE LIVESTREAM
 
