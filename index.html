@@ -210,7 +210,27 @@
                     </div>
             </div>
             <div class="bg-green-800 border-8 border-yellow-800/50 rounded-2xl shadow-2xl p-4 sm:p-8 mesa-grid mx-auto">
-                <div class="flex items-center justify-center player-slot-top"><div id="slot-1" class="player-slot flex flex-col items-center"></div></div><div class="flex items-center justify-center player-slot-left"><div id="slot-4" class="player-slot flex flex-col items-center"></div></div><div class="flex items-center justify-center player-slot-right"><div id="slot-2" class="player-slot flex flex-col items-center"></div></div><div class="flex items-center justify-center player-slot-bottom"><div id="slot-3" class="player-slot flex flex-col items-center"></div></div>
+
+                <div class="flex flex-col items-center justify-center player-slot-top">
+                    <span class="text-xs font-bold text-green-400/70 mb-1 tracking-wider uppercase">Jogador 1</span>
+                    <div id="slot-1" class="player-slot flex flex-col items-center"></div>
+                </div>
+
+                <div class="flex flex-col items-center justify-center player-slot-left">
+                    <span class="text-xs font-bold text-green-400/70 mb-1 tracking-wider uppercase">Jogador 4</span>
+                    <div id="slot-4" class="player-slot flex flex-col items-center"></div>
+                </div>
+
+                <div class="flex flex-col items-center justify-center player-slot-right">
+                    <span class="text-xs font-bold text-green-400/70 mb-1 tracking-wider uppercase">Jogador 2</span>
+                    <div id="slot-2" class="player-slot flex flex-col items-center"></div>
+                </div>
+
+                <div class="flex flex-col items-center justify-center player-slot-bottom">
+                    <span class="text-xs font-bold text-green-400/70 mb-1 tracking-wider uppercase">Jogador 3</span>
+                    <div id="slot-3" class="player-slot flex flex-col items-center"></div>
+                </div>
+
             </div>
             <div class="mt-8 text-center space-y-4">
                 <button id="btnStartGame" class="bg-gray-400 text-white font-bold py-3 px-6 rounded-lg shadow-md cursor-not-allowed" disabled>Iniciar Jogo</button>
@@ -2920,8 +2940,6 @@ function setupFirestoreListeners() {
         if (appState.gameState.activeGame) {
             renderLiveMatchFeed(appState.gameState.activeGame);
         }
-        // A barra será atualizada ao abrir o app e sempre que um jogador ganhar um raio/partida!
-        atualizarBarraDeNoticias();
     });
 
     if(document.getElementById('view-history').classList.contains('active')) {
@@ -2994,6 +3012,11 @@ function setupFirestoreListeners() {
                 }
             }
             // --- 👆 FIM DA LÓGICA DO LOCUTOR 👆 ---
+
+            // A barra será atualizada ao abrir o app e sempre que um jogador ganhar um raio/partida!
+            atualizarBarraDeNoticias();
+            // Atualiza os dados do firebase para que o esp32 consiga pegar depois.
+            atualizarPainelFisico(appState.gameState.activeGame);
         }
     });
 
@@ -3708,7 +3731,49 @@ document.addEventListener('DOMContentLoaded', atualizarVisualDoBotaoLocutor);
 
 /// FIM DAS FUNÇÕES DE LIVESTREAM
 
+// Função para enviar os dados mastigados para o ESP32
+// Função para enviar os dados mastigados para o ESP32
+async function atualizarPainelFisico(gameData) {
+    try {
+        // 🛡️ ESCUDO: Se o jogo não estiver carregado ou não existir partida ativa
+        if (!gameData || !gameData.playerIds) {
+            const docRef = doc(db, "hardware", "display");
+            // Manda tudo zerado para o ESP32 apagar os LEDs da mesa
+            await setDoc(docRef, {
+                jogador1: 0,
+                jogador2: 0,
+                jogador3: 0,
+                jogador4: 0,
+                status: "inactive"
+            });
+            return; // Interrompe a função aqui para não dar erro
+        }
 
+        // Se o jogo existe, continua normalmente
+        const p1 = gameData.playerIds[0];
+        const p2 = gameData.playerIds[1];
+        const p3 = gameData.playerIds[2];
+        const p4 = gameData.playerIds[3];
+
+        const resumoParaESP32 = {
+            jogador1: gameData.scores[p1] || 0,
+            jogador2: gameData.scores[p2] || 0,
+            jogador3: gameData.scores[p3] || 0,
+            jogador4: gameData.scores[p4] || 0,
+            status: gameData.status
+        };
+
+        const docRef = doc(db, "hardware", "display");
+        await setDoc(docRef, resumoParaESP32);
+
+    } catch (erro) {
+        console.error("Erro ao atualizar o placar físico:", erro);
+    }
+}
+
+window.atualizarPainelFisico =atualizarPainelFisico;
+
+////
 // Ativação do modo admin
 
 // --- Admin Logic Atualizada ---
