@@ -14,7 +14,7 @@ firebase.initializeApp({
 const messaging = firebase.messaging();
 
 // 2. Mantém sua lógica de Cache (PWA)
-const CACHE_NAME = "placar_domino_cache_v2.2";
+const CACHE_NAME = "placar_domino_cache_v2.3";
 const urlsToCache = [
   "/placar_domino/",
   "/placar_domino/index.html",
@@ -48,6 +48,15 @@ self.addEventListener("activate", (event) => {
 
 self.addEventListener("fetch", (event) => {
   if (event.request.method !== "GET") return;
+
+  // 🛡️ ESCUDO: Ignora as conexões ao vivo do Firestore/Google
+  // Se a URL tiver "firestore" ou "google", passa direto e não usa cache
+  if (event.request.url.includes("firestore.googleapis.com") ||
+      event.request.url.includes("google.com")) {
+    return;
+  }
+
+  // Para o resto (imagens, HTML, CSS), usa o sistema de cache normal
   event.respondWith(
     caches.match(event.request).then((response) => response || fetch(event.request))
   );
