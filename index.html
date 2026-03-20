@@ -1417,12 +1417,55 @@ async function launchScore() {
                 }
             }
         }
-
         
+        // ==========================================
+
+        // Construção do roundEvent
+        matchUpdates.scores = { ...currentGame.scores, [winnerId]: newScore };
+        matchUpdates.raios = currentGame.raios;
+        matchUpdates.turn = winnerId;
+
+        batch.update(winnerPlayerDocRef, playerUpdates);
 
         // ==========================================
-        // 🎙️ PREPARAÇÃO DO COMBO DE ÁUDIO DA LIVE
+        // 1. O EVENTO DA RODADA (A base dos dados)
         // ==========================================
+        const roundEvent = {
+            roundNumber: currentGame.history.length + 1,
+            winnerId: winnerId,
+            completedRaio: completedRaio,
+            unlockedAchievements: unlockedAchievements,
+            preUpdateStats: jogadorRaiosLambretas,
+            timestamp: new Date()
+        };
+
+        if (lambretaLosersThisRound.length > 0) roundEvent.lambretaPlayerIds = lambretaLosersThisRound;
+        if (matchPointsThisRound.length > 0) roundEvent.matchPointPlayerIds = matchPointsThisRound;
+
+        // 👇 ESSA ERA A PARTE QUE TINHA SUMIDO! (Calculando os Zeros)
+        if (completedRaio) {
+            roundEvent.stateScore = {
+                scores: currentGame.playerIds.reduce((acc, id) => ({ ...acc, [id]: 0 }), {}),
+                raios: {
+                    ...currentGame.raios,
+                    [winnerId]: (currentGame.raios[winnerId] || 0) + 1
+                }
+            };
+        } else {
+            roundEvent.stateScore = {
+                scores: matchUpdates.scores,
+                raios: matchUpdates.raios
+            };
+        }
+
+        if (ladraoDeRaio && ladraoDeRaio.vitma && ladraoDeRaio.vitma.length > 0) {
+            roundEvent.ladraoDeRaio = ladraoDeRaio;
+        }
+
+        // ==========================================
+        // 2. 🎙️ O COMBO DO LOCUTOR DE ÁUDIO
+        // ==========================================
+
         const nomeGanhador = appState.players[winnerId].name;
         let frasesParaFalar = []; // Criamos uma lista vazia para guardar as frases
 
@@ -1458,49 +1501,12 @@ async function launchScore() {
             matchUpdates.ultimaAcaoParaLer = mensagemNarracao;
             matchUpdates.timestampDaAcao = Date.now();
         }
-        // ==========================================
-
-        // Construção do roundEvent
-        matchUpdates.scores = { ...currentGame.scores, [winnerId]: newScore };
-        matchUpdates.raios = currentGame.raios;
-        matchUpdates.turn = winnerId;
-
-        batch.update(winnerPlayerDocRef, playerUpdates);
-
-        const roundEvent = {
-            roundNumber: currentGame.history.length + 1,
-            winnerId: winnerId,
-            completedRaio: completedRaio,
-            unlockedAchievements: unlockedAchievements,
-            preUpdateStats: jogadorRaiosLambretas,
-            timestamp: new Date()
-        };
-
-        if (lambretaLosersThisRound.length > 0) roundEvent.lambretaPlayerIds = lambretaLosersThisRound;
-        if (matchPointsThisRound.length > 0) roundEvent.matchPointPlayerIds = matchPointsThisRound;
-
-        if (completedRaio) {
-            roundEvent.stateScore = {
-                scores: currentGame.playerIds.reduce((acc, id) => ({ ...acc, [id]: 0 }), {}),
-                raios: {
-                    ...currentGame.raios,
-                    [winnerId]: (currentGame.raios[winnerId] || 0) + 1
-                }
-            };
-        } else {
-            roundEvent.stateScore = {
-                scores: matchUpdates.scores,
-                raios: matchUpdates.raios
-            };
-        }
-
-        if (ladraoDeRaio.vitma.length > 0) {
-            roundEvent.ladraoDeRaio = ladraoDeRaio;
-        }
 
         const newHistory = [...currentGame.history, roundEvent];
 
-        // 1. Executa as atualizações das estatísticas dos jogadores
+        // ==========================================
+        // 3. SALVANDO ESTATÍSTICAS NO BANCO
+        // ==========================================
         await batch.commit();
 
         if (completedRaio) {
@@ -1510,12 +1516,42 @@ async function launchScore() {
             }
         }
 
-        // 2. Atualiza o objeto da partida no banco
-        matchUpdates.raios = roundEvent.stateScore.raios;
-        matchUpdates.scores = roundEvent.stateScore.scores;
-        matchUpdates.turn = winnerId;
+        // ==========================================
+        // 4. 🚦 A MÁGICA DOS 2 UPDATES (A COMEMORAÇÃO)
+        // ==========================================
+        if (completedRaio) {
+            // MOSTRA A VITÓRIA (O 4 FICA NA TELA)
+            await updateDoc(gameDocRef, { 
+                ...matchUpdates, 
+                updatedAt: serverTimestamp() 
+            });
 
-        await updateDoc(gameDocRef, { ...matchUpdates, history: newHistory, updatedAt: serverTimestamp() });
+            // PAUSA DRAMÁTICA DE 4 SEGUNDOS ⏱️
+            await new Promise(resolve => setTimeout(resolve, 4000));
+
+            // LIMPA A MESA E ATUALIZA O RAIO
+            await updateDoc(gameDocRef, {
+                scores: roundEvent.stateScore.scores,
+                raios: roundEvent.stateScore.raios,
+                history: newHistory,
+                turn: winnerId,
+                updatedAt: serverTimestamp()
+            });
+
+        } else {
+            // SE FOR PONTO NORMAL (Atualiza direto)
+            matchUpdates.raios = roundEvent.stateScore.raios;
+            matchUpdates.scores = roundEvent.stateScore.scores;
+            matchUpdates.turn = winnerId;
+
+            await updateDoc(gameDocRef, { 
+                ...matchUpdates, 
+                history: newHistory, 
+                updatedAt: serverTimestamp() 
+            });
+        }
+
+
     };
 }
 
@@ -3731,7 +3767,6 @@ document.addEventListener('DOMContentLoaded', atualizarVisualDoBotaoLocutor);
 
 /// FIM DAS FUNÇÕES DE LIVESTREAM
 
-// Função para enviar os dados mastigados para o ESP32
 // Função para enviar os dados mastigados para o ESP32
 async function atualizarPainelFisico(gameData) {
     try {
