@@ -2165,7 +2165,8 @@ function renderVisualScoreboard(gameData) {
     const scoreboardDiv = document.getElementById('liveMatchScoreboard');
     if (!scoreboardDiv) return;
 
-    const { playerIds, scores, raios } = gameData;
+    const { playerIds, scores, raios, history } = gameData;
+    const matchHistory = history || [];
     let scoreboardHTML = '';
 
     playerIds.forEach(playerId => {
@@ -2175,6 +2176,12 @@ function renderVisualScoreboard(gameData) {
         const currentPontos = scores?.[playerId] || 0;
         const currentRaios = raios?.[playerId] || 0;
 
+        // 👇 A CORREÇÃO ESTÁ AQUI: Conta quantas lambretas esse jogador SOFREU
+        const currentLambretas = matchHistory.filter(round =>
+            round.lambretaPlayerIds &&
+            round.lambretaPlayerIds.includes(playerId)
+        ).length;
+
         // Gera os 4 círculos de pontos
         let pointsHTML = '';
         for (let i = 1; i <= 4; i++) {
@@ -2182,17 +2189,28 @@ function renderVisualScoreboard(gameData) {
             pointsHTML += `<div class="w-4 h-4 rounded-full ${pointColor} border-2 border-white"></div>`;
         }
 
-        // Gera o contador de raios
-        const raioCounterHTML = currentRaios > 1 ? `
-            <span class="ml-1 text-sm font-bold text-yellow-700">(x${currentRaios})</span>
-        ` : '';
+        // ==========================================
+        // 🎖️ ÁREA DE CONQUISTAS E "VERGONHAS"
+        // ==========================================
+        let badgesContent = '';
 
-        const raiosDisplayHTML = currentRaios > 0 ? `
-            <div class="flex items-center justify-center text-2xl mt-2">
-                <span>⚡️</span>
-                ${raioCounterHTML}
+        if (currentRaios > 0) {
+            badgesContent += `<span title="Raios ganhos">⚡️</span>${currentRaios > 1 ? `<span class="text-xs font-bold text-yellow-700 ml-0.5 mr-1">(x${currentRaios})</span>` : ''}`;
+        }
+
+        if (currentLambretas > 0) {
+            // Se o cara tiver Raio E Lambreta, dá um espacinho
+            const espaco = currentRaios > 0 ? 'ml-2' : '';
+            // Mudei o título para "Lambretas sofridas" para quem passar o mouse por cima
+            badgesContent += `<span title="Lambretas sofridas" class="${espaco}">🛵</span>${currentLambretas > 1 ? `<span class="text-xs font-bold text-gray-600 ml-0.5">(x${currentLambretas})</span>` : ''}`;
+        }
+
+        // Monta a linha de ícones ou deixa o espaço em branco para manter a caixa alinhada
+        const badgesDisplayHTML = badgesContent !== '' ? `
+            <div class="flex items-center justify-center text-xl mt-2 h-8">
+                ${badgesContent}
             </div>
-        ` : '<div class="h-9"></div>'; // Espaço reservado para manter a altura
+        ` : '<div class="h-8 mt-2"></div>';
 
         scoreboardHTML += `
             <div class="bg-gray-50 p-2 rounded-lg text-center shadow">
@@ -2200,7 +2218,7 @@ function renderVisualScoreboard(gameData) {
                 <div class="flex justify-center items-center gap-1.5 my-2">
                     ${pointsHTML}
                 </div>
-                ${raiosDisplayHTML}
+                ${badgesDisplayHTML}
             </div>
         `;
     });
@@ -2218,7 +2236,6 @@ function renderHistoryFeed(gameData) {
         return;
     }
 
-    // REMOVEMOS o .slice(-5). Agora pegamos tudo e apenas invertemos para o mais novo ficar no topo.
     const fullHistoryReversed = [...history].reverse();
 
     historyDiv.innerHTML = fullHistoryReversed.map(round => {
@@ -2235,10 +2252,18 @@ function renderHistoryFeed(gameData) {
                 `ganhou um <strong>Raio! ⚡️</strong>` :
                 `marcou um ponto.`;
 
+            // 👇 ADICIONANDO O DESTAQUE DA LAMBRETA NO HISTÓRICO
+            let lambretaBadge = '';
+            if (round.lambretaPlayerIds && round.lambretaPlayerIds.length > 0) {
+                const vitimas = round.lambretaPlayerIds.map(id => appState.players[id]?.name || 'Alguém').join(' e ');
+                lambretaBadge = `<br><span class="text-xs font-bold text-purple-700 bg-purple-100 border border-purple-200 px-2 py-0.5 rounded-full inline-block mt-1 shadow-sm">🛵 Lambreta em ${vitimas}!</span>`;
+            }
+
             eventHTML = `
                 <p class="text-sm text-gray-800">
                     <span class="font-semibold text-gray-400">Rod. ${round.roundNumber}:</span>
                     <span class="font-bold">${winnerName}</span> ${roundText}
+                    ${lambretaBadge}
                 </p>`;
         }
 
@@ -2534,8 +2559,6 @@ function resetGameState() {
     updateGameModeUI();
 }
 
-// 1. Limpamos a função pois os botões de modo não existem mais.
-// Agora ela só garante que o modo é individual e reseta a mesa.
 function updateGameModeUI() {
     appState.gameState.gameMode = 'individual';
     resetPlayerSlots();
@@ -2877,7 +2900,6 @@ async function deletarJogador(playerId) {
         }
     }
 }
-
 // 5. ESSENCIAL: Torna a função visível para o 'onclick' do botão no modal
 window.deletarJogador = deletarJogador;
 
