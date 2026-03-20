@@ -3049,11 +3049,11 @@ function setupFirestoreListeners() {
             }
             // --- 👆 FIM DA LÓGICA DO LOCUTOR 👆 ---
 
-            // A barra será atualizada ao abrir o app e sempre que um jogador ganhar um raio/partida!
-            atualizarBarraDeNoticias();
             // Atualiza os dados do firebase para que o esp32 consiga pegar depois.
             atualizarPainelFisico(appState.gameState.activeGame);
         }
+        // A barra será atualizada ao abrir o app e sempre que um jogador ganhar um raio/partida!
+        atualizarBarraDeNoticias();
     });
 
     appState.unsubscribers.push(unsubPlayers, unsubFeed, unsubLiveMatch);
