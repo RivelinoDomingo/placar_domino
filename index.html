@@ -1294,6 +1294,7 @@ async function launchScore() {
             }
         }
 
+         // Incrementando matchPoints na temporada do vencedor do round.
         if (newScore === 3) {
             playerUpdates[`${currentSeason}.matchPointsNaTemporada`] = increment(1);
             matchPointsThisRound.push(winnerId);
@@ -1519,36 +1520,104 @@ async function launchScore() {
         // ==========================================
         // 4. 🚦 A MÁGICA DOS 2 UPDATES (A COMEMORAÇÃO)
         // ==========================================
-        if (completedRaio) {
-            // MOSTRA A VITÓRIA (O 4 FICA NA TELA)
-            await updateDoc(gameDocRef, { 
-                ...matchUpdates, 
-                updatedAt: serverTimestamp() 
-            });
+        // if (completedRaio) {
+        //     // MOSTRA A VITÓRIA (O 4 FICA NA TELA)
+        //     await updateDoc(gameDocRef, {
+        //         ...matchUpdates,
+        //         updatedAt: serverTimestamp()
+        //     });
+        //
+        //     // PAUSA DRAMÁTICA DE 4 SEGUNDOS ⏱️
+        //     await new Promise(resolve => setTimeout(resolve, 4000));
+        //
+        //     // LIMPA A MESA E ATUALIZA O RAIO
+        //     await updateDoc(gameDocRef, {
+        //         scores: roundEvent.stateScore.scores,
+        //         raios: roundEvent.stateScore.raios,
+        //         history: newHistory,
+        //         turn: winnerId,
+        //         updatedAt: serverTimestamp()
+        //     });
+        //
+        // } else {
+        //     // SE FOR PONTO NORMAL (Atualiza direto)
+        //     matchUpdates.raios = roundEvent.stateScore.raios;
+        //     matchUpdates.scores = roundEvent.stateScore.scores;
+        //     matchUpdates.turn = winnerId;
+        //
+        //     await updateDoc(gameDocRef, {
+        //         ...matchUpdates,
+        //         history: newHistory,
+        //         updatedAt: serverTimestamp()
+        //     });
+        // }
 
-            // PAUSA DRAMÁTICA DE 4 SEGUNDOS ⏱️
-            await new Promise(resolve => setTimeout(resolve, 4000));
+        // ==========================================
+        // 4. 🚦 A MÁGICA DOS 2 UPDATES (A COMEMORAÇÃO)
+        // ==========================================
 
-            // LIMPA A MESA E ATUALIZA O RAIO
-            await updateDoc(gameDocRef, {
-                scores: roundEvent.stateScore.scores,
-                raios: roundEvent.stateScore.raios,
-                history: newHistory,
-                turn: winnerId,
-                updatedAt: serverTimestamp()
-            });
+        // Pega os botões da tela para travar
+        const btnLaunch = document.getElementById('btnLaunchScore');
+        const btnEnd = document.getElementById('btnEndGame');
+        const btnUndo = document.getElementById('btnUndoRound');
 
-        } else {
-            // SE FOR PONTO NORMAL (Atualiza direto)
-            matchUpdates.raios = roundEvent.stateScore.raios;
-            matchUpdates.scores = roundEvent.stateScore.scores;
-            matchUpdates.turn = winnerId;
+        try {
+            if (completedRaio) {
+                // 1. TRAVA A TELA E DÁ A ORDEM CLARA PARA ESPERAR
+                if (btnLaunch) {
+                    btnLaunch.disabled = true;
+                    btnLaunch.innerHTML = "Anotando o vencedor do raio, ESPERE! ⏳";
+                    showMessage("Espere!!!", 'wait');
+                    // Muda a cor para um amarelo de alerta para chamar atenção
+                    btnLaunch.classList.remove('bg-green-600', 'hover:bg-green-700');
+                    btnLaunch.classList.add('bg-yellow-600', 'hover:bg-yellow-700');
+                }
+                if (btnEnd) btnEnd.disabled = true;
+                if (btnUndo) btnUndo.disabled = true;
 
-            await updateDoc(gameDocRef, { 
-                ...matchUpdates, 
-                history: newHistory, 
-                updatedAt: serverTimestamp() 
-            });
+                // 2. MOSTRA A VITÓRIA (Manda o 4 para a tela e para o ESP32)
+                await updateDoc(gameDocRef, {
+                    ...matchUpdates,
+                    updatedAt: serverTimestamp()
+                });
+
+                // 3. PAUSA DRAMÁTICA DE 4 SEGUNDOS ⏱️
+                // O cara que marcou o ponto vai ficar olhando a mensagem "ESPERE!"
+                await new Promise(resolve => setTimeout(resolve, 4000));
+
+                // 4. LIMPA A MESA (O segundo lote consolidado no Firebase)
+                await updateDoc(gameDocRef, {
+                    scores: roundEvent.stateScore.scores,
+                    raios: roundEvent.stateScore.raios,
+                    history: newHistory,
+                    turn: winnerId,
+                    updatedAt: serverTimestamp()
+                });
+
+            } else {
+                // SE FOR PONTO NORMAL (Atualiza direto sem pausa)
+                matchUpdates.raios = roundEvent.stateScore.raios;
+                matchUpdates.scores = roundEvent.stateScore.scores;
+                matchUpdates.turn = winnerId;
+
+                await updateDoc(gameDocRef, {
+                    ...matchUpdates,
+                    history: newHistory,
+                    updatedAt: serverTimestamp()
+                });
+            }
+        } catch (erro) {
+            console.error("🔥 Erro ao registrar o ponto:", erro);
+        } finally {
+            // 5. DESTRAVA A TELA (Roda sempre, até se a internet cair)
+            if (btnLaunch) {
+                btnLaunch.disabled = false;
+                btnLaunch.innerHTML = "Lançar Ponto";
+                btnLaunch.classList.remove('bg-yellow-600', 'hover:bg-yellow-700');
+                btnLaunch.classList.add('bg-green-600', 'hover:bg-green-700');
+            }
+            if (btnEnd) btnEnd.disabled = false;
+            if (btnUndo) btnUndo.disabled = false;
         }
 
 
@@ -2712,6 +2781,7 @@ function processMessageQueue() {
     switch (messageData.type) {
         case 'success': typeClasses = 'bg-green-600'; break;
         case 'error': typeClasses = 'bg-red-600'; break;
+        case 'wait': typeClasses = 'bg-yellow-600'; break;
         default: typeClasses = 'bg-blue-600'; break;
     }
 
@@ -3848,7 +3918,7 @@ window.atualizarPainelFisico =atualizarPainelFisico;
             document.getElementById('menuItemCriarAviso').classList.remove('hidden');
             document.getElementById('menuItemDesativarAviso').classList.remove('hidden');
 
-            showMessage("Modo Admin Ativado!", "success");
+            // showMessage("Modo Admin Ativado!", "success");
             renderScoreboard();
         } else {
             showMessage("Senha incorreta.", "error");
@@ -3911,19 +3981,19 @@ ui.gameMode.gameOver.gameSummaryBtn.addEventListener('click', () => showGameSumm
 
 
 // --- Admin Logic Atualizada ---
-ui.adminPanel.activateBtn.addEventListener('click', () => {
-    const key = ui.adminPanel.keyInput.value;
-    if (key === ADMIN_KEY) {
-        appState.isAdminMode = true;
-        ui.adminPanel.loginView.classList.add('hidden');
-        ui.adminPanel.controlsView.classList.remove('hidden');
-        showMessage("Modo Admin Ativado!", "success");
-        renderScoreboard();
-        // activateAdminMode();
-    } else {
-        showMessage("Senha incorreta.", "error");
-    }
-});
+// ui.adminPanel.activateBtn.addEventListener('click', () => {
+//     const key = ui.adminPanel.keyInput.value;
+//     if (key === ADMIN_KEY) {
+//         appState.isAdminMode = true;
+//         ui.adminPanel.loginView.classList.add('hidden');
+//         ui.adminPanel.controlsView.classList.remove('hidden');
+//         showMessage("Modo Admin Ativado!", "success");
+//         renderScoreboard();
+//         // activateAdminMode();
+//     } else {
+//         showMessage("Senha incorreta.", "error");
+//     }
+// });
 // ui.adminFab.button.addEventListener('click', (e) => toggleAdminPanel(e));
 // ui.adminFab.activateBtn.addEventListener('click', activateAdminMode);
 // ui.adminFab.keyInput.addEventListener('keydown', function(event) {
