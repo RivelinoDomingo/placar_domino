@@ -1517,45 +1517,6 @@ async function launchScore() {
             }
         }
 
-        // ==========================================
-        // 4. 🚦 A MÁGICA DOS 2 UPDATES (A COMEMORAÇÃO)
-        // ==========================================
-        // if (completedRaio) {
-        //     // MOSTRA A VITÓRIA (O 4 FICA NA TELA)
-        //     await updateDoc(gameDocRef, {
-        //         ...matchUpdates,
-        //         updatedAt: serverTimestamp()
-        //     });
-        //
-        //     // PAUSA DRAMÁTICA DE 4 SEGUNDOS ⏱️
-        //     await new Promise(resolve => setTimeout(resolve, 4000));
-        //
-        //     // LIMPA A MESA E ATUALIZA O RAIO
-        //     await updateDoc(gameDocRef, {
-        //         scores: roundEvent.stateScore.scores,
-        //         raios: roundEvent.stateScore.raios,
-        //         history: newHistory,
-        //         turn: winnerId,
-        //         updatedAt: serverTimestamp()
-        //     });
-        //
-        // } else {
-        //     // SE FOR PONTO NORMAL (Atualiza direto)
-        //     matchUpdates.raios = roundEvent.stateScore.raios;
-        //     matchUpdates.scores = roundEvent.stateScore.scores;
-        //     matchUpdates.turn = winnerId;
-        //
-        //     await updateDoc(gameDocRef, {
-        //         ...matchUpdates,
-        //         history: newHistory,
-        //         updatedAt: serverTimestamp()
-        //     });
-        // }
-
-        // ==========================================
-        // 4. 🚦 A MÁGICA DOS 2 UPDATES (A COMEMORAÇÃO)
-        // ==========================================
-
         // Pega os botões da tela para travar
         const btnLaunch = document.getElementById('btnLaunchScore');
         const btnEnd = document.getElementById('btnEndGame');
@@ -3862,39 +3823,67 @@ document.addEventListener('DOMContentLoaded', atualizarVisualDoBotaoLocutor);
 // Função para enviar os dados mastigados para o ESP32
 async function atualizarPainelFisico(gameData) {
     try {
+        const docRef = doc(db, "hardware", "display");
+
         // 🛡️ ESCUDO: Se o jogo não estiver carregado ou não existir partida ativa
         if (!gameData || !gameData.playerIds) {
-            const docRef = doc(db, "hardware", "display");
-            // Manda tudo zerado para o ESP32 apagar os LEDs da mesa
+            // Manda o pacote zerado (Limpa o ESP32 e o VAR)
             await setDoc(docRef, {
-                jogador1: 0,
-                jogador2: 0,
-                jogador3: 0,
-                jogador4: 0,
+                jogador1: 0, jogador2: 0, jogador3: 0, jogador4: 0,
+                nome1: "", nome2: "", nome3: "", nome4: "",
+                raios1: 0, raios2: 0, raios3: 0, raios4: 0,
+                lambretas1: 0, lambretas2: 0, lambretas3: 0, lambretas4: 0,
                 status: "inactive"
             });
-            return; // Interrompe a função aqui para não dar erro
+            return;
         }
 
-        // Se o jogo existe, continua normalmente
+        // 1. Pega os IDs da mesa
         const p1 = gameData.playerIds[0];
         const p2 = gameData.playerIds[1];
         const p3 = gameData.playerIds[2];
         const p4 = gameData.playerIds[3];
 
-        const resumoParaESP32 = {
+        // 2. Função rápida para contar as lambretas SOFRIDAS por um jogador nesta partida
+        const matchHistory = gameData.history || [];
+        const contarLambretas = (id) => matchHistory.filter(round =>
+            round.lambretaPlayerIds && round.lambretaPlayerIds.includes(id)
+        ).length;
+
+        // 3. Monta o Super-Pacote de Dados
+        const resumoParaSistemasExternos = {
+            // === DADOS DO ESP32 (Intocáveis) ===
             jogador1: gameData.scores[p1] || 0,
             jogador2: gameData.scores[p2] || 0,
             jogador3: gameData.scores[p3] || 0,
             jogador4: gameData.scores[p4] || 0,
-            status: gameData.status
+            status: gameData.status,
+
+            // === DADOS NOVOS PARA O VAR ===
+            // Nomes reais puxados da memória global
+            nome1: appState.players[p1]?.name || "Jogador 1",
+            nome2: appState.players[p2]?.name || "Jogador 2",
+            nome3: appState.players[p3]?.name || "Jogador 3",
+            nome4: appState.players[p4]?.name || "Jogador 4",
+
+            // Contagem de Raios
+            raios1: gameData.raios?.[p1] || 0,
+            raios2: gameData.raios?.[p2] || 0,
+            raios3: gameData.raios?.[p3] || 0,
+            raios4: gameData.raios?.[p4] || 0,
+
+            // Contagem de Lambretas (Usando a lógica de "vítima" que corrigimos)
+            lambretas1: contarLambretas(p1),
+            lambretas2: contarLambretas(p2),
+            lambretas3: contarLambretas(p3),
+            lambretas4: contarLambretas(p4)
         };
 
-        const docRef = doc(db, "hardware", "display");
-        await setDoc(docRef, resumoParaESP32);
+        // Envia tudo para o Firebase
+        await setDoc(docRef, resumoParaSistemasExternos);
 
     } catch (erro) {
-        console.error("Erro ao atualizar o placar físico:", erro);
+        console.error("Erro ao atualizar os placares externos:", erro);
     }
 }
 
