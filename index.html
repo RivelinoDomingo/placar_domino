@@ -3060,6 +3060,8 @@ function setupFirestoreListeners() {
             ui.liveMatchFeed.classList.remove('open');
             ui.liveMatchFeed.innerHTML = '';
             appState.gameState.activeGame = null;
+            // Atualiza os o esp32 na tela do placar.
+            atualizarPainelFisico(appState.gameState.activeGame);
         };
 
         if (snapshot.empty) {
@@ -3914,33 +3916,11 @@ window.atualizarPainelFisico =atualizarPainelFisico;
         }
     });
 
-// Adicionar este listener para fechar quando clicar fora
-// document.addEventListener('click', (e) => {
-//     const isClickInsidePanel = ui.adminFab.panel.contains(e.target);
-//     const isClickOnFabButton = e.target.closest('#adminFabButton');
-//
-//     if (ui.adminFab.panel.classList.contains('active') && !isClickInsidePanel && !isClickOnFabButton) {
-//         ui.adminFab.button.classList.remove('active');
-//         ui.adminFab.defaultIcon.classList.remove('hidden');
-//         ui.adminFab.closeIcon.classList.add('hidden');
-//         ui.adminFab.panel.classList.remove('active');
-//
-//         if (!appState.isAdminMode) {
-//             ui.adminFab.loginView.style.display = 'block';
-//             ui.adminFab.controlsView.style.display = 'none';
-//             ui.adminFab.keyInput.value = '';
-//         }
-//     }
-// });
-
 // 4. Iniciar Partida (Novo item do menu)
     ui.menu.startGame.addEventListener('click', () => {
         ui.menu.dropdown.classList.remove('open'); // Fecha o menu
         handleStartGameClick();
     });
-
-// function activateAdminMode() { if(ui.adminFab.keyInput.value === ADMIN_KEY) { appState.isAdminMode = true; ui.adminFab.loginView.style.display = 'none'; ui.adminFab.controlsView.style.display = 'block'; updateAdminUI(); } else { alert('Senha incorreta!'); }}
-
 
 // Listener para o modo partida que estava comentado
 ui.gameMode.startBtn.addEventListener('click', createGameInFirestore);
@@ -3966,51 +3946,10 @@ ui.liveMatchHeader.addEventListener('click', () => {
 
 ui.gameMode.newGameBtn.addEventListener('click', () => { resetGameState(); switchView('view-game-table'); });
 ui.gameMode.gameOver.gameSummaryBtn.addEventListener('click', () => showGameSummary());
-
-
-
-// --- Admin Logic Atualizada ---
-// ui.adminPanel.activateBtn.addEventListener('click', () => {
-//     const key = ui.adminPanel.keyInput.value;
-//     if (key === ADMIN_KEY) {
-//         appState.isAdminMode = true;
-//         ui.adminPanel.loginView.classList.add('hidden');
-//         ui.adminPanel.controlsView.classList.remove('hidden');
-//         showMessage("Modo Admin Ativado!", "success");
-//         renderScoreboard();
-//         // activateAdminMode();
-//     } else {
-//         showMessage("Senha incorreta.", "error");
-//     }
-// });
-// ui.adminFab.button.addEventListener('click', (e) => toggleAdminPanel(e));
-// ui.adminFab.activateBtn.addEventListener('click', activateAdminMode);
-// ui.adminFab.keyInput.addEventListener('keydown', function(event) {
-//     if (event.key === 'Enter') {
-//         event.preventDefault();
-//         activateAdminMode();
-//     }
-// });
-
 ui.adminPanel.addPlayerBtn.addEventListener('click', () => {
         ui.adminPanel.overlay.style.display = 'none'; // Fecha o painel
         addNovoJogador();
     });
-// ui.notificationsBtn.addEventListener('click',async () => {
-//     if ('serviceWorker' in navigator && 'Notification' in window) {
-//     try {
-//         const registration = await navigator.serviceWorker.register('/placar_domino/service-worker.js', {
-//         scope: '/placar_domino/'
-//         });
-//         // console.log('SW registrado:', registration.scope);
-//         requestPermissionAndGetToken(registration);
-//     } catch (error) {
-//         console.error('Erro ao registrar Service Worker:', error);
-//     }
-//     } else {
-//     console.warn("SW ou Notification API não suportado");
-//     }
-// });
 
 ui.gameMode.goToBtn.addEventListener('click', handleStartGameClick);
 ui.gameMode.backBtn.addEventListener('click', () => endGame(false));
