@@ -430,6 +430,18 @@ function calcularFechamentoDeTemporada(seasonToEvaluate) {
 
         if (!playersInSerie || playersInSerie.length === 0) continue;
 
+        // 👇 NOVA LÓGICA DE ESCALONAMENTO DE VAGAS
+        const qtdJogadores = playersInSerie.length;
+        let limiteVagas = 3; // Padrão: 8 ou mais jogadores
+
+        if (qtdJogadores < 5) {
+            limiteVagas = 1;
+        } else if (qtdJogadores < 8) {
+            limiteVagas = 2;
+        }
+
+        console.log(`📊 Série ${serieName} tem ${qtdJogadores} jogadores. Vagas liberadas (Sobe/Cai): ${limiteVagas}`);
+
         playersInSerie.sort((a, b) => {
             const statsA = a[season] || {};
             const statsB = b[season] || {};
@@ -446,7 +458,8 @@ function calcularFechamentoDeTemporada(seasonToEvaluate) {
         // --- QUEM SOBE ---
         let promocoes = 0;
         if (i < SERIES_CONFIG.length - 1) {
-            for (let j = 0; j < playersInSerie.length && promocoes < 3; j++) {
+            // Substituímos o < 3 pelo < limiteVagas
+            for (let j = 0; j < playersInSerie.length && promocoes < limiteVagas; j++) {
                 let p = playersInSerie[j];
                 let partidas = p[season]?.partidasNaTemporada || 0;
 
@@ -461,7 +474,8 @@ function calcularFechamentoDeTemporada(seasonToEvaluate) {
         // --- QUEM CAI ---
         let rebaixamentos = 0;
         if (i > 0) {
-            for (let j = playersInSerie.length - 1; j >= 0 && rebaixamentos < 3; j--) {
+            // Substituímos o < 3 pelo < limiteVagas
+            for (let j = playersInSerie.length - 1; j >= 0 && rebaixamentos < limiteVagas; j--) {
                 let p = playersInSerie[j];
 
                 if (!p._jaMovimentado) {
