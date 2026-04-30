@@ -156,6 +156,11 @@
             </button>
             <div class="h-px bg-gray-100 my-1"></div>
 
+            <button id="menuItemAbout" class="w-full text-left px-4 py-3 hover:bg-gray-50 flex items-center gap-3 text-gray-700 transition">
+                <span class="text-xl">ℹ️</span>
+                <span class="font-medium">Sobre o App</span>
+            </button>
+
             <button id="menuItemAdmin" class="w-full text-left px-4 py-3 hover:bg-gray-50 flex items-center gap-3 text-gray-700 transition">
                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-gray-500"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>
                 <span class="font-medium">Administrador</span>
@@ -167,7 +172,12 @@
 <div id="app-container" class="container mx-auto max-w-2xl p-4 sm:p-6 lg:p-8">
     <div id="view-scoreboard" class="view active fade-in">
 
-        <div class="text-center mb-8 pt-4"> <h1 class="text-4xl font-bold font-condensed tracking-wider">PLACAR DO DOMINÓ</h1>
+        <div class="text-center mb-8 pt-4">
+            <h1 class="text-4xl font-bold font-condensed tracking-wider text-gray-800">LIGA DO DOMINÓ</h1>
+            <!-- O span aguarda o JavaScript injetar o nome da temporada -->
+            <h2 id="tituloTemporadaAtual" class="text-sm font-semibold text-gray-500 uppercase tracking-widest mt-1">
+                Carregando...
+            </h2>
         </div>
 
         <div class="flex justify-center mb-8 hidden" id="goToGameModeContainer">
@@ -392,6 +402,19 @@ function getCurrentSeasonNumber() {
     return Math.floor(daysSinceStart / 30);
 }
 const currentSeason = `temporada_${getCurrentSeasonNumber()}`;
+
+function renderizarTituloTemporada(seasonString) {
+    const elementoSubtitulo = document.getElementById('tituloTemporadaAtual');
+    if (!elementoSubtitulo || !seasonString) return;
+
+    // Pega "temporada_9" e transforma em "Temporada 9"
+    const textoFormatado = seasonString
+        .replace('_', ' ') // Troca o underline por espaço
+        .replace(/\b\w/g, letra => letra.toUpperCase()); // Deixa a primeira letra maiúscula
+
+    elementoSubtitulo.textContent = textoFormatado;
+}
+renderizarTituloTemporada(currentSeason);
 
 function getDiasDaTemporadaAtual() {
     const firstSeasonStart = new Date("2025-07-06T00:00:00Z");
@@ -841,7 +864,8 @@ const ui = {
         notifications: document.getElementById('menuItemNotifications'),
         history: document.getElementById('menuItemHistory'),
         admin: document.getElementById('menuItemAdmin'),
-        startGame: document.getElementById('menuItemStartGame')
+        startGame: document.getElementById('menuItemStartGame'),
+        about: document.getElementById('menuItemAbout')
     },
 
     // Admin agora é um overlay
@@ -959,6 +983,109 @@ ui.menu.admin.addEventListener('click', () => {
     ui.menu.dropdown.classList.remove('open');
     ui.adminPanel.overlay.style.display = 'flex'; // Exibe o overlay
     setTimeout(() => ui.adminPanel.overlay.classList.remove('hidden'), 10);
+});
+
+// 4. Sobre o App (Verificador de Versões e Limpeza de Cache)
+ui.menu.about.addEventListener('click', async () => {
+    // Fecha o menu visualmente
+    ui.menu.dropdown.classList.remove('open');
+
+    // 👇 DEFINA AQUI A VERSÃO ATUAL DA TELA
+    const versaoDaInterface = "v2.81";
+
+    // O detetive do Cache
+    let versaoDoCache = "Não detectado";
+    if ('caches' in window) {
+        try {
+            const cacheNames = await caches.keys();
+            const appCache = cacheNames.find(name => name.startsWith('placar_domino_cache_v'));
+
+            if (appCache) {
+                versaoDoCache = appCache.replace('placar_domino_cache_', '');
+            }
+        } catch (error) {
+            console.error("Erro ao ler caches:", error);
+        }
+    }
+
+    const estaSincronizado = (versaoDaInterface === versaoDoCache);
+
+    const modalHTML = `
+        <div class="text-center animate-bounce-in">
+            <div class="text-4xl mb-3">🀄</div>
+            <h2 class="text-2xl font-black text-blue-600 mb-2">Liga do Dominó</h2>
+            <p class="text-gray-500 text-sm mb-6">Informações do Sistema</p>
+
+            <div class="bg-gray-50 border border-gray-200 p-4 rounded-lg text-left mb-6 shadow-sm font-mono text-sm">
+                <div class="flex justify-between border-b pb-2 mb-2">
+                    <span class="font-semibold text-gray-600">Interface (UI):</span>
+                    <span class="font-bold text-blue-600">${versaoDaInterface}</span>
+                </div>
+                <div class="flex justify-between">
+                    <span class="font-semibold text-gray-600">Motor (SW):</span>
+                    <span class="font-bold ${estaSincronizado ? 'text-green-600' : 'text-red-600'}">${versaoDoCache}</span>
+                </div>
+            </div>
+
+            ${estaSincronizado ? `
+                <div class="bg-green-50 text-green-700 p-3 rounded text-sm mb-4 border border-green-200 font-medium">
+                    ✅ Aplicativo 100% atualizado e sincronizado!
+                </div>
+            ` : `
+                <div class="bg-red-50 text-red-700 p-3 rounded text-sm mb-4 border border-red-200 font-medium">
+                    ⚠️ <strong>Conflito de Versão Detectado!</strong><br>
+                    O seu navegador está segurando a versão antiga do sistema.
+                </div>
+                <button id="btnForceReload" class="w-full bg-red-600 text-white font-bold py-3 mb-4 rounded-xl hover:bg-red-700 transition shadow-md">
+                    🔄 Limpar Cache e Atualizar
+                </button>
+            `}
+
+            <button id="btnCloseAbout" class="w-full bg-gray-200 text-gray-800 font-bold py-3 rounded-xl hover:bg-gray-300 transition shadow-sm">
+                Fechar
+            </button>
+        </div>
+    `;
+
+    openModal(modalHTML);
+
+    // ==========================================
+    // CORREÇÃO 1: Fazendo o botão de fechar funcionar
+    // ==========================================
+    document.getElementById('btnCloseAbout').addEventListener('click', closeModal);
+
+    // ==========================================
+    // CORREÇÃO 2: A "Opção Nuclear" para limpar o Cache
+    // ==========================================
+    const btnReload = document.getElementById('btnForceReload');
+    if (btnReload) {
+        btnReload.addEventListener('click', async () => {
+            btnReload.innerHTML = "Limpando o sistema... ⏳";
+            btnReload.disabled = true;
+
+            try {
+                // 1. Deleta fisicamente TODOS os Caches do navegador
+                if ('caches' in window) {
+                    const nomesDosCaches = await caches.keys();
+                    await Promise.all(nomesDosCaches.map(nome => caches.delete(nome)));
+                }
+
+                // 2. Caça e "mata" os Service Workers Zumbis
+                if ('serviceWorker' in navigator) {
+                    const registros = await navigator.serviceWorker.getRegistrations();
+                    for (let registro of registros) {
+                        await registro.unregister();
+                    }
+                }
+
+                // 3. Recarrega a página de forma limpa
+                window.location.reload(true);
+            } catch (erro) {
+                console.error("Erro ao forçar limpeza:", erro);
+                alert("Não foi possível limpar automaticamente. Feche a aba e abra novamente.");
+            }
+        });
+    }
 });
 
 // Fechar Admin
@@ -1322,8 +1449,9 @@ async function launchScore() {
             playerUpdates.partidasJogadas = increment(1);
             playerUpdates[`${currentSeason}.raiosNaTemporada`] = increment(1);
             playerUpdates[`${currentSeason}.partidasNaTemporada`] = increment(1);
+            //
 
-            // Atualiza partidas jogadas dos perdedores
+            // Atualiza partidas jogadas dos perdedores (Isso continua igual)
             for (const loserId of loserIds) {
                 batch.update(doc(playersCollectionRef(), loserId), {
                     [`${currentSeason}.partidasNaTemporada`]: increment(1),
@@ -1334,15 +1462,54 @@ async function launchScore() {
             // Lógica de lambretas
             stateScore = { ...currentGame.scores, [winnerId]: newScore };
 
+            // PASSO 1: Apenas levanta os suspeitos (quem zerou), SEM SALVAR NADA
+            lambretaLosersThisRound = [];
             for (const loserId of loserIds) {
                 if ((stateScore[loserId] || 0) === 0) {
-                    batch.update(doc(playersCollectionRef(), loserId), {
-                        lambreta: increment(1),
-                        [`${currentSeason}.lambretasNaTemporada`]: increment(1)
-                    });
                     lambretaLosersThisRound.push(loserId);
                 }
             }
+
+            // PASSO 2: 🛡️ FILTRO ANTI-INJUSTIÇA DA LAMBRETA (Com regra de Mérito)
+            const pesoSerie = { 'A': 1, 'B': 2, 'C': 3, 'D': 4, 'Amador': 5 };
+
+            const jogadoresNaMesa = currentGame.playerIds.map(id => {
+                const serieDoJogador = appState.players[id]?.series || 'D';
+                return { id: id, peso: pesoSerie[serieDoJogador] || 4 };
+            });
+
+            const lambretasValidadas = lambretaLosersThisRound.filter(vitimaId => {
+                const serieDaVitima = appState.players[vitimaId]?.series || 'D';
+                const pesoDaVitima = pesoSerie[serieDaVitima] || 4;
+
+                const serieDoGanhador = appState.players[winnerId]?.series || 'D';
+                const pesoDoGanhador = pesoSerie[serieDoGanhador] || 4;
+
+                // REGRA 1: O MÉRITO (Davi contra Golias)
+                if (pesoDoGanhador >= (pesoDaVitima + 2)) return true;
+
+                // REGRA 2: A MESA CONTAMINADA
+                const temNovatoQuePrejudica = jogadoresNaMesa.some(jogador => {
+                    if (jogador.id === vitimaId) return false;
+                    if (jogador.id === winnerId) return false;
+                    return jogador.peso >= (pesoDaVitima + 2);
+                });
+
+                return !temNovatoQuePrejudica;
+            });
+
+            // Atualiza a lista da rodada apenas com quem não foi perdoado
+            lambretaLosersThisRound = lambretasValidadas;
+
+            // PASSO 3: AGORA SIM! Carimba a lambreta no banco de dados das vítimas finais
+            for (const vitimaId of lambretasValidadas) {
+                batch.update(doc(playersCollectionRef(), vitimaId), {
+                    lambreta: increment(1),
+                    [`${currentSeason}.lambretasNaTemporada`]: increment(1)
+                });
+            }
+
+            //
 
             // Lógica de conquista Roubo de Raio
             const ultimoRaioIndex = currentGame.history.findLastIndex(r => r.completedRaio);
@@ -1457,7 +1624,6 @@ async function launchScore() {
         if (lambretaLosersThisRound.length > 0) roundEvent.lambretaPlayerIds = lambretaLosersThisRound;
         if (matchPointsThisRound.length > 0) roundEvent.matchPointPlayerIds = matchPointsThisRound;
 
-        // 👇 ESSA ERA A PARTE QUE TINHA SUMIDO! (Calculando os Zeros)
         if (completedRaio) {
             roundEvent.stateScore = {
                 scores: currentGame.playerIds.reduce((acc, id) => ({ ...acc, [id]: 0 }), {}),
@@ -3075,7 +3241,10 @@ function setupFirestoreListeners() {
             ui.liveMatchFeed.innerHTML = '';
             appState.gameState.activeGame = null;
             // Atualiza os o esp32 na tela do placar.
-            atualizarPainelFisico(appState.gameState.activeGame);
+            if (appState.isAdminMode) {
+                atualizarPainelFisico(appState.gameState.activeGame);
+            }
+
         };
 
         if (snapshot.empty) {
@@ -3119,7 +3288,10 @@ function setupFirestoreListeners() {
             // --- 👆 FIM DA LÓGICA DO LOCUTOR 👆 ---
 
             // Atualiza os dados do firebase para que o esp32 consiga pegar depois.
-            atualizarPainelFisico(appState.gameState.activeGame);
+            if (appState.isAdminMode){
+                atualizarPainelFisico(appState.gameState.activeGame);
+            }
+
         }
         // A barra será atualizada ao abrir o app e sempre que um jogador ganhar um raio/partida!
         atualizarBarraDeNoticias();
