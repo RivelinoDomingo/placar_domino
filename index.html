@@ -991,7 +991,7 @@ ui.menu.about.addEventListener('click', async () => {
     ui.menu.dropdown.classList.remove('open');
 
     // 👇 DEFINA AQUI A VERSÃO ATUAL DA TELA
-    const versaoDaInterface = "v2.81";
+    const versaoDaInterface = "v2.82";
 
     // O detetive do Cache
     let versaoDoCache = "Não detectado";
@@ -1224,6 +1224,16 @@ function promptResumeGame(gameId, gameData) {
     document.getElementById('btnDiscardAndNew').onclick = async () => {
         closeModal();
         await updateDoc(doc(matchesCollectionRef(), gameId), { status: 'aborted', endedAt: serverTimestamp() });
+        
+        // Limpa o painel físico
+        await setDoc(doc(db, "hardware", "display"), {
+        jogador1: 0, jogador2: 0, jogador3: 0, jogador4: 0,
+        nome1: "", nome2: "", nome3: "", nome4: "",
+        raios1: 0, raios2: 0, raios3: 0, raios4: 0,
+        lambretas1: 0, lambretas2: 0, lambretas3: 0, lambretas4: 0,
+        status: "inactive"
+        });
+        
         resetGameState();
         switchView('view-game-table');
         showMessage("Partida anterior descartada.", "info");
@@ -2004,6 +2014,9 @@ async function endGame() {
         // 🔥 JUIZ AO VIVO: Agora é o "Irmão Gêmeo" do analyzeMatchHistory
         let contagemRaios = {};
         let contagemPontos = {};
+        
+        // Limpando o painel fisico do esp32        
+        await atualizarPainelFisico(null);
 
         if (currentGame.history && Array.isArray(currentGame.history)) {
             currentGame.history.forEach(round => {
@@ -2148,6 +2161,19 @@ async function processAndShowGameOver(gameData) {
     // 5. MUDA A TELA E DESENHA
     resetGameState();
     switchView('view-game-over');
+    
+    // Após mostrar a tela de game over, agenda a limpeza do painel físico
+    // Dá um tempo para o ESP32 ler o último estado antes de limpar
+    setTimeout(async () => {
+        await setDoc(doc(db, "hardware", "display"), {
+            jogador1: 0, jogador2: 0, jogador3: 0, jogador4: 0,
+            nome1: "", nome2: "", nome3: "", nome4: "",
+            raios1: 0, raios2: 0, raios3: 0, raios4: 0,
+            lambretas1: 0, lambretas2: 0, lambretas3: 0, lambretas4: 0,
+            status: "inactive"
+        });
+    }, 10000); // 10 segundos de delay para o ESP32 ler o último estado
+
 
     ui.gameMode.gameOver.winnerText.textContent = winnerText;
     ui.gameMode.gameOver.scoreText.textContent = finalScoreText;
@@ -3240,10 +3266,11 @@ function setupFirestoreListeners() {
             ui.liveMatchFeed.classList.remove('open');
             ui.liveMatchFeed.innerHTML = '';
             appState.gameState.activeGame = null;
+            // Removido para resolver bug com disply esp32
             // Atualiza os o esp32 na tela do placar.
-            if (appState.isAdminMode) {
-                atualizarPainelFisico(appState.gameState.activeGame);
-            }
+            //if (appState.isAdminMode) {
+            //    atualizarPainelFisico(appState.gameState.activeGame);
+            //}
 
         };
 
@@ -4016,13 +4043,14 @@ async function atualizarPainelFisico(gameData) {
         // 🛡️ ESCUDO: Se o jogo não estiver carregado ou não existir partida ativa
         if (!gameData || !gameData.playerIds) {
             // Manda o pacote zerado (Limpa o ESP32 e o VAR)
-            await setDoc(docRef, {
+            /* await setDoc(docRef, {
                 jogador1: 0, jogador2: 0, jogador3: 0, jogador4: 0,
                 nome1: "", nome2: "", nome3: "", nome4: "",
                 raios1: 0, raios2: 0, raios3: 0, raios4: 0,
                 lambretas1: 0, lambretas2: 0, lambretas3: 0, lambretas4: 0,
                 status: "inactive"
-            });
+            }); */
+            console.log("Nenhuma partida ativa no momento, ignorando..");
             return;
         }
 
