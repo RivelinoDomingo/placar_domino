@@ -565,7 +565,6 @@ async function verificarViradaDeTemporada() {
 async function executarViradaAutomatica(seasonPassada) {
     console.log(`⏳ Calculando rebaixamentos da ${seasonPassada}...`);
 
-    // Chama o nosso Juiz passando o passado
     const movimentacoes = calcularFechamentoDeTemporada(seasonPassada);
 
     if (movimentacoes.length === 0) {
@@ -578,15 +577,19 @@ async function executarViradaAutomatica(seasonPassada) {
 
         movimentacoes.forEach(mov => {
             const playerDocRef = doc(playersCollectionRef(), mov.id);
-            // Atualiza a série do jogador!
-            batch.update(playerDocRef, { series: mov.para });
+            
+            // Atualiza a série do jogador E registra no histórico da temporada
+            batch.update(playerDocRef, { 
+                series: mov.para,
+                [`${seasonPassada}.seriesNaTemporada`]: mov.para  // NOVO: Registra a série final da temporada
+            });
+            
             console.log(`🔄 Automático - ${mov.nome}: Série ${mov.de} ➔ Série ${mov.para}`);
         });
 
         await batch.commit();
         console.log("🎉 Virada de temporada concluída com sucesso! Séries atualizadas.");
 
-        // Opcional: Mostra um aviso rápido na tela para o "jogador porteiro"
         showMessage(`Temporada encerrada! ${movimentacoes.length} jogadores mudaram de série.`, "success");
 
     } catch (error) {
@@ -991,7 +994,7 @@ ui.menu.about.addEventListener('click', async () => {
     ui.menu.dropdown.classList.remove('open');
 
     // 👇 DEFINA AQUI A VERSÃO ATUAL DA TELA
-    const versaoDaInterface = "v2.82";
+    const versaoDaInterface = "v2.83";
 
     // O detetive do Cache
     let versaoDoCache = "Não detectado";
@@ -2194,7 +2197,7 @@ async function processAndShowGameOver(gameData) {
 }
 
 function switchView(viewId) { ui.views.forEach(v => v.classList.toggle('active', v.id === viewId)); }
-
+/*
 function renderScoreboard() {
     const players = Object.values(appState.players);
     const seriesOrder = ['A', 'B', 'C', 'D', 'Amador'];
@@ -2273,6 +2276,143 @@ function renderScoreboard() {
         checarGatilhoDoResumo();
         verificarAvisoDoSistema();
         temporadaJaVerificada = true; // Avisa que já checou, não precisa checar de novo hoje!
+    }
+}*/
+
+function renderScoreboard() {
+    const players = Object.values(appState.players);
+    const seriesOrder = ['A', 'B', 'C', 'D', 'Amador'];
+    
+    // Agrupa jogadores por série
+    const playersBySeries = {};
+    seriesOrder.forEach(serie => {
+        playersBySeries[serie] = players.filter(p => (p.series || 'Amador') === serie);
+    });
+    
+    // Ordena jogadores dentro de cada série
+    seriesOrder.forEach(serie => {
+        playersBySeries[serie].sort((a, b) => {
+            const statsA = a[currentSeason] || {};
+            const statsB = b[currentSeason] || {};
+
+            const aproveitamentoDiff = (statsB.aproveitamentoNaTemporada || 0) - (statsA.aproveitamentoNaTemporada || 0);
+            if (aproveitamentoDiff !== 0) return aproveitamentoDiff;
+
+            const pontosDiff = (statsB.pontosNaTemporada || 0) - (statsA.pontosNaTemporada || 0);
+            if (pontosDiff !== 0) return pontosDiff;
+
+            return (statsA.lambretasNaTemporada || 0) - (statsB.lambretasNaTemporada || 0);
+        });
+    });
+    
+    // Função auxiliar para definir cores com base na posição e total de jogadores
+    function getCardClasses(index, totalPlayers) {
+        let topCount, bottomCount;
+        
+        if (totalPlayers >= 8) {
+            topCount = 3;
+            bottomCount = 3;
+        } else if (totalPlayers >= 5) {
+            topCount = 2;
+            bottomCount = 2;
+        } else {
+            topCount = 1;
+            bottomCount = 1;
+        }
+        
+        // Verifica se está no topo (verde)
+        if (index < topCount) {
+            return "p-4 rounded-xl shadow-sm flex items-center justify-between transition-all duration-200 hover:scale-[1.01] bg-green-50 border-l-4 border-green-500";
+        } 
+        // Verifica se está no final (vermelho)
+        else if (index >= totalPlayers - bottomCount) {
+            return "p-4 rounded-xl shadow-sm flex items-center justify-between transition-all duration-200 hover:scale-[1.01] bg-red-50 border-l-4 border-red-500";
+        } 
+        // Meio (branco)
+        else {
+            return "p-4 rounded-xl shadow-sm flex items-center justify-between transition-all duration-200 hover:scale-[1.01] bg-white";
+        }
+    }
+    
+    // Função para definir posição/ícone
+    function getPositionDisplay(index, totalPlayers) {
+        let topCount;
+        if (totalPlayers >= 8) topCount = 3;
+        else if (totalPlayers >= 5) topCount = 2;
+        else topCount = 1;
+        
+        if (index === 0) return "👑 1º";
+        if (index < topCount) return ["🥇", "🥈", "🥉"][index] || `${index + 1}º`;
+        return `${index + 1}º`;
+    }
+    
+    // Renderiza o HTML agrupado por série
+    let html = '';
+    
+    seriesOrder.forEach(serie => {
+        const seriePlayers = playersBySeries[serie];
+        if (seriePlayers.length === 0) return;
+        
+        // Título da série
+        html += `
+            <div class="mb-6">
+                <div class="flex items-center gap-3 mb-3 px-1">
+                    <h3 class="text-xl font-bold text-gray-700 uppercase tracking-wider">Série ${serie}</h3>
+                    <span class="text-sm text-gray-500 font-medium">(${seriePlayers.length} jogadores)</span>
+                </div>
+                <div class="space-y-2">
+        `;
+        
+        // Renderiza cada jogador da série
+        seriePlayers.forEach((player, index) => {
+            const stats = player[currentSeason] || {};
+            const cardClass = getCardClasses(index, seriePlayers.length);
+            const positionDisplay = getPositionDisplay(index, seriePlayers.length);
+            
+            html += `
+                <div class="${cardClass}">
+                    <div class="flex items-center gap-3">
+                        <span class="font-mono text-sm text-gray-400 w-8 text-center">
+                            ${positionDisplay}
+                        </span>
+                        <div>
+                            <span class="font-bold text-lg player-name-clickable" data-player-id="${player.id}">
+                                ${player.name}
+                            </span>
+                        </div>
+                    </div>
+                    <div class="text-sm font-mono leading-tight text-right">
+                        <div class="grid grid-cols-4 text-gray-500 w-44 mx-auto">
+                            <span class="text-center">RT</span>
+                            <span class="text-center">LT</span>
+                            <span class="text-center">PAT</span>
+                            <span class="text-center">AT</span>
+                        </div>
+                        <div class="grid grid-cols-4 font-semibold w-44 mx-auto">
+                            <span class="text-blue-600 text-center">${stats.raiosNaTemporada || 0}</span>
+                            <span class="text-yellow-600 text-center">${stats.lambretasNaTemporada || 0}</span>
+                            <span class="text-center">${stats.partidasNaTemporada || 0}</span>
+                            <span class="text-center">${(stats.aproveitamentoNaTemporada || 0).toFixed(1)}%</span>
+                        </div>
+                    </div>
+                </div>
+            `;
+        });
+        
+        html += `
+                </div>
+            </div>
+        `;
+    });
+    
+    ui.playersListDiv.innerHTML = html;
+    
+    // Verificações de temporada (mantido do código original)
+    if (!temporadaJaVerificada) {
+        verificarViradaDeTemporada();
+        checarGatilhoDoResumo();
+        verificarAvisoDoSistema();
+        temporadaJaVerificada = true;
     }
 }
 
@@ -3035,7 +3175,8 @@ async function addNovoJogador() {
                     pontosNaTemporada: 0,
                     matchPointsNaTemporada: 0,
                     partidasNaTemporada: 0,
-                    conquistasNaTemporada:{}
+                    conquistasNaTemporada:{},
+                    seriesNaTemporada: 'D'
                     }
 
                 });
@@ -3395,16 +3536,24 @@ async function applySeriesChanges(playerId, changes) {
 
     const playerDocRef = doc(playersCollectionRef(), playerId);
     const player = appState.players[playerId];
+    
     let updates = {
-    series: changes.stagnant ? player.series : changes.newSeries,
-    raiosNaSerie: changes.stagnant ? 0 : (changes.undoSeries ? 15 : 0),
-    lambretasNaSerie: changes.stagnant ? 0 : (changes.undoSeries ? player.lambretasNaSerie : 0)
+        series: changes.stagnant ? player.series : changes.newSeries,
+        raiosNaSerie: changes.stagnant ? 0 : (changes.undoSeries ? 15 : 0),
+        lambretasNaSerie: changes.stagnant ? 0 : (changes.undoSeries ? player.lambretasNaSerie : 0)
     };
+    
+    // NOVO: Se a série mudou, registra a série desta temporada
+    if (!changes.stagnant) {
+        updates[`${currentSeason}.seriesNaTemporada`] = changes.newSeries;
+    } else {
+        // Se ficou estagnado, mantém a série atual
+        updates[`${currentSeason}.seriesNaTemporada`] = player.series;
+    }
 
     await updateDoc(playerDocRef, updates);
 
     // Concede conquistas relacionadas a séries
-
     if (changes.demotion){
         await concederConquista(playerId, "demotion", `foi rebaixado para Série ${changes.newSeries}`);
     }
@@ -3412,7 +3561,7 @@ async function applySeriesChanges(playerId, changes) {
         await concederConquista(playerId, "promotion", `foi promovido para Série ${changes.newSeries}`);
     }
     else if (changes.stagnant){
-        await concederConquista(playerId, "stagnant", player.series === "A" ? `ganhou um raio e contioua na Série  ${player.series}` : `tomou uma lambreta e permanece na Série ${player.series}`);
+        await concederConquista(playerId, "stagnant", player.series === "A" ? `ganhou um raio e continuou na Série ${player.series}` : `tomou uma lambreta e permanece na Série ${player.series}`);
     }
 }
 
@@ -3826,6 +3975,7 @@ function mudarAbaHistorico(aba) {
     }
 }
 
+/*
 // A Super Função de Renderização Histórica
 function renderScoreboardHistory(seasonName, containerId) {
     // 1. Descobre o número da temporada (ex: "temporada_7" -> 7)
@@ -3930,6 +4080,180 @@ function renderScoreboardHistory(seasonName, containerId) {
             `;
         }
     }).join('');
+
+    document.getElementById(containerId).innerHTML = html;
+} */
+
+function renderScoreboardHistory(seasonName, containerId) {
+    const seasonNum = parseInt(seasonName.replace('temporada_', ''));
+
+    let players = Object.values(appState.players).filter(p => p[seasonName]);
+
+    if (players.length === 0) {
+        document.getElementById(containerId).innerHTML = '<p class="text-center text-gray-500 py-8">Nenhum dado encontrado para esta temporada.</p>';
+        return;
+    }
+
+    const seriesOrder = ['A', 'B', 'C', 'D', 'Amador'];
+    
+    // Agrupa jogadores por série DAQUELA TEMPORADA
+    const playersBySeries = {};
+    seriesOrder.forEach(serie => {
+        // Usa a série histórica se disponível, senão usa a atual (fallback)
+        playersBySeries[serie] = players.filter(p => {
+            const serieNaTemporada = p[seasonName]?.seriesNaTemporada;
+            // Se tem registro histórico, usa ele; senão, usa a série atual
+            return serieNaTemporada ? serieNaTemporada === serie : (p.series || 'Amador') === serie;
+        });
+    });
+
+    // 3. ORDENAÇÃO DENTRO DE CADA SÉRIE
+    seriesOrder.forEach(serie => {
+        playersBySeries[serie].sort((a, b) => {
+            const statsA = a[seasonName];
+            const statsB = b[seasonName];
+
+            if (seasonNum >= 7) {
+                // REGRA NOVA (Temporada 7 em diante)
+                const aproveitamentoDiff = (statsB.aproveitamentoNaTemporada || 0) - (statsA.aproveitamentoNaTemporada || 0);
+                if (aproveitamentoDiff !== 0) return aproveitamentoDiff;
+
+                const pontosDiff = (statsB.pontosNaTemporada || 0) - (statsA.pontosNaTemporada || 0);
+                if (pontosDiff !== 0) return pontosDiff;
+
+                return (statsA.lambretasNaTemporada || 0) - (statsB.lambretasNaTemporada || 0);
+            } else {
+                // REGRA ANTIGA (Temporada 6 para trás)
+                const saldoA = (statsA.raiosNaTemporada || 0) - (statsA.lambretasNaTemporada || 0);
+                const saldoB = (statsB.raiosNaTemporada || 0) - (statsB.lambretasNaTemporada || 0);
+
+                if (saldoB !== saldoA) return saldoB - saldoA;
+
+                return (statsB.pontosNaTemporada || 0) - (statsA.pontosNaTemporada || 0);
+            }
+        });
+    });
+
+    // Função auxiliar para definir cores com base na posição e total de jogadores
+    function getCardClasses(index, totalPlayers) {
+        let topCount, bottomCount;
+        
+        if (totalPlayers >= 8) {
+            topCount = 3;
+            bottomCount = 3;
+        } else if (totalPlayers >= 5) {
+            topCount = 2;
+            bottomCount = 2;
+        } else {
+            topCount = 1;
+            bottomCount = 1;
+        }
+        
+        // Verifica se está no topo (verde)
+        if (index < topCount) {
+            return "p-3 rounded-xl shadow-sm flex items-center justify-between mb-2 transition-all duration-200 hover:scale-[1.01] bg-green-50 border-l-4 border-green-500";
+        } 
+        // Verifica se está no final (vermelho)
+        else if (index >= totalPlayers - bottomCount) {
+            return "p-3 rounded-xl shadow-sm flex items-center justify-between mb-2 transition-all duration-200 hover:scale-[1.01] bg-red-50 border-l-4 border-red-500";
+        } 
+        // Meio (branco)
+        else {
+            return "p-3 rounded-xl shadow-sm flex items-center justify-between mb-2 transition-all duration-200 hover:scale-[1.01] bg-white border border-gray-100";
+        }
+    }
+
+    // Função para definir posição/ícone
+    function getPositionDisplay(index, totalPlayers) {
+        let topCount;
+        if (totalPlayers >= 8) topCount = 3;
+        else if (totalPlayers >= 5) topCount = 2;
+        else topCount = 1;
+        
+        if (index === 0) return "👑";
+        if (index < topCount) return ["🥇", "🥈", "🥉"][index] || `${index + 1}º`;
+        return `${index + 1}º`;
+    }
+
+    // 4. RENDERIZAÇÃO VISUAL AGRUPADA POR SÉRIE
+    let html = '';
+    
+    seriesOrder.forEach(serie => {
+        const seriePlayers = playersBySeries[serie];
+        if (seriePlayers.length === 0) return;
+        
+        // Título da série
+        html += `
+            <div class="mb-6">
+                <div class="flex items-center gap-3 mb-3 px-1">
+                    <h3 class="text-lg font-bold text-gray-700 uppercase tracking-wider">Série ${serie}</h3>
+                    <span class="text-sm text-gray-500 font-medium">(${seriePlayers.length} jogadores)</span>
+                </div>
+                <div class="space-y-2">
+        `;
+        
+        // Renderiza cada jogador da série
+        seriePlayers.forEach((player, index) => {
+            const stats = player[seasonName];
+            const cardClass = getCardClasses(index, seriePlayers.length);
+            const positionIcon = getPositionDisplay(index, seriePlayers.length);
+
+            if (seasonNum >= 7) {
+                // LAYOUT NOVO (RT | LT | PAT | AT%)
+                html += `
+                    <div class="${cardClass}">
+                        <div class="flex items-center gap-3">
+                            <span class="font-mono text-sm text-gray-400 w-6 text-center">${positionIcon}</span>
+                            <span class="font-bold text-gray-800">${player.name}</span>
+                        </div>
+                        <div class="text-xs font-mono text-right w-44">
+                            <div class="grid grid-cols-4 text-gray-400 mb-0.5">
+                                <span class="text-center">RT</span>
+                                <span class="text-center">LT</span>
+                                <span class="text-center">PAT</span>
+                                <span class="text-center">AT</span>
+                            </div>
+                            <div class="grid grid-cols-4 font-semibold text-sm">
+                                <span class="text-blue-600 text-center">${stats.raiosNaTemporada || 0}</span>
+                                <span class="text-yellow-600 text-center">${stats.lambretasNaTemporada || 0}</span>
+                                <span class="text-gray-700 text-center">${stats.partidasNaTemporada || 0}</span>
+                                <span class="text-gray-800 text-center">${(stats.aproveitamentoNaTemporada || 0).toFixed(1)}%</span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            } else {
+                // LAYOUT ANTIGO (Jogos | Pts | Raios | Lambretas)
+                html += `
+                    <div class="${cardClass}">
+                        <div class="flex items-center gap-3">
+                            <span class="font-mono text-sm text-gray-400 w-6 text-center">${positionIcon}</span>
+                            <span class="font-bold text-gray-800">${player.name}</span>
+                        </div>
+                        <div class="text-xs font-mono text-right w-44">
+                            <div class="grid grid-cols-4 text-gray-400 mb-0.5">
+                                <span class="text-center" title="Partidas Jogadas">JOG</span>
+                                <span class="text-center" title="Pontos">PTS</span>
+                                <span class="text-center" title="Raios">RT</span>
+                                <span class="text-center" title="Lambretas">LT</span>
+                            </div>
+                            <div class="grid grid-cols-4 font-semibold text-sm">
+                                <span class="text-gray-600 text-center">${stats.partidasNaTemporada || 0}</span>
+                                <span class="text-green-600 text-center">${stats.pontosNaTemporada || 0}</span>
+                                <span class="text-blue-600 text-center">${stats.raiosNaTemporada || 0}</span>
+                                <span class="text-red-500 text-center">${stats.lambretasNaTemporada || 0}</span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+        });
+        
+        html += `
+                </div>
+            </div>
+        `;
+    });
 
     document.getElementById(containerId).innerHTML = html;
 }

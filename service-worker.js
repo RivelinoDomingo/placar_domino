@@ -14,7 +14,7 @@ firebase.initializeApp({
 const messaging = firebase.messaging();
 
 // 2. Mantém sua lógica de Cache (PWA)
-const CACHE_NAME = "placar_domino_cache_v2.82";
+const CACHE_NAME = "placar_domino_cache_v2.83";
 const urlsToCache = [
   "/placar_domino/",
   "/placar_domino/index.html",
