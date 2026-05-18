@@ -429,8 +429,89 @@ function getDiasDaTemporadaAtual() {
 }
 
 // Adicionamos o 'seasonToEvaluate' no parênteses
+// function calcularFechamentoDeTemporada(seasonToEvaluate) {
+//     // Se não passarmos nada, ele usa a atual. Mas na virada, vamos passar a anterior!
+//     const season = seasonToEvaluate || currentSeason;
+//     const jogadores = Object.values(appState.players);
+//
+//     if (jogadores.length === 0) return [];
+//
+//     console.log(`🔍 O Juiz está avaliando a temporada: ${season}`);
+//
+//     let ligas = { 'A': [], 'B': [], 'C': [], 'D': [], 'Amador': [] };
+//
+//     jogadores.forEach(p => {
+//         const serieAtual = p.series || 'D';
+//         if(ligas[serieAtual]) ligas[serieAtual].push(p);
+//     });
+//
+//     let movimentacoes = [];
+//
+//     for (let i = 0; i < SERIES_CONFIG.length; i++) {
+//         const serieName = SERIES_CONFIG[i].name;
+//         const playersInSerie = ligas[serieName];
+//
+//         if (!playersInSerie || playersInSerie.length === 0) continue;
+//
+//         // 👇 NOVA LÓGICA DE ESCALONAMENTO DE VAGAS
+//         const qtdJogadores = playersInSerie.length;
+//         let limiteVagas = 3; // Padrão: 8 ou mais jogadores
+//
+//         if (qtdJogadores < 5) {
+//             limiteVagas = 1;
+//         } else if (qtdJogadores < 8) {
+//             limiteVagas = 2;
+//         }
+//
+//         console.log(`📊 Série ${serieName} tem ${qtdJogadores} jogadores. Vagas liberadas (Sobe/Cai): ${limiteVagas}`);
+//
+//         playersInSerie.sort((a, b) => {
+//             const statsA = a[season] || {};
+//             const statsB = b[season] || {};
+//
+//             const aproveitamentoDiff = (statsB.aproveitamentoNaTemporada || 0) - (statsA.aproveitamentoNaTemporada || 0);
+//             if (aproveitamentoDiff !== 0) return aproveitamentoDiff;
+//
+//             const pontosDiff = (statsB.pontosNaTemporada || 0) - (statsA.pontosNaTemporada || 0);
+//             if (pontosDiff !== 0) return pontosDiff;
+//
+//             return (statsA.lambretasNaTemporada || 0) - (statsB.lambretasNaTemporada || 0);
+//         });
+//
+//         // --- QUEM SOBE ---
+//         let promocoes = 0;
+//         if (i < SERIES_CONFIG.length - 1) {
+//             // Substituímos o < 3 pelo < limiteVagas
+//             for (let j = 0; j < playersInSerie.length && promocoes < limiteVagas; j++) {
+//                 let p = playersInSerie[j];
+//                 let partidas = p[season]?.partidasNaTemporada || 0;
+//
+//                 if (partidas >= 20) {
+//                     movimentacoes.push({ id: p.id, nome: p.name, de: serieName, para: SERIES_CONFIG[i + 1].name, status: '⬆️ PROMOVIDO' });
+//                     promocoes++;
+//                     p._jaMovimentado = true;
+//                 }
+//             }
+//         }
+//
+//         // --- QUEM CAI ---
+//         let rebaixamentos = 0;
+//         if (i > 0) {
+//             // Substituímos o < 3 pelo < limiteVagas
+//             for (let j = playersInSerie.length - 1; j >= 0 && rebaixamentos < limiteVagas; j--) {
+//                 let p = playersInSerie[j];
+//
+//                 if (!p._jaMovimentado) {
+//                     movimentacoes.push({ id: p.id, nome: p.name, de: serieName, para: SERIES_CONFIG[i - 1].name, status: '⬇️ REBAIXADO' });
+//                     rebaixamentos++;
+//                 }
+//             }
+//         }
+//     }
+//
+//     return movimentacoes;
+// }
 function calcularFechamentoDeTemporada(seasonToEvaluate) {
-    // Se não passarmos nada, ele usa a atual. Mas na virada, vamos passar a anterior!
     const season = seasonToEvaluate || currentSeason;
     const jogadores = Object.values(appState.players);
 
@@ -442,7 +523,7 @@ function calcularFechamentoDeTemporada(seasonToEvaluate) {
 
     jogadores.forEach(p => {
         const serieAtual = p.series || 'D';
-        if(ligas[serieAtual]) ligas[serieAtual].push(p);
+        if (ligas[serieAtual]) ligas[serieAtual].push(p);
     });
 
     let movimentacoes = [];
@@ -453,15 +534,10 @@ function calcularFechamentoDeTemporada(seasonToEvaluate) {
 
         if (!playersInSerie || playersInSerie.length === 0) continue;
 
-        // 👇 NOVA LÓGICA DE ESCALONAMENTO DE VAGAS
         const qtdJogadores = playersInSerie.length;
-        let limiteVagas = 3; // Padrão: 8 ou mais jogadores
-
-        if (qtdJogadores < 5) {
-            limiteVagas = 1;
-        } else if (qtdJogadores < 8) {
-            limiteVagas = 2;
-        }
+        let limiteVagas = 3;
+        if (qtdJogadores < 5) limiteVagas = 1;
+        else if (qtdJogadores < 8) limiteVagas = 2;
 
         console.log(`📊 Série ${serieName} tem ${qtdJogadores} jogadores. Vagas liberadas (Sobe/Cai): ${limiteVagas}`);
 
@@ -481,7 +557,6 @@ function calcularFechamentoDeTemporada(seasonToEvaluate) {
         // --- QUEM SOBE ---
         let promocoes = 0;
         if (i < SERIES_CONFIG.length - 1) {
-            // Substituímos o < 3 pelo < limiteVagas
             for (let j = 0; j < playersInSerie.length && promocoes < limiteVagas; j++) {
                 let p = playersInSerie[j];
                 let partidas = p[season]?.partidasNaTemporada || 0;
@@ -497,7 +572,6 @@ function calcularFechamentoDeTemporada(seasonToEvaluate) {
         // --- QUEM CAI ---
         let rebaixamentos = 0;
         if (i > 0) {
-            // Substituímos o < 3 pelo < limiteVagas
             for (let j = playersInSerie.length - 1; j >= 0 && rebaixamentos < limiteVagas; j--) {
                 let p = playersInSerie[j];
 
@@ -508,6 +582,50 @@ function calcularFechamentoDeTemporada(seasonToEvaluate) {
             }
         }
     }
+
+    // ─────────────────────────────────────────────────────────────
+    // 🛡️  FILTRO GUARDIÃO — Garante mínimo de 2 jogadores por série
+    //
+    //  Simula o estado final de cada série. Qualquer série que ficaria
+    //  com menos de 2 jogadores tem o rebaixamento cancelado até
+    //  estabilizar. O while repete até não haver mais correções.
+    // ─────────────────────────────────────────────────────────────
+    const MIN_POR_SERIE = 2;
+    let corrigiu = true;
+
+    while (corrigiu) {
+        corrigiu = false;
+
+        // 1. Simula contagem final por série
+        const contagem = {};
+        SERIES_CONFIG.forEach(s => {
+            contagem[s.name] = ligas[s.name]?.length || 0;
+        });
+        movimentacoes.forEach(mov => {
+            contagem[mov.de]--;
+            contagem[mov.para]++;
+        });
+
+        // 2. Para cada série abaixo do mínimo, cancela o último rebaixamento dela
+        for (const serieName of Object.keys(contagem)) {
+            if (contagem[serieName] >= MIN_POR_SERIE) continue;
+
+            for (let k = movimentacoes.length - 1; k >= 0; k--) {
+                const mov = movimentacoes[k];
+                if (mov.de === serieName && mov.status === '⬇️ REBAIXADO') {
+                    console.log(`🛡️ Guardião: ${mov.nome} fica na Série ${serieName} (cancelado rebaixamento para ${mov.para})`);
+                    movimentacoes.splice(k, 1);
+                    corrigiu = true;
+                    break;
+                }
+            }
+
+            if (corrigiu) break; // Recomeça o while com a lista corrigida
+        }
+    }
+
+    console.log('📋 Movimentações finais após filtro guardião:');
+    movimentacoes.forEach(m => console.log(`  ${m.status} ${m.nome}: ${m.de} → ${m.para}`));
 
     return movimentacoes;
 }
@@ -577,13 +695,13 @@ async function executarViradaAutomatica(seasonPassada) {
 
         movimentacoes.forEach(mov => {
             const playerDocRef = doc(playersCollectionRef(), mov.id);
-            
+
             // Atualiza a série do jogador E registra no histórico da temporada
-            batch.update(playerDocRef, { 
+            batch.update(playerDocRef, {
                 series: mov.para,
                 [`${seasonPassada}.seriesNaTemporada`]: mov.para  // NOVO: Registra a série final da temporada
             });
-            
+
             console.log(`🔄 Automático - ${mov.nome}: Série ${mov.de} ➔ Série ${mov.para}`);
         });
 
@@ -1227,7 +1345,7 @@ function promptResumeGame(gameId, gameData) {
     document.getElementById('btnDiscardAndNew').onclick = async () => {
         closeModal();
         await updateDoc(doc(matchesCollectionRef(), gameId), { status: 'aborted', endedAt: serverTimestamp() });
-        
+
         // Limpa o painel físico
         await setDoc(doc(db, "hardware", "display"), {
         jogador1: 0, jogador2: 0, jogador3: 0, jogador4: 0,
@@ -1236,7 +1354,7 @@ function promptResumeGame(gameId, gameData) {
         lambretas1: 0, lambretas2: 0, lambretas3: 0, lambretas4: 0,
         status: "inactive"
         });
-        
+
         resetGameState();
         switchView('view-game-table');
         showMessage("Partida anterior descartada.", "info");
@@ -1612,7 +1730,7 @@ async function launchScore() {
                 }
             }
         }
-        
+
         // ==========================================
 
         // Construção do roundEvent
@@ -1682,9 +1800,9 @@ async function launchScore() {
                 const nomeVitima = appState.players[ladraoDeRaio.vitma[0]].name;
                 frasesParaFalar.push(`Que reviravolta! ${nomeGanhador} roubou o raio de ${nomeVitima}!`);
             } else {
-               frasesParaFalar.push(`E para completar a jogada, desbloqueou a conquista: ${nomesConquistas}!`); 
+               frasesParaFalar.push(`E para completar a jogada, desbloqueou a conquista: ${nomesConquistas}!`);
             }
-            
+
         }
 
         // Junta todas as frases que aconteceram com um espaço entre elas
@@ -1799,6 +1917,7 @@ async function undoRound() {
         pontos: increment(-1),
         [`${currentSeason}.pontosNaTemporada`]: increment(-1)
     });
+
     // Reverte MatchPoints
     if (lastRound.matchPointPlayerIds?.length > 0){
         lastRound.matchPointPlayerIds.forEach(id => {
@@ -2017,8 +2136,8 @@ async function endGame() {
         // 🔥 JUIZ AO VIVO: Agora é o "Irmão Gêmeo" do analyzeMatchHistory
         let contagemRaios = {};
         let contagemPontos = {};
-        
-        // Limpando o painel fisico do esp32        
+
+        // Limpando o painel fisico do esp32
         await atualizarPainelFisico(null);
 
         if (currentGame.history && Array.isArray(currentGame.history)) {
@@ -2164,7 +2283,7 @@ async function processAndShowGameOver(gameData) {
     // 5. MUDA A TELA E DESENHA
     resetGameState();
     switchView('view-game-over');
-    
+
     // Após mostrar a tela de game over, agenda a limpeza do painel físico
     // Dá um tempo para o ESP32 ler o último estado antes de limpar
     setTimeout(async () => {
@@ -2282,13 +2401,13 @@ function renderScoreboard() {
 function renderScoreboard() {
     const players = Object.values(appState.players);
     const seriesOrder = ['A', 'B', 'C', 'D', 'Amador'];
-    
+
     // Agrupa jogadores por série
     const playersBySeries = {};
     seriesOrder.forEach(serie => {
         playersBySeries[serie] = players.filter(p => (p.series || 'Amador') === serie);
     });
-    
+
     // Ordena jogadores dentro de cada série
     seriesOrder.forEach(serie => {
         playersBySeries[serie].sort((a, b) => {
@@ -2304,11 +2423,11 @@ function renderScoreboard() {
             return (statsA.lambretasNaTemporada || 0) - (statsB.lambretasNaTemporada || 0);
         });
     });
-    
+
     // Função auxiliar para definir cores com base na posição e total de jogadores
     function getCardClasses(index, totalPlayers) {
         let topCount, bottomCount;
-        
+
         if (totalPlayers >= 8) {
             topCount = 3;
             bottomCount = 3;
@@ -2319,40 +2438,40 @@ function renderScoreboard() {
             topCount = 1;
             bottomCount = 1;
         }
-        
+
         // Verifica se está no topo (verde)
         if (index < topCount) {
             return "p-4 rounded-xl shadow-sm flex items-center justify-between transition-all duration-200 hover:scale-[1.01] bg-green-50 border-l-4 border-green-500";
-        } 
+        }
         // Verifica se está no final (vermelho)
         else if (index >= totalPlayers - bottomCount) {
             return "p-4 rounded-xl shadow-sm flex items-center justify-between transition-all duration-200 hover:scale-[1.01] bg-red-50 border-l-4 border-red-500";
-        } 
+        }
         // Meio (branco)
         else {
             return "p-4 rounded-xl shadow-sm flex items-center justify-between transition-all duration-200 hover:scale-[1.01] bg-white";
         }
     }
-    
+
     // Função para definir posição/ícone
     function getPositionDisplay(index, totalPlayers) {
         let topCount;
         if (totalPlayers >= 8) topCount = 3;
         else if (totalPlayers >= 5) topCount = 2;
         else topCount = 1;
-        
+
         if (index === 0) return "👑 1º";
         if (index < topCount) return ["🥇", "🥈", "🥉"][index] || `${index + 1}º`;
         return `${index + 1}º`;
     }
-    
+
     // Renderiza o HTML agrupado por série
     let html = '';
-    
+
     seriesOrder.forEach(serie => {
         const seriePlayers = playersBySeries[serie];
         if (seriePlayers.length === 0) return;
-        
+
         // Título da série
         html += `
             <div class="mb-6">
@@ -2362,13 +2481,13 @@ function renderScoreboard() {
                 </div>
                 <div class="space-y-2">
         `;
-        
+
         // Renderiza cada jogador da série
         seriePlayers.forEach((player, index) => {
             const stats = player[currentSeason] || {};
             const cardClass = getCardClasses(index, seriePlayers.length);
             const positionDisplay = getPositionDisplay(index, seriePlayers.length);
-            
+
             html += `
                 <div class="${cardClass}">
                     <div class="flex items-center gap-3">
@@ -2384,13 +2503,13 @@ function renderScoreboard() {
                     <div class="text-sm font-mono leading-tight text-right">
                         <div class="grid grid-cols-4 text-gray-500 w-44 mx-auto">
                             <span class="text-center">RT</span>
-                            <span class="text-center">LT</span>
+                            <span class="text-center">BÔ</span>
                             <span class="text-center">PAT</span>
                             <span class="text-center">AT</span>
                         </div>
                         <div class="grid grid-cols-4 font-semibold w-44 mx-auto">
                             <span class="text-blue-600 text-center">${stats.raiosNaTemporada || 0}</span>
-                            <span class="text-yellow-600 text-center">${stats.lambretasNaTemporada || 0}</span>
+                            <span class="text-green-600 text-center">${(stats.bonusNaTemporada || 0).toFixed(1)}%</span>
                             <span class="text-center">${stats.partidasNaTemporada || 0}</span>
                             <span class="text-center">${(stats.aproveitamentoNaTemporada || 0).toFixed(1)}%</span>
                         </div>
@@ -2398,15 +2517,15 @@ function renderScoreboard() {
                 </div>
             `;
         });
-        
+
         html += `
                 </div>
             </div>
         `;
     });
-    
+
     ui.playersListDiv.innerHTML = html;
-    
+
     // Verificações de temporada (mantido do código original)
     if (!temporadaJaVerificada) {
         verificarViradaDeTemporada();
@@ -2437,12 +2556,17 @@ async function atualizarAproveitamentoTemporada(playerId) {
     const aproveitamentoRA = partidas > 0 ? (raios / partidas) * 100 : 0;
     const aproveitamentoLB = partidas > 0 ? (lambretas / partidas) * 100 : 0;
 
+    // Bônus de fidelidade: +0.1% por cada partida acima das 20 obrigatórias
+    const PARTIDAS_MINIMAS = 20;
+    const bonusPartidas = partidas > PARTIDAS_MINIMAS ? (partidas - PARTIDAS_MINIMAS) * 0.1 : 0;
+
     // Fórmula final
-    // Aproveitamento agora passa pelo peso dos raios e das lambretas.
-    const aproveitamento = peso - aproveitamentoLB + aproveitamentoRA;
+    // Aproveitamento agora passa pelo peso dos raios, das lambretas e do bônus de partidas.
+    const aproveitamento = peso - aproveitamentoLB + aproveitamentoRA + bonusPartidas;
 
     await updateDoc(playerRef, {
-        [`${currentSeason}.aproveitamentoNaTemporada`]: aproveitamento
+        [`${currentSeason}.aproveitamentoNaTemporada`]: aproveitamento,
+        [`${currentSeason}.bonusNaTemporada`]: bonusPartidas
     });
 }
 
@@ -3360,7 +3484,7 @@ function setupFirestoreListeners() {
     appState.unsubscribers.forEach(unsub => unsub());
     appState.unsubscribers = [];
 
-    let ultimoAudioLido = null; 
+    let ultimoAudioLido = null;
 
     // Listener para a lista de jogadores (não muda)
     const unsubPlayers = onSnapshot(query(playersCollectionRef()), (snapshot) => {
@@ -3536,13 +3660,13 @@ async function applySeriesChanges(playerId, changes) {
 
     const playerDocRef = doc(playersCollectionRef(), playerId);
     const player = appState.players[playerId];
-    
+
     let updates = {
         series: changes.stagnant ? player.series : changes.newSeries,
         raiosNaSerie: changes.stagnant ? 0 : (changes.undoSeries ? 15 : 0),
         lambretasNaSerie: changes.stagnant ? 0 : (changes.undoSeries ? player.lambretasNaSerie : 0)
     };
-    
+
     // NOVO: Se a série mudou, registra a série desta temporada
     if (!changes.stagnant) {
         updates[`${currentSeason}.seriesNaTemporada`] = changes.newSeries;
@@ -4095,7 +4219,7 @@ function renderScoreboardHistory(seasonName, containerId) {
     }
 
     const seriesOrder = ['A', 'B', 'C', 'D', 'Amador'];
-    
+
     // Agrupa jogadores por série DAQUELA TEMPORADA
     const playersBySeries = {};
     seriesOrder.forEach(serie => {
@@ -4137,7 +4261,7 @@ function renderScoreboardHistory(seasonName, containerId) {
     // Função auxiliar para definir cores com base na posição e total de jogadores
     function getCardClasses(index, totalPlayers) {
         let topCount, bottomCount;
-        
+
         if (totalPlayers >= 8) {
             topCount = 3;
             bottomCount = 3;
@@ -4148,15 +4272,15 @@ function renderScoreboardHistory(seasonName, containerId) {
             topCount = 1;
             bottomCount = 1;
         }
-        
+
         // Verifica se está no topo (verde)
         if (index < topCount) {
             return "p-3 rounded-xl shadow-sm flex items-center justify-between mb-2 transition-all duration-200 hover:scale-[1.01] bg-green-50 border-l-4 border-green-500";
-        } 
+        }
         // Verifica se está no final (vermelho)
         else if (index >= totalPlayers - bottomCount) {
             return "p-3 rounded-xl shadow-sm flex items-center justify-between mb-2 transition-all duration-200 hover:scale-[1.01] bg-red-50 border-l-4 border-red-500";
-        } 
+        }
         // Meio (branco)
         else {
             return "p-3 rounded-xl shadow-sm flex items-center justify-between mb-2 transition-all duration-200 hover:scale-[1.01] bg-white border border-gray-100";
@@ -4169,7 +4293,7 @@ function renderScoreboardHistory(seasonName, containerId) {
         if (totalPlayers >= 8) topCount = 3;
         else if (totalPlayers >= 5) topCount = 2;
         else topCount = 1;
-        
+
         if (index === 0) return "👑";
         if (index < topCount) return ["🥇", "🥈", "🥉"][index] || `${index + 1}º`;
         return `${index + 1}º`;
@@ -4177,11 +4301,11 @@ function renderScoreboardHistory(seasonName, containerId) {
 
     // 4. RENDERIZAÇÃO VISUAL AGRUPADA POR SÉRIE
     let html = '';
-    
+
     seriesOrder.forEach(serie => {
         const seriePlayers = playersBySeries[serie];
         if (seriePlayers.length === 0) return;
-        
+
         // Título da série
         html += `
             <div class="mb-6">
@@ -4191,7 +4315,7 @@ function renderScoreboardHistory(seasonName, containerId) {
                 </div>
                 <div class="space-y-2">
         `;
-        
+
         // Renderiza cada jogador da série
         seriePlayers.forEach((player, index) => {
             const stats = player[seasonName];
@@ -4199,7 +4323,7 @@ function renderScoreboardHistory(seasonName, containerId) {
             const positionIcon = getPositionDisplay(index, seriePlayers.length);
 
             if (seasonNum >= 7) {
-                // LAYOUT NOVO (RT | LT | PAT | AT%)
+                // LAYOUT NOVO (RT | BÔ | PAT | AT%)
                 html += `
                     <div class="${cardClass}">
                         <div class="flex items-center gap-3">
@@ -4209,13 +4333,13 @@ function renderScoreboardHistory(seasonName, containerId) {
                         <div class="text-xs font-mono text-right w-44">
                             <div class="grid grid-cols-4 text-gray-400 mb-0.5">
                                 <span class="text-center">RT</span>
-                                <span class="text-center">LT</span>
+                                <span class="text-center">BÔ</span>
                                 <span class="text-center">PAT</span>
                                 <span class="text-center">AT</span>
                             </div>
                             <div class="grid grid-cols-4 font-semibold text-sm">
                                 <span class="text-blue-600 text-center">${stats.raiosNaTemporada || 0}</span>
-                                <span class="text-yellow-600 text-center">${stats.lambretasNaTemporada || 0}</span>
+                                <span class="text-green-600 text-center">${(stats.bonusNaTemporada || 0).toFixed(1)}%</span>
                                 <span class="text-gray-700 text-center">${stats.partidasNaTemporada || 0}</span>
                                 <span class="text-gray-800 text-center">${(stats.aproveitamentoNaTemporada || 0).toFixed(1)}%</span>
                             </div>
@@ -4248,7 +4372,7 @@ function renderScoreboardHistory(seasonName, containerId) {
                 `;
             }
         });
-        
+
         html += `
                 </div>
             </div>
@@ -4330,9 +4454,9 @@ let isLocutorAtivo = localStorage.getItem('modoLocutor') === 'true';
 function toggleModoLocutor() {
     isLocutorAtivo = !isLocutorAtivo; // Inverte o status
     localStorage.setItem('modoLocutor', isLocutorAtivo);
-    
+
     atualizarVisualDoBotaoLocutor();
-    
+
     if (isLocutorAtivo) {
         narrarNaLive("Modo locutor ativado com sucesso!");
     }
@@ -4586,6 +4710,7 @@ if ('serviceWorker' in navigator) {
     }, 60 * 60 * 1000);
 }
 // calcularFechamentoDeTemporada();
+
 
 </script>
 </body>
