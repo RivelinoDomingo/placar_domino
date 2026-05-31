@@ -347,7 +347,7 @@
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
 import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-import { getFirestore, doc, getDoc, runTransaction, addDoc, setDoc, updateDoc, deleteDoc, onSnapshot, collection, query, getDocs, orderBy, limit, serverTimestamp, writeBatch, increment, where } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+import { getFirestore, doc, getDoc, runTransaction, addDoc, setDoc, updateDoc, deleteDoc, onSnapshot, collection, query, getDocs, orderBy, limit, serverTimestamp, Timestamp, writeBatch, increment, where } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 import { getMessaging, getToken, onMessage } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-messaging.js";
 
 const firebaseConfig = {
@@ -395,10 +395,26 @@ const playersCollectionRef = () => collection(db, `artifacts/${appIdentifier}/pu
 const activityFeedCollectionRef = () => collection(db, `artifacts/${appIdentifier}/public/data/events`);
 const matchesCollectionRef = () => collection(db, `artifacts/${appIdentifier}/public/data/partidas`);
 
+function getSaoPauloMidnightOffset(date) {
+    // Retorna a data "truncada" para meia-noite no horário de São Paulo
+    // usando Intl para respeitar horário de verão automaticamente
+    const spDate = new Intl.DateTimeFormat('pt-BR', {
+        timeZone: 'America/Sao_Paulo',
+        year: 'numeric', month: '2-digit', day: '2-digit'
+    }).formatToParts(date);
+
+    const year  = spDate.find(p => p.type === 'year').value;
+    const month = spDate.find(p => p.type === 'month').value;
+    const day   = spDate.find(p => p.type === 'day').value;
+
+    // Reconstrói como meia-noite em São Paulo → converte para UTC
+    return new Date(`${year}-${month}-${day}T00:00:00-03:00`);
+}
+
 function getCurrentSeasonNumber() {
-    const firstSeasonStart = new Date("2025-07-06T00:00:00Z"); // você pode mudar essa data
-    const now = new Date();
-    const daysSinceStart = Math.floor((now - firstSeasonStart) / (1000 * 60 * 60 * 24));
+    const firstSeasonStart = new Date("2025-07-06T00:00:00-03:00"); // meia-noite SP
+    const nowEmSP = getSaoPauloMidnightOffset(new Date());
+    const daysSinceStart = Math.floor((nowEmSP - firstSeasonStart) / (1000 * 60 * 60 * 24));
     return Math.floor(daysSinceStart / 30);
 }
 const currentSeason = `temporada_${getCurrentSeasonNumber()}`;
@@ -406,28 +422,20 @@ const currentSeason = `temporada_${getCurrentSeasonNumber()}`;
 function renderizarTituloTemporada(seasonString) {
     const elementoSubtitulo = document.getElementById('tituloTemporadaAtual');
     if (!elementoSubtitulo || !seasonString) return;
-
-    // Pega "temporada_9" e transforma em "Temporada 9"
     const textoFormatado = seasonString
-        .replace('_', ' ') // Troca o underline por espaço
-        .replace(/\b\w/g, letra => letra.toUpperCase()); // Deixa a primeira letra maiúscula
-
+        .replace('_', ' ')
+        .replace(/\b\w/g, letra => letra.toUpperCase());
     elementoSubtitulo.textContent = textoFormatado;
 }
 renderizarTituloTemporada(currentSeason);
 
 function getDiasDaTemporadaAtual() {
-    const firstSeasonStart = new Date("2025-07-06T00:00:00Z");
-    const now = new Date();
-    const daysSinceStart = Math.floor((now - firstSeasonStart) / (1000 * 60 * 60 * 24));
-
-    // O resto da divisão por 30 (daysSinceStart % 30) dá os dias decorridos.
-    // Somamos + 1 para que o início seja "Dia 1" e não "Dia 0".
+    const firstSeasonStart = new Date("2025-07-06T00:00:00-03:00"); // meia-noite SP
+    const nowEmSP = getSaoPauloMidnightOffset(new Date());
+    const daysSinceStart = Math.floor((nowEmSP - firstSeasonStart) / (1000 * 60 * 60 * 24));
     const diaAtual = (daysSinceStart % 30) + 1;
-
     return diaAtual;
 }
-
 // Adicionamos o 'seasonToEvaluate' no parênteses
 // function calcularFechamentoDeTemporada(seasonToEvaluate) {
 //     // Se não passarmos nada, ele usa a atual. Mas na virada, vamos passar a anterior!
@@ -630,15 +638,17 @@ function calcularFechamentoDeTemporada(seasonToEvaluate) {
     return movimentacoes;
 }
 // 🔑 A CHAVE DO COFRE: Isso expõe a função para o console (F12)
-window.calcularFechamentoDeTemporada = calcularFechamentoDeTemporada;
+//window.calcularFechamentoDeTemporada = calcularFechamentoDeTemporada;
 // 🧪 Funções de teste expostas no console:
 //   await mostrarModalFimDeTemporada('temporada_10')  → abre o modal forçado
 //   await gerarResumoDaTemporadaAnterior('temporada_10') → retorna o objeto resumo
-window.mostrarModalFimDeTemporada    = mostrarModalFimDeTemporada;
-window.gerarResumoDaTemporadaAnterior = gerarResumoDaTemporadaAnterior;
+//window.mostrarModalFimDeTemporada    = mostrarModalFimDeTemporada;
+//window.gerarResumoDaTemporadaAnterior = gerarResumoDaTemporadaAnterior;
 
 // 1. O PORTEIRO (Verifica se virou o mês)
-let temporadaJaVerificada = false;
+let temporadaJaVerificada        = false;
+let resumoTemporadaPassadaCache    = null;  // Cache em memória do resumo da temporada passada
+let resumoTemporadaPassadaCarregando = false; // Flag para evitar múltiplas buscas simultâneas
 
 async function verificarViradaDeTemporada() {
     const seasonAtualPeloRelogio = currentSeason;
@@ -731,6 +741,153 @@ function checarGatilhoDoResumo() {
 }
 
 //Tratar o fim de temporada para resumo
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Busca todas as partidas da temporada e calcula as maiores sequências de
+// raios e lambretas por jogador (dentro de cada partida).
+// Usa o campo `season` nas partidas novas; faz fallback por `createdAt`
+// nas partidas antigas que ainda não têm o campo.
+// ─────────────────────────────────────────────────────────────────────────────
+async function buscarStreaksDaTemporada(seasonPassada) {
+    const resultado = {}; // { playerId: { nome, maiorStreakRaios, maiorStreakLambretas } }
+
+    try {
+        // ── 1. Tenta buscar pelo campo season (partidas novas) ────────────────
+        const qPorSeason = query(matchesCollectionRef(), where("season", "==", seasonPassada));
+        const snapPorSeason = await getDocs(qPorSeason);
+
+        // ── 2. Fallback: partidas sem campo season → filtra por createdAt ─────
+        //    As temporadas são ciclos fixos de 30 dias a partir de 06/jul/2025.
+        //    Temporada N começa em firstSeasonStart + N*30 dias.
+        //    Usamos Timestamp.fromDate() para compatibilidade com o Firestore.
+        const firstSeasonStart = new Date("2025-07-06T00:00:00Z");
+        const seasonNum = parseInt(seasonPassada.replace("temporada_", ""), 10);
+        const inicioSeasonPassada = new Date(firstSeasonStart.getTime() + seasonNum       * 30 * 24 * 60 * 60 * 1000);
+        const fimSeasonPassada    = new Date(firstSeasonStart.getTime() + (seasonNum + 1) * 30 * 24 * 60 * 60 * 1000);
+
+        const qFallback = query(
+            matchesCollectionRef(),
+            where("createdAt", ">=", Timestamp.fromDate(inicioSeasonPassada)),
+            where("createdAt", "<",  Timestamp.fromDate(fimSeasonPassada))
+        );
+        const snapFallback = await getDocs(qFallback);
+
+        // ── 3. Junta os dois conjuntos sem duplicar ───────────────────────────
+        const docsVistos = new Set();
+        const todasPartidas = [];
+
+        snapPorSeason.forEach(d => { docsVistos.add(d.id); todasPartidas.push(d.data()); });
+        snapFallback.forEach(d => {
+            // Só inclui do fallback partidas antigas (sem campo season) não duplicadas
+            if (!docsVistos.has(d.id) && !d.data().season) {
+                todasPartidas.push(d.data());
+            }
+        });
+
+        if (todasPartidas.length === 0) return resultado;
+
+        // ── 4. Varre o history de cada partida ───────────────────────────────
+        todasPartidas.forEach(partida => {
+            const history = partida.history || [];
+
+            // console.log("Partidas iniciadas em: ", partida.createdAt);
+
+            // Constrói o conjunto dinâmico de jogadores — inclui quem entrou via swap
+            const todosJogadores = new Set(partida.playerIds || []);
+            history.forEach(r => {
+                if (r.type === 'swap') {
+                    if (r.playerInId)  todosJogadores.add(r.playerInId);
+                    if (r.playerOutId) todosJogadores.add(r.playerOutId);
+                }
+            });
+
+            // Garante entrada no resultado para cada jogador (incluindo substitutos)
+            todosJogadores.forEach(id => {
+                if (!resultado[id]) {
+                    resultado[id] = {
+                        nome: appState.players[id]?.name || id,
+                        maiorStreakRaios: 0,
+                        maiorStreakLambretas: 0
+                    };
+                }
+            });
+
+            // Filtra só os rounds que completaram um raio (ignora swaps e rounds normais)
+            const raiosCompletos = history.filter(r => r.completedRaio === true);
+            if (raiosCompletos.length === 0) return;
+
+            // Rastreia quem está ativo a cada momento (muda com os swaps)
+            // Constrói um mapa: roundNumber → set de jogadores ativos
+            // Para simplificar, recalcula quem estava ativo no momento de cada raio completo
+            let jogadoresAtivos = new Set(partida.playerIds || []);
+
+            // ── Streak de RAIOS (vitórias consecutivas de raio) ──────────────
+            let streakAtualRaios = {};
+            let swapIdx = 0; // ponteiro nos eventos de swap em ordem
+            const swaps = history.filter(r => r.type === 'swap');
+
+            raiosCompletos.forEach(round => {
+                // Aplica swaps que ocorreram antes deste roundNumber
+                swaps.forEach(swap => {
+                    const swapRound = swap.roundNumber || 0;
+                    if (swapRound < round.roundNumber) {
+                        if (swap.playerOutId) jogadoresAtivos.delete(swap.playerOutId);
+                        if (swap.playerInId)  jogadoresAtivos.add(swap.playerInId);
+                    }
+                });
+
+                const ganhador = round.winnerId;
+                // Reseta todos os ativos exceto o ganhador
+                jogadoresAtivos.forEach(id => {
+                    if (id !== ganhador) streakAtualRaios[id] = 0;
+                });
+                streakAtualRaios[ganhador] = (streakAtualRaios[ganhador] || 0) + 1;
+                if (resultado[ganhador] && streakAtualRaios[ganhador] > resultado[ganhador].maiorStreakRaios) {
+                    resultado[ganhador].maiorStreakRaios = streakAtualRaios[ganhador];
+                }
+            });
+
+            // ── Streak de LAMBRETAS (lambretas consecutivas sofridas) ─────────
+            let streakAtualLambretas = {};
+            jogadoresAtivos = new Set(partida.playerIds || []); // reseta para início da partida
+
+            raiosCompletos.forEach(round => {
+                // Aplica swaps anteriores a este round
+                swaps.forEach(swap => {
+                    const swapRound = swap.roundNumber || 0;
+                    if (swapRound < round.roundNumber) {
+                        if (swap.playerOutId) jogadoresAtivos.delete(swap.playerOutId);
+                        if (swap.playerInId)  jogadoresAtivos.add(swap.playerInId);
+                    }
+                });
+
+                const lambretados = round.lambretaPlayerIds || [];
+                jogadoresAtivos.forEach(id => {
+                    if (lambretados.includes(id)) {
+                        streakAtualLambretas[id] = (streakAtualLambretas[id] || 0) + 1;
+                        if (resultado[id] && streakAtualLambretas[id] > resultado[id].maiorStreakLambretas) {
+                            resultado[id].maiorStreakLambretas = streakAtualLambretas[id];
+                        }
+                    } else {
+                        streakAtualLambretas[id] = 0;
+                    }
+                });
+            });
+        });
+
+        // 🔍 DEBUG — remove após validação
+        // console.log("📊 Streaks calculados por jogador:");
+        // Object.entries(resultado).forEach(([id, dados]) => {
+        //     console.log(`  ${dados.nome} → ⚡ Raios: ${dados.maiorStreakRaios} | 🛵 Lambretas: ${dados.maiorStreakLambretas}`);
+        // });
+
+    } catch (err) {
+        console.error("❌ Erro ao buscar streaks da temporada:", err);
+    }
+
+    return resultado;
+}
+
 // ─────────────────────────────────────────────────────────────────────────────
 // seasonOverride: string opcional para testes (ex: 'temporada_10').
 //   Quando presente, bypassa o cálculo automático da temporada passada e
@@ -739,8 +896,8 @@ function checarGatilhoDoResumo() {
 //
 // Fluxo:
 //   1. Verifica se já existe um resumo cacheado no Firestore para a temporada.
-//   2. SE SIM  → retorna o cache direto (zero varredura de jogadores).
-//   3. SE NÃO  → calcula, salva no Firestore e retorna o resultado.
+//   2. SE SIM  → retorna o cache direto (zero custo de processamento).
+//   3. SE NÃO  → calcula tudo (jogadores + streaks), salva e retorna.
 // ─────────────────────────────────────────────────────────────────────────────
 async function gerarResumoDaTemporadaAnterior(seasonOverride = null) {
     const caminhoBase = "artifacts/1:187178310074:web:5f56292dea8dc776532583/public/data";
@@ -748,10 +905,10 @@ async function gerarResumoDaTemporadaAnterior(seasonOverride = null) {
     // ── Resolve qual temporada processar ─────────────────────────────────────
     let seasonPassada;
     if (seasonOverride) {
-        seasonPassada = seasonOverride; // Modo de teste
+        seasonPassada = seasonOverride;
     } else {
         const seasonPassadaNum = getCurrentSeasonNumber() - 1;
-        if (seasonPassadaNum < 0) return null; // Não existe temporada anterior
+        if (seasonPassadaNum < 0) return null;
         seasonPassada = `temporada_${seasonPassadaNum}`;
     }
 
@@ -767,37 +924,37 @@ async function gerarResumoDaTemporadaAnterior(seasonOverride = null) {
         console.warn("⚠️ Não foi possível ler o cache do resumo:", err);
     }
 
-    // ── 2. Cache não existe: calcula o resumo ─────────────────────────────────
-    console.log(`🔢 Calculando resumo da ${seasonPassada} pela primeira vez...`);
+    // ── 2. Cache não existe: calcula tudo pela primeira vez ───────────────────
+    console.log(`🔢 Calculando resumo completo da ${seasonPassada}...`);
     const jogadores = Object.values(appState.players);
 
-    // Nossos "Troféus"
+    // Nossos "Troféus" — inclui os campos de streak que virão dos dados de partida
     let resumo = {
         temporadaNome: seasonPassada,
-        maisPartidas: { nome: 'Ninguém', valor: 0 },
-        maisPontos: { nome: 'Ninguém', valor: 0 },
-        maisRaios: { nome: 'Ninguém', valor: 0 },
-        maisLambretas: { nome: 'Ninguém', valor: 0 },
-        maisMatchPoints: { nome: 'Ninguém', valor: 0 },
-        maisConquistas: { nome: 'Ninguém', valor: 0 },
-        conquistaMaisRecorrente: { nome: 'Nenhuma', valor: 0 },
-        maisRoubos: { nome: 'Ninguém', valor: 0 }
+        maisPartidas:            { nome: 'Ninguém', valor: 0 },
+        maisPontos:              { nome: 'Ninguém', valor: 0 },
+        maisRaios:               { nome: 'Ninguém', valor: 0 },
+        maisLambretas:           { nome: 'Ninguém', valor: 0 },
+        maisMatchPoints:         { nome: 'Ninguém', valor: 0 },
+        maisConquistas:          { nome: 'Ninguém', valor: 0 },
+        conquistaMaisRecorrente: { nome: 'Nenhuma',  valor: 0 },
+        maisRoubos:              { nome: 'Ninguém', valor: 0 },
+        maiorStreakRaios:        { nome: 'Ninguém', valor: 0 },
+        maiorStreakLambretas:    { nome: 'Ninguém', valor: 0 }
     };
 
     let todasConquistas = {};
 
     jogadores.forEach(p => {
         const stats = p[seasonPassada];
-        if (!stats) return; // Se não jogou a temporada passada, pula
+        if (!stats) return;
 
-        // Compara e atualiza os recordes
-        if ((stats.partidasNaTemporada || 0) > resumo.maisPartidas.valor) resumo.maisPartidas = { nome: p.name, valor: stats.partidasNaTemporada };
-        if ((stats.pontosNaTemporada || 0) > resumo.maisPontos.valor) resumo.maisPontos = { nome: p.name, valor: stats.pontosNaTemporada };
-        if ((stats.raiosNaTemporada || 0) > resumo.maisRaios.valor) resumo.maisRaios = { nome: p.name, valor: stats.raiosNaTemporada };
-        if ((stats.lambretasNaTemporada || 0) > resumo.maisLambretas.valor) resumo.maisLambretas = { nome: p.name, valor: stats.lambretasNaTemporada };
+        if ((stats.partidasNaTemporada  || 0) > resumo.maisPartidas.valor)   resumo.maisPartidas   = { nome: p.name, valor: stats.partidasNaTemporada };
+        if ((stats.pontosNaTemporada    || 0) > resumo.maisPontos.valor)      resumo.maisPontos     = { nome: p.name, valor: stats.pontosNaTemporada };
+        if ((stats.raiosNaTemporada     || 0) > resumo.maisRaios.valor)       resumo.maisRaios      = { nome: p.name, valor: stats.raiosNaTemporada };
+        if ((stats.lambretasNaTemporada || 0) > resumo.maisLambretas.valor)   resumo.maisLambretas  = { nome: p.name, valor: stats.lambretasNaTemporada };
         if ((stats.matchPointsNaTemporada || 0) > resumo.maisMatchPoints.valor) resumo.maisMatchPoints = { nome: p.name, valor: stats.matchPointsNaTemporada };
 
-        // Conta o total de conquistas do jogador e soma no global
         let totalConquistasJogador = 0;
         if (stats.conquistasNaTemporada) {
             for (const [conquistaNome, qtd] of Object.entries(stats.conquistasNaTemporada)) {
@@ -807,142 +964,34 @@ async function gerarResumoDaTemporadaAnterior(seasonOverride = null) {
         }
         if (totalConquistasJogador > resumo.maisConquistas.valor) resumo.maisConquistas = { nome: p.name, valor: totalConquistasJogador };
 
-        // Conta quantos roubos de raio o jogador fez na temporada
         const roubosDoJogador = stats.conquistasNaTemporada?.roubo || 0;
         if (roubosDoJogador > resumo.maisRoubos.valor) resumo.maisRoubos = { nome: p.name, valor: roubosDoJogador };
     });
 
-    // Acha a conquista que mais aconteceu na mesa toda
     for (const [nome, qtd] of Object.entries(todasConquistas)) {
         if (qtd > resumo.conquistaMaisRecorrente.valor) {
             resumo.conquistaMaisRecorrente = { nome: nome.toUpperCase(), valor: qtd };
         }
     }
 
-    // ── 3. Salva o resultado no Firestore para uso futuro ─────────────────────
-    // Nota: em modo de teste (seasonOverride) o resumo ainda é salvo — isso é
-    // intencional, pois gera exatamente o documento que será usado na virada real.
+    // ── 3. Calcula os streaks varrendo as partidas ────────────────────────────
+    const streaks = await buscarStreaksDaTemporada(seasonPassada);
+    for (const dados of Object.values(streaks)) {
+        if (dados.maiorStreakRaios     > resumo.maiorStreakRaios.valor)
+            resumo.maiorStreakRaios     = { nome: dados.nome, valor: dados.maiorStreakRaios };
+        if (dados.maiorStreakLambretas > resumo.maiorStreakLambretas.valor)
+            resumo.maiorStreakLambretas = { nome: dados.nome, valor: dados.maiorStreakLambretas };
+    }
+
+    // ── 4. Salva o resumo completo no Firestore ───────────────────────────────
     try {
         await setDoc(cacheRef, resumo);
-        console.log(`✅ Resumo da ${seasonPassada} salvo em system/resumo_${seasonPassada}.`);
+        console.log(`✅ Resumo completo da ${seasonPassada} salvo em system/resumo_${seasonPassada}.`);
     } catch (err) {
         console.warn("⚠️ Não foi possível salvar o cache do resumo:", err);
     }
 
     return resumo;
-}
-
-// Busca todas as partidas da temporada passada e calcula as maiores
-// sequências de raios e lambretas por jogador (dentro de cada partida).
-// Usa o campo `season` nas partidas novas; faz fallback por `createdAt`
-// nas partidas antigas que ainda não têm o campo.
-async function buscarStreaksDaTemporada(seasonPassada) {
-    const resultado = {}; // { playerId: { nome, maiorStreakRaios, maiorStreakLambretas } }
-
-    try {
-        // ── 1. Tenta buscar pelo campo season (partidas novas) ────────────────
-        const qPorSeason = query(matchesCollectionRef(), where("season", "==", seasonPassada));
-        const snapPorSeason = await getDocs(qPorSeason);
-
-        // ── 2. Fallback: partidas sem campo season → filtra por createdAt ─────
-        //    Calcula o intervalo de datas da temporada passada.
-        //    Cada temporada tem ~30 dias, numeradas a partir de um mês base.
-        //    getCurrentSeasonNumber() retorna o número da temporada ATUAL,
-        //    então a passada começou (seasonPassadaNum) meses atrás a partir
-        //    do mês 0 da aplicação. Como não temos a data exata do mês 0,
-        //    usamos uma janela conservadora de 35 dias terminando no início
-        //    da temporada atual para não perder partidas.
-        const seasonAtualNum = getCurrentSeasonNumber();
-        const seasonPassadaNum = seasonAtualNum - 1;
-
-        // Data de início da temporada atual = início do mês corrente (dia 1)
-        const hoje = new Date();
-        const inicioTemporadaAtual = new Date(hoje.getFullYear(), hoje.getMonth(), 1);
-        // Janela de 35 dias para trás a partir do início da temporada atual
-        const inicioJanela = new Date(inicioTemporadaAtual);
-        inicioJanela.setDate(inicioJanela.getDate() - 35);
-
-        const qFallback = query(
-            matchesCollectionRef(),
-            where("createdAt", ">=", inicioJanela),
-            where("createdAt", "<",  inicioTemporadaAtual)
-        );
-        const snapFallback = await getDocs(qFallback);
-
-        // ── 3. Junta os dois conjuntos sem duplicar ───────────────────────────
-        const docsVistos = new Set();
-        const todasPartidas = [];
-
-        snapPorSeason.forEach(d => { docsVistos.add(d.id); todasPartidas.push(d.data()); });
-        snapFallback.forEach(d => {
-            // Só inclui do fallback se não tiver campo season (partida antiga)
-            // e se ainda não foi adicionada pelo snap principal
-            if (!docsVistos.has(d.id) && !d.data().season) {
-                todasPartidas.push(d.data());
-            }
-        });
-
-        if (todasPartidas.length === 0) return resultado;
-
-        // ── 4. Varre o history de cada partida ───────────────────────────────
-        todasPartidas.forEach(partida => {
-            const history = partida.history || [];
-            // Filtra apenas os eventos que completaram um raio
-            const raiosCompletos = history.filter(r => r.completedRaio);
-
-            if (raiosCompletos.length === 0) return;
-
-            // Garante que todos os jogadores da partida estejam no resultado
-            (partida.playerIds || []).forEach(id => {
-                if (!resultado[id]) {
-                    resultado[id] = {
-                        nome: appState.players[id]?.name || id,
-                        maiorStreakRaios: 0,
-                        maiorStreakLambretas: 0
-                    };
-                }
-            });
-
-            // ── Streak de RAIOS (vitórias consecutivas) ──────────────────────
-            let streakAtualRaios = {};
-            raiosCompletos.forEach(round => {
-                const ganhador = round.winnerId;
-                // Reseta todos os outros jogadores
-                (partida.playerIds || []).forEach(id => {
-                    if (id !== ganhador) streakAtualRaios[id] = 0;
-                });
-                // Incrementa o ganhador
-                streakAtualRaios[ganhador] = (streakAtualRaios[ganhador] || 0) + 1;
-                // Atualiza o recorde se for o maior
-                if (resultado[ganhador] && streakAtualRaios[ganhador] > resultado[ganhador].maiorStreakRaios) {
-                    resultado[ganhador].maiorStreakRaios = streakAtualRaios[ganhador];
-                }
-            });
-
-            // ── Streak de LAMBRETAS (lambretas consecutivas sofridas) ─────────
-            let streakAtualLambretas = {};
-            raiosCompletos.forEach(round => {
-                const lambretados = round.lambretaPlayerIds || [];
-                (partida.playerIds || []).forEach(id => {
-                    if (lambretados.includes(id)) {
-                        // Sofreu lambreta neste raio: incrementa
-                        streakAtualLambretas[id] = (streakAtualLambretas[id] || 0) + 1;
-                        if (resultado[id] && streakAtualLambretas[id] > resultado[id].maiorStreakLambretas) {
-                            resultado[id].maiorStreakLambretas = streakAtualLambretas[id];
-                        }
-                    } else {
-                        // Não levou lambreta: reseta a sequência
-                        streakAtualLambretas[id] = 0;
-                    }
-                });
-            });
-        });
-
-    } catch (err) {
-        console.error("❌ Erro ao buscar streaks da temporada:", err);
-    }
-
-    return resultado;
 }
 
 // seasonOverride: string opcional para testes, ex: 'temporada_10'.
@@ -975,26 +1024,13 @@ async function mostrarModalFimDeTemporada(seasonOverride = null) {
         </div>
     `);
 
-    // Calcula (ou carrega do cache) o resumo da temporada
+    // Calcula (ou carrega do cache) o resumo completo da temporada — já inclui streaks
     const resumo = await gerarResumoDaTemporadaAnterior(seasonOverride);
     if (!resumo || resumo.maisPartidas.valor === 0) { closeModal(); return; }
 
-    // Busca as sequências de raios e lambretas no Firestore
-    const seasonAlvo = seasonOverride || `temporada_${seasonPassadaNum}`;
-    const streaks = await buscarStreaksDaTemporada(seasonAlvo);
-
-    // ── Processa os streaks para encontrar os campeões ────────────────────
-    let maiorStreakRaios     = { nome: 'Ninguém', valor: 0 };
-    let maiorStreakLambretas = { nome: 'Ninguém', valor: 0 };
-
-    for (const [id, dados] of Object.entries(streaks)) {
-        if (dados.maiorStreakRaios > maiorStreakRaios.valor) {
-            maiorStreakRaios = { nome: dados.nome, valor: dados.maiorStreakRaios };
-        }
-        if (dados.maiorStreakLambretas > maiorStreakLambretas.valor) {
-            maiorStreakLambretas = { nome: dados.nome, valor: dados.maiorStreakLambretas };
-        }
-    }
+    // Lê os campeões de streak direto do resumo (já calculados e cacheados)
+    const maiorStreakRaios     = resumo.maiorStreakRaios     || { nome: 'Ninguém', valor: 0 };
+    const maiorStreakLambretas = resumo.maiorStreakLambretas || { nome: 'Ninguém', valor: 0 };
 
     // ── Monta o HTML completo do modal ────────────────────────────────────
     const modalHTML = `
@@ -1348,7 +1384,7 @@ ui.menu.about.addEventListener('click', async () => {
     ui.menu.dropdown.classList.remove('open');
 
     // 👇 DEFINA AQUI A VERSÃO ATUAL DA TELA
-    const versaoDaInterface = "v2.84";
+    const versaoDaInterface = "v2.85";
 
     // O detetive do Cache
     let versaoDoCache = "Não detectado";
@@ -3680,13 +3716,22 @@ function atualizarBarraDeNoticias() {
     const diaTemporada = getDiasDaTemporadaAtual();
 
     // Se estamos na semana 1, injeta as fofocas da temporada passada!
+    // O resumo é carregado uma única vez em memória (resumoTemporadaPassadaCache)
+    // para não bloquear a barra a cada atualização.
     if (diaTemporada <= 7) {
-        const resumo = gerarResumoDaTemporadaAnterior();
-        if (resumo && resumo.maisPontos.valor > 0) {
+        if (resumoTemporadaPassadaCache) {
+            const resumo = resumoTemporadaPassadaCache;
             noticias.push(`🏆FIM DE TEMPORADA! ${resumo.maisRaios.nome} venceu ${resumo.maisRaios.valor} raios na última temporada.`);
             noticias.push(`⚡ ${resumo.maisPontos.nome} foi o batedor isolado com ${resumo.maisPontos.valor} pontos!`);
             noticias.push(`🚔 Fiquem de olho: A conquista mais vista da última temporada foi '${resumo.conquistaMaisRecorrente.nome}'!`);
-            noticias.push(` ${resumo.maisConquistas.nome} foi quem mais acumulou conquistas na temporada! Um total de ${resumo.maisConquistas.valor}`);
+            noticias.push(`${resumo.maisConquistas.nome} foi quem mais acumulou conquistas na temporada! Um total de ${resumo.maisConquistas.valor}`);
+        } else if (!resumoTemporadaPassadaCarregando) {
+            // Dispara o carregamento uma única vez; quando chegar, a barra usa na próxima renderização
+            resumoTemporadaPassadaCarregando = true;
+            gerarResumoDaTemporadaAnterior().then(r => {
+                resumoTemporadaPassadaCache = r || null;
+                resumoTemporadaPassadaCarregando = false;
+            }).catch(() => { resumoTemporadaPassadaCarregando = false; });
         }
     }
 
