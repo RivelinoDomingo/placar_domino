@@ -537,7 +537,7 @@ function calcularFechamentoDeTemporada(seasonToEvaluate) {
         const qtdJogadores = playersInSerie.length;
         let limiteVagas = 3;
         if (qtdJogadores < 5) limiteVagas = 1;
-        else if (qtdJogadores < 8) limiteVagas = 2;
+        else if (qtdJogadores < 10) limiteVagas = 2;
 
         console.log(`📊 Série ${serieName} tem ${qtdJogadores} jogadores. Vagas liberadas (Sobe/Cai): ${limiteVagas}`);
 
@@ -2428,7 +2428,7 @@ function renderScoreboard() {
     function getCardClasses(index, totalPlayers) {
         let topCount, bottomCount;
 
-        if (totalPlayers >= 8) {
+        if (totalPlayers >= 10) {
             topCount = 3;
             bottomCount = 3;
         } else if (totalPlayers >= 5) {
