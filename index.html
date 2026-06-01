@@ -437,84 +437,225 @@ function getDiasDaTemporadaAtual() {
     return diaAtual;
 }
 
-function calcularFechamentoDeTemporada(seasonToEvaluate) {
-    const season = seasonToEvaluate || currentSeason;
-    const jogadores = Object.values(appState.players);
+// function calcularFechamentoDeTemporada(seasonToEvaluate) {
+//     const season = seasonToEvaluate || currentSeason;
+//     const jogadores = Object.values(appState.players);
+//
+//     if (jogadores.length === 0) return [];
+//
+//     console.log(`🔍 O Juiz está avaliando a temporada: ${season}`);
+//
+//     let ligas = { 'A': [], 'B': [], 'C': [], 'D': [], 'Amador': [] };
+//
+//     jogadores.forEach(p => {
+//         const serieAtual = p.series || 'D';
+//         if (ligas[serieAtual]) ligas[serieAtual].push(p);
+//     });
+//
+//     let movimentacoes = [];
+//
+//     for (let i = 0; i < SERIES_CONFIG.length; i++) {
+//         const serieName = SERIES_CONFIG[i].name;
+//         const playersInSerie = ligas[serieName];
+//
+//         if (!playersInSerie || playersInSerie.length === 0) continue;
+//
+//         const qtdJogadores = playersInSerie.length;
+//         let limiteVagas = 3;
+//         if (qtdJogadores < 5) limiteVagas = 1;
+//         else if (qtdJogadores < 10) limiteVagas = 2;
+//
+//         console.log(`📊 Série ${serieName} tem ${qtdJogadores} jogadores. Vagas liberadas (Sobe/Cai): ${limiteVagas}`);
+//
+//         playersInSerie.sort((a, b) => {
+//             const statsA = a[season] || {};
+//             const statsB = b[season] || {};
+//
+//             const aproveitamentoDiff = (statsB.aproveitamentoNaTemporada || 0) - (statsA.aproveitamentoNaTemporada || 0);
+//             if (aproveitamentoDiff !== 0) return aproveitamentoDiff;
+//
+//             const pontosDiff = (statsB.pontosNaTemporada || 0) - (statsA.pontosNaTemporada || 0);
+//             if (pontosDiff !== 0) return pontosDiff;
+//
+//             return (statsA.lambretasNaTemporada || 0) - (statsB.lambretasNaTemporada || 0);
+//         });
+//
+//         // --- QUEM SOBE ---
+//         let promocoes = 0;
+//         if (i < SERIES_CONFIG.length - 1) {
+//             for (let j = 0; j < playersInSerie.length && promocoes < limiteVagas; j++) {
+//                 let p = playersInSerie[j];
+//                 let partidas = p[season]?.partidasNaTemporada || 0;
+//
+//                 if (partidas >= 20) {
+//                     movimentacoes.push({ id: p.id, nome: p.name, de: serieName, para: SERIES_CONFIG[i + 1].name, status: '⬆️ PROMOVIDO' });
+//                     promocoes++;
+//                     p._jaMovimentado = true;
+//                 }
+//             }
+//         }
+//
+//         // --- QUEM CAI ---
+//         let rebaixamentos = 0;
+//         if (i > 0) {
+//             for (let j = playersInSerie.length - 1; j >= 0 && rebaixamentos < limiteVagas; j--) {
+//                 let p = playersInSerie[j];
+//
+//                 if (!p._jaMovimentado) {
+//                     movimentacoes.push({ id: p.id, nome: p.name, de: serieName, para: SERIES_CONFIG[i - 1].name, status: '⬇️ REBAIXADO' });
+//                     rebaixamentos++;
+//                 }
+//             }
+//         }
+//     }
+//
+//     // ─────────────────────────────────────────────────────────────
+//     // 🛡️  FILTRO GUARDIÃO — Garante mínimo de 2 jogadores por série
+//     //
+//     //  Simula o estado final de cada série. Qualquer série que ficaria
+//     //  com menos de 2 jogadores tem o rebaixamento cancelado até
+//     //  estabilizar. O while repete até não haver mais correções.
+//     // ─────────────────────────────────────────────────────────────
+//     const MIN_POR_SERIE = 2;
+//     let corrigiu = true;
+//
+//     while (corrigiu) {
+//         corrigiu = false;
+//
+//         // 1. Simula contagem final por série
+//         const contagem = {};
+//         SERIES_CONFIG.forEach(s => {
+//             contagem[s.name] = ligas[s.name]?.length || 0;
+//         });
+//         movimentacoes.forEach(mov => {
+//             contagem[mov.de]--;
+//             contagem[mov.para]++;
+//         });
+//
+//         // 2. Para cada série abaixo do mínimo, cancela o último rebaixamento dela
+//         for (const serieName of Object.keys(contagem)) {
+//             if (contagem[serieName] >= MIN_POR_SERIE) continue;
+//
+//             for (let k = movimentacoes.length - 1; k >= 0; k--) {
+//                 const mov = movimentacoes[k];
+//                 if (mov.de === serieName && mov.status === '⬇️ REBAIXADO') {
+//                     console.log(`🛡️ Guardião: ${mov.nome} fica na Série ${serieName} (cancelado rebaixamento para ${mov.para})`);
+//                     movimentacoes.splice(k, 1);
+//                     corrigiu = true;
+//                     break;
+//                 }
+//             }
+//
+//             if (corrigiu) break; // Recomeça o while com a lista corrigida
+//         }
+//     }
+//
+//     console.log('📋 Movimentações finais após filtro guardião:');
+//     movimentacoes.forEach(m => console.log(`  ${m.status} ${m.nome}: ${m.de} → ${m.para}`));
+//
+//     return movimentacoes;
+// }
 
-    if (jogadores.length === 0) return [];
+function calcularFechamentoDeTemporada(seasonPassada) {
+    const movimentacoes = [];
+    const ligasIniciais = {};
 
-    console.log(`🔍 O Juiz está avaliando a temporada: ${season}`);
-
-    let ligas = { 'A': [], 'B': [], 'C': [], 'D': [], 'Amador': [] };
-
-    jogadores.forEach(p => {
-        const serieAtual = p.series || 'D';
-        if (ligas[serieAtual]) ligas[serieAtual].push(p);
+    // Inicializa o mapa para contar os jogadores originais de cada série
+    SERIES_CONFIG.forEach(s => {
+        ligasIniciais[s.name] = 0;
     });
 
-    let movimentacoes = [];
+    SERIES_CONFIG.forEach((serieConfig, index) => {
+        const serieName = serieConfig.name;
 
-    for (let i = 0; i < SERIES_CONFIG.length; i++) {
-        const serieName = SERIES_CONFIG[i].name;
-        const playersInSerie = ligas[serieName];
+        // 1. FILTRO: Pega apenas quem jogou nesta série durante a temporada passada
+        const playersInSerie = Object.values(appState.players).filter(p => {
+            const dadosDaSeason = p[seasonPassada];
+            const serieNaTemporada = dadosDaSeason?.seriesNaTemporada || p.series || 'D';
+            return serieNaTemporada === serieName;
+        });
 
-        if (!playersInSerie || playersInSerie.length === 0) continue;
+        // Registra a quantidade inicial para uso do Filtro Guardião
+        ligasIniciais[serieName] = playersInSerie.length;
 
+        // 2. ORDENAÇÃO: (1º Aproveitamento, 2º Raios, 3º Pontos) - Ordem Decrescente
+        playersInSerie.sort((a, b) => {
+            const statsA = a[seasonPassada] || {};
+            const statsB = b[seasonPassada] || {};
+
+            const aprovA = statsA.aproveitamentoNaTemporada || 0;
+            const aprovB = statsB.aproveitamentoNaTemporada || 0;
+
+            const raiosA = statsA.raiosNaTemporada || 0;
+            const raiosB = statsB.raiosNaTemporada || 0;
+
+            const pontosA = statsA.pontosNaTemporada || 0;
+            const pontosB = statsB.pontosNaTemporada || 0;
+
+            if (aprovB !== aprovA) return aprovB - aprovA;
+            if (raiosB !== raiosA) return raiosB - raiosA;
+            return pontosB - pontosA;
+        });
+
+        // 3. CÁLCULO DE VAGAS: Baseado no total de jogadores da série
         const qtdJogadores = playersInSerie.length;
         let limiteVagas = 3;
         if (qtdJogadores < 5) limiteVagas = 1;
         else if (qtdJogadores < 10) limiteVagas = 2;
 
-        console.log(`📊 Série ${serieName} tem ${qtdJogadores} jogadores. Vagas liberadas (Sobe/Cai): ${limiteVagas}`);
+        console.log(`📊 Série ${serieName} tinha ${qtdJogadores} jogadores na ${seasonPassada}. Vagas aplicadas: ${limiteVagas}`);
 
-        playersInSerie.sort((a, b) => {
-            const statsA = a[season] || {};
-            const statsB = b[season] || {};
+        // 4. APLICAÇÃO DAS MOVIMENTAÇÕES
+        const promovidosIds = new Set();
 
-            const aproveitamentoDiff = (statsB.aproveitamentoNaTemporada || 0) - (statsA.aproveitamentoNaTemporada || 0);
-            if (aproveitamentoDiff !== 0) return aproveitamentoDiff;
+        // Subir de série (Promovidos) -> Vai para index + 1 (em direção à Série A)
+        if (index < SERIES_CONFIG.length - 1) {
+            let promocoesFeitas = 0;
 
-            const pontosDiff = (statsB.pontosNaTemporada || 0) - (statsA.pontosNaTemporada || 0);
-            if (pontosDiff !== 0) return pontosDiff;
-
-            return (statsA.lambretasNaTemporada || 0) - (statsB.lambretasNaTemporada || 0);
-        });
-
-        // --- QUEM SOBE ---
-        let promocoes = 0;
-        if (i < SERIES_CONFIG.length - 1) {
-            for (let j = 0; j < playersInSerie.length && promocoes < limiteVagas; j++) {
-                let p = playersInSerie[j];
-                let partidas = p[season]?.partidasNaTemporada || 0;
+            // Laço que desce a lista até preencher as vagas
+            for (let j = 0; j < playersInSerie.length && promocoesFeitas < limiteVagas; j++) {
+                const p = playersInSerie[j];
+                const partidas = p[seasonPassada]?.partidasNaTemporada || 0;
 
                 if (partidas >= 20) {
-                    movimentacoes.push({ id: p.id, nome: p.name, de: serieName, para: SERIES_CONFIG[i + 1].name, status: '⬆️ PROMOVIDO' });
-                    promocoes++;
-                    p._jaMovimentado = true;
+                    movimentacoes.push({
+                        id: p.id,
+                        name: p.name,
+                        de: serieName,
+                        para: SERIES_CONFIG[index + 1].name,
+                        motivo: "Promovido"
+                    });
+                    promovidosIds.add(p.id); // Protege contra rebaixamento simultâneo
+                    promocoesFeitas++;       // Só consome a vaga se o cara subiu de fato
+                } else {
+                    console.log(`⚠️ ${p.name} estagnou (apenas ${partidas}/20 partidas). A vaga de promoção passou para o próximo.`);
                 }
             }
         }
 
-        // --- QUEM CAI ---
-        let rebaixamentos = 0;
-        if (i > 0) {
-            for (let j = playersInSerie.length - 1; j >= 0 && rebaixamentos < limiteVagas; j--) {
-                let p = playersInSerie[j];
+        // Cair de série (Rebaixados) -> Vai para index - 1 (em direção à Série Amador)
+        if (index > 0) {
+            // 1. Tira da reta quem acabou de ser promovido
+            const candidatosRebaixamento = playersInSerie.filter(p => !promovidosIds.has(p.id));
 
-                if (!p._jaMovimentado) {
-                    movimentacoes.push({ id: p.id, nome: p.name, de: serieName, para: SERIES_CONFIG[i - 1].name, status: '⬇️ REBAIXADO' });
-                    rebaixamentos++;
-                }
-            }
+            // 2. O rebaixamento não exige mínimo de partidas (quem não joga, cai)
+            // Pega os últimos da fila
+            const rebaixados = candidatosRebaixamento.slice(-limiteVagas);
+
+            rebaixados.forEach(p => {
+                movimentacoes.push({
+                    id: p.id,
+                    name: p.name,
+                    de: serieName,
+                    para: SERIES_CONFIG[index - 1].name,
+                    motivo: "Rebaixado"
+                });
+            });
         }
-    }
+    });
 
     // ─────────────────────────────────────────────────────────────
     // 🛡️  FILTRO GUARDIÃO — Garante mínimo de 2 jogadores por série
-    //
-    //  Simula o estado final de cada série. Qualquer série que ficaria
-    //  com menos de 2 jogadores tem o rebaixamento cancelado até
-    //  estabilizar. O while repete até não haver mais correções.
     // ─────────────────────────────────────────────────────────────
     const MIN_POR_SERIE = 2;
     let corrigiu = true;
@@ -522,39 +663,38 @@ function calcularFechamentoDeTemporada(seasonToEvaluate) {
     while (corrigiu) {
         corrigiu = false;
 
-        // 1. Simula contagem final por série
-        const contagem = {};
-        SERIES_CONFIG.forEach(s => {
-            contagem[s.name] = ligas[s.name]?.length || 0;
-        });
+        // 1. Simula o balanço final de jogadores por série
+        const contagem = { ...ligasIniciais };
         movimentacoes.forEach(mov => {
             contagem[mov.de]--;
             contagem[mov.para]++;
         });
 
-        // 2. Para cada série abaixo do mínimo, cancela o último rebaixamento dela
+        // 2. Procura séries que ficariam desertas ou com menos de 2 jogadores
         for (const serieName of Object.keys(contagem)) {
             if (contagem[serieName] >= MIN_POR_SERIE) continue;
 
+            // Se a série está abaixo do mínimo, cancela o ÚLTIMO rebaixamento que saiu dela
             for (let k = movimentacoes.length - 1; k >= 0; k--) {
                 const mov = movimentacoes[k];
-                if (mov.de === serieName && mov.status === '⬇️ REBAIXADO') {
-                    console.log(`🛡️ Guardião: ${mov.nome} fica na Série ${serieName} (cancelado rebaixamento para ${mov.para})`);
-                    movimentacoes.splice(k, 1);
+                if (mov.de === serieName && mov.motivo === "Rebaixado") {
+                    console.log(`🛡️ Guardião: ${mov.name} fica na Série ${serieName} (cancelado rebaixamento para ${mov.para})`);
+                    movimentacoes.splice(k, 1); // Remove a movimentação de queda
                     corrigiu = true;
                     break;
                 }
             }
 
-            if (corrigiu) break; // Recomeça o while com a lista corrigida
+            if (corrigiu) break; // Reinicia o loop while para testar a nova tabela simulada
         }
     }
 
     console.log('📋 Movimentações finais após filtro guardião:');
-    movimentacoes.forEach(m => console.log(`  ${m.status} ${m.nome}: ${m.de} → ${m.para}`));
+    movimentacoes.forEach(m => console.log(`  [${m.motivo}] ${m.name}: ${m.de} → ${m.para}`));
 
     return movimentacoes;
 }
+
 // 🔑 A CHAVE DO COFRE: Isso expõe a função para o console (F12)
 //window.calcularFechamentoDeTemporada = calcularFechamentoDeTemporada;
 // 🧪 Funções de teste expostas no console:
@@ -618,30 +758,86 @@ async function executarViradaAutomatica(seasonPassada) {
 
     const movimentacoes = calcularFechamentoDeTemporada(seasonPassada);
 
-    if (movimentacoes.length === 0) {
-        console.log("Nenhuma movimentação de série necessária nesta virada.");
-        return;
+    // =================================================================
+    // 1. RELATÓRIO DO JUIZ (Grava a fotografia da virada para depuração)
+    // =================================================================
+    try {
+        const caminhoBase = "artifacts/1:187178310074:web:5f56292dea8dc776532583/public/data";
+        const logRef = doc(db, `${caminhoBase}/system`, `fechamento_${seasonPassada}`);
+
+        // Agrupa para você saber exatamente o que o sistema enxergou na hora da virada
+        const resumoSeries = {};
+        SERIES_CONFIG.forEach(s => {
+            const jogadoresNaSerie = Object.values(appState.players).filter(p => (p.series || 'D') === s.name);
+            resumoSeries[s.name] = {
+                totalIdentificado: jogadoresNaSerie.length,
+                limiteVagasCalculado: jogadoresNaSerie.length < 5 ? 1 : (jogadoresNaSerie.length < 10 ? 2 : 3)
+            };
+        });
+
+        await setDoc(logRef, {
+            dataExecucao: serverTimestamp(),
+            movimentacoes: movimentacoes,
+            leituraDasSeries: resumoSeries
+        });
+        console.log(`📊 Relatório de fechamento salvo em /system/fechamento_${seasonPassada}`);
+    } catch (err) {
+        console.error("Erro ao salvar log de fechamento:", err);
     }
 
+    // =================================================================
+    // 2. O BATCH DE ATUALIZAÇÃO (Sela a temporada velha e cria a nova)
+    // =================================================================
     try {
         const batch = writeBatch(db);
+        const seasonAtual = currentSeason; // Puxa "temporada_11" (a que está começando)
+        const jogadores = Object.values(appState.players);
 
-        movimentacoes.forEach(mov => {
-            const playerDocRef = doc(playersCollectionRef(), mov.id);
+        jogadores.forEach(p => {
+            const playerDocRef = doc(playersCollectionRef(), p.id);
 
-            // Atualiza a série do jogador E registra no histórico da temporada
-            batch.update(playerDocRef, {
-                series: mov.para,
-                [`${seasonPassada}.seriesNaTemporada`]: mov.para  // NOVO: Registra a série final da temporada
-            });
+            // 1. Qual era a série dele quando jogou a temporada passada?
+            const serieAntiga = p.series || 'D';
 
-            console.log(`🔄 Automático - ${mov.nome}: Série ${mov.de} ➔ Série ${mov.para}`);
+            // 2. Ele subiu ou caiu? (Verifica na lista de movimentações)
+            const movimento = movimentacoes.find(m => m.id === p.id);
+            const serieFinal = movimento ? movimento.para : serieAntiga;
+
+            // 3. Monta o pacote de atualização blindado
+            let updates = {
+                // A série atual no Root (para o placar em tempo real)
+                series: serieFinal,
+
+                // O CARIMBO HISTÓRICO: Guarda a série em que ele JOGOU a temporada passada
+                [`${seasonPassada}.seriesNaTemporada`]: serieAntiga,
+
+                // O ESQUELETO DA NOVA TEMPORADA: Tudo zerado, pronto para o primeiro jogo
+                [`${seasonAtual}.lambretasNaTemporada`]: 0,
+                [`${seasonAtual}.raiosNaTemporada`]: 0,
+                [`${seasonAtual}.pontosNaTemporada`]: 0,
+                [`${seasonAtual}.matchPointsNaTemporada`]: 0,
+                [`${seasonAtual}.partidasNaTemporada`]: 0,
+                [`${seasonAtual}.conquistasNaTemporada`]: {},
+
+                // A SÉRIE DE LARGADA DA NOVA TEMPORADA (Aplica promoção/rebaixamento)
+                [`${seasonAtual}.seriesNaTemporada`]: serieFinal
+            };
+
+            batch.update(playerDocRef, updates);
+
+            if (movimento) {
+                console.log(`🔄 Automático - ${p.name}: Série ${movimento.de} ➔ Série ${movimento.para}`);
+            }
         });
 
         await batch.commit();
-        console.log("🎉 Virada de temporada concluída com sucesso! Séries atualizadas.");
+        console.log(`🎉 Virada de temporada concluída com sucesso! Séries e históricos atualizados para a ${seasonAtual}.`);
 
-        showMessage(`Temporada encerrada! ${movimentacoes.length} jogadores mudaram de série.`, "success");
+        if (movimentacoes.length > 0) {
+            showMessage(`Temporada encerrada! ${movimentacoes.length} jogadores mudaram de série.`, "success");
+        } else {
+            console.log("Virada estrutural feita, mas ninguém mudou de série.");
+        }
 
     } catch (error) {
         console.error("🔥 Erro fatal ao rodar a virada automática:", error);
@@ -2924,61 +3120,6 @@ function closeModal() {
     if (fabContainer) fabContainer.classList.remove('hidden');
 }
 
-async function updatePlayerStat(playerId, stat, amount) {
-    if (!appState.isAdminMode) return;
-
-    const playerDocRef = doc(playersCollectionRef(), playerId);
-
-    try {
-        const playerDoc = await getDoc(playerDocRef);
-        if (!playerDoc.exists()) {
-            showMessage("Erro: Jogador não encontrado.", "error");
-            return;
-        }
-        const player = playerDoc.data();
-
-        const updates = {};
-
-        // --- INÍCIO DA CORREÇÃO ---
-        // Lógica corrigida para lidar com o plural de "lambreta"
-        let seriesStatName = '';
-        if (stat === 'lambreta') {
-            seriesStatName = 'lambretasNaSerie';
-        } else {
-            seriesStatName = `${stat}NaSerie`;
-        }
-        // --- FIM DA CORREÇÃO ---
-
-        const currentStatValue = player[stat] || 0;
-        const currentSeriesValue = player[seriesStatName] || 0;
-
-        if (currentStatValue + amount < 0) {
-            showMessage(`Não é possível ter valor negativo para ${stat}.`, 'error');
-            return;
-        }
-
-        updates[stat] = increment(amount);
-
-        if (currentSeriesValue + amount >= 0) {
-            updates[seriesStatName] = increment(amount);
-        } else {
-            updates[seriesStatName] = -1;
-            // console.warn(`Contador de série para "${stat}" já está em 0.`);
-        }
-
-        if (Object.keys(updates).length > 0) {
-            await updateDoc(playerDocRef, updates);
-        }
-
-        // const changes = await checarStatusDaSerie(playerId);
-        // await applySeriesChanges(playerId, changes);
-
-    } catch (error) {
-        console.error(`Erro ao atualizar ${stat}:`, error);
-        showMessage(`Erro ao atualizar ${stat}.`, 'error');
-    }
-}
-
 function openPlayerDetailsModal(playerId) {
     appState.modalContext = { currentViewedPlayerId: playerId };
     const player = appState.players[playerId];
@@ -3553,20 +3694,56 @@ function atualizarBarraDeNoticias() {
     // Se estamos na semana 1, injeta as fofocas da temporada passada!
     // O resumo é carregado uma única vez em memória (resumoTemporadaPassadaCache)
     // para não bloquear a barra a cada atualização.
+    // if (diaTemporada <= 7) {
+    //     if (resumoTemporadaPassadaCache) {
+    //         const resumo = resumoTemporadaPassadaCache;
+    //         noticias.push(`🏆FIM DE TEMPORADA! ${resumo.maisRaios.nome} venceu ${resumo.maisRaios.valor} raios na última temporada.`);
+    //         noticias.push(`⚡ ${resumo.maisPontos.nome} foi o batedor isolado com ${resumo.maisPontos.valor} pontos!`);
+    //         noticias.push(`🚔 Fiquem de olho: A conquista mais vista da última temporada foi '${resumo.conquistaMaisRecorrente.nome}'!`);
+    //         noticias.push(`${resumo.maisConquistas.nome} foi quem mais acumulou conquistas na temporada! Um total de ${resumo.maisConquistas.valor}`);
+    //     } else if (!resumoTemporadaPassadaCarregando) {
+    //         // Dispara o carregamento uma única vez; quando chegar, a barra usa na próxima renderização
+    //         resumoTemporadaPassadaCarregando = true;
+    //         gerarResumoDaTemporadaAnterior().then(r => {
+    //             resumoTemporadaPassadaCache = r || null;
+    //             resumoTemporadaPassadaCarregando = false;
+    //         }).catch(() => { resumoTemporadaPassadaCarregando = false; });
+    //     }
+    // }
+
+    // No início do bloco da temporada
     if (diaTemporada <= 7) {
         if (resumoTemporadaPassadaCache) {
+            // Usa o cache da memória se já buscou antes nesta sessão
             const resumo = resumoTemporadaPassadaCache;
-            noticias.push(`🏆FIM DE TEMPORADA! ${resumo.maisRaios.nome} venceu ${resumo.maisRaios.valor} raios na última temporada.`);
+            noticias.push(`🏆 FIM DE TEMPORADA! ${resumo.maisRaios.nome} venceu ${resumo.maisRaios.valor} raios na última temporada.`);
             noticias.push(`⚡ ${resumo.maisPontos.nome} foi o batedor isolado com ${resumo.maisPontos.valor} pontos!`);
             noticias.push(`🚔 Fiquem de olho: A conquista mais vista da última temporada foi '${resumo.conquistaMaisRecorrente.nome}'!`);
-            noticias.push(`${resumo.maisConquistas.nome} foi quem mais acumulou conquistas na temporada! Um total de ${resumo.maisConquistas.valor}`);
+            noticias.push(`⭐ ${resumo.maisConquistas.nome} foi quem mais acumulou conquistas! Um total de ${resumo.maisConquistas.valor}`);
         } else if (!resumoTemporadaPassadaCarregando) {
-            // Dispara o carregamento uma única vez; quando chegar, a barra usa na próxima renderização
             resumoTemporadaPassadaCarregando = true;
-            gerarResumoDaTemporadaAnterior().then(r => {
-                resumoTemporadaPassadaCache = r || null;
+
+            // 1. Descobre qual foi a temporada passada
+            const numeroAtual = parseInt(currentSeason.split('_')[1]);
+            const seasonPassada = `temporada_${numeroAtual - 1}`;
+
+            // 2. Caminho direto para o resumo salvo no Firestore
+            const caminhoBase = "artifacts/1:187178310074:web:5f56292dea8dc776532583/public/data";
+            const cacheRef = doc(db, `${caminhoBase}/system`, `resumo_${seasonPassada}`);
+
+            // 3. Busca limpa e direta!
+            getDoc(cacheRef).then(cacheSnap => {
+                if (cacheSnap.exists()) {
+                    resumoTemporadaPassadaCache = cacheSnap.data();
+                    atualizarBarraDeNoticias(); // Renderiza de novo com os dados
+                } else {
+                    console.warn(`Resumo da ${seasonPassada} ainda não foi gerado no Firestore.`);
+                }
                 resumoTemporadaPassadaCarregando = false;
-            }).catch(() => { resumoTemporadaPassadaCarregando = false; });
+            }).catch(err => {
+                console.error("Erro ao buscar resumo direto do Firestore:", err);
+                resumoTemporadaPassadaCarregando = false;
+            });
         }
     }
 
@@ -3707,69 +3884,6 @@ function setupFirestoreListeners() {
     });
 
     appState.unsubscribers.push(unsubPlayers, unsubFeed, unsubLiveMatch);
-}
-
-async function checarStatusDaSerie(playerId) {
-    const player = appState.players[playerId];
-    if (!player) return { changed: false };
-
-    const seriesOrder = SERIES_CONFIG.map(s => s.name);
-    const currentIndex = seriesOrder.indexOf(player.series || 'Amador');
-
-    let changes = {
-        changed: false,
-        undoSeries: false,
-        newSeries: null,
-        oldSeries: player.series,
-        unlockedAchievements: [],
-        promotion: false,
-        demotion: false,
-        stagnant: false
-    };
-
-    // Verificação de promoção (15 raios na série atual)
-    if ((player.raiosNaSerie || 0) >= 15 && currentIndex < seriesOrder.length - 1) {
-        changes.newSeries = seriesOrder[currentIndex + 1];
-        changes.changed = true;
-        changes.promotion = true;
-
-        // Verifica se é o primeiro a chegar nesta série
-        const jogadoresNaSerie = Object.values(appState.players).filter(p =>
-            p.series === changes.newSeries && p.id !== playerId
-        );
-
-        if (jogadoresNaSerie.length === 0) {
-            changes.unlockedAchievements.push('desbravador');
-            await concederConquista(playerId, 'desbravador', `foi o primeiro a alcançar a Série ${changes.newSeries}! 🧗‍♂️`);
-        }
-
-        if (changes.newSeries === 'A') {
-            changes.unlockedAchievements.push('primeiro_rei');
-        }
-    }
-    else if ((player.raiosNaSerie || 0) >= 15 && seriesOrder.length - 1){
-        changes.stagnant = true;
-        changes.changed = true;
-    }
-    else if ((player.raiosNaSerie || 0) === -1 && currentIndex > 0){
-        const playerDocRef = doc(playersCollectionRef(), playerId);
-        changes.undoSeries = true;
-        changes.newSeries = seriesOrder[currentIndex - 1];
-        changes.changed = true;
-        changes.demotion = true;
-    }
-    // Verificação de rebaixamento (15 lambretas na série atual)
-    else if ((player.lambretasNaSerie || 0) >= 15 && currentIndex > 0) {
-        changes.newSeries = seriesOrder[currentIndex - 1];
-        changes.changed = true;
-        changes.demotion = true;
-    }
-    else if ((player.lambretasNaSerie || 0) >= 15 && currentIndex === 0){
-        changes.stagnant = true;
-        changes.changed = true;
-    }
-
-    return changes;
 }
 
 async function applySeriesChanges(playerId, changes) {
@@ -4270,7 +4384,7 @@ function renderScoreboardHistory(seasonName, containerId) {
     function getCardClasses(index, totalPlayers) {
         let topCount, bottomCount;
 
-        if (totalPlayers >= 8) {
+        if (totalPlayers >= 11) {
             topCount = 3;
             bottomCount = 3;
         } else if (totalPlayers >= 5) {
@@ -4646,25 +4760,8 @@ ui.modal.container.addEventListener('click', (e) => {
         const playerId = appState.modalContext?.currentViewedPlayerId;
 
         // Ações que dependem de um jogador específico no modal
-        const statButton = target.closest('.stat-button');
         const renameButton = target.closest('#btnRenamePlayer');
         const deleteButton = target.closest('#btnDeletePlayer');
-
-        if (statButton && playerId) {
-            const { action, stat } = statButton.dataset;
-            const amount = action === 'increment' ? 1 : -1;
-            const valueElement = document.getElementById(`${stat}-value`);
-            const currentValue = parseInt(valueElement.textContent, 10);
-            const newValue = currentValue + amount;
-
-            if (newValue >= 0) {
-                valueElement.textContent = newValue;
-                updatePlayerStat(playerId, stat, amount);
-            } else {
-                showMessage(`Não é possível ter valor negativo.`, 'error');
-            }
-            return;
-        }
 
         if (renameButton && playerId) {
             renomearJogador(playerId);
