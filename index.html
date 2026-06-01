@@ -436,89 +436,7 @@ function getDiasDaTemporadaAtual() {
     const diaAtual = (daysSinceStart % 30) + 1;
     return diaAtual;
 }
-// Adicionamos o 'seasonToEvaluate' no parênteses
-// function calcularFechamentoDeTemporada(seasonToEvaluate) {
-//     // Se não passarmos nada, ele usa a atual. Mas na virada, vamos passar a anterior!
-//     const season = seasonToEvaluate || currentSeason;
-//     const jogadores = Object.values(appState.players);
-//
-//     if (jogadores.length === 0) return [];
-//
-//     console.log(`🔍 O Juiz está avaliando a temporada: ${season}`);
-//
-//     let ligas = { 'A': [], 'B': [], 'C': [], 'D': [], 'Amador': [] };
-//
-//     jogadores.forEach(p => {
-//         const serieAtual = p.series || 'D';
-//         if(ligas[serieAtual]) ligas[serieAtual].push(p);
-//     });
-//
-//     let movimentacoes = [];
-//
-//     for (let i = 0; i < SERIES_CONFIG.length; i++) {
-//         const serieName = SERIES_CONFIG[i].name;
-//         const playersInSerie = ligas[serieName];
-//
-//         if (!playersInSerie || playersInSerie.length === 0) continue;
-//
-//         // 👇 NOVA LÓGICA DE ESCALONAMENTO DE VAGAS
-//         const qtdJogadores = playersInSerie.length;
-//         let limiteVagas = 3; // Padrão: 8 ou mais jogadores
-//
-//         if (qtdJogadores < 5) {
-//             limiteVagas = 1;
-//         } else if (qtdJogadores < 8) {
-//             limiteVagas = 2;
-//         }
-//
-//         console.log(`📊 Série ${serieName} tem ${qtdJogadores} jogadores. Vagas liberadas (Sobe/Cai): ${limiteVagas}`);
-//
-//         playersInSerie.sort((a, b) => {
-//             const statsA = a[season] || {};
-//             const statsB = b[season] || {};
-//
-//             const aproveitamentoDiff = (statsB.aproveitamentoNaTemporada || 0) - (statsA.aproveitamentoNaTemporada || 0);
-//             if (aproveitamentoDiff !== 0) return aproveitamentoDiff;
-//
-//             const pontosDiff = (statsB.pontosNaTemporada || 0) - (statsA.pontosNaTemporada || 0);
-//             if (pontosDiff !== 0) return pontosDiff;
-//
-//             return (statsA.lambretasNaTemporada || 0) - (statsB.lambretasNaTemporada || 0);
-//         });
-//
-//         // --- QUEM SOBE ---
-//         let promocoes = 0;
-//         if (i < SERIES_CONFIG.length - 1) {
-//             // Substituímos o < 3 pelo < limiteVagas
-//             for (let j = 0; j < playersInSerie.length && promocoes < limiteVagas; j++) {
-//                 let p = playersInSerie[j];
-//                 let partidas = p[season]?.partidasNaTemporada || 0;
-//
-//                 if (partidas >= 20) {
-//                     movimentacoes.push({ id: p.id, nome: p.name, de: serieName, para: SERIES_CONFIG[i + 1].name, status: '⬆️ PROMOVIDO' });
-//                     promocoes++;
-//                     p._jaMovimentado = true;
-//                 }
-//             }
-//         }
-//
-//         // --- QUEM CAI ---
-//         let rebaixamentos = 0;
-//         if (i > 0) {
-//             // Substituímos o < 3 pelo < limiteVagas
-//             for (let j = playersInSerie.length - 1; j >= 0 && rebaixamentos < limiteVagas; j--) {
-//                 let p = playersInSerie[j];
-//
-//                 if (!p._jaMovimentado) {
-//                     movimentacoes.push({ id: p.id, nome: p.name, de: serieName, para: SERIES_CONFIG[i - 1].name, status: '⬇️ REBAIXADO' });
-//                     rebaixamentos++;
-//                 }
-//             }
-//         }
-//     }
-//
-//     return movimentacoes;
-// }
+
 function calcularFechamentoDeTemporada(seasonToEvaluate) {
     const season = seasonToEvaluate || currentSeason;
     const jogadores = Object.values(appState.players);
@@ -2589,87 +2507,6 @@ async function processAndShowGameOver(gameData) {
 }
 
 function switchView(viewId) { ui.views.forEach(v => v.classList.toggle('active', v.id === viewId)); }
-/*
-function renderScoreboard() {
-    const players = Object.values(appState.players);
-    const seriesOrder = ['A', 'B', 'C', 'D', 'Amador'];
-
-    players.sort((a, b) => {
-        const statsA = a[currentSeason] || {};
-        const statsB = b[currentSeason] || {};
-
-        const aproveitamentoDiff = (statsB.aproveitamentoNaTemporada || 0) - (statsA.aproveitamentoNaTemporada || 0);
-        if (aproveitamentoDiff !== 0) return aproveitamentoDiff;
-
-        const pontosDiff = (statsB.pontosNaTemporada || 0) - (statsA.pontosNaTemporada || 0);
-        if (pontosDiff !== 0) return pontosDiff;
-
-        return (statsA.lambretasNaTemporada || 0) - (statsB.lambretasNaTemporada || 0);
-    });
-
-    ui.playersListDiv.innerHTML = players.map((player, index) => {
-        const stats = player[currentSeason] || {};
-
-        let cardClasses = "p-4 rounded-xl shadow-sm flex items-center justify-between transition-all duration-200 hover:scale-[1.01]";
-        let positionIcon = "";
-        let positionText = `${index + 1}º`;
-
-        if (index < 3) {
-            cardClasses += " bg-green-50 border-l-4 border-green-500";
-            positionIcon = ["🥇", "🥈", "🥉"][index] || "";
-        } else if (index >= players.length - 3) {
-            cardClasses += " bg-red-50 border-l-4 border-red-500";
-        } else {
-            cardClasses += " bg-white";
-        }
-
-        if (index === 0) {
-            cardClasses += " ring-2 ring-yellow-400 animate-pulse";
-            positionText = "👑 " + positionText;
-        }
-
-        return `
-            <div class="${cardClasses}">
-                <div class="flex items-center gap-3">
-                    <span class="font-mono text-sm text-gray-400 w-8 text-center">
-                        ${positionIcon || positionText}
-                    </span>
-                    <div>
-                        <span class="font-bold text-lg player-name-clickable" data-player-id="${player.id}">
-                            ${player.name}
-                        </span>
-                        <span class="text-sm text-gray-500 ml-2">
-                            (Série ${player.series})
-                        </span>
-                    </div>
-                </div>
-                <div class="text-sm font-mono leading-tight text-right">
-                    <div class="grid grid-cols-4 text-gray-500 w-44 mx-auto">
-                        <span class="text-center">RT</span>
-                        <span class="text-center">LT</span>
-                        <span class="text-center">PAT</span>
-                        <span class="text-center">AT</span>
-                    </div>
-                    <div class="grid grid-cols-4 font-semibold w-44 mx-auto">
-                        <span class="text-blue-600 text-center">${stats.raiosNaTemporada || 0}</span>
-                        <span class="text-yellow-600 text-center">${stats.lambretasNaTemporada || 0}</span>
-                        <span class="text-center">${stats.partidasNaTemporada || 0}</span>
-                        <span class="text-center">${(stats.aproveitamentoNaTemporada || 0).toFixed(1)}%</span>
-                    </div>
-                </div>
-            </div>
-        `;
-
-    }).join('');
-    // Verificando a Temporada, se virou para uma nova!
-    // 🛡️ O CADEADO: Chama o porteiro só na primeira vez que o placar carrega
-    if (!temporadaJaVerificada) {
-        verificarViradaDeTemporada();
-        checarGatilhoDoResumo();
-        verificarAvisoDoSistema();
-        temporadaJaVerificada = true; // Avisa que já checou, não precisa checar de novo hoje!
-    }
-}*/
 
 function renderScoreboard() {
     const players = Object.values(appState.players);
@@ -2816,8 +2653,6 @@ async function atualizarAproveitamentoTemporada(playerId) {
     const player = playerSnap.data();
     const stats = player[currentSeason] || {};
     let peso = 50;
-    // const aproveitamentoRA = stats.partidasNaTemporada > 0 ? (stats.raiosNaTemporada / stats.partidasNaTemporada) * 100 : 0;
-    // const aproveitamentoLB = stats.partidasNaTemporada > 0 ? (stats.lambretasNaTemporada / stats.partidasNaTemporada) * 100: 0;
     // Garantimos que todos os valores sejam números, usando || 0 para campos inexistentes
     const partidas = stats.partidasNaTemporada || 0;
     const raios = stats.raiosNaTemporada || 0;
@@ -4381,115 +4216,6 @@ function mudarAbaHistorico(aba) {
     }
 }
 
-/*
-// A Super Função de Renderização Histórica
-function renderScoreboardHistory(seasonName, containerId) {
-    // 1. Descobre o número da temporada (ex: "temporada_7" -> 7)
-    const seasonNum = parseInt(seasonName.replace('temporada_', ''));
-
-    // 2. Pega apenas os jogadores que têm dados gravados naquela temporada
-    let players = Object.values(appState.players).filter(p => p[seasonName]);
-
-    if (players.length === 0) {
-        document.getElementById(containerId).innerHTML = '<p class="text-center text-gray-500 py-8">Nenhum dado encontrado para esta temporada.</p>';
-        return;
-    }
-
-    // 3. ORDENAÇÃO DINÂMICA
-    players.sort((a, b) => {
-        const statsA = a[seasonName];
-        const statsB = b[seasonName];
-
-        if (seasonNum >= 7) {
-            // REGRA NOVA (Temporada 7 em diante)
-            // 1º Aproveitamento > 2º Pontos > 3º Menos Lambretas
-            const aproveitamentoDiff = (statsB.aproveitamentoNaTemporada || 0) - (statsA.aproveitamentoNaTemporada || 0);
-            if (aproveitamentoDiff !== 0) return aproveitamentoDiff;
-
-            const pontosDiff = (statsB.pontosNaTemporada || 0) - (statsA.pontosNaTemporada || 0);
-            if (pontosDiff !== 0) return pontosDiff;
-
-            return (statsA.lambretasNaTemporada || 0) - (statsB.lambretasNaTemporada || 0);
-        } else {
-            // REGRA ANTIGA (Temporada 6 para trás)
-            // 1º (Raios - Lambretas) > 2º Pontos
-            const saldoA = (statsA.raiosNaTemporada || 0) - (statsA.lambretasNaTemporada || 0);
-            const saldoB = (statsB.raiosNaTemporada || 0) - (statsB.lambretasNaTemporada || 0);
-
-            if (saldoB !== saldoA) return saldoB - saldoA;
-
-            // Desempate por pontos
-            return (statsB.pontosNaTemporada || 0) - (statsA.pontosNaTemporada || 0);
-        }
-    });
-
-    // 4. RENDERIZAÇÃO VISUAL (LAYOUT)
-    const html = players.map((player, index) => {
-        const stats = player[seasonName];
-
-        // Estilo base do card e medalhas para o Top 3
-        let cardClasses = "p-3 rounded-xl shadow-sm flex items-center justify-between mb-2 transition-all duration-200 hover:scale-[1.01] ";
-        let positionIcon = `${index + 1}º`;
-
-        if (index === 0) { cardClasses += "bg-yellow-50 border-l-4 border-yellow-400"; positionIcon = "🥇"; }
-        else if (index === 1) { cardClasses += "bg-gray-50 border-l-4 border-gray-400"; positionIcon = "🥈"; }
-        else if (index === 2) { cardClasses += "bg-orange-50 border-l-4 border-orange-400"; positionIcon = "🥉"; }
-        else { cardClasses += "bg-white border border-gray-100"; }
-
-        if (seasonNum >= 7) {
-            // LAYOUT NOVO (RT | LT | PAT | AT%)
-            return `
-                <div class="${cardClasses}">
-                    <div class="flex items-center gap-3">
-                        <span class="font-mono text-sm text-gray-400 w-6 text-center">${positionIcon}</span>
-                        <span class="font-bold text-gray-800">${player.name}</span>
-                    </div>
-                    <div class="text-xs font-mono text-right w-44">
-                        <div class="grid grid-cols-4 text-gray-400 mb-0.5">
-                            <span class="text-center">RT</span>
-                            <span class="text-center">LT</span>
-                            <span class="text-center">PAT</span>
-                            <span class="text-center">AT</span>
-                        </div>
-                        <div class="grid grid-cols-4 font-semibold text-sm">
-                            <span class="text-blue-600 text-center">${stats.raiosNaTemporada || 0}</span>
-                            <span class="text-yellow-600 text-center">${stats.lambretasNaTemporada || 0}</span>
-                            <span class="text-gray-700 text-center">${stats.partidasNaTemporada || 0}</span>
-                            <span class="text-gray-800 text-center">${(stats.aproveitamentoNaTemporada || 0).toFixed(1)}%</span>
-                        </div>
-                    </div>
-                </div>
-            `;
-        } else {
-            // LAYOUT ANTIGO (Jogos | Pts | Raios | Lambretas)
-            return `
-                <div class="${cardClasses}">
-                    <div class="flex items-center gap-3">
-                        <span class="font-mono text-sm text-gray-400 w-6 text-center">${positionIcon}</span>
-                        <span class="font-bold text-gray-800">${player.name}</span>
-                    </div>
-                    <div class="text-xs font-mono text-right w-44">
-                        <div class="grid grid-cols-4 text-gray-400 mb-0.5">
-                            <span class="text-center" title="Partidas Jogadas">JOG</span>
-                            <span class="text-center" title="Pontos">PTS</span>
-                            <span class="text-center" title="Raios">RT</span>
-                            <span class="text-center" title="Lambretas">LT</span>
-                        </div>
-                        <div class="grid grid-cols-4 font-semibold text-sm">
-                            <span class="text-gray-600 text-center">${stats.partidasNaTemporada || 0}</span>
-                            <span class="text-green-600 text-center">${stats.pontosNaTemporada || 0}</span>
-                            <span class="text-blue-600 text-center">${stats.raiosNaTemporada || 0}</span>
-                            <span class="text-red-500 text-center">${stats.lambretasNaTemporada || 0}</span>
-                        </div>
-                    </div>
-                </div>
-            `;
-        }
-    }).join('');
-
-    document.getElementById(containerId).innerHTML = html;
-} */
-
 function renderScoreboardHistory(seasonName, containerId) {
     const seasonNum = parseInt(seasonName.replace('temporada_', ''));
 
@@ -4773,13 +4499,6 @@ async function atualizarPainelFisico(gameData) {
         // 🛡️ ESCUDO: Se o jogo não estiver carregado ou não existir partida ativa
         if (!gameData || !gameData.playerIds) {
             // Manda o pacote zerado (Limpa o ESP32 e o VAR)
-            /* await setDoc(docRef, {
-                jogador1: 0, jogador2: 0, jogador3: 0, jogador4: 0,
-                nome1: "", nome2: "", nome3: "", nome4: "",
-                raios1: 0, raios2: 0, raios3: 0, raios4: 0,
-                lambretas1: 0, lambretas2: 0, lambretas3: 0, lambretas4: 0,
-                status: "inactive"
-            }); */
             console.log("Nenhuma partida ativa no momento, ignorando..");
             return;
         }
