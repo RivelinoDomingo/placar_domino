@@ -622,20 +622,20 @@
         "roubo": 4
       },
       "raios": 63,
-      "pontos": 419,
-      "partidasJogadas": 211,
       "lambreta": 58,
+      "pontos": 423,
+      "partidasJogadas": 213,
       "temporada_11": {
         "conquistasNaTemporada": {
           "roubo": 1
         },
         "bonusNaTemporada": 0,
         "raiosNaTemporada": 3,
-        "pontosNaTemporada": 15,
-        "matchPointsNaTemporada": 4,
-        "partidasNaTemporada": 6,
         "lambretasNaTemporada": 2,
-        "aproveitamentoNaTemporada": 66.66666666666667
+        "pontosNaTemporada": 19,
+        "matchPointsNaTemporada": 5,
+        "partidasNaTemporada": 8,
+        "aproveitamentoNaTemporada": 62.5
       }
     },
     {
@@ -690,17 +690,17 @@
         "raiosNaTemporada": 6
       },
       "raios": 16,
-      "pontos": 127,
-      "partidasJogadas": 78,
-      "lambreta": 25,
+      "lambreta": 26,
+      "pontos": 128,
+      "partidasJogadas": 80,
       "temporada_11": {
         "bonusNaTemporada": 0,
         "raiosNaTemporada": 1,
-        "pontosNaTemporada": 9,
         "matchPointsNaTemporada": 2,
-        "partidasNaTemporada": 8,
-        "lambretasNaTemporada": 4,
-        "aproveitamentoNaTemporada": 12.5
+        "lambretasNaTemporada": 5,
+        "pontosNaTemporada": 10,
+        "partidasNaTemporada": 10,
+        "aproveitamentoNaTemporada": 10
       }
     },
     {
@@ -993,9 +993,9 @@
         "imbativel": 7,
         "tanque_de_guerra": 12
       },
-      "partidasJogadas": 974,
-      "pontos": 1940,
-      "raios": 274,
+      "partidasJogadas": 976,
+      "pontos": 1948,
+      "raios": 276,
       "temporada_11": {
         "lambretasNaTemporada": 9,
         "conquistasNaTemporada": {
@@ -1003,12 +1003,12 @@
           "imbativel": 1,
           "tanque_de_guerra": 1
         },
-        "matchPointsNaTemporada": 28,
-        "pontosNaTemporada": 131,
-        "partidasNaTemporada": 59,
-        "raiosNaTemporada": 21,
-        "aproveitamentoNaTemporada": 74.23898305084747,
-        "bonusNaTemporada": 3.9000000000000004
+        "matchPointsNaTemporada": 30,
+        "pontosNaTemporada": 139,
+        "partidasNaTemporada": 61,
+        "raiosNaTemporada": 23,
+        "aproveitamentoNaTemporada": 77.05081967213114,
+        "bonusNaTemporada": 4.1000000000000005
       }
     },
     {
@@ -1269,20 +1269,20 @@
       "conquistas": {
         "azarao": 1
       },
-      "lambreta": 18,
-      "pontos": 56,
-      "partidasJogadas": 40,
+      "pontos": 59,
+      "partidasJogadas": 42,
+      "lambreta": 19,
       "temporada_11": {
         "raiosNaTemporada": 2,
-        "matchPointsNaTemporada": 3,
         "conquistasNaTemporada": {
           "azarao": 1
         },
-        "lambretasNaTemporada": 12,
-        "pontosNaTemporada": 21,
-        "partidasNaTemporada": 21,
-        "aproveitamentoNaTemporada": 2.480952380952385,
-        "bonusNaTemporada": 0.1
+        "pontosNaTemporada": 24,
+        "matchPointsNaTemporada": 4,
+        "partidasNaTemporada": 23,
+        "lambretasNaTemporada": 13,
+        "aproveitamentoNaTemporada": 2.4739130434782615,
+        "bonusNaTemporada": 0.30000000000000004
       }
     },
     {
