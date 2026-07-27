@@ -584,7 +584,6 @@
         "azarao": 6,
         "roubo": 17
       },
-      "raios": 234,
       "temporada_11": {
         "lambretasNaTemporada": 2,
         "conquistasNaTemporada": {
@@ -598,19 +597,20 @@
         "bonusNaTemporada": 0.6000000000000001,
         "seriesNaTemporada": "A"
       },
-      "pontos": 1640,
+      "raios": 237,
+      "pontos": 1657,
+      "partidasJogadas": 754,
       "temporada_12": {
         "seriesNaTemporada": "A",
         "conquistasNaTemporada": {},
-        "raiosNaTemporada": 0,
         "lambretasNaTemporada": 0,
-        "matchPointsNaTemporada": 1,
-        "aproveitamentoNaTemporada": 0,
         "bonusNaTemporada": 0,
-        "pontosNaTemporada": 5,
-        "partidasNaTemporada": 2
-      },
-      "partidasJogadas": 749
+        "matchPointsNaTemporada": 5,
+        "raiosNaTemporada": 3,
+        "pontosNaTemporada": 22,
+        "partidasNaTemporada": 7,
+        "aproveitamentoNaTemporada": 92.85714285714286
+      }
     },
     {
       "id": "O9HRWCk2kCHOKT5aLZ69",
@@ -684,7 +684,6 @@
         "aproveitamentoNaTemporada": 70.45483870967742,
         "bonusNaTemporada": 1.1
       },
-      "lambreta": 58,
       "temporada_11": {
         "lambretasNaTemporada": 2,
         "conquistasNaTemporada": {
@@ -705,21 +704,22 @@
         "roubo": 5
       },
       "raios": 71,
-      "pontos": 469,
-      "partidasJogadas": 229,
+      "lambreta": 59,
+      "pontos": 480,
       "temporada_12": {
         "seriesNaTemporada": "B",
-        "lambretasNaTemporada": 0,
-        "matchPointsNaTemporada": 1,
         "conquistasNaTemporada": {
           "roubo": 1
         },
         "raiosNaTemporada": 1,
         "bonusNaTemporada": 0,
-        "pontosNaTemporada": 6,
-        "partidasNaTemporada": 2,
-        "aproveitamentoNaTemporada": 100
-      }
+        "lambretasNaTemporada": 1,
+        "aproveitamentoNaTemporada": 50,
+        "pontosNaTemporada": 17,
+        "matchPointsNaTemporada": 4,
+        "partidasNaTemporada": 7
+      },
+      "partidasJogadas": 234
     },
     {
       "id": "RTN5Bn71X3CJSlEWxaNe",
@@ -774,8 +774,6 @@
       },
       "raios": 17,
       "lambreta": 27,
-      "pontos": 137,
-      "partidasJogadas": 84,
       "temporada_11": {
         "bonusNaTemporada": 0,
         "raiosNaTemporada": 2,
@@ -786,14 +784,18 @@
         "aproveitamentoNaTemporada": 21.42857142857143,
         "seriesNaTemporada": "D"
       },
+      "pontos": 138,
+      "partidasJogadas": 85,
       "temporada_12": {
         "seriesNaTemporada": "D",
-        "pontosNaTemporada": 0,
-        "partidasNaTemporada": 0,
         "conquistasNaTemporada": {},
         "raiosNaTemporada": 0,
         "lambretasNaTemporada": 0,
-        "matchPointsNaTemporada": 0
+        "matchPointsNaTemporada": 0,
+        "pontosNaTemporada": 1,
+        "partidasNaTemporada": 1,
+        "aproveitamentoNaTemporada": 0,
+        "bonusNaTemporada": 0
       }
     },
     {
@@ -1122,7 +1124,6 @@
         "matchPointsNaTemporada": 66,
         "lambretasNaTemporada": 29
       },
-      "lambreta": 237,
       "temporada_11": {
         "conquistasNaTemporada": {
           "roubo": 1,
@@ -1139,27 +1140,29 @@
         "seriesNaTemporada": "B"
       },
       "series": "A",
-      "partidasJogadas": 995,
-      "pontos": 1987,
-      "raios": 281,
-      "temporada_12": {
-        "seriesNaTemporada": "A",
-        "lambretasNaTemporada": 0,
-        "bonusNaTemporada": 0,
-        "matchPointsNaTemporada": 2,
-        "pontosNaTemporada": 7,
-        "partidasNaTemporada": 2,
-        "raiosNaTemporada": 1,
-        "aproveitamentoNaTemporada": 100,
-        "conquistasNaTemporada": {
-          "tanque_de_guerra": 1
-        }
-      },
       "conquistas": {
         "azarao": 7,
-        "roubo": 29,
         "imbativel": 7,
-        "tanque_de_guerra": 13
+        "tanque_de_guerra": 13,
+        "roubo": 30
+      },
+      "raios": 282,
+      "pontos": 1993,
+      "partidasJogadas": 1000,
+      "lambreta": 239,
+      "temporada_12": {
+        "seriesNaTemporada": "A",
+        "bonusNaTemporada": 0,
+        "matchPointsNaTemporada": 3,
+        "conquistasNaTemporada": {
+          "tanque_de_guerra": 1,
+          "roubo": 1
+        },
+        "raiosNaTemporada": 2,
+        "pontosNaTemporada": 13,
+        "partidasNaTemporada": 7,
+        "lambretasNaTemporada": 2,
+        "aproveitamentoNaTemporada": 50
       }
     },
     {
@@ -1609,16 +1612,12 @@
         "seriesNaTemporada": "B",
         "partidasNaTemporada": 146
       },
-      "lambreta": 162,
       "conquistas": {
         "imbativel": 1,
         "azarao": 7,
         "tanque_de_guerra": 6,
         "roubo": 20
       },
-      "partidasJogadas": 705,
-      "pontos": 1316,
-      "raios": 171,
       "temporada_11": {
         "lambretasNaTemporada": 12,
         "matchPointsNaTemporada": 17,
@@ -1633,16 +1632,22 @@
         "bonusNaTemporada": 3.9000000000000004,
         "seriesNaTemporada": "A"
       },
+      "series": "B",
+      "lambreta": 163,
+      "partidasJogadas": 709,
+      "pontos": 1323,
+      "raios": 172,
       "temporada_12": {
         "seriesNaTemporada": "B",
-        "pontosNaTemporada": 0,
-        "partidasNaTemporada": 0,
         "conquistasNaTemporada": {},
-        "raiosNaTemporada": 0,
-        "lambretasNaTemporada": 0,
-        "matchPointsNaTemporada": 0
-      },
-      "series": "B"
+        "bonusNaTemporada": 0,
+        "lambretasNaTemporada": 1,
+        "matchPointsNaTemporada": 1,
+        "pontosNaTemporada": 7,
+        "partidasNaTemporada": 4,
+        "raiosNaTemporada": 1,
+        "aproveitamentoNaTemporada": 50
+      }
     },
     {
       "id": "zKnvEnwu79cfz5nVvJ9l",
@@ -2423,6 +2428,16 @@
       "timestamp": {
         "_seconds": 1776911745,
         "_nanoseconds": 622000000
+      }
+    },
+    {
+      "id": "GDHttnu8ZBrfIp83wVfH",
+      "player": "Renata",
+      "text": "🚔👮🏻Chama a policia que Renata acabou de roubar o raio de Kauê",
+      "type": "achievement",
+      "timestamp": {
+        "_seconds": 1785113116,
+        "_nanoseconds": 801000000
       }
     },
     {
