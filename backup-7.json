@@ -358,10 +358,6 @@
         "roubo": 18,
         "azarao": 17
       },
-      "raios": 249,
-      "pontos": 2060,
-      "partidasJogadas": 1207,
-      "lambreta": 401,
       "temporada_12": {
         "seriesNaTemporada": "C",
         "bonusNaTemporada": 0,
@@ -375,14 +371,20 @@
         "lambretasNaTemporada": 6,
         "aproveitamentoNaTemporada": 26.923076923076923
       },
+      "lambreta": 403,
+      "partidasJogadas": 1213,
+      "pontos": 2070,
+      "raios": 250,
       "temporada_13": {
         "seriesNaTemporada": "C",
-        "pontosNaTemporada": 0,
-        "partidasNaTemporada": 0,
         "conquistasNaTemporada": {},
-        "raiosNaTemporada": 0,
-        "lambretasNaTemporada": 0,
-        "matchPointsNaTemporada": 0
+        "bonusNaTemporada": 0,
+        "lambretasNaTemporada": 2,
+        "matchPointsNaTemporada": 1,
+        "pontosNaTemporada": 10,
+        "partidasNaTemporada": 6,
+        "raiosNaTemporada": 1,
+        "aproveitamentoNaTemporada": 33.333333333333336
       }
     },
     {
@@ -645,10 +647,6 @@
         "bonusNaTemporada": 0.6000000000000001,
         "seriesNaTemporada": "A"
       },
-      "raios": 237,
-      "lambreta": 152,
-      "pontos": 1662,
-      "partidasJogadas": 760,
       "temporada_12": {
         "seriesNaTemporada": "A",
         "conquistasNaTemporada": {},
@@ -660,14 +658,20 @@
         "partidasNaTemporada": 13,
         "aproveitamentoNaTemporada": 57.69230769230769
       },
+      "pontos": 1675,
+      "raios": 240,
+      "partidasJogadas": 766,
+      "lambreta": 153,
       "temporada_13": {
         "seriesNaTemporada": "A",
-        "pontosNaTemporada": 0,
-        "partidasNaTemporada": 0,
         "conquistasNaTemporada": {},
-        "raiosNaTemporada": 0,
-        "lambretasNaTemporada": 0,
-        "matchPointsNaTemporada": 0
+        "bonusNaTemporada": 0,
+        "matchPointsNaTemporada": 3,
+        "pontosNaTemporada": 13,
+        "raiosNaTemporada": 3,
+        "partidasNaTemporada": 6,
+        "lambretasNaTemporada": 1,
+        "aproveitamentoNaTemporada": 83.33333333333334
       }
     },
     {
@@ -1248,10 +1252,7 @@
         "tanque_de_guerra": 13,
         "roubo": 30
       },
-      "lambreta": 241,
       "raios": 283,
-      "pontos": 1998,
-      "partidasJogadas": 1007,
       "temporada_12": {
         "seriesNaTemporada": "A",
         "bonusNaTemporada": 0,
@@ -1267,14 +1268,19 @@
         "aproveitamentoNaTemporada": 42.85714285714286
       },
       "series": "B",
+      "lambreta": 243,
+      "pontos": 2007,
+      "partidasJogadas": 1013,
       "temporada_13": {
         "seriesNaTemporada": "B",
-        "pontosNaTemporada": 0,
-        "partidasNaTemporada": 0,
         "conquistasNaTemporada": {},
         "raiosNaTemporada": 0,
-        "lambretasNaTemporada": 0,
-        "matchPointsNaTemporada": 0
+        "bonusNaTemporada": 0,
+        "matchPointsNaTemporada": 1,
+        "lambretasNaTemporada": 2,
+        "pontosNaTemporada": 9,
+        "partidasNaTemporada": 6,
+        "aproveitamentoNaTemporada": -33.33333333333333
       }
     },
     {
@@ -1781,10 +1787,6 @@
         "seriesNaTemporada": "A"
       },
       "series": "B",
-      "lambreta": 165,
-      "partidasJogadas": 718,
-      "pontos": 1340,
-      "raios": 174,
       "temporada_12": {
         "seriesNaTemporada": "B",
         "conquistasNaTemporada": {},
@@ -1796,14 +1798,20 @@
         "raiosNaTemporada": 3,
         "aproveitamentoNaTemporada": 50
       },
+      "pontos": 1353,
+      "raios": 176,
+      "partidasJogadas": 724,
+      "lambreta": 167,
       "temporada_13": {
         "seriesNaTemporada": "B",
-        "pontosNaTemporada": 0,
-        "partidasNaTemporada": 0,
         "conquistasNaTemporada": {},
-        "raiosNaTemporada": 0,
-        "lambretasNaTemporada": 0,
-        "matchPointsNaTemporada": 0
+        "bonusNaTemporada": 0,
+        "matchPointsNaTemporada": 3,
+        "pontosNaTemporada": 13,
+        "raiosNaTemporada": 2,
+        "partidasNaTemporada": 6,
+        "lambretasNaTemporada": 2,
+        "aproveitamentoNaTemporada": 50
       }
     },
     {
