@@ -119,6 +119,15 @@
         "pontosNaTemporada": 2,
         "partidasNaTemporada": 2,
         "aproveitamentoNaTemporada": -50
+      },
+      "temporada_14": {
+        "seriesNaTemporada": "Amador",
+        "pontosNaTemporada": 0,
+        "partidasNaTemporada": 0,
+        "conquistasNaTemporada": {},
+        "raiosNaTemporada": 0,
+        "lambretasNaTemporada": 0,
+        "matchPointsNaTemporada": 0
       }
     },
     {
@@ -165,6 +174,15 @@
         "raiosNaTemporada": 0,
         "lambretasNaTemporada": 0,
         "matchPointsNaTemporada": 0
+      },
+      "temporada_14": {
+        "seriesNaTemporada": "Amador",
+        "pontosNaTemporada": 0,
+        "partidasNaTemporada": 0,
+        "conquistasNaTemporada": {},
+        "raiosNaTemporada": 0,
+        "lambretasNaTemporada": 0,
+        "matchPointsNaTemporada": 0
       }
     },
     {
@@ -204,6 +222,15 @@
         "matchPointsNaTemporada": 0
       },
       "temporada_13": {
+        "seriesNaTemporada": "D",
+        "pontosNaTemporada": 0,
+        "partidasNaTemporada": 0,
+        "conquistasNaTemporada": {},
+        "raiosNaTemporada": 0,
+        "lambretasNaTemporada": 0,
+        "matchPointsNaTemporada": 0
+      },
+      "temporada_14": {
         "seriesNaTemporada": "D",
         "pontosNaTemporada": 0,
         "partidasNaTemporada": 0,
@@ -387,6 +414,15 @@
         "pontosNaTemporada": 15,
         "partidasNaTemporada": 10,
         "aproveitamentoNaTemporada": 40
+      },
+      "temporada_14": {
+        "seriesNaTemporada": "C",
+        "pontosNaTemporada": 0,
+        "partidasNaTemporada": 0,
+        "conquistasNaTemporada": {},
+        "raiosNaTemporada": 0,
+        "lambretasNaTemporada": 0,
+        "matchPointsNaTemporada": 0
       }
     },
     {
@@ -510,6 +546,15 @@
         "aproveitamentoNaTemporada": 16.666666666666664
       },
       "temporada_13": {
+        "seriesNaTemporada": "D",
+        "pontosNaTemporada": 0,
+        "partidasNaTemporada": 0,
+        "conquistasNaTemporada": {},
+        "raiosNaTemporada": 0,
+        "lambretasNaTemporada": 0,
+        "matchPointsNaTemporada": 0
+      },
+      "temporada_14": {
         "seriesNaTemporada": "D",
         "pontosNaTemporada": 0,
         "partidasNaTemporada": 0,
@@ -674,6 +719,15 @@
         "partidasNaTemporada": 6,
         "lambretasNaTemporada": 1,
         "aproveitamentoNaTemporada": 83.33333333333334
+      },
+      "temporada_14": {
+        "seriesNaTemporada": "A",
+        "pontosNaTemporada": 0,
+        "partidasNaTemporada": 0,
+        "conquistasNaTemporada": {},
+        "raiosNaTemporada": 0,
+        "lambretasNaTemporada": 0,
+        "matchPointsNaTemporada": 0
       }
     },
     {
@@ -792,6 +846,15 @@
         "raiosNaTemporada": 0,
         "lambretasNaTemporada": 0,
         "matchPointsNaTemporada": 0
+      },
+      "temporada_14": {
+        "seriesNaTemporada": "A",
+        "pontosNaTemporada": 0,
+        "partidasNaTemporada": 0,
+        "conquistasNaTemporada": {},
+        "raiosNaTemporada": 0,
+        "lambretasNaTemporada": 0,
+        "matchPointsNaTemporada": 0
       }
     },
     {
@@ -880,6 +943,15 @@
         "partidasNaTemporada": 2,
         "raiosNaTemporada": 1,
         "aproveitamentoNaTemporada": 100
+      },
+      "temporada_14": {
+        "seriesNaTemporada": "D",
+        "pontosNaTemporada": 0,
+        "partidasNaTemporada": 0,
+        "conquistasNaTemporada": {},
+        "raiosNaTemporada": 0,
+        "lambretasNaTemporada": 0,
+        "matchPointsNaTemporada": 0
       }
     },
     {
@@ -989,6 +1061,15 @@
         "raiosNaTemporada": 0,
         "lambretasNaTemporada": 0,
         "matchPointsNaTemporada": 0
+      },
+      "temporada_14": {
+        "seriesNaTemporada": "Amador",
+        "pontosNaTemporada": 0,
+        "partidasNaTemporada": 0,
+        "conquistasNaTemporada": {},
+        "raiosNaTemporada": 0,
+        "lambretasNaTemporada": 0,
+        "matchPointsNaTemporada": 0
       }
     },
     {
@@ -1028,6 +1109,15 @@
       },
       "series": "Amador",
       "temporada_13": {
+        "seriesNaTemporada": "Amador",
+        "pontosNaTemporada": 0,
+        "partidasNaTemporada": 0,
+        "conquistasNaTemporada": {},
+        "raiosNaTemporada": 0,
+        "lambretasNaTemporada": 0,
+        "matchPointsNaTemporada": 0
+      },
+      "temporada_14": {
         "seriesNaTemporada": "Amador",
         "pontosNaTemporada": 0,
         "partidasNaTemporada": 0,
@@ -1100,6 +1190,15 @@
       },
       "series": "Amador",
       "temporada_13": {
+        "seriesNaTemporada": "Amador",
+        "pontosNaTemporada": 0,
+        "partidasNaTemporada": 0,
+        "conquistasNaTemporada": {},
+        "raiosNaTemporada": 0,
+        "lambretasNaTemporada": 0,
+        "matchPointsNaTemporada": 0
+      },
+      "temporada_14": {
         "seriesNaTemporada": "Amador",
         "pontosNaTemporada": 0,
         "partidasNaTemporada": 0,
@@ -1285,6 +1384,15 @@
         "partidasNaTemporada": 10,
         "lambretasNaTemporada": 3,
         "aproveitamentoNaTemporada": 50
+      },
+      "temporada_14": {
+        "seriesNaTemporada": "B",
+        "pontosNaTemporada": 0,
+        "partidasNaTemporada": 0,
+        "conquistasNaTemporada": {},
+        "raiosNaTemporada": 0,
+        "lambretasNaTemporada": 0,
+        "matchPointsNaTemporada": 0
       }
     },
     {
@@ -1413,6 +1521,15 @@
         "raiosNaTemporada": 0,
         "lambretasNaTemporada": 0,
         "matchPointsNaTemporada": 0
+      },
+      "temporada_14": {
+        "seriesNaTemporada": "Amador",
+        "pontosNaTemporada": 0,
+        "partidasNaTemporada": 0,
+        "conquistasNaTemporada": {},
+        "raiosNaTemporada": 0,
+        "lambretasNaTemporada": 0,
+        "matchPointsNaTemporada": 0
       }
     },
     {
@@ -1525,6 +1642,15 @@
         "raiosNaTemporada": 0,
         "lambretasNaTemporada": 0,
         "matchPointsNaTemporada": 0
+      },
+      "temporada_14": {
+        "seriesNaTemporada": "C",
+        "pontosNaTemporada": 0,
+        "partidasNaTemporada": 0,
+        "conquistasNaTemporada": {},
+        "raiosNaTemporada": 0,
+        "lambretasNaTemporada": 0,
+        "matchPointsNaTemporada": 0
       }
     },
     {
@@ -1586,6 +1712,15 @@
         "raiosNaTemporada": 0,
         "lambretasNaTemporada": 0,
         "matchPointsNaTemporada": 0
+      },
+      "temporada_14": {
+        "seriesNaTemporada": "Amador",
+        "pontosNaTemporada": 0,
+        "partidasNaTemporada": 0,
+        "conquistasNaTemporada": {},
+        "raiosNaTemporada": 0,
+        "lambretasNaTemporada": 0,
+        "matchPointsNaTemporada": 0
       }
     },
     {
@@ -1632,9 +1767,18 @@
         "lambretasNaTemporada": 0,
         "matchPointsNaTemporada": 0
       },
-      "series": "C",
       "temporada_13": {
         "seriesNaTemporada": "C",
+        "pontosNaTemporada": 0,
+        "partidasNaTemporada": 0,
+        "conquistasNaTemporada": {},
+        "raiosNaTemporada": 0,
+        "lambretasNaTemporada": 0,
+        "matchPointsNaTemporada": 0
+      },
+      "series": "D",
+      "temporada_14": {
+        "seriesNaTemporada": "D",
         "pontosNaTemporada": 0,
         "partidasNaTemporada": 0,
         "conquistasNaTemporada": {},
@@ -1816,6 +1960,15 @@
         "partidasNaTemporada": 10,
         "lambretasNaTemporada": 3,
         "aproveitamentoNaTemporada": 40
+      },
+      "temporada_14": {
+        "seriesNaTemporada": "B",
+        "pontosNaTemporada": 0,
+        "partidasNaTemporada": 0,
+        "conquistasNaTemporada": {},
+        "raiosNaTemporada": 0,
+        "lambretasNaTemporada": 0,
+        "matchPointsNaTemporada": 0
       }
     },
     {
@@ -1955,9 +2108,18 @@
         "lambretasNaTemporada": 0,
         "matchPointsNaTemporada": 0
       },
-      "series": "D",
       "temporada_13": {
         "seriesNaTemporada": "D",
+        "pontosNaTemporada": 0,
+        "partidasNaTemporada": 0,
+        "conquistasNaTemporada": {},
+        "raiosNaTemporada": 0,
+        "lambretasNaTemporada": 0,
+        "matchPointsNaTemporada": 0
+      },
+      "series": "Amador",
+      "temporada_14": {
+        "seriesNaTemporada": "Amador",
         "pontosNaTemporada": 0,
         "partidasNaTemporada": 0,
         "conquistasNaTemporada": {},
